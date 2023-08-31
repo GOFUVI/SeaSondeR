@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(project)
+library(SeaSondeR)
 
 test_check("project")
