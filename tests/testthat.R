@@ -9,4 +9,4 @@
 library(testthat)
 library(SeaSondeR)
 
-test_check("project")
+test_check("SeaSondeR")

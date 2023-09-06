@@ -1,10 +1,7 @@
 ^renv$
 ^renv\.lock$
-^project\.Rproj$
+^SeaSondeR\.Rproj$
 ^\.Rproj\.user$
-^project\.Rcheck$
-^project.*\.tar\.gz$
-^project.*\.tgz$
 ^SeaSondeR\.Rcheck$
 ^SeaSondeR.*\.tar\.gz$
 ^SeaSondeR.*\.tgz$

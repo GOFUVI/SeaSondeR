@@ -4,9 +4,6 @@
 .httr-oauth
 .DS_Store
 .quarto
-project.Rcheck/
-project*.tar.gz
-project*.tgz
 SeaSondeR.Rcheck/
 SeaSondeR*.tar.gz
 SeaSondeR*.tgz
