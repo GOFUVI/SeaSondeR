@@ -1,1 +1,2 @@
 source("renv/activate.R")
+Sys.setenv(GITHUB_PAT="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")

@@ -9,7 +9,6 @@ The goal of SeaSondeR is to provide a comprehensive set of tools for processing 
     facilitate the handling of raw and processed data, including spectral matrices, calibration, 
     and metadata management.
 
-ChatGTP development thread: https://chat.openai.com/share/711fb2a0-ccac-4ae6-8611-0cb09de5bcec
 
 ## Installation
 
