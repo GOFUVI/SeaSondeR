@@ -28,3 +28,6 @@ library(SeaSondeR)
 ## basic example code
 ```
 
+## Package pages
+
+https://gofuvi.github.io/SeaSondeR/
