@@ -1,6 +1,6 @@
 Package: SeaSondeR
 Title: Tools for Processing SeaSonde HF-Radar Data
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Authors@R: 
     person("Juan Luis", "Herrera Cortijo", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0002-4206-2459"))
@@ -14,7 +14,9 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests: 
     here (>= 1.0.1),
+    knitr,
     mockthat (>= 0.2.8),
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://github.com/GOFUVI/SeaSondeR
@@ -26,3 +28,4 @@ Imports:
     purrr (>= 1.0.2),
     rlang (>= 1.1.1),
     stringr (>= 1.5.0)
+VignetteBuilder: knitr

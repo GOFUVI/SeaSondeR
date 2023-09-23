@@ -1,0 +1,87 @@
+---
+title: "SeaSondeR"
+output: rmarkdown::html_vignette
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{SeaSondeR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SeaSondeR)
+```
+
+## Instrument Introduction: SeaSonde
+
+SeaSonde is a compact, simplified radar system developed in California's Silicon Valley to measure near-surface ocean currents and, in certain cases, ocean waves. It operates at low frequencies ranging from 4 to 50 megahertz, and uses a small bandwidth.
+
+A SeaSonde system consists of two or more radial sites that contribute to a combined site to produce current maps. Each radial site can be imagined as the hub of a wheel, with the "radials" acting as spokes pointing toward or away from the site. These radials represent the component velocities of an ocean current in specific directions. Radial sites are typically several kilometers apart and are fully automated.
+
+## Common Data Processing Tasks.
+
+1. **Radial Map Generation**: Creation of maps showing the direction and velocity of currents relative to a radial site.
+2. **Vector Map Creation**: Combining radial maps from multiple sites to create a complete ocean current map.
+3. **Antenna Pattern Measurement (APM)**: Antenna pattern calibration to improve data accuracy.
+4. **Outliers Removal and Noise Filtering**: Preprocessing to improve data quality.
+5. 5. **Antenna Gain Calculation**: Adjustment of measurements to obtain more accurate data.
+
+## Existing SeaSonde Data Processing Software
+
+### Radial Suite
+
+This is proprietary software specifically for SeaSonde that provides tools for data processing.
+
+**Advantages**:  
+- Designed specifically for SeaSonde.
+- Integrated and comprehensive.
+
+**Disadvantages**:  
+- Closed software.
+- Costly and with limited licenses.
+
+### Radiowave Operators Working Group Repositories
+
+Includes the `spectra_tools` repository, which has Python scripts for reading and preprocessing data.
+
+**Advantages**:  
+- Open source.
+- Good for data quality control.
+
+**Disadvantages**:  
+- Limited to a few tasks.
+
+### hfr_cs_processing by Bryan Emery
+
+Provides a wide range of functionality for data processing in MATLAB.
+
+**Advantages**:  
+- Complete task coverage.
+- Good for research.
+
+**Disadvantages**:  
+- Requires a MATLAB license.
+- Limited to author's research.
+
+## Tasks that Can be Performed with This R Package
+
+This R package, called `SeaSondeR`, aims to provide a complete, open source solution for SeaSonde data processing. Capabilities include:
+
+1. **Data Reading**: Read APM and `.cs` files.
+2. **Map Generation**: Create both radial and vector maps.
+3. 3. **APM**: Antenna pattern calibration.
+4. **Data Preprocessing**: Noise filtering, outliers elimination and gain calculation.
+5. **Interoperability**: Can interface with other packages and repositories for deeper analysis.
+6. **Diagnostics and Maintenance**: Tools for radio site problem diagnosis and resolution.
+
+By using `SeaSondeR`, users can take advantage of the power and flexibility of the R language for data analysis, while maintaining high accuracy and reliability in the interpretation of SeaSonde data.
+
+
+# References

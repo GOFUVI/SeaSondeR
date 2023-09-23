@@ -1,0 +1,236 @@
+---
+title: "APM"
+output: rmarkdown::html_vignette
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{APM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SeaSondeR)
+```
+
+### Introduction
+
+#### Importance of an HF-Radar Antenna Pattern
+
+In high frequency radar (HF-Radar) systems, the antenna pattern is a crucial component for obtaining accurate current measurements from the reflected radar signal. This radiation pattern, which theoretically consists of two opposite ellipses for each antenna loop, is disturbed by obstacles and other interference [@SeaSonde-Operating_Theory] . The presence of buildings, trees or any other nearby structure can distort the antenna pattern, leading to incorrect current measurement.
+
+#### Need for Antenna Pattern Measurement (APM)
+
+Antenna Pattern Measurement (APM) is essential to know the actual antenna pattern, allowing the system to be adjusted to compensate for these distortions and obstacles. This is vital to improve the accuracy of radar measurements [@Advances_in_Sensors_Reviews_Vol_5.pdf2kl].
+
+### Antenna Pattern Measurement (APM)
+
+#### APM Objective
+
+The main objective of the APM is to correct and recalibrate the actual antenna pattern. In doing so, the APM contributes to the significant improvement of the quality of the data collected by the HF-Radar.
+
+### MUSIC algorithm and APM
+
+#### Direction Finding with MUSIC
+
+MUSIC (Multiple Signal Classification) [@Schmidt.1986] is an algorithm to estimate the direction of origin (DOA) of signals received by the radar. In systems such as SeaSonde, the MUSIC algorithm is applied to the complex voltages measured on the three antenna elements to estimate these parameters.
+
+#### Application of the MUSIC algorithm to SeaSonde
+
+In the context of HF-Radar systems such as SeaSonde, the antenna pattern is conceptualized as the "transfer vector" between the incident signals and the measured voltages at the antennas, following the mathematical model proposed by [@Stoica.1988]:
+
+$$ y(t) = A(\theta) x(t) + e(t), \quad t = 1, 2, \ldots, N $$.
+
+This transfer vector, or antenna pattern, is crucial to the MUSIC algorithm because it directly affects the covariance matrix of the complex voltages. By incorporating the actual antenna pattern obtained using APM, the DOA estimation results with MUSIC will be significantly more accurate and reliable.
+
+### Limitations and Challenges
+
+In implementing the MUSIC algorithm, there are several assumptions and limitations to consider:
+
+1.  $m > n$: The number of antenna elements ($m$) must be strictly greater than the number of incident signals ($n$). In the SeaSonde context, this limits the number of incident signals that can be considered for each Doppler frequency to one or two [@Lipa.2006].
+
+Single antenna responses: For two different DOAs, the responses of the three antennas must not be the same. Otherwise, one enters a type one ambiguity, where one cannot discern from which direction the signal is arriving [@Schmidt.1986].
+
+3.  Uncorrelated noise: The noise at all antennas is assumed to have zero mean and the same standard deviation. The noises should also not be correlated with each other.
+
+4.  Not fully coherent signals: The incident signals should not be completely coherent with each other. This is a reasonable assumption, especially when dealing with echoes reflected from the sea surface [@Lipa.2006].
+
+5.  $N > m$: The number of measured samples ($N$) at each antenna must be greater than $m$ [@Lipa.2006].
+
+#### How APM is Applied
+
+The APM procedure involves several software steps and specialized tools:
+
+1.  **GPS Tracker**: Processes the GPS track to create a TRACK file to be used in subsequent steps.
+2.  **SeaSondeAcquisition**: Combines the data acquired by the radar with the GPS TRACK, generating a LOOP file.
+3.  **CrossLoopPatterner**: Processes the LOOP file to generate the antenna pattern.
+4.  Installation of the new antenna pattern in the system.
+
+It is crucial to use the same version of Radial Suite for both APM data and TimeSeries files to ensure consistency in the processed data.
+
+# Introduction to the `SeaSondeAPM` Class
+
+The `SeaSondeAPM` class in the `SeaSondeR` package is designed to handle antenna pattern calibration data, primarily for SeaSonde radar systems. This class aims to provide a comprehensive and standardized framework to store, manipulate, and validate antenna pattern calibration data and its associated metadata. The class relies on several core functions that perform various tasks from object creation to data validation. Here is a brief overview of these functions:
+
+## Core Functions
+
+### `seasonder_createSeaSondeAPM`
+
+This function is the constructor for creating a `SeaSondeAPM` object. It takes a complex matrix (`calibration_matrix`) as its primary argument, which stores the calibration data for various bearings. The function performs validations, initializes additional attributes, and returns a `SeaSondeAPM` object.
+
+**Usage:**
+
+``` r
+apm <- seasonder_createSeaSondeAPM(calibration_matrix)
+```
+
+### `seasonder_initializeAttributesSeaSondeAPM`
+
+Called internally by `seasonder_createSeaSondeAPM`, this function initializes the various attributes for a `SeaSondeAPM` object. Attributes include metadata and properties like `quality_matrix`, `BEAR`, `Creator`, `SiteName`, etc. It returns a list of initialized attributes.
+
+### `seasonder_validateCalibrationMatrixSeaSondeAPM`
+
+This function ensures that the given calibration matrix meets the required specifications. For instance, it checks if the matrix has exactly two rows and contains only complex numbers.
+
+### `seasonder_validateAttributesSeaSondeAPM`
+
+This function validates the various attributes of a `SeaSondeAPM` object. It performs rigorous checks to make sure each attribute meets predefined conditions. It's called internally to validate attributes during object creation or modification.
+
+### `validate_SeaSondeAPM_*`
+
+A suite of functions that validate individual attributes of a `SeaSondeAPM` object, like `validate_SeaSondeAPM_quality_matrix`, `validate_SeaSondeAPM_BEAR`, `validate_SeaSondeAPM_SiteOrigin`, etc.
+
+## Getters and Setters
+
+In the SeaSondeAPM system, each attribute is accompanied by a corresponding getter and setter function. These functions follow a specific naming pattern to make it easy to identify which attribute they manipulate.
+
+### Naming Convention
+
+The naming convention for these getter and setter functions is:
+
+-   `seasonder_set_SeaSondeAPM_<AttributeName>(seasonde_apm_obj, new_value)`: for setting the value of an attribute.
+
+-   `seasonder_get_SeaSondeAPM_<AttributeName>(seasonde_apm_obj)`: for retrieving the value of an attribute.
+
+Here, `<AttributeName>` is the name of the attribute you are interested in manipulating.
+
+### Examples
+
+#### Setting an Attribute
+
+To set the value of the 'Type' attribute in a `SeaSondeAPM` object, you would use:
+
+``` r
+seasonder_set_SeaSondeAPM_Type(seasonde_apm_obj, new_value)
+```
+
+Here, `seasonde_apm_obj` is the `SeaSondeAPM` object whose 'Type' attribute you want to set, and `new_value` is the value you want to assign to it.
+
+#### Getting an Attribute
+
+To get the value of the 'Type' attribute from a `SeaSondeAPM` object, you would use:
+
+``` r
+value = seasonder_get_SeaSondeAPM_Type(seasonde_apm_obj)
+```
+
+Here, `seasonde_apm_obj` is the `SeaSondeAPM` object whose 'Type' attribute you want to retrieve.
+
+By following these naming conventions and examples, you can easily set or get any attribute for a `SeaSondeAPM` object.
+
+### `seasonder_readSeaSondeAPMFile`
+
+This function allows users to read a SeaSonde APM file from a given path and parse it into a `SeaSondeAPM` object.
+
+## Example Use Cases
+
+``` r
+# Create a SeaSondeAPM object
+cal_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2)
+apm <- seasonder_createSeaSondeAPM(cal_matrix)
+
+# Read from an APM file
+apm_from_file <- seasonder_readSeaSondeAPMFile("path/to/file.apm")
+```
+
+## Key Features
+
+-   Robust validation mechanisms
+-   Customizable attributes and metadata
+-   Easy integration with SeaSonde data pipelines
+
+By utilizing this class and its associated functions, users can maintain a high level of integrity and standardization in managing SeaSonde antenna pattern calibration data.
+
+# Detailed Attributes for SeaSondeAPM Objects
+
+The SeaSondeAPM object has various attributes to capture the specifics of the Antenna Pattern Measurement (APM) data. These attributes can be initialized using the `seasonder_initializeAttributesSeaSondeAPM()` function.
+
+## Initialization Function
+
+The `seasonder_initializeAttributesSeaSondeAPM` function initializes various attributes for a SeaSondeAPM object, taking a calibration matrix as a mandatory argument and any number of additional named attributes to override the default settings.
+
+### Syntax
+
+``` r
+seasonder_initializeAttributesSeaSondeAPM(calibration_matrix, ...)
+```
+
+**Arguments:**
+
+-   `calibration_matrix`: A 2 x b complex matrix, where b represents the number of bearings for calibration.
+-   `...`: Additional named attributes that may override default values.
+
+### Returns
+
+The function returns a list containing initialized attributes for a SeaSondeAPM object.
+
+## Attributes
+
+-   `quality_matrix`: A 2 x b complex matrix for quality data, where b represents the number of bearings.
+-   `BEAR`: A numeric vector for bearings (degrees).
+-   `Type`: Character string representing the antenna pattern type.
+-   `FileName`: The name of the MeasPattern.txt file from which the APM data was read.
+-   `CreateTimeStamp`: The creation time of the APM file.
+-   `Creator`: The name of the entity that created the SeaSondeAPM object. Defaults to an empty character vector.
+-   `SiteName`: The name of the site (different from `SiteCode`). Defaults to an empty character vector.
+-   `SiteOrigin`: A numeric vector representing the GPS location of the station. Defaults to `c(0,0)`.
+-   `ProcessingSteps`: A character vector that keeps track of all the processing steps applied to the object. Defaults to an empty character vector.
+-   `AmplitudeFactors`: A numeric vector for amplitude factors. Defaults to `c(0,0)`.
+-   `AntennaBearing`: A numeric vector for antenna bearing. Defaults to an empty numeric vector.
+-   `StationCode`: A 4-character code for the station. Defaults to an empty character vector.
+-   `BearingResolution`: A numeric value indicating bearing resolution in degrees. Defaults to an empty numeric vector.
+-   `Smoothing`: A numeric vector indicating the smoothing applied to the antenna pattern. Defaults to an empty numeric vector.
+-   `CommentLine`: Metadata lines from the data file not matching any other attribute. Defaults to an empty character vector.
+-   `FileID`: File's UUID. Defaults to an empty character vector.
+-   `PhaseCorrections`: A numeric vector for phase corrections. Defaults to `c(0,0)`.
+
+## Examples
+
+### Initialize Attributes with Default Settings
+
+``` r
+# Create a calibration_matrix
+cal_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2, ncol = 2)
+
+# Initialize attributes
+attr_list <- seasonder_initializeAttributesSeaSondeAPM(calibration_matrix = cal_matrix)
+str(attr_list)
+```
+
+### Initialize Attributes with Custom 'Type'
+
+``` r
+# Initialize attributes with a custom 'Type'
+attr_list_custom <- seasonder_initializeAttributesSeaSondeAPM(calibration_matrix = cal_matrix, Type = "Custom Pattern")
+str(attr_list_custom)
+```
+
+By understanding these attributes and their corresponding getter and setter methods, you can more effectively interact with SeaSondeAPM objects.
+
+### Referencias
