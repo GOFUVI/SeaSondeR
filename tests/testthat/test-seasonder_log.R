@@ -200,76 +200,89 @@ test_that("seasonder_areLogsEnabled returns correct status", {
 })
 
 
-#### seasonder_log_and_message ####
+#### seasonder_logAndMessage ####
 
-# Definir función para tests
-test_that("seasonder_log_and_message behaves as expected", {
+describe("seasonder_logAndMessage",{
 
-  msg_en_mk <-  mockthat::mock(TRUE)
-  log_en_mk <-  mockthat::mock(FALSE)
-  log_mk <- mockthat::mock(NULL)
+  it("behaves as expected", {
 
-  # Test 1: When messages are enabled but logs are not
-  mockthat::with_mock(
-    seasonder_areMessagesEnabled = msg_en_mk,
-    seasonder_areLogsEnabled = log_en_mk,
-    seasonder_log = log_mk,
-    {
-      msg <- "This is a test message."
-      suppressMessages(seasonder_log_and_message(msg))
-      expect_message(seasonder_log_and_message(msg), "This is a test message.")
-      expect_equal(mockthat::mock_n_called(log_mk),0) # Expect no calls to seasonder_log
-    }
-  )
+    msg_en_mk <-  mockthat::mock(TRUE)
+    log_en_mk <-  mockthat::mock(FALSE)
+    log_mk <- mockthat::mock(NULL)
 
-  msg_en_mk <-  mockthat::mock(FALSE)
-  log_en_mk <-  mockthat::mock(TRUE)
-  log_mk <- mockthat::mock(NULL)
-  # Test 2: When logs are enabled but messages are not
-  mockthat::with_mock(
-    seasonder_areMessagesEnabled = msg_en_mk,
-    seasonder_areLogsEnabled = log_en_mk,
-    seasonder_log = log_mk,
-    {
-      msg <- "This is a test message."
-      seasonder_log_and_message(msg)
-      expect_equal(mockthat::mock_n_called(log_mk),1) # Expect one call to seasonder_log
-      expect_no_message(seasonder_log_and_message(msg))
+    # Test 1: When messages are enabled but logs are not
+    mockthat::with_mock(
+      seasonder_areMessagesEnabled = msg_en_mk,
+      seasonder_areLogsEnabled = log_en_mk,
+      seasonder_log = log_mk,
+      {
+        msg <- "This is a test message."
+        suppressMessages(seasonder_logAndMessage(msg))
+        expect_message(seasonder_logAndMessage(msg), "This is a test message.")
+        expect_equal(mockthat::mock_n_called(log_mk),0) # Expect no calls to seasonder_log
+      }
+    )
 
-    }
-  )
+    msg_en_mk <-  mockthat::mock(FALSE)
+    log_en_mk <-  mockthat::mock(TRUE)
+    log_mk <- mockthat::mock(NULL)
+    # Test 2: When logs are enabled but messages are not
+    mockthat::with_mock(
+      seasonder_areMessagesEnabled = msg_en_mk,
+      seasonder_areLogsEnabled = log_en_mk,
+      seasonder_log = log_mk,
+      {
+        msg <- "This is a test message."
+        seasonder_logAndMessage(msg)
+        expect_equal(mockthat::mock_n_called(log_mk),1) # Expect one call to seasonder_log
+        expect_no_message(seasonder_logAndMessage(msg))
 
-  msg_en_mk <-  mockthat::mock(TRUE)
-  log_en_mk <-  mockthat::mock(TRUE)
-  log_mk <- mockthat::mock(NULL)
-  # Test 3: When both messages and logs are enabled
-  mockthat::with_mock(
-    seasonder_areMessagesEnabled = msg_en_mk,
-    seasonder_areLogsEnabled = log_en_mk,
-    seasonder_log = log_mk,
-    {
-      msg <- "This is a test message."
-      suppressMessages(seasonder_log_and_message(msg))
-      expect_equal(mockthat::mock_n_called(log_mk),1) # Expect one call to seasonder_log
-      expect_message(seasonder_log_and_message(msg), "This is a test message.")
+      }
+    )
 
-    }
-  )
+    msg_en_mk <-  mockthat::mock(TRUE)
+    log_en_mk <-  mockthat::mock(TRUE)
+    log_mk <- mockthat::mock(NULL)
+    # Test 3: When both messages and logs are enabled
+    mockthat::with_mock(
+      seasonder_areMessagesEnabled = msg_en_mk,
+      seasonder_areLogsEnabled = log_en_mk,
+      seasonder_log = log_mk,
+      {
+        msg <- "This is a test message."
+        suppressMessages(seasonder_logAndMessage(msg))
+        expect_equal(mockthat::mock_n_called(log_mk),1) # Expect one call to seasonder_log
+        expect_message(seasonder_logAndMessage(msg), "This is a test message.")
 
-  msg_en_mk <-  mockthat::mock(FALSE)
-  log_en_mk <-  mockthat::mock(FALSE)
-  log_mk <- mockthat::mock(NULL)
-  # Test 4: When neither messages nor logs are enabled
-  mockthat::with_mock(
-    seasonder_areMessagesEnabled = msg_en_mk,
-    seasonder_areLogsEnabled = log_en_mk,
-    seasonder_log = log_mk,
-    {
-      msg <- "This is a test message."
-      seasonder_log_and_message(msg)
-      expect_no_message(seasonder_log_and_message(msg))
-      expect_equal(mockthat::mock_n_called(log_mk),0) # Expect no calls to seasonder_log
-    }
-  )
+      }
+    )
+
+    msg_en_mk <-  mockthat::mock(FALSE)
+    log_en_mk <-  mockthat::mock(FALSE)
+    log_mk <- mockthat::mock(NULL)
+    # Test 4: When neither messages nor logs are enabled
+    mockthat::with_mock(
+      seasonder_areMessagesEnabled = msg_en_mk,
+      seasonder_areLogsEnabled = log_en_mk,
+      seasonder_log = log_mk,
+      {
+        msg <- "This is a test message."
+        seasonder_logAndMessage(msg)
+        expect_no_message(seasonder_logAndMessage(msg))
+        expect_equal(mockthat::mock_n_called(log_mk),0) # Expect no calls to seasonder_log
+      }
+    )
+  })
+
+  describe("whan calling it inside tryCatch",{
+
+  expect_warning(tryCatch(rlang::abort("stop"),error=function(e) seasonder_logAndMessage("An error happened.","error")),"An error happened.")
+
+
+  })
+
 })
+
+
+
 

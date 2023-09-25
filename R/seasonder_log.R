@@ -114,18 +114,102 @@ seasonder_archive_expression_log <- function(expr, ...){
 
 
 
-seasonder_log_and_message <- function(msg, log_level = "info") {
+
+#' Log and Inform Message in SeaSondeR
+#'
+#' This function logs a message to the SeaSondeR logging system and also informs the message to the console.
+#' It prefixes the message with the name of the calling function.
+#'
+#' @param msg A character string indicating the message to be logged and informed.
+#' @param log_level A character string indicating the level of the log ("info", "error", "fatal"). Default is "info".
+#' @return An invisible NULL. The function modifies the shared environment `seasonder_the` in place if logs are enabled, and informs the message if messages are enabled.
+#' @export
+#' @examples
+#' \dontrun{
+#' my_function <- function() {
+#'   seasonder_logAndMessage("This is a message", "info")
+#' }
+#' my_function()
+#' }
+#'
+seasonder_logAndMessage <- function(msg,log_level="info") {
+
+
   # Get the name of the calling function
+
   calling_function <- sys.call(-1)[[1]]
 
-  msg <- stringr::str_remove(msg,paste0(calling_function,":"))
+  full_msg <- msg
 
-  # Construct the full message with the prefix
-  full_msg <- paste0(calling_function, ": ", msg)
 
-  if (seasonder_areMessagesEnabled()) {
+  full_msg <- try({
+
+    calling_function <- as.character(calling_function)
+    full_msg <- stringr::str_remove(msg,paste0(calling_function[1],":"))
+
+    # Construct the full message with the prefix
+    paste0(calling_function[1], ": ", full_msg)
+  },silent = TRUE)
+
+  if(inherits(full_msg,"try-error")){
+    full_msg <- msg
+  }
+
+  if (seasonder_areMessagesEnabled() & log_level=="info") {
     rlang::inform(full_msg)
   }
+
+  if (log_level=="error") {
+    rlang::warn(full_msg)
+  }
+
+  if (seasonder_areLogsEnabled()) {
+    seasonder_log(full_msg, log_level)
+  }
+}
+
+
+#' Log and Abort Message in SeaSondeR
+#'
+#' This function logs a message to the SeaSondeR logging system and also aborts the execution.
+#' It prefixes the abort message with the name of the calling function.
+#'
+#' @param msg A character string indicating the message
+#' @return An invisible NULL. The function modifies the shared environment `seasonder_the` in place if logs are enabled.
+#' @export
+#' @examples
+#' \dontrun{
+#' my_function <- function() {
+#'   seasonder_logAndAbort("This is a message")
+#' }
+#' my_function()
+#' }
+#'
+seasonder_logAndAbort <- function(msg) {
+
+  log_level <- "fatal"
+
+  # Get the name of the calling function
+
+  calling_function <- sys.call(-1)[[1]]
+
+  full_msg <- msg
+
+
+  full_msg <- try({
+    calling_function <- as.character(calling_function)
+    full_msg <- stringr::str_remove(msg,paste0(calling_function[1],":"))
+
+    # Construct the full message with the prefix
+    paste0(calling_function[1], ": ", full_msg)
+  },silent = TRUE)
+
+  if(inherits(full_msg,"try-error")){
+    full_msg <- msg
+  }
+
+  rlang::abort(full_msg)
+
 
   if (seasonder_areLogsEnabled()) {
     seasonder_log(full_msg, log_level)
