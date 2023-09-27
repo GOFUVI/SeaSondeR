@@ -1,6 +1,8 @@
 test_that("Related functions are defined",{
 
+  expect_true(is.function(seasonder_raw_to_int))
   expect_true(is.function(seasonder_readCSField))
+  expect_true(is.function(seasonder_readSeaSondeCSFileBlock))
 
 })
 
@@ -65,7 +67,7 @@ describe("seasonder_raw_to_int",{
 
 })
 
-describe("Tests for seasonder_readCSField", {
+describe("seasonder_readCSField", {
 
 
 
@@ -199,5 +201,107 @@ describe("Tests for seasonder_readCSField", {
 
   })
 
+
+})
+
+
+describe("read_and_qc_field", {
+
+  # Simulate the behavior of seasonder_readCSField
+  mocked_seasonder_readCSField <- mockthat::mock(123)  # Returns 123 by default
+
+  assign("qc_check_range", function(field_value, min, max) {
+    if (is.null(field_value) || field_value < min || field_value > max) {
+      return(NULL)
+    }
+    return(field_value)
+  }, envir = seasonder_the)
+
+  assign("qc_check_not_null", function(field_value) {
+    if (is.null(field_value)) {
+      return(-999)
+    }
+    return(field_value)
+  }, envir = seasonder_the)
+
+
+  it("reads a simple field and applies QC", {
+    field_spec <- list(type = "double", qc_fun = "qc_check_range", qc_params = list(min = 100, max = 200))
+
+
+    result <- mockthat::with_mock(
+      read_and_qc_field(field_spec, connection = NULL),
+      seasonder_readCSField = mocked_seasonder_readCSField
+    )
+
+    expect_equal(result, 123)  # Given our mock returns 123
+  })
+
+  it("returns NULL for values out of QC range", {
+
+      field_spec <- list(type = "double", qc_fun = "qc_check_range", qc_params = list(min = 124, max = 200))
+
+
+    result <- mockthat::with_mock(
+      read_and_qc_field(field_spec, connection = NULL),
+      seasonder_readCSField = mocked_seasonder_readCSField
+    )
+
+    expect_null(result)  # Value 123 is outside the allowed range
+  })
+
+  it("returns default for NULL values using QC", {
+    # Changing our mock to return NULL
+    mocked_seasonder_readCSField <- mockthat::mock(NULL)
+
+    field_spec <-  list(type = "double", qc_fun = "qc_check_not_null", qc_params = list())
+
+
+    result <- mockthat::with_mock(
+      read_and_qc_field(field_spec, connection = NULL),
+      seasonder_readCSField = mocked_seasonder_readCSField
+    )
+
+    expect_equal(result, -999)  # -999 is our default value in case of NULL
+  })
+
+})
+
+
+describe("seasonder_readSeaSondeCSFileBlock", {
+
+  it("returns a named list of values", {
+
+    create_sequence_generator <- function(values) {
+      i <- 1
+      function() {
+        value <- values[i]
+        if (i < length(values)) {
+          i <<- i + 1
+        }
+        value
+      }
+    }
+
+    # Uso:
+    seq_gen <- create_sequence_generator(c(123, 456))
+    mocked_seasonder_readCSField <- mockthat::mock(seq_gen())
+
+    spec <- list(
+      temp = list(type = "double", qc_fun = "qc_check_range", qc_params = list(min = 100, max = 200)),
+      pressure = list(type = "double", qc_fun = "qc_check_not_null", qc_params = list())
+    )
+
+    result <- mockthat::with_mock(
+      seasonder_readSeaSondeCSFileBlock(spec, connection = NULL),
+      read_and_qc_field = mocked_seasonder_readCSField  # Mock returns to simulate two field values
+    )
+
+    expect_true(is.list(result))
+    expect_equal(length(result), 2)
+    expect_equal(names(result), c("temp", "pressure"))
+    expect_equal(result$temp, 123)
+    expect_equal(result$pressure, 456)
+  })
 
 })

@@ -16,7 +16,6 @@ seasonder_the$valid_yaml_seasondecs_versions <- c("1.0.0")
 #' @seealso \code{\link[yaml]{read_yaml}} for the underlying YAML reading.
 #' @seealso \code{\link[purrr]{pluck}} for the data extraction mechanism used.
 #'
-#' @export
 #'
 #' @examples
 #' \dontrun{
@@ -43,11 +42,12 @@ seasonder_readYAMLSpecs <- function(file_path, path) {
     seasonder_logAndAbort("Invalid YAML structure.")
   }
 
-  # Check the YAML version
-  yaml_version <- yaml_content$metadata$version
-  if (!(yaml_version %in% seasonder_the$valid_yaml_seasondecs_versions)) {
-    seasonder_logAndAbort("Unsupported version.")
-  }
+  # TODO: move to another function. This is a general specs reading function.
+  # # Check the YAML version
+  # yaml_version <- yaml_content$metadata$version
+  # if (!(yaml_version %in% seasonder_the$valid_yaml_seasondecs_versions)) {
+  #   seasonder_logAndAbort("Unsupported version.")
+  # }
 
   # Extract the desired data based on the given path
   extracted_data <- purrr::pluck(yaml_content, !!!path)

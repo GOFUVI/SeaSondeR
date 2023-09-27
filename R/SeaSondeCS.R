@@ -10,6 +10,11 @@ seasonder_readSeaSondeCSFile <- function(filepath){
   # Crear conexión y manejar endianidad
   ...
 
+  # Obtener especificaciones y comprobar versión
+
+
+
+
   # Leer encabezado
   header <- seasonder_readSeaSondeCSFileHeader(connection)
 
@@ -74,7 +79,6 @@ seasonder_raw_to_int <- function(r,signed=F){
 #' @examples
 #' con <- rawConnection(as.raw(c(0x12)))
 #' seasonder_readCSField(con, "UInt8")
-#' @export
 #' @seealso seasonder_raw_to_int For converting raw to 64-bit integers.
 seasonder_readCSField <- function(con, type, endian="big") {
 
@@ -140,4 +144,103 @@ seasonder_readCSField <- function(con, type, endian="big") {
            return(NULL)
          }
   )
+}
+
+#' Read and Quality Control a Single Field
+#'
+#' This auxiliary function reads a field from a binary file using a provided specification and
+#' applies a quality control function on the retrieved data. The expectations and functioning of the
+#' quality control functions are described in detail in the documentation for `seasonder_readSeaSondeCSFileBlock`.
+#'
+#' @param field_spec A list containing the specifications for the field to read.
+#'   It should contain:
+#'   * `type`: the type of data to read, passed to `seasonder_readCSField`.
+#'   * `qc_fun`: the name of a quality control function. As detailed in `seasonder_readSeaSondeCSFileBlock`,
+#'     this function should be present in the shared environment `seasonder_the` and must accept
+#'     `field_value` as its first argument, followed by any other arguments specified in `qc_params`.
+#'   * `qc_params`: a list of additional parameters to pass to the quality control function. See
+#'     `seasonder_readSeaSondeCSFileBlock` for detailed expectations of the QC function behavior.
+#' @param connection A connection to the binary file.
+#'
+#' @return The value of the field after quality control. Can be the original value, a transformed value,
+#'   or NULL if the value fails quality control. The exact behavior of the quality control function, including
+#'   the handling of NULL values, is detailed in `seasonder_readSeaSondeCSFileBlock`.
+#'
+#' @export
+read_and_qc_field <- function(field_spec, connection) {
+  # Extract the field type from the specifications
+  field_type <- field_spec$type
+  # Extract the quality control function name from the specifications
+  qc_fun_name <- field_spec$qc_fun
+  # Extract the quality control parameters from the specifications
+  qc_params <- field_spec$qc_params
+
+  # Read the field using the helper function
+  field_value <- seasonder_readCSField(connection, field_type)
+
+  # Apply quality control
+  # Get the quality control function from the shared environment
+  qc_fun <- get(qc_fun_name, envir = seasonder_the)
+  # Call the quality control function with the field value and the specified parameters
+  field_value_after_qc <- do.call(qc_fun, c(list(field_value), qc_params))
+
+  # Return the value after quality control
+  return(field_value_after_qc)
+}
+
+
+
+#' Read and Apply Quality Control to a Block of Fields
+#'
+#' Reads a block of fields from a binary file based on provided specifications. Each field is read
+#' and then processed with a specified quality control function.
+#'
+#' @param spec A named list of specifications for fields to read. Each specification should be in
+#'   the form:
+#'   list(type = "data_type", qc_fun = "qc_function_name", qc_params = list(param1 = value1, ...))
+#'   Where:
+#'   * `type`: is the data type to read, which will be passed to `seasonder_readCSField`.
+#'   * `qc_fun`: is the name of a quality control function. This function should be present in the
+#'     shared environment `seasonder_the` and must accept `field_value` as its first argument,
+#'     followed by any other arguments specified in `qc_params`.
+#'   * `qc_params`: is a list of additional parameters to pass to the quality control function.
+#' @param connection A connection to the binary file.
+#'
+#' @details
+#' The quality control (QC) functions (`qc_fun`) specified within `spec` play a pivotal role in ensuring the
+#' reliability of the data that's read. Here's the expected behavior of these QC functions:
+#'
+#' - **Input**:
+#'   * `field_value`: Value of the field that has been read from the binary file using the `seasonder_readCSField` function.
+#'   * `...`: Additional parameters specified in `qc_params` that are passed to `qc_fun` for quality control.
+#'
+#' - **Functioning**:
+#'   The QC function receives a read value and performs checks or transformations based on defined rules or parameters.
+#'
+#'   * **On QC failure**:
+#'     - The QC function itself is responsible for determining the action to take. It can log an error, return a default
+#'       value, impute the value, and more.
+#'     - For critical errors, the QC function could halt the execution. However, note that logging is managed by the QC
+#'       function and won't necessarily halt execution in every case.
+#'   * **On success**:
+#'     The QC function will return the value (either unchanged or transformed).
+#'
+#' - **Output**:
+#'   Value that has been validated or transformed based on quality control rules.
+#'
+#' - **Additional Notes**:
+#'   - The action on QC failure is directly implemented within the QC function.
+#'   - Reading errors are managed by the `seasonder_readCSField` function, which returns NULL in the case of an error. It
+#'     is up to the QC function to decide what to do if it receives a NULL.
+#'
+#' @return A named list where each entry corresponds to a field that has been read. Each key is
+#'   the field name, and its associated value is the data for that field after quality control.
+#'
+#' @export
+seasonder_readSeaSondeCSFileBlock <- function(spec, connection) {
+  # Use purrr::map to apply the read_and_qc_field function to each field specification
+  results <- purrr::map(spec, \(field_spec) read_and_qc_field(field_spec=field_spec,connection=connection))
+
+  # Return the results
+  return(results)
 }
