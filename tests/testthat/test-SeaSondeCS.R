@@ -3,6 +3,10 @@ test_that("Related functions are defined",{
   expect_true(is.function(seasonder_raw_to_int))
   expect_true(is.function(seasonder_readCSField))
   expect_true(is.function(seasonder_readSeaSondeCSFileBlock))
+  expect_true(is.function(seasonder_readSeaSondeCSFileHeader))
+  expect_true(is.function(seasonder_readSeaSondeCSFileHeaderV1))
+  expect_true(is.function(seasonder_readSeaSondeCSFileHeaderV2))
+  expect_true(is.function(seasonder_readSeaSondeCSFileHeaderV3))
 
 })
 
@@ -305,3 +309,108 @@ describe("seasonder_readSeaSondeCSFileBlock", {
   })
 
 })
+
+
+
+
+
+
+
+
+
+describe("seasonder_readSeaSondeCSFileHeaderV1 works as expected", {
+
+  # Define your mock for seasonder_readSeaSondeCSFileBlock
+  mocked_block_function <- function(spec, connection, endian="big") {
+    # Here, you can return any predefined value to simulate the function's behavior.
+    list(
+      nCsFileVersion = 10,
+      nDateTime = as.integer(Sys.Date()), # convert today's date to integer
+      nV1Extent = 1000
+    )
+  }
+
+  mockthat::with_mock(
+    seasonder_readSeaSondeCSFileBlock = mocked_block_function,
+
+    {
+      # Mocked specs based on YAML
+      specs <- list(
+        nCsFileVersion = list(type = "SInt16", qc_fun = "qc_check_range", qc_params = list(min = 1, max = 32, expected_type = "integer")),
+        nDateTime = list(type = "UInt32", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer")),
+        nV1Extent = list(type = "SInt32", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer"))
+      )
+
+      describe("Function seasonder_readSeaSondeCSFileHeaderV1", {
+        it("returns correct date-time transformation", {
+          results <- seasonder_readSeaSondeCSFileHeaderV1(specs, NULL)
+
+          # Check if nDateTime is transformed to POSIXct correctly
+          expect_s3_class(results$nDateTime, "POSIXct")
+        })
+
+        it("returns expected mocked values", {
+          results <- seasonder_readSeaSondeCSFileHeaderV1(specs, NULL)
+          expect_equal(results$nCsFileVersion, 10)
+          expect_equal(results$nV1Extent, 1000)
+        })
+      })
+    }
+  )
+})
+
+#### QC ####
+
+describe("QC functions work as expected", {
+
+  mocked_abort_function <- function(message) {
+    stop(message)
+  }
+
+  mockthat::with_mock(
+    seasonder_logAndAbort = mocked_abort_function,
+
+    {
+      describe("Function qc_check_type", {
+
+
+        it("returns value when type matches", {
+          result <- qc_check_type(100L, "integer")
+          expect_equal(result, 100L)
+        })
+
+        it("throws error when type doesn't match", {
+          expect_error(qc_check_type("100", "integer"), "QC Error: Value does not have the expected type: integer")
+        })
+
+      })
+
+      describe("Function qc_check_range", {
+
+
+        it("returns value when within range and type matches", {
+
+          result <- qc_check_range(15L, 1, 32,"integer")
+
+          expect_equal(result, 15)
+        })
+
+        it("throws error when value is out of range", {
+          expect_error(qc_check_range(40L, 1, 32, "integer"), "QC Error: Value out of range. Expected between 1 and 32")
+        })
+
+        it("throws error when type doesn't match", {
+          expect_error(qc_check_range("15", 1, 32, "integer"), "QC Error: Value does not have the expected type: integer")
+        })
+
+        it("works without expected_type argument", {
+          result <- qc_check_range(15L, 1, 32)
+          expect_equal(result, 15)
+        })
+
+      })
+
+    }
+  )
+})
+

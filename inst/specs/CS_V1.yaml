@@ -1,0 +1,25 @@
+metadata:
+  version: 1.0.0
+  type: SeaSondeCS
+
+header:
+  V1:
+    nCsFileVersion:
+      type: SInt16
+      qc_fun: qc_check_range
+      qc_params:
+        min: 1
+        max: 32
+        expected_type: "integer"
+
+    nDateTime:
+      type: UInt32
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "integer"
+
+    nV1Extent:
+      type: SInt32
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "integer"

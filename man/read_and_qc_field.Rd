@@ -4,7 +4,7 @@
 \alias{read_and_qc_field}
 \title{Read and Quality Control a Single Field}
 \usage{
-read_and_qc_field(field_spec, connection)
+read_and_qc_field(field_spec, connection, endian = "big")
 }
 \arguments{
 \item{field_spec}{A list containing the specifications for the field to read.
@@ -19,6 +19,8 @@ this function should be present in the shared environment \code{seasonder_the} a
 }}
 
 \item{connection}{A connection to the binary file.}
+
+\item{endian}{A character string indicating the byte order. Options are "big" and "little" (default is "big").}
 }
 \value{
 The value of the field after quality control. Can be the original value, a transformed value,

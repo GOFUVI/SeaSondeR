@@ -55,7 +55,7 @@ seasonder_createSeaSondeAPM <- function(calibration_matrix = matrix(complex(real
   class(calibration_matrix) <- c("SeaSondeAPM",class(calibration_matrix))
 
 
-  seasonder_log_and_message("seasonder_createSeaSondeAPM: APM object created successfully.", "info")
+  seasonder_logAndMessage("seasonder_createSeaSondeAPM: APM object created successfully.", "info")
 
   return(calibration_matrix)
 }
@@ -192,17 +192,17 @@ seasonder_validateCalibrationMatrixSeaSondeAPM <- function(matrix) {
   # Implement validation logic here
 
   if (!is.matrix(matrix)) {
-    seasonder_log_and_message("seasonder_validateCalibrationMatrixSeaSondeAPM: Input calibration_matrix must be a matrix.", "fatal")
+    seasonder_logAndMessage("seasonder_validateCalibrationMatrixSeaSondeAPM: Input calibration_matrix must be a matrix.", "fatal")
     rlang::abort("seasonder_validateCalibrationMatrixSeaSondeAPM: Input calibration_matrix must be a matrix.")
   }
 
   if (nrow(matrix) != 2) {
-    seasonder_log_and_message("seasonder_validateCalibrationMatrixSeaSondeAPM: Calibration matrix must have two rows.", "fatal")
+    seasonder_logAndMessage("seasonder_validateCalibrationMatrixSeaSondeAPM: Calibration matrix must have two rows.", "fatal")
     rlang::abort("seasonder_validateCalibrationMatrixSeaSondeAPM: Calibration matrix must have two rows.")
   }
 
   if (!is.complex(matrix)) {
-    seasonder_log_and_message("seasonder_validateCalibrationMatrixSeaSondeAPM: Calibration matrix must contain complex numbers.", "fatal")
+    seasonder_logAndMessage("seasonder_validateCalibrationMatrixSeaSondeAPM: Calibration matrix must contain complex numbers.", "fatal")
     rlang::abort("seasonder_validateCalibrationMatrixSeaSondeAPM: Calibration matrix must contain complex numbers.")
   }
 
@@ -303,13 +303,13 @@ seasonder_validateAttributesSeaSondeAPM <- function(seasonde_apm_obj) {
 validate_SeaSondeAPM_quality_matrix <- function(matrix,seasonde_apm_obj) {
   if (!is.matrix(matrix) || nrow(matrix) != 2 || !is.complex(matrix)) {
     msg <- "validate_SeaSondeAPM_quality_matrix: The quality_matrix must be a 2-row complex matrix."
-    seasonder_log_and_message(msg, "fatal")
+    seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
 
   if (ncol(matrix) != ncol(seasonde_apm_obj)) {
     msg <- glue::glue("validate_SeaSondeAPM_quality_matrix: The quality_matrix must be a {ncol(seasonde_apm_obj)}-row complex matrix, same as the calibration_matrix. Currently has {ncol(matrix)} columns.")
-    seasonder_log_and_message(msg, "fatal")
+    seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
 
@@ -328,19 +328,19 @@ validate_SeaSondeAPM_quality_matrix <- function(matrix,seasonde_apm_obj) {
 validate_SeaSondeAPM_BEAR <- function(vector,seasonde_apm_obj) {
   if (!is.numeric(vector)) {
     msg <- "validate_SeaSondeAPM_BEAR: BEAR must be a numeric vector."
-    seasonder_log_and_message(msg, "fatal")
+    seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
 
   if (length(vector) != ncol(seasonde_apm_obj)) {
     msg <- glue::glue("validate_SeaSondeAPM_BEAR: BEAR must be a numeric vector of length {ncol(seasonde_apm_obj)}, matching the number of columns of the calibration matrix. Currently is of length {length(vector)}.")
-    seasonder_log_and_message(msg, "fatal")
+    seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
 
   if(any(!dplyr::between(vector,-180,180))){
     msg <- glue::glue("validate_SeaSondeAPM_BEAR: BEAR must be a numeric vector of values between -180 and 180.")
-    seasonder_log_and_message(msg, "fatal")
+    seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
 
@@ -355,7 +355,7 @@ validate_SeaSondeAPM_BEAR <- function(vector,seasonde_apm_obj) {
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeAPM_Type <- function(type) {
   if (!is.character(type)) {
-    seasonder_log_and_message("validate_SeaSondeAPM_Type: Type must be a character string.", "fatal")
+    seasonder_logAndMessage("validate_SeaSondeAPM_Type: Type must be a character string.", "fatal")
     rlang::abort("validate_SeaSondeAPM_Type: Type must be a character string.")
   }
   return(TRUE)
@@ -369,7 +369,7 @@ validate_SeaSondeAPM_Type <- function(type) {
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeAPM_Creator <- function(creator) {
   if (!is.character(creator)) {
-    seasonder_log_and_message("validate_SeaSondeAPM_Creator: Creator must be a character string.", "fatal")
+    seasonder_logAndMessage("validate_SeaSondeAPM_Creator: Creator must be a character string.", "fatal")
     rlang::abort("validate_SeaSondeAPM_Creator: Creator must be a character string.")
   }
   return(TRUE)
@@ -383,7 +383,7 @@ validate_SeaSondeAPM_Creator <- function(creator) {
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeAPM_SiteName <- function(site_name) {
   if (!is.character(site_name)) {
-    seasonder_log_and_message("validate_SeaSondeAPM_SiteName: SiteName must be a character string.", "fatal")
+    seasonder_logAndMessage("validate_SeaSondeAPM_SiteName: SiteName must be a character string.", "fatal")
     rlang::abort("validate_SeaSondeAPM_SiteName: SiteName must be a character string.")
   }
   return(TRUE)
@@ -399,7 +399,7 @@ validate_SeaSondeAPM_SiteOrigin <- function(site_origin) {
 
   if (!is.numeric(site_origin) | length(site_origin) !=2) {
     msg <- glue::glue("validate_SeaSondeAPM_SiteOrigin: SiteOrigin must be a numeric vector of length 2. Current length is {length(vector)}")
-    seasonder_log_and_message(msg, "fatal")
+    seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
 
@@ -415,7 +415,7 @@ validate_SeaSondeAPM_SiteOrigin <- function(site_origin) {
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeAPM_FileName <- function(file_name) {
   if (!is.character(file_name)) {
-    seasonder_log_and_message("validate_SeaSondeAPM_FileName: FileName must be a character string.", "fatal")
+    seasonder_logAndMessage("validate_SeaSondeAPM_FileName: FileName must be a character string.", "fatal")
     rlang::abort("validate_SeaSondeAPM_FileName: FileName must be a character string.")
   }
   return(TRUE)
@@ -430,7 +430,7 @@ validate_SeaSondeAPM_FileName <- function(file_name) {
 validate_SeaSondeAPM_CreateTimeStamp <- function(timestamp) {
 
   if (!inherits(timestamp, "POSIXct")) {
-    seasonder_log_and_message("validate_SeaSondeAPM_CreateTimeStamp: CreateTimeStamp must be a Date object.", "fatal")
+    seasonder_logAndMessage("validate_SeaSondeAPM_CreateTimeStamp: CreateTimeStamp must be a Date object.", "fatal")
     rlang::abort("validate_SeaSondeAPM_CreateTimeStamp: CreateTimeStamp must be a Date object.")
   }
   return(TRUE)
@@ -444,7 +444,7 @@ validate_SeaSondeAPM_CreateTimeStamp <- function(timestamp) {
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeAPM_ProcessingSteps <- function(steps) {
   if (!is.character(steps)) {
-    seasonder_log_and_message("validate_SeaSondeAPM_ProcessingSteps: ProcessingSteps must be a character vector.", "fatal")
+    seasonder_logAndMessage("validate_SeaSondeAPM_ProcessingSteps: ProcessingSteps must be a character vector.", "fatal")
     rlang::abort("validate_SeaSondeAPM_ProcessingSteps: ProcessingSteps must be a character vector.")
   }
   return(TRUE)
@@ -459,7 +459,7 @@ validate_SeaSondeAPM_ProcessingSteps <- function(steps) {
 validate_SeaSondeAPM_AmplitudeFactors <- function(factors) {
   if (!is.numeric(factors) | length(factors) !=2) {
     msg <- glue::glue("validate_SeaSondeAPM_AmplitudeFactors: AmplitudeFactors must be a numeric vector of length 2. Current length is {length(vector)}")
-    seasonder_log_and_message(msg, "fatal")
+    seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
   return(TRUE)
@@ -473,7 +473,7 @@ validate_SeaSondeAPM_AmplitudeFactors <- function(factors) {
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeAPM_AntennaBearing <- function(bearing) {
   if (!is.numeric(bearing)) {
-    seasonder_log_and_message("validate_SeaSondeAPM_AntennaBearing: AntennaBearing must be a numeric value.", "fatal")
+    seasonder_logAndMessage("validate_SeaSondeAPM_AntennaBearing: AntennaBearing must be a numeric value.", "fatal")
     rlang::abort("validate_SeaSondeAPM_AntennaBearing: AntennaBearing must be a numeric value.")
   }
   return(TRUE)
@@ -488,19 +488,19 @@ validate_SeaSondeAPM_AntennaBearing <- function(bearing) {
 validate_SeaSondeAPM_StationCode <- function(code) {
   if (!is.character(code)) {
     msg <- glue::glue("validate_SeaSondeAPM_StationCode: StationCode must be a character string. Provided value is {code}")
-    seasonder_log_and_message(msg, "fatal")
+    seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
   if(length(code)>0){
     if(length(code)==1){
       if(nchar(code) !=4){
         msg <- glue::glue("validate_SeaSondeAPM_StationCode: StationCode must have 4 characters. Provided value is {code}.")
-        seasonder_log_and_message(msg, "fatal")
+        seasonder_logAndMessage(msg, "fatal")
         rlang::abort(msg)
       }
     }else{
       msg <- glue::glue("validate_SeaSondeAPM_StationCode: StationCode must have length 0 or 1. Provided value is {length(code)}.")
-      seasonder_log_and_message(msg, "fatal")
+      seasonder_logAndMessage(msg, "fatal")
       rlang::abort(msg)
     }
   }
@@ -515,7 +515,7 @@ validate_SeaSondeAPM_StationCode <- function(code) {
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeAPM_BearingResolution <- function(resolution) {
   if (!is.numeric(resolution)) {
-    seasonder_log_and_message("validate_SeaSondeAPM_BearingResolution: BearingResolution must be a numeric value.", "fatal")
+    seasonder_logAndMessage("validate_SeaSondeAPM_BearingResolution: BearingResolution must be a numeric value.", "fatal")
     rlang::abort("validate_SeaSondeAPM_BearingResolution: BearingResolution must be a numeric value.")
   }
   return(TRUE)
@@ -530,7 +530,7 @@ validate_SeaSondeAPM_BearingResolution <- function(resolution) {
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeAPM_Smoothing <- function(smoothing) {
   if (!is.numeric(smoothing)) {
-    seasonder_log_and_message("validate_SeaSondeAPM_Smoothing: Smoothing must be a numeric value.", "fatal")
+    seasonder_logAndMessage("validate_SeaSondeAPM_Smoothing: Smoothing must be a numeric value.", "fatal")
     rlang::abort("validate_SeaSondeAPM_Smoothing: Smoothing must be a numeric value.")
   }
   return(TRUE)
@@ -544,7 +544,7 @@ validate_SeaSondeAPM_Smoothing <- function(smoothing) {
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeAPM_CommentLine <- function(comment) {
   if (!is.character(comment)) {
-    seasonder_log_and_message("validate_SeaSondeAPM_CommentLine: CommentLine must be a character string.", "fatal")
+    seasonder_logAndMessage("validate_SeaSondeAPM_CommentLine: CommentLine must be a character string.", "fatal")
     rlang::abort("validate_SeaSondeAPM_CommentLine: CommentLine must be a character string.")
   }
   return(TRUE)
@@ -558,7 +558,7 @@ validate_SeaSondeAPM_CommentLine <- function(comment) {
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeAPM_FileID <- function(id) {
   if (!is.character(id)) {
-    seasonder_log_and_message("validate_SeaSondeAPM_FileID: FileID must be a unique character string.", "fatal")
+    seasonder_logAndMessage("validate_SeaSondeAPM_FileID: FileID must be a unique character string.", "fatal")
     rlang::abort("validate_SeaSondeAPM_FileID: FileID must be a unique character string.")
   }
   return(TRUE)
@@ -574,7 +574,7 @@ validate_SeaSondeAPM_FileID <- function(id) {
 validate_SeaSondeAPM_PhaseCorrections <- function(corrections) {
   if (!is.numeric(corrections) | length(corrections) !=2) {
     msg <- glue::glue("validate_SeaSondeAPM_PhaseCorrections: PhaseCorrections must be a numeric vector of length 2. Current length is {length(corrections)}")
-    seasonder_log_and_message(msg, "fatal")
+    seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
 

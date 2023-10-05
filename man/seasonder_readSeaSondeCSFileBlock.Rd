@@ -4,7 +4,7 @@
 \alias{seasonder_readSeaSondeCSFileBlock}
 \title{Read and Apply Quality Control to a Block of Fields}
 \usage{
-seasonder_readSeaSondeCSFileBlock(spec, connection)
+seasonder_readSeaSondeCSFileBlock(spec, connection, endian = "big")
 }
 \arguments{
 \item{spec}{A named list of specifications for fields to read. Each specification should be in
@@ -20,6 +20,8 @@ followed by any other arguments specified in \code{qc_params}.
 }}
 
 \item{connection}{A connection to the binary file.}
+
+\item{endian}{A character string indicating the byte order. Options are "big" and "little" (default is "big").}
 }
 \value{
 A named list where each entry corresponds to a field that has been read. Each key is
