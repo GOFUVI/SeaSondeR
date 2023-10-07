@@ -206,6 +206,25 @@ describe("seasonder_readCSField", {
   })
 
 
+  it("should read CharN types correctly", {
+    # Create a test for Char4
+    con <- rawConnection(charToRaw("Test"))  # Create a raw connection with the string "Test"
+    on.exit(close(con))
+    expect_equal(seasonder_readCSField(con, "Char4"), "Test")
+    close(con)
+    # Another example for Char5
+    con <- rawConnection(charToRaw("Hello"))  # Create a raw connection with the string "Hello"
+    on.exit(close(con))
+    expect_equal(seasonder_readCSField(con, "Char5"), "Hello")
+  })
+
+  it("should read CharN types with special characters", {
+    # Testing Char5 with space and special characters
+    con <- rawConnection(charToRaw("T st!"))  # Create a raw connection with the string "T st!"
+    on.exit(close(con))
+    expect_equal(seasonder_readCSField(con, "Char5"), "T st!")
+  })
+
 })
 
 
@@ -314,6 +333,109 @@ describe("seasonder_readSeaSondeCSFileBlock", {
 
 
 
+describe("seasonder_readSeaSondeCSFileHeader", {
+
+  # Test for version 3
+  it("processes the headers correctly when file version is 3", {
+
+    # Mocked headers
+    mock_header_v1 <- mockthat::mock(
+      list(
+        nCsFileVersion = 3,  # Indicamos que es versión 3 para el test
+        nDateTime = as.POSIXct("2023-09-23 10:00:00"),
+        nV1Extent = 62
+      )
+    )
+
+    mock_header_v2 <- mockthat::mock(
+      list(
+        nCsKind = 2,
+        someField = "example"
+      )
+    )
+
+    mock_header_v3 <- mockthat::mock(
+      list(
+        someField = "overwritten_example",  # This field will overwrite the previous value
+        anotherField = 12345,
+        yetAnotherField = TRUE
+      )
+    )
+
+    # Empty specs for this test
+    specs <- list(
+      V1 = list(),
+      V2 = list(),
+      V3 = list()
+    )
+
+    # Execute with mocks
+    result <- mockthat::with_mock(
+      seasonder_readSeaSondeCSFileHeader(specs, NULL),
+      seasonder_readSeaSondeCSFileHeaderV1 = mock_header_v1,
+      seasonder_readSeaSondeCSFileHeaderV2 = mock_header_v2,
+      seasonder_readSeaSondeCSFileHeaderV3 = mock_header_v3
+    )
+
+    # Check results
+    expect_equal(result$nCsFileVersion, 3)
+    expect_equal(result$nDateTime, as.POSIXct("2023-09-23 10:00:00"))
+    expect_equal(result$someField, "overwritten_example")  # Check overwritten value
+    expect_equal(result$anotherField, 12345)
+
+    # Ensure helper functions are called
+    expect_equal(mockthat::mock_n_called(mock_header_v1), 1)
+    expect_equal(mockthat::mock_n_called(mock_header_v2), 1)
+    expect_equal(mockthat::mock_n_called(mock_header_v3), 1)
+
+  })
+
+  # Test for version 2, to ensure no unexpected calls to non-existent version functions
+  it("processes the headers correctly when file version is 2", {
+
+    # Mocked headers
+    mock_header_v1 <- mockthat::mock(
+      list(
+        nCsFileVersion = 2,  # Indicate that it's version 2 for this test
+        nDateTime = as.POSIXct("2023-09-23 10:00:00"),
+        nV1Extent = 62
+      )
+    )
+
+    mock_header_v2 <- mockthat::mock(
+      list(
+        nCsKind = 2,
+        someField = "example"
+      )
+    )
+
+    # Empty specs for this test
+    specs <- list(
+      V1 = list(),
+      V2 = list(),
+      V3 = list()
+    )
+
+    # Execute with mocks
+    result <- mockthat::with_mock(
+      seasonder_readSeaSondeCSFileHeader(specs, NULL),
+      seasonder_readSeaSondeCSFileHeaderV1 = mock_header_v1,
+      seasonder_readSeaSondeCSFileHeaderV2 = mock_header_v2
+      # Note: No V3 mock here as it shouldn't be called for file version 2
+    )
+
+    # Check results
+    expect_equal(result$nCsFileVersion, 2)
+    expect_equal(result$nDateTime, as.POSIXct("2023-09-23 10:00:00"))
+    expect_equal(result$someField, "example")
+
+    # Ensure helper functions are called
+    expect_equal(mockthat::mock_n_called(mock_header_v1), 1)
+    expect_equal(mockthat::mock_n_called(mock_header_v2), 1)
+
+  })
+
+})
 
 
 
@@ -358,6 +480,251 @@ describe("seasonder_readSeaSondeCSFileHeaderV1 works as expected", {
     }
   )
 })
+
+describe("seasonder_readSeaSondeCSFileHeaderV2 works as expected", {
+
+  # Define your mock for seasonder_readSeaSondeCSFileBlock
+  mocked_block_function <- function(spec, connection, endian="big") {
+    # Return predefined values to simulate the function's behavior.
+    list(
+      nCsKind = 1L,
+      nV2Extent = 1000L
+    )
+  }
+
+  mockthat::with_mock(
+    seasonder_readSeaSondeCSFileBlock = mocked_block_function,
+    {
+      # Mocked specs based on YAML
+      specs <- list(
+        nCsKind = list(type = "SInt16", qc_fun = "qc_check_range", qc_params = list(min = 1, max = 2, expected_type = "integer")),
+        nV2Extent = list(type = "SInt32", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer"))
+      )
+
+      describe("Function seasonder_readSeaSondeCSFileHeaderV2", {
+
+        it("returns expected mocked values for nCsKind and nV2Extent", {
+          results <- seasonder_readSeaSondeCSFileHeaderV2(specs, NULL)
+
+          # Check if nCsKind and nV2Extent have expected mocked values
+          expect_equal(results$nCsKind, 1)
+          expect_equal(results$nV2Extent, 1000)
+        })
+
+        it("ensures that the type of nCsKind is an integer", {
+          results <- seasonder_readSeaSondeCSFileHeaderV2(specs, NULL)
+          expect_type(results$nCsKind, "integer")
+        })
+
+        it("ensures that the type of nV2Extent is an integer", {
+          results <- seasonder_readSeaSondeCSFileHeaderV2(specs, NULL)
+          expect_type(results$nV2Extent, "integer")
+        })
+
+      })
+    }
+  )
+})
+
+describe("seasonder_readSeaSondeCSFileHeaderV3 works as expected", {
+
+  # Define your mock for seasonder_readSeaSondeCSFileBlock
+  mocked_block_function <- function(spec, connection, endian="big") {
+    # Here, you can return any predefined value to simulate the function's behavior.
+    list(
+      nSiteCodeName = "TEST",
+      nV3Extent = 1500L
+    )
+  }
+
+  mockthat::with_mock(
+    seasonder_readSeaSondeCSFileBlock = mocked_block_function,
+
+    {
+      # Mocked specs based on YAML
+      specs <- list(
+        nSiteCodeName = list(type = "Char4", qc_fun = "qc_check_type", qc_params = list(expected_type = "character")),
+        nV3Extent = list(type = "SInt32", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer"))
+      )
+
+      describe("Function seasonder_readSeaSondeCSFileHeaderV3", {
+
+        it("returns expected mocked values", {
+          results <- seasonder_readSeaSondeCSFileHeaderV3(specs, NULL)
+
+          # Check if nSiteCodeName and nV3Extent return expected values
+          expect_equal(results$nSiteCodeName, "TEST")
+          expect_equal(results$nV3Extent, 1500)
+        })
+
+        it("returns hardcoded values for nRangeCells, nDopplerCells, and nFirstRangeCell", {
+          results <- seasonder_readSeaSondeCSFileHeaderV3(specs, NULL)
+
+          # Check hardcoded values
+          expect_equal(results$nRangeCells, 31)
+          expect_equal(results$nDopplerCells, 512)
+          expect_equal(results$nFirstRangeCell, 1)
+        })
+      })
+    }
+  )
+})
+
+describe("seasonder_readSeaSondeCSFileHeaderV4 works as expected", {
+
+  # Define your mock for seasonder_readSeaSondeCSFileBlock
+  mocked_block_function <- function(spec, connection, endian="big") {
+    # Here, you can return any predefined value to simulate the function's behavior.
+    list(
+      nCoverMinutes = 15L,
+      bDeletedSource = 1L,
+      bOverrideSrcInfo = 0L,
+      fStartFreqMHz = 100.5,
+      fRepFreqHz = 1000.0,
+      fBandwidthKHz = 25.5,
+      bSweepUp = 0L,
+      nDopplerCells = 512L,
+      nRangeCells = 31L,
+      nFirstRangeCell = 1L,
+      fRangeCellDistKm = 0.5,
+      nV4Extent = 0L
+    )
+  }
+
+  mockthat::with_mock(
+    seasonder_readSeaSondeCSFileBlock = mocked_block_function,
+
+    {
+      # Mocked specs based on YAML
+      specs <- list(
+        nCoverMinutes = list(type = "SInt32", qc_fun = "qc_check_range", qc_params = list(min = 0, max = 60, expected_type = "integer")),
+        bDeletedSource = list(type = "SInt32", qc_fun = "qc_check_range", qc_params = list(min = 0, max = 1, expected_type = "integer")),
+        bOverrideSrcInfo = list(type = "SInt32", qc_fun = "qc_check_range", qc_params = list(min = 0, max = 1, expected_type = "integer")),
+        fStartFreqMHz = list(type = "Float", qc_fun = "qc_check_type", qc_params = list(expected_type = "numeric")),
+        fRepFreqHz = list(type = "Float", qc_fun = "qc_check_type", qc_params = list(expected_type = "numeric")),
+        fBandwidthKHz = list(type = "Float", qc_fun = "qc_check_type", qc_params = list(expected_type = "numeric")),
+        bSweepUp = list(type = "SInt32", qc_fun = "qc_check_range", qc_params = list(min = 0, max = 1, expected_type = "integer")),
+        nDopplerCells = list(type = "SInt32", qc_fun = "qc_check_range", qc_params = list(min = 0, max = 1024, expected_type = "integer")), # assuming a reasonable max for illustration
+        nRangeCells = list(type = "SInt32", qc_fun = "qc_check_range", qc_params = list(min = 0, max = 32, expected_type = "integer")), # max is 32 based on provided info
+        nFirstRangeCell = list(type = "SInt32", qc_fun = "qc_check_range", qc_params = list(min = -10, max = 32, expected_type = "integer")), # min is -10 just for illustration, adjust as necessary
+        fRangeCellDistKm = list(type = "Float", qc_fun = "qc_check_type", qc_params = list(expected_type = "numeric")),
+        nV4Extent = list(type = "SInt32", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer"))
+      )
+
+
+      describe("Function seasonder_readSeaSondeCSFileHeaderV4", {
+        it("returns CenterFreq correctly", {
+          results <- seasonder_readSeaSondeCSFileHeaderV4(specs, NULL)
+          expect_equal(results$CenterFreq, 75) # This is based on mocked values.
+        })
+
+        it("returns expected mocked values for nCoverMinutes and nDopplerCells", {
+          results <- seasonder_readSeaSondeCSFileHeaderV4(specs, NULL)
+          expect_equal(results$nCoverMinutes, 15)
+          expect_equal(results$nDopplerCells, 512)
+        })
+
+        it("returns expected mocked value for bDeletedSource", {
+          results <- seasonder_readSeaSondeCSFileHeaderV4(specs, NULL)
+          expect_equal(results$bDeletedSource, 1)
+        })
+
+        it("returns expected mocked value for bOverrideSrcInfo", {
+          results <- seasonder_readSeaSondeCSFileHeaderV4(specs, NULL)
+          expect_equal(results$bOverrideSrcInfo, 0)
+        })
+
+        it("returns expected mocked values for fStartFreqMHz and fRepFreqHz", {
+          results <- seasonder_readSeaSondeCSFileHeaderV4(specs, NULL)
+          expect_equal(results$fStartFreqMHz, 100.5)
+          expect_equal(results$fRepFreqHz, 1000.0)
+        })
+
+        it("returns expected mocked value for fBandwidthKHz", {
+          results <- seasonder_readSeaSondeCSFileHeaderV4(specs, NULL)
+          expect_equal(results$fBandwidthKHz, 25.5)
+        })
+
+        it("returns expected mocked value for bSweepUp", {
+          results <- seasonder_readSeaSondeCSFileHeaderV4(specs, NULL)
+          expect_equal(results$bSweepUp, 0)
+        })
+
+        it("returns expected mocked values for nRangeCells and nFirstRangeCell", {
+          results <- seasonder_readSeaSondeCSFileHeaderV4(specs, NULL)
+          expect_equal(results$nRangeCells, 31)
+          expect_equal(results$nFirstRangeCell, 1)
+        })
+
+        it("returns expected mocked value for fRangeCellDistKm", {
+          results <- seasonder_readSeaSondeCSFileHeaderV4(specs, NULL)
+          expect_equal(results$fRangeCellDistKm, 0.5)
+        })
+
+        it("returns expected mocked value for nV4Extent", {
+          results <- seasonder_readSeaSondeCSFileHeaderV4(specs, NULL)
+          expect_equal(results$nV4Extent, 0)
+        })
+
+      })
+    }
+  )
+})
+
+
+describe("seasonder_readSeaSondeCSFileHeaderV5 works as expected", {
+
+  # Mock for the seasonder_readSeaSondeCSFileBlock function
+  mocked_block_function_v5 <- function(spec, connection, endian="big") {
+    # Here, you can return any predefined value to simulate the function's behavior.
+    list(
+      nOutputInterval = 10L,
+      nCreateTypeCode = 1L,
+      nCreatorVersion = 3L,
+      nActiveChannels = 4L,
+      nSpectraChannels = 10L,
+      nActiveChanBits = bitwOr(1, bitwShiftL(1, 3)), # setting bits for 1st and 4th channels
+      nV5Extent = 5000L
+    )
+  }
+
+  mockthat::with_mock(
+    seasonder_readSeaSondeCSFileBlock = mocked_block_function_v5,
+
+    {
+      # Mocked specs based on your function's requirements
+      specs <- list(
+        nOutputInterval = list(type = "SInt16", qc_fun = "qc_check_range", qc_params = list(min = 1, max = 32, expected_type = "integer")),
+        nCreateTypeCode = list(type = "UInt8", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer")),
+        nCreatorVersion = list(type = "UInt8", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer")),
+        nActiveChannels = list(type = "SInt32", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer")),
+        nSpectraChannels = list(type = "SInt16", qc_fun = "qc_check_range", qc_params = list(min = 1, max = 16, expected_type = "integer")),
+        nActiveChanBits = list(type = "UInt32", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer")),
+        nV5Extent = list(type = "SInt32", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer"))
+      )
+
+      describe("Function seasonder_readSeaSondeCSFileHeaderV5", {
+        it("returns the correct transformation for ActiveChannels", {
+          results <- seasonder_readSeaSondeCSFileHeaderV5(specs, NULL)
+
+          # Check if nActiveChanBits is transformed to ActiveChannels correctly
+          expect_equal(results$ActiveChannels, c(1, 4))
+        })
+
+        it("returns expected mocked values", {
+          results <- seasonder_readSeaSondeCSFileHeaderV5(specs, NULL)
+          expect_equal(results$nOutputInterval, 10)
+          expect_equal(results$nCreateTypeCode, 1)
+          expect_equal(results$nCreatorVersion, 3)
+          expect_equal(results$nActiveChannels, 4)
+          expect_equal(results$nSpectraChannels, 10)
+          expect_equal(results$nV5Extent, 5000)
+        })
+      })
+    }
+  )
+})
+
 
 #### QC ####
 
@@ -413,4 +780,7 @@ describe("QC functions work as expected", {
     }
   )
 })
+
+
+
 

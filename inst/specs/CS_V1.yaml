@@ -23,3 +23,161 @@ header:
       qc_fun: qc_check_type
       qc_params:
         expected_type: "integer"
+  V2:
+    nCsKind:
+      type: SInt16
+      qc_fun: qc_check_range
+      qc_params:
+        min: 1
+        max: 2
+        expected_type: "integer"
+
+    nV2Extent:
+      type: SInt32
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "integer"
+  V3:
+    nSiteCodeName:
+      type: Char4
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "character"
+
+    nV3Extent:
+      type: SInt32
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "integer"
+  V4:
+    nCoverMinutes:
+      type: SInt32
+      qc_fun: qc_check_range
+      qc_params:
+        min: 5
+        max: 60
+        expected_type: "integer"
+
+    bDeletedSource:
+      type: SInt32
+      qc_fun: qc_check_range
+      qc_params:
+        min: 0
+        max: 1
+        expected_type: "integer"
+
+    bOverrideSrcInfo:
+      type: SInt32
+      qc_fun: qc_check_range
+      qc_params:
+        min: 0
+        max: 1
+        expected_type: "integer"
+
+    fStartFreqMHz:
+      type: Float
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "numeric"
+
+    fRepFreqHz:
+      type: Float
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "numeric"
+
+    fBandwidthKHz:
+      type: Float
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "numeric"
+
+    bSweepUp:
+      type: SInt32
+      qc_fun: qc_check_range
+      qc_params:
+        min: 0
+        max: 1
+        expected_type: "integer"
+
+    nDopplerCells:
+      type: SInt32
+      qc_fun: qc_check_range
+      qc_params:
+        min: 1
+        max: 512
+        expected_type: "integer"
+
+    nRangeCells:
+      type: SInt32
+      qc_fun: qc_check_range
+      qc_params:
+        min: 1
+        max: 32
+        expected_type: "integer"
+
+    nFirstRangeCell:
+      type: SInt32
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "integer"
+
+    fRangeCellDistKm:
+      type: Float
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "numeric"
+
+    nV4Extent:
+      type: SInt32
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "integer"
+  V5:
+    nOutputInterval:
+      type: SInt32
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "integer"
+
+    nCreateTypeCode:
+      type: Char4
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "character"
+
+    nCreatorVersion:
+      type: Char4
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "character"
+
+    nActiveChannels:
+      type: SInt32
+      qc_fun: qc_check_range
+      qc_params:
+        min: 1
+        max: 32
+        expected_type: "integer"
+
+    nSpectraChannels:
+      type: SInt32
+      qc_fun: qc_check_range
+      qc_params:
+        min: 1
+        max: 32
+        expected_type: "integer"
+
+    nActiveChanBits:
+      type: UInt32
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "integer"
+
+    nV5Extent:
+      type: SInt32
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "integer"
+
+

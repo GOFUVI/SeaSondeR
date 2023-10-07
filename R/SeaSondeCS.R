@@ -65,6 +65,8 @@ seasonder_raw_to_int <- function(r,signed=F){
 
 }
 
+
+
 #' Read a CSField from a Binary Connection
 #'
 #' This function reads specific data types from a binary connection,
@@ -99,6 +101,18 @@ seasonder_readCSField <- function(con, type, endian="big") {
                       NULL
                     })
     return(res)
+  }
+
+
+
+  # Check if it's CharN
+  if (grepl("^Char[0-9]+$", type)) {
+
+    # Read N characters
+    char_length <- as.integer(sub("^Char", "", type))
+    chars <- read_values(1, "raw",char_length)
+
+    return(rawToChar(chars))
   }
 
   # Determine the data type specified and read it from the connection accordingly.
@@ -165,7 +179,6 @@ seasonder_readCSField <- function(con, type, endian="big") {
 #'   or NULL if the value fails quality control. The exact behavior of the quality control function, including
 #'   the handling of NULL values, is detailed in `seasonder_readSeaSondeCSFileBlock`.
 #'
-#' @export
 read_and_qc_field <- function(field_spec, connection, endian="big") {
   # Extract the field type from the specifications
   field_type <- field_spec$type
@@ -236,7 +249,6 @@ read_and_qc_field <- function(field_spec, connection, endian="big") {
 #' @return A named list where each entry corresponds to a field that has been read. Each key is
 #'   the field name, and its associated value is the data for that field after quality control.
 #'
-#' @export
 seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian="big") {
   # Use purrr::map to apply the read_and_qc_field function to each field specification
   results <- purrr::map(spec, \(field_spec) read_and_qc_field(field_spec=field_spec,connection=connection, endian=endian))
@@ -264,7 +276,6 @@ seasonder_check_specs <- function(specs, fields){
 #' @param endian Character string specifying the endianness. Default is "big".
 #'
 #' @return A list with the read and transformed results.
-#' @export
 seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "big") {
 
   # Step 1: Specification Validation
@@ -288,31 +299,157 @@ seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "bi
 }
 
 
-seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "big"){
+#' Read SeaSonde File Header (Version 2)
+#'
+#' Reads the header of a SeaSonde file (Version 2) based on the provided specifications.
+#'
+#' @param specs A list containing specifications for reading the file.
+#' @param connection Connection object to the file.
+#' @param endian Character string specifying the endianness. Default is "big".
+#'
+#' @return A list with the read results.
+seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "big") {
 
+  # Step 1: Specification Validation
+  # This step ensures that the provided specs contain the necessary information
+  # for the fields "nCsKind" and "nV2Extent".
+  seasonder_check_specs(specs, c("nCsKind","nV2Extent"))
+
+  # Step 2: Field Reading
+  # This step reads the specified fields from the connection (e.g., file)
+  # based on the provided specs and returns the results as a list.
+  results <- seasonder_readSeaSondeCSFileBlock(specs, connection, endian)
+
+  # Return the read results.
+  return(results)
 }
 
-seasonder_readSeaSondeCSFileHeaderV3 <- function(specs, connection, endian = "big"){
+#' Read SeaSonde File Header (Version 3)
+#'
+#' Reads the header of a SeaSonde file (Version 3) based on the provided specifications.
+#' Adds nRangeCells, nDopplerCells, and nFirstRangeCell as constant values to the results.
+#'
+#' @param specs A list containing specifications for reading the file.
+#' @param connection Connection object to the file.
+#' @param endian Character string specifying the endianness. Default is "big".
+#'
+#' @return A list with the read results.
+#' @export
+seasonder_readSeaSondeCSFileHeaderV3 <- function(specs, connection, endian = "big") {
 
+  # Step 1: Specification Validation
+  # This step ensures that the provided specs contain the necessary information
+  # for the fields "nSiteCodeName" and "nV3Extent".
+  seasonder_check_specs(specs, c("nSiteCodeName","nV3Extent"))
+
+  # Step 2: Field Reading
+  # This step reads the specified fields from the connection (e.g., file)
+  # based on the provided specs and returns the results as a list.
+  results <- seasonder_readSeaSondeCSFileBlock(specs, connection, endian)
+
+  # Step 3: Data Addition
+  # Add constant values to the results.
+  results$nRangeCells <- 31L
+  results$nDopplerCells <- 512L
+  results$nFirstRangeCell <- 1L
+
+  # Return the final results
+  return(results)
 }
+
+#' Read SeaSonde File Header (Version 4)
+#'
+#' Reads the header of a SeaSonde file (Version 4) based on the provided specifications.
+#' Transforms the CenterFreq field and returns the results.
+#'
+#' @param specs A list containing specifications for reading the file.
+#' @param connection Connection object to the file.
+#' @param endian Character string specifying the endianness. Default is "big".
+#'
+#' @return A list with the read and transformed results.
+#' @export
+seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "big") {
+
+  # Step 1: Specification Validation
+  # This step ensures that the provided specs contain the necessary information.
+  required_fields <- c("nCoverMinutes", "bDeletedSource", "bOverrideSrcInfo",
+                       "fStartFreqMHz", "fRepFreqHz", "fBandwidthKHz", "bSweepUp",
+                       "nDopplerCells", "nRangeCells", "nFirstRangeCell",
+                       "fRangeCellDistKm", "nV4Extent")
+  seasonder_check_specs(specs, required_fields)
+
+  # Step 2: Field Reading
+  # This step reads the specified fields from the connection (e.g., file)
+  # based on the provided specs and returns the results as a list.
+  results <- seasonder_readSeaSondeCSFileBlock(specs, connection, endian)
+
+  # Step 3: Data Transformation
+  # Calculate CenterFreq using the provided formula.
+  results$CenterFreq <- results$fStartFreqMHz + results$fBandwidthKHz/2 * -2^(results$bSweepUp == 0)
+
+  # Return the final results, including the CenterFreq.
+  return(results)
+}
+
+#' Read SeaSonde File Header (Version 5)
+#'
+#' Reads the header of a SeaSonde file (Version 5) based on the provided specifications.
+#' Performs applicable transformations and returns the results.
+#'
+#' @param specs A list containing specifications for reading the file.
+#' @param connection Connection object to the file.
+#' @param endian Character string specifying the endianness. Default is "big".
+#'
+#' @return A list with the read and transformed results.
+#' @export
+seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "big") {
+
+  # Step 1: Specification Validation
+  seasonder_check_specs(specs, c("nOutputInterval", "nCreateTypeCode", "nCreatorVersion", "nActiveChannels",
+                                 "nSpectraChannels", "nActiveChanBits", "nV5Extent"))
+
+  # Step 2: Field Reading
+  results <- seasonder_readSeaSondeCSFileBlock(specs, connection, endian)
+
+  # Step 3: Data Transformation
+  # Convert the bits into a vector of active antennas
+  results$ActiveChannels <- which(intToBits(results$nActiveChanBits)[1:32] == TRUE)
+
+  # Return the final results.
+  return(results)
+}
+
 
 
 ##' Process a Specific Version of the SeaSonde File Header
 #'
-#' This auxiliary function is responsible for processing a specific version of the SeaSonde
-#' file header. It fetches the corresponding header function based on the given version and
-#' appends the processed header to an accumulating pool of header data.
+#' This function processes a specified version of the SeaSonde file header. It identifies the
+#' appropriate header function for the given version, processes the header, and then updates
+#' the accumulating pool of header data. Specifically:
 #'
-#' @param pool List of processed headers so far.
-#' @param version Numeric version of the header to be processed.
-#' @param specs List of header specifications for each version.
-#' @param connection The file connection.
-#' @param endian Character string indicating the byte order, either "big" (default) or "little".
+#' 1. For fields in the current header that overlap with the accumulated pool, the
+#'    current header's values overwrite those in the pool.
+#' 2. Fields that are unique to the current header are appended to the pool.
 #'
-#' @return A list combining the existing `pool` and the newly processed header.
+#' @section Assumptions:
+#' This function assumes that the desired version-specific `seasonder_readSeaSondeCSFileHeaderV*`
+#' functions are available in the global environment.
 #'
-#' @export
-process_version_header <- function(pool, version, specs, connection, endian) {
+#' @param pool List. An accumulating list of processed headers from prior versions.
+#' @param version Integer. The specific version of the header to be processed. E.g., for version 3,
+#'        the function `seasonder_readSeaSondeCSFileHeaderV3` should be present.
+#' @param specs List. Header specifications for each version. Each entry should correspond to
+#'        a version number and contain the required information to process that version's header.
+#' @param connection Connection object. The file connection pointing to the SeaSonde file.
+#' @param endian Character string. Specifies the byte order for reading data. Can be "big" (default)
+#'        or "little". Use the appropriate value depending on the system architecture and the
+#'        file's source.
+#'
+#' @return List. A combination of the initial `pool` and the processed header for the given `version`.
+#'         Fields in the current header will overwrite or append to the pool as described above.
+#'
+process_version_header <- function(pool, version, specs, connection, endian = "big") {
+  # Construct the function name based on the provided version
   function_name <- paste0("seasonder_readSeaSondeCSFileHeaderV", version)
 
   # Access the appropriate function from the global environment
@@ -321,9 +458,17 @@ process_version_header <- function(pool, version, specs, connection, endian) {
   # Process the current version header
   current_header <- header_function(specs[[paste0("V", version)]], connection, endian)
 
-  # Combine with the accumulated header data
-  return(c(pool, current_header))
+  # Overwrite overlapping fields from the pool with the current header
+  overlapping_keys <- intersect(names(pool), names(current_header))
+  pool[overlapping_keys] <- current_header[overlapping_keys]
+
+  # Add new fields from the current header to the pool
+  new_keys <- setdiff(names(current_header), names(pool))
+  pool <- c(pool, current_header[new_keys])
+
+  return(pool)
 }
+
 
 #' Read the SeaSonde CS File Header
 #'
@@ -337,7 +482,6 @@ process_version_header <- function(pool, version, specs, connection, endian) {
 #'
 #' @return A combined list of all processed headers up to the file version.
 #'
-#' @export
 seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big") {
   # Read the general header (Version 1)
   header_v1 <- seasonder_readSeaSondeCSFileHeaderV1(specs$V1, connection, endian)
@@ -368,7 +512,6 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
 #' @param expected_type The expected type of the field_value.
 #'
 #' @return The original field_value if it matches the expected_type; otherwise, an error is raised.
-#' @export
 #'
 #'
 #' @examples
@@ -395,7 +538,6 @@ assign("qc_check_type",qc_check_type,envir = seasonder_the)
 #' @param expected_type (optional) The expected type of the field_value. Default is NULL.
 #'
 #' @return The original field_value if it's within range and matches the expected_type; otherwise, an error is raised.
-#' @export
 #'
 #'
 #' @examples
