@@ -21,7 +21,7 @@ describe("seasonder_raw_to_int",{
     expect_equal(as.character(seasonder_raw_to_int(r, signed=F)),  "0")
 
 
-      r <- seasonder_int_to_raw(300)
+    r <- seasonder_int_to_raw(300)
 
 
     expect_equal(as.character(seasonder_raw_to_int(r, signed=F)),  "300")
@@ -262,7 +262,7 @@ describe("read_and_qc_field", {
 
   it("returns NULL for values out of QC range", {
 
-      field_spec <- list(type = "double", qc_fun = "qc_check_range", qc_params = list(min = 124, max = 200))
+    field_spec <- list(type = "double", qc_fun = "qc_check_range", qc_params = list(min = 124, max = 200))
 
 
     result <- mockthat::with_mock(
@@ -723,6 +723,138 @@ describe("seasonder_readSeaSondeCSFileHeaderV5 works as expected", {
       })
     }
   )
+})
+
+
+describe("readV6BlockData works as expected", {
+
+
+  mocked_regular_block_function <- function(spec, connection, endian="big") {
+
+    list(
+      Var1=1L,
+      Var2=2L
+    )
+  }
+
+
+  mock_factory <- function(n){
+
+
+    .n <- n
+
+    .regular_block <- TRUE
+
+
+    function(spec, connection, endian, prev_data) {
+
+      if(.regular_block){
+        out <- list(Var1=1L,
+                    Var2=2L)
+        .regular_block <<- FALSE
+      }else{
+        out <- list(
+          Var4 = paste0("sampleValueVar4_",.n),
+          Var5 = paste0("sampleValueVar5_",.n))
+        .n <<- .n -1
+      }
+
+
+      out
+    }
+
+
+
+  }
+
+
+
+
+
+  reg_specs <-list(
+    Var1 = list(type = "varType1", qc_fun = "qc_fun_name1", qc_params = list(param1 = "value1")),
+    Var2 = list(type = "varType2", qc_fun = "qc_fun_name2", qc_params = list(param1 = "value2"))
+
+
+  )
+
+
+
+  rep_specs <-list(
+    Var1 = list(type = "varType1", qc_fun = "qc_fun_name1", qc_params = list(param1 = "value1")),
+    Var2 = list(type = "varType2", qc_fun = "qc_fun_name2", qc_params = list(param1 = "value2")),
+    "repeat"=list(how_many=c("L1","L2"),what=list(
+      Var3 = list(type = "varType3", qc_fun = "qc_fun_name3", qc_params = list(param1 = "value3")),
+      Var4 = list(type = "varType4", qc_fun = "qc_fun_name4", qc_params = list(param1 = "value4"))
+    ))
+
+
+  )
+
+  mock_prev_data <- list(L1=2,L2=3)
+
+
+  it("reads regular blocks correctly", {
+
+    results <- mockthat::with_mock(
+      seasonder_readSeaSondeCSFileBlock = mocked_regular_block_function,
+
+      {
+        readV6BlockData(reg_specs, NULL,prev_data=mock_prev_data)
+
+
+      })
+
+    expect_equal(results$Var1,1L)
+    expect_equal(results$Var2,2L)
+  })
+
+  it("reads repeated blocks correctly", {
+
+    mocked_repeated_block_function <- mock_factory(6)
+
+    results <- mockthat::with_mock(
+      seasonder_readSeaSondeCSFileBlock = mocked_repeated_block_function,
+
+      {
+        readV6BlockData(rep_specs, NULL,prev_data=mock_prev_data)
+
+
+      })
+
+    expect_equal(results$Var1,1L)
+    expect_equal(results$Var2,2L)
+
+    targetV4 <- list(loop="L1",
+                     data=list(
+                       list(loop="L2",
+                            data=c("sampleValueVar4_6","sampleValueVar4_5","sampleValueVar4_4")
+                       ),
+                       list(loop="L2",
+                            data=c("sampleValueVar4_3","sampleValueVar4_2","sampleValueVar4_1")
+                       )
+
+                     )
+    )
+
+    expect_equal(results$Var4,targetV4)
+
+    targetV5 <- list(loop="L1",
+                                 data=list(
+                                   list(loop="L2",
+                                                    data=c("sampleValueVar5_6","sampleValueVar5_5","sampleValueVar5_4")
+                                   ),
+                                   list(loop="L2",
+                                                    data=c("sampleValueVar5_3","sampleValueVar5_2","sampleValueVar5_1")
+                                   )
+
+                                 )
+    )
+
+
+    expect_equal(results$Var5,targetV5)
+  })
+
 })
 
 

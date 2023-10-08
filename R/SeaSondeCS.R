@@ -420,6 +420,54 @@ seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "bi
 }
 
 
+readV6BlockData <- function(specs, connection, endian="big", prev_data=NULL, remaining_loops=NULL) {
+
+  if(length(remaining_loops)>0){
+    loop_var <- remaining_loops[1]
+    num_repeats <- prev_data[[loop_var]]
+    remaining_loops <- remaining_loops[-1]
+
+    repeated_data <- vector("list", num_repeats)
+    for (i in seq_len(num_repeats)) {
+      repeated_data[[i]] <- readV6BlockData(specs, connection,endian, prev_data, remaining_loops)
+
+    }
+
+    repeated_data <- purrr::list_transpose(repeated_data)
+
+    repeated_data %<>% purrr::map(\(x) list(loop=loop_var,data=x))
+
+    return(repeated_data)
+  }
+
+
+  regular_specs <- specs[names(specs) !="repeat"]
+
+  out <- list()
+
+  if (length(regular_specs)>0) {
+    regular_block <- seasonder_readSeaSondeCSFileBlock(regular_specs, connection, endian)
+    out <- c(out,regular_block)
+  }
+
+  if("repeat" %in% names(specs)){
+  repeat_specs <- specs[["repeat"]]
+  remaining_loops <- repeat_specs$how_many
+
+
+    repeat_result <- readV6BlockData(repeat_specs$what, connection,endian, prev_data, remaining_loops)
+
+    out <- c(out,repeat_result)
+  }
+
+
+out
+
+}
+
+# Supongo que la función seasonder_readSeaSondeCSFileBlock ha sido renombrada a la función proporcionada para leer bloques regulares y repetidos.
+
+
 
 ##' Process a Specific Version of the SeaSonde File Header
 #'
