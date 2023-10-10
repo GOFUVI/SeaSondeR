@@ -102,18 +102,14 @@ header:
 
     nDopplerCells:
       type: SInt32
-      qc_fun: qc_check_range
+      qc_fun: qc_check_type
       qc_params:
-        min: 1
-        max: 512
         expected_type: "integer"
 
     nRangeCells:
       type: SInt32
-      qc_fun: qc_check_range
+      qc_fun: qc_check_type
       qc_params:
-        min: 1
-        max: 32
         expected_type: "integer"
 
     nFirstRangeCell:
@@ -201,423 +197,423 @@ header:
           expected_type: "integer"
 
 
-  blocks:
-    TIME:
-      nTimeMark:
-        type: UInt8
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
-      nYear:
-        type: UInt16
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
-      nMonth:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 1
-          max: 12
-          expected_type: "integer"
-      nDay:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 1
-          max: 31
-          expected_type: "integer"
-      nHour:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 23
-          expected_type: "integer"
-      nMinute:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 59
-          expected_type: "integer"
-      fSeconds:
-        type: Double
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 60
-          expected_type: "numeric"
-      fCoverageSeconds:
-        type: Double
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "numeric"
-      fHoursFromUTC:
-        type: Double
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "numeric"
+    blocks:
+      TIME:
+        nTimeMark:
+          type: UInt8
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
+        nYear:
+          type: UInt16
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
+        nMonth:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 1
+            max: 12
+            expected_type: "integer"
+        nDay:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 1
+            max: 31
+            expected_type: "integer"
+        nHour:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 23
+            expected_type: "integer"
+        nMinute:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 59
+            expected_type: "integer"
+        fSeconds:
+          type: Double
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 60
+            expected_type: "numeric"
+        fCoverageSeconds:
+          type: Double
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "numeric"
+        fHoursFromUTC:
+          type: Double
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "numeric"
 
-    ZONE:
-      szTimeZone:
-        type: String
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "character"
-    CITY:
-      szTimeZone:
-        type: String
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "character"
-    LOCA:
-      fLatitude:
-        type: Double
-        qc_fun: qc_check_range
-        qc_params:
-          min: -90
-          max: 90
-          expected_type: "numeric"
-      fLongitude:
-        type: Double
-        qc_fun: qc_check_range
-        qc_params:
-          min: -180
-          max: 180
-          expected_type: "numeric"
-      fAltitudeMeters:
-        type: Double
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 500
-          expected_type: "numeric"
-    SITD:
-      szSiteDescription:
-        type: String
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "character"
-    RCVI:
-      nReceiverModel:
-        type: UInt32
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 5
-          expected_type: "integer"
+      ZONE:
+        szTimeZone:
+          type: String
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "character"
+      CITY:
+        szTimeZone:
+          type: String
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "character"
+      LOCA:
+        fLatitude:
+          type: Double
+          qc_fun: qc_check_range
+          qc_params:
+            min: -90
+            max: 90
+            expected_type: "numeric"
+        fLongitude:
+          type: Double
+          qc_fun: qc_check_range
+          qc_params:
+            min: -180
+            max: 180
+            expected_type: "numeric"
+        fAltitudeMeters:
+          type: Double
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 500
+            expected_type: "numeric"
+      SITD:
+        szSiteDescription:
+          type: String
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "character"
+      RCVI:
+        nReceiverModel:
+          type: UInt32
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 5
+            expected_type: "integer"
 
-      nRxAntennaModel:
-        type: UInt32
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 5
-          expected_type: "integer"
+        nRxAntennaModel:
+          type: UInt32
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 5
+            expected_type: "integer"
 
-      fReferenceGainDB:
-        type: Double
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "numeric"
-      szFirmware:
-        type: String
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "character"
-    TOOL:
-      szToolNameVer:
-        type: String
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "character"
-    GLRM:
-      nMethod:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 4
-          expected_type: "integer"
-      nVersion:
-        type: UInt8
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
-      nPointsRemoved:
-        type: UInt32
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
+        fReferenceGainDB:
+          type: Double
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "numeric"
+        szFirmware:
+          type: Char32
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "character"
+      TOOL:
+        szToolNameVer:
+          type: String
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "character"
+      GLRM:
+        nMethod:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 4
+            expected_type: "integer"
+        nVersion:
+          type: UInt8
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
+        nPointsRemoved:
+          type: UInt32
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
 
-      nTimesRemoved:
-        type: UInt32
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
+        nTimesRemoved:
+          type: UInt32
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
 
-      nSegmentsRemoved:
-        type: UInt32
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
+        nSegmentsRemoved:
+          type: UInt32
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
 
-      fPointPowerThreshold:
-        type: Double
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "numeric"
+        fPointPowerThreshold:
+          type: Double
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "numeric"
 
-      fRangePowerThreshold:
-        type: Double
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "numeric"
+        fRangePowerThreshold:
+          type: Double
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "numeric"
 
-      fRangeBinThreshold:
-        type: Double
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "numeric"
+        fRangeBinThreshold:
+          type: Double
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "numeric"
 
-      bRemoveDC:
-        type: UInt8
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
+        bRemoveDC:
+          type: UInt8
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
 
-    SUPI:
-      nMethod:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 1
-          expected_type: "integer"
-      nVersion:
-        type: UInt8
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
+      SUPI:
+        nMethod:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 1
+            expected_type: "integer"
+        nVersion:
+          type: UInt8
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
 
-      nMode:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 3
-          expected_type: "integer"
+        nMode:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 3
+            expected_type: "integer"
 
-      nDebugMode:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 1
-          expected_type: "integer"
+        nDebugMode:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 1
+            expected_type: "integer"
 
-      nDopplerSuppressed:
-        type: UInt32
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
+        nDopplerSuppressed:
+          type: UInt32
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
 
-      fPowerThreshold:
-        type: Double
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "numeric"
+        fPowerThreshold:
+          type: Double
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "numeric"
 
-      fRangeBinThreshold:
-        type: Double
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "numeric"
+        fRangeBinThreshold:
+          type: Double
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "numeric"
 
-      nRangeBanding:
-        type: SInt16
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
+        nRangeBanding:
+          type: SInt16
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
 
-      nDopplerDetectionSmoothing:
-        type: SInt16
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
-    SUPM:
-      repeat:
-        how_many: [nSpectraChannels, nDopplerCells]
-        what:
-          fSuppressionVoltageSquared:
-            type: Float
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "numeric"
+        nDopplerDetectionSmoothing:
+          type: SInt16
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
+      SUPM:
+        repeat:
+          how_many: [nSpectraChannels, nDopplerCells]
+          what:
+            fSuppressionVoltageSquared:
+              type: Float
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "numeric"
 
-    SUPP:
-      repeat:
-        how_many: [nSpectraChannels, nDopplerCells]
-        what:
-          fPhaseDegrees:
-            type: Float
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "numeric"
+      SUPP:
+        repeat:
+          how_many: [nSpectraChannels, nDopplerCells]
+          what:
+            fPhaseDegrees:
+              type: Float
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "numeric"
 
 
-    ANTG:
-      repeat:
-        how_many: [nSpectraChannels]
-        what:
-          fGainDB:
-            type: Double
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "numeric"
+      ANTG:
+        repeat:
+          how_many: [nSpectraChannels]
+          what:
+            fGainDB:
+              type: Double
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "numeric"
 
-    FWIN:
-      nRangeWindowType:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 3
-          expected_type: "integer"
+      FWIN:
+        nRangeWindowType:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 3
+            expected_type: "integer"
 
-      nDopplerWindowType:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 3
-          expected_type: "integer"
+        nDopplerWindowType:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 3
+            expected_type: "integer"
 
-      fRangeWindowParam:
-        type: Double
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "numeric"
+        fRangeWindowParam:
+          type: Double
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "numeric"
 
-      fDopplerWindowParam:
-        type: Double
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "numeric"
+        fDopplerWindowParam:
+          type: Double
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "numeric"
 
-    IQAP:
-      nMethod:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 2
-          expected_type: "integer"
+      IQAP:
+        nMethod:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 2
+            expected_type: "integer"
 
-      nVersion:
-        type: UInt8
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
+        nVersion:
+          type: UInt8
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
 
-      repeat:
-        how_many: [nRanges]
-        what:
-          fMagnitude:
-            type: Double
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "numeric"
-          fPhase:
-            type: Double
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "numeric"
-    FILL:
-      nRangeMethod:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 2
-          expected_type: "integer"
-      nRangeMult:
-        type: UInt8
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
+        repeat:
+          how_many: [nRangeCells]
+          what:
+            fMagnitude:
+              type: Double
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "numeric"
+            fPhase:
+              type: Double
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "numeric"
+      FILL:
+        nRangeMethod:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 2
+            expected_type: "integer"
+        nRangeMult:
+          type: UInt8
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
 
-      nDopplerMethod:
-        type: UInt8
-        qc_fun: qc_check_range
-        qc_params:
-          min: 0
-          max: 2
-          expected_type: "integer"
-      nDopplerMult:
-        type: UInt8
-        qc_fun: qc_check_type
-        qc_params:
-          expected_type: "integer"
+        nDopplerMethod:
+          type: UInt8
+          qc_fun: qc_check_range
+          qc_params:
+            min: 0
+            max: 2
+            expected_type: "integer"
+        nDopplerMult:
+          type: UInt8
+          qc_fun: qc_check_type
+          qc_params:
+            expected_type: "integer"
 
-    FOLS:
-      repeat:
-        how_many: [nRanges]
-        what:
-          nNegBraggLeftIndex:
-            type: SInt32
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "integer"
-          nNegBraggRightIndex:
-            type: SInt32
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "integer"
-          nPosBraggLeftIndex:
-            type: SInt32
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "integer"
-          nPosBraggRightIndex:
-            type: SInt32
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "integer"
+      FOLS:
+        repeat:
+          how_many: [nRangeCells]
+          what:
+            nNegBraggLeftIndex:
+              type: SInt32
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "integer"
+            nNegBraggRightIndex:
+              type: SInt32
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "integer"
+            nPosBraggLeftIndex:
+              type: SInt32
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "integer"
+            nPosBraggRightIndex:
+              type: SInt32
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "integer"
 
-    WOLS:
-      repeat:
-        how_many: [nRanges]
-        what:
-          nNegBraggLeftIndex:
-            type: SInt32
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "integer"
-          nNegBraggRightIndex:
-            type: SInt32
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "integer"
-          nPosBraggLeftIndex:
-            type: SInt32
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "integer"
-          nPosBraggRightIndex:
-            type: SInt32
-            qc_fun: qc_check_type
-            qc_params:
-              expected_type: "integer"
-    BRGR:
-      repeat:
-        how_many: [nRanges]
-        what:
-          nBraggReject:
-            type: UInt8
-            qc_fun: qc_check_range
-            qc_params:
-              min: 0
-              max: 3
-              expected_type: "integer"
+      WOLS:
+        repeat:
+          how_many: [nRangeCells]
+          what:
+            nNegBraggLeftIndex:
+              type: SInt32
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "integer"
+            nNegBraggRightIndex:
+              type: SInt32
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "integer"
+            nPosBraggLeftIndex:
+              type: SInt32
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "integer"
+            nPosBraggRightIndex:
+              type: SInt32
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "integer"
+      BRGR:
+        repeat:
+          how_many: [nRangeCells]
+          what:
+            nBraggReject:
+              type: UInt8
+              qc_fun: qc_check_range
+              qc_params:
+                min: 0
+                max: 3
+                expected_type: "integer"

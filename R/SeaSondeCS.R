@@ -110,9 +110,11 @@ seasonder_readCSField <- function(con, type, endian="big") {
 
     # Read N characters
     char_length <- as.integer(sub("^Char", "", type))
-    chars <- read_values(1, "raw",char_length)
 
-    return(rawToChar(chars))
+
+    chars <- read_values(1, "raw",char_length)
+    out <- rawToChar(chars)
+    return(out)
   }
 
   # Determine the data type specified and read it from the connection accordingly.
@@ -148,6 +150,7 @@ seasonder_readCSField <- function(con, type, endian="big") {
              if (char == as.raw(0)) break
              chars <- c(chars, char)
            }
+
            rawToChar(do.call(c, list(chars)))
          },
          {
@@ -192,7 +195,7 @@ read_and_qc_field <- function(field_spec, connection, endian="big") {
 
   # Apply quality control
   # Get the quality control function from the shared environment
-  qc_fun <- get(qc_fun_name, envir = seasonder_the)
+  qc_fun <- seasonder_the$qc_functions[[qc_fun_name]]
   # Call the quality control function with the field value and the specified parameters
   field_value_after_qc <- do.call(qc_fun, c(list(field_value), qc_params))
 
@@ -251,7 +254,13 @@ read_and_qc_field <- function(field_spec, connection, endian="big") {
 #'
 seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian="big") {
   # Use purrr::map to apply the read_and_qc_field function to each field specification
-  results <- purrr::map(spec, \(field_spec) read_and_qc_field(field_spec=field_spec,connection=connection, endian=endian))
+  results <- purrr::map(spec, \(field_spec) {
+    out <- try(read_and_qc_field(field_spec=field_spec,connection=connection, endian=endian))
+    if(inherits(out,"try-error")){
+      out <- NULL
+    }
+    out
+  })
 
   # Return the results
   return(results)
@@ -276,7 +285,7 @@ seasonder_check_specs <- function(specs, fields){
 #' @param endian Character string specifying the endianness. Default is "big".
 #'
 #' @return A list with the read and transformed results.
-seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "big") {
+seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
   # Step 1: Specification Validation
   # This step ensures that the provided specs contain the necessary information
@@ -308,7 +317,7 @@ seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "bi
 #' @param endian Character string specifying the endianness. Default is "big".
 #'
 #' @return A list with the read results.
-seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "big") {
+seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
   # Step 1: Specification Validation
   # This step ensures that the provided specs contain the necessary information
@@ -335,7 +344,7 @@ seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "bi
 #'
 #' @return A list with the read results.
 #' @export
-seasonder_readSeaSondeCSFileHeaderV3 <- function(specs, connection, endian = "big") {
+seasonder_readSeaSondeCSFileHeaderV3 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
   # Step 1: Specification Validation
   # This step ensures that the provided specs contain the necessary information
@@ -368,7 +377,7 @@ seasonder_readSeaSondeCSFileHeaderV3 <- function(specs, connection, endian = "bi
 #'
 #' @return A list with the read and transformed results.
 #' @export
-seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "big") {
+seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
   # Step 1: Specification Validation
   # This step ensures that the provided specs contain the necessary information.
@@ -402,7 +411,7 @@ seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "bi
 #'
 #' @return A list with the read and transformed results.
 #' @export
-seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "big") {
+seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
   # Step 1: Specification Validation
   seasonder_check_specs(specs, c("nOutputInterval", "nCreateTypeCode", "nCreatorVersion", "nActiveChannels",
@@ -419,53 +428,144 @@ seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "bi
   return(results)
 }
 
-
+#' Read Version 6 Block Data
+#'
+#' This function reads and processes regular and repeated blocks of data
+#' based on provided specifications. Regular blocks are read directly, while
+#' repeated blocks are processed recursively based on a set of loops provided
+#' in the specifications.
+#'
+#' @param specs A list. Specifications detailing the structure and content of the data blocks.
+#'              Contains variable names, types, quality check functions, and other related attributes.
+#'              For repeated blocks, a 'repeat' key is added which details the loop structure and
+#'              nested specifications.
+#' @param connection A connection object. Represents the connection to the data source. It's passed
+#'                   to the lower-level reading function.
+#' @param endian A character string. Specifies the byte order to be used. Default is "big".
+#'               Passed to the lower-level reading function.
+#' @param prev_data A list. Previous data or metadata that might be required to inform the reading
+#'                  process, such as loop lengths for repeated blocks. Default is NULL.
+#' @param remaining_loops A character vector. Details the remaining loops to be processed for
+#'                        repeated blocks. Internally used for recursive processing. Default is NULL.
+#'                        If provided, it should always be in sync with the repeat specifications.
+#' @return A list. Contains the read and processed data based on the provided specifications.
+#'         Regular variables are returned at the top level. Repeated blocks are nested lists with
+#'         'loop' and 'data' keys detailing the loop variable and corresponding data.
+#' @importFrom purrr list_transpose map
+#'
+#' @export
 readV6BlockData <- function(specs, connection, endian="big", prev_data=NULL, remaining_loops=NULL) {
 
-  if(length(remaining_loops)>0){
+  # browser(expr= "nReceiverModel" %in% names(specs))
+
+  # If there are remaining loops to process, handle the repeated block recursively
+  if(length(remaining_loops) > 0) {
+    # Get the current loop variable and its repetition count from prev_data
     loop_var <- remaining_loops[1]
     num_repeats <- prev_data[[loop_var]]
+
+    # Update the list of remaining loops by removing the current one
     remaining_loops <- remaining_loops[-1]
 
+    # Initialize a list to store data from repeated blocks
     repeated_data <- vector("list", num_repeats)
-    for (i in seq_len(num_repeats)) {
-      repeated_data[[i]] <- readV6BlockData(specs, connection,endian, prev_data, remaining_loops)
 
+    # Recursively call readV6BlockData for each iteration of the current loop
+    for (i in seq_len(num_repeats)) {
+      repeated_data[[i]] <- readV6BlockData(specs, connection, endian, prev_data, remaining_loops)
     }
 
+    # Transpose the list to group by variable rather than by loop iteration
     repeated_data <- purrr::list_transpose(repeated_data)
 
-    repeated_data %<>% purrr::map(\(x) list(loop=loop_var,data=x))
+    # Add loop information to the data
+    repeated_data %<>% purrr::map(\(x) list(loop = loop_var, data = x))
 
     return(repeated_data)
   }
 
+  # If there are no remaining loops, handle the regular block
+  # Filter out repeated block specifications
+  regular_specs <- specs[names(specs) != "repeat"]
 
-  regular_specs <- specs[names(specs) !="repeat"]
-
+  # Initialize an output list
   out <- list()
 
-  if (length(regular_specs)>0) {
+  # If there are regular specs, read the regular block data
+  if (length(regular_specs) > 0) {
     regular_block <- seasonder_readSeaSondeCSFileBlock(regular_specs, connection, endian)
-    out <- c(out,regular_block)
+    out <- c(out, regular_block)
   }
 
-  if("repeat" %in% names(specs)){
-  repeat_specs <- specs[["repeat"]]
-  remaining_loops <- repeat_specs$how_many
+  # If the specs contain a "repeat" key, handle the repeated block
+  if("repeat" %in% names(specs)) {
+    repeat_specs <- specs[["repeat"]]
+    remaining_loops <- repeat_specs$how_many
 
+    # Recursively call readV6BlockData for the repeated block
+    repeat_result <- readV6BlockData(repeat_specs$what, connection, endian, prev_data, remaining_loops)
 
-    repeat_result <- readV6BlockData(repeat_specs$what, connection,endian, prev_data, remaining_loops)
-
-    out <- c(out,repeat_result)
+    # Merge the repeated block data into the output
+    out <- c(out, repeat_result)
   }
 
-
-out
-
+  # Return the merged regular and repeated block data
+  return(out)
 }
 
-# Supongo que la función seasonder_readSeaSondeCSFileBlock ha sido renombrada a la función proporcionada para leer bloques regulares y repetidos.
+#' Read SeaSonde CS File Header V6
+#'
+#' This function reads the header of a SeaSonde CS File Version 6.
+#' It sequentially reads blocks based on the provided specifications and returns the read data.
+#'
+#' @param specs A list of specifications for reading the file header. It should contain three main elements:
+#' `nCS6ByteSize`, `block_spec`, and `blocks`, each containing further specifications for reading various parts of the header.
+#' @param connection A connection object to the SeaSonde CS file.
+#' @param endian The byte order for reading the file. Default is "big".
+#' @param prev_data Previous data, if any, that might affect the current reading. Default is NULL.
+#'
+#' @return A list containing the read data, organized based on the block keys.
+#'
+#' @export
+seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "big", prev_data = NULL) {
+
+  # Step 1: Specification Validation
+  seasonder_check_specs(specs, c("nCS6ByteSize","block_spec"))
+
+  # Step 2: Field Reading
+  nCS6ByteSize <- seasonder_readSeaSondeCSFileBlock(specs["nCS6ByteSize"], connection, endian)$nCS6ByteSize
+  results <- list()
+
+  # Continue reading as long as there are bytes left in the CS6 Byte Size
+  while (nCS6ByteSize > 0) {
+    # Read the block key and block data size
+    block <- seasonder_readSeaSondeCSFileBlock(specs$block_spec, connection, endian)
+
+    # If the block key is recognized:
+    if (!is.null(specs$blocks[[block$nBlockKey]])) {
+      # Read block data using readV6BlockData
+      block_data <- readV6BlockData(specs$blocks[[block$nBlockKey]], connection, endian, prev_data)
+
+      # Apply transformations if they exist
+      if (!is.null(seasonder_the$transform_functions[[block$nBlockKey]])) {
+        block_data <- seasonder_the$transform_functions[[block$nBlockKey]](block_data)
+      }
+
+      # Store the results
+      results[[block$nBlockKey]] <- block_data
+    } else {
+      # If the block key is not recognized, skip bytes as per the block data size
+      seek(connection, block$nBlockDataSize, origin = "current")
+    }
+
+    # Subtract the current read size from nCS6ByteSize
+    nCS6ByteSize <- nCS6ByteSize - 8 - block$nBlockDataSize
+  }
+
+  # Return the results
+  return(results)
+}
+
 
 
 
@@ -496,7 +596,7 @@ out
 #' @return List. A combination of the initial `pool` and the processed header for the given `version`.
 #'         Fields in the current header will overwrite or append to the pool as described above.
 #'
-process_version_header <- function(pool, version, specs, connection, endian = "big") {
+process_version_header <- function(pool, version, specs, connection, endian = "big", prev_data = NULL) {
   # Construct the function name based on the provided version
   function_name <- paste0("seasonder_readSeaSondeCSFileHeaderV", version)
 
@@ -504,7 +604,7 @@ process_version_header <- function(pool, version, specs, connection, endian = "b
   header_function <- get(function_name)
 
   # Process the current version header
-  current_header <- header_function(specs[[paste0("V", version)]], connection, endian)
+  current_header <- header_function(specs[[paste0("V", version)]], connection, endian,  prev_data = prev_data)
 
   # Overwrite overlapping fields from the pool with the current header
   overlapping_keys <- intersect(names(pool), names(current_header))
@@ -541,16 +641,83 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
   versions_to_process <- 2:file_version
 
   # Reduce the list of versions to process them sequentially
-  header_pool <- purrr::reduce(versions_to_process, \(pool, version) process_version_header(pool = pool, version = version, specs = specs, connection = connection, endian = endian), .init = header_v1)
+  header_pool <- purrr::reduce(versions_to_process, \(pool, version){
+
+    out <- process_version_header(pool = pool, version = version, specs = specs, connection = connection, endian = endian, prev_data = pool)
+
+    out
+  }, .init = header_v1)
 
   return(header_pool)
 }
 
 
+#### Transform functions ####
+
+seasonder_the$transform_functions <- list()
+
+seasonder_the$transform_functions[["TIME"]] <- function(x) {
+  x$nTimeMark %<>% factor(levels=c(0L,1L,2L),labels=c("start","center time","end time"))
+  x
+}
+
+seasonder_the$transform_functions[["RCVI"]] <- function(x) {
+  x$nReceiverModel %<>% factor(levels=c(0L,1L,2L,3L,4L,5L),labels=c("Unknown", "Awg3/Rcvr2 Chassis AC", "Awg3/Rcvr2 Chassis DC", "AllInOne", "Awg4 Chassis AC","Awg4 Chassis DC"))
+  x$nRxAntennaModel %<>% factor(levels=c(0L,1L,2L,3L,4L,5L),labels=c("Unknown", "Box Loops","2","3", "Dome Loops","TR Dome Loops"))
+
+  x
+}
+
+
+seasonder_the$transform_functions[["GLRM"]] <- function(x) {
+  x$nReceiverModel %<>% factor(levels=c(0L,1L,2L,3L,4L),labels=c("Off","Point","Range","Range&Point", "SubDCOnly"))
+  x
+}
+
+
+seasonder_the$transform_functions[["SUPI"]] <- function(x) {
+  x$nMethod %<>% factor(levels=c(0L,1L),labels=c("Off","Normal"))
+  x$nMode %<>% factor(levels=c(0L,1L,2L,3L),labels=c("Light","Heavy","MaxLight","MaxHeavy"))
+  x$nDebugMode %<>% factor(levels=c(0L,1L),labels=c("Off","On"))
+  x
+}
+
+
+
+seasonder_the$transform_functions[["FWIN"]] <- function(x) {
+
+  x$nRangeWindowType %<>% factor(levels=c(0L,1L,2L,3L),labels=c("None","Blackman", "Hamming", "Tukey"))
+  x$nDopplerWindowType %<>% factor(levels=c(0L,1L,2L,3L),labels=c("None","Blackman", "Hamming", "Tukey"))
+  x
+}
+
+seasonder_the$transform_functions[["IQAP"]] <- function(x) {
+
+  x$nRangeWindowType %<>% factor(levels=c(0L,1L,2L),labels=c("Off","Measured","Corrected"))
+
+  x
+}
+
+seasonder_the$transform_functions[["FILL"]] <- function(x) {
+
+  x$nRangeMethod %<>% factor(levels=c(0L,1L,2L),labels=c("None", "Linear", "FFTPadding"))
+  x$nDopplerMethod %<>% factor(levels=c(0L,1L,2L),labels=c("None", "Linear", "FFTPadding"))
+
+  x
+}
+
+seasonder_the$transform_functions[["BRGR"]] <- function(x) {
+
+  x$nBraggReject$data %<>% factor(levels=c(0L,1L,2L,3L),labels=c("OK", "RejectNegBragg", "RejectPosBragg", "RejectBoth"))
+
+
+  x
+}
 
 
 #### QC functions ####
 
+seasonder_the$qc_functions <- list()
 
 #' Quality Control - Check Type
 #'
@@ -573,7 +740,7 @@ qc_check_type <- function(field_value, expected_type) {
 }
 
 
-assign("qc_check_type",qc_check_type,envir = seasonder_the)
+
 
 #' Quality Control - Check Range and Type
 #'
@@ -605,4 +772,10 @@ qc_check_range <- function(field_value, min, max, expected_type = NULL) {
   return(field_value)
 }
 
-assign("qc_check_range",qc_check_range,envir = seasonder_the)
+seasonder_load_qc_functions <- function(){
+
+  seasonder_the$qc_functions[["qc_check_type"]] <- qc_check_type
+  seasonder_the$qc_functions[["qc_check_range"]] <- qc_check_range
+
+}
+seasonder_load_qc_functions()

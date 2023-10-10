@@ -1,3 +1,5 @@
+suppressMessages(here::i_am("tests/testthat/test-SeaSondeCS.R"))
+
 test_that("Related functions are defined",{
 
   expect_true(is.function(seasonder_raw_to_int))
@@ -7,6 +9,9 @@ test_that("Related functions are defined",{
   expect_true(is.function(seasonder_readSeaSondeCSFileHeaderV1))
   expect_true(is.function(seasonder_readSeaSondeCSFileHeaderV2))
   expect_true(is.function(seasonder_readSeaSondeCSFileHeaderV3))
+  expect_true(is.function(seasonder_readSeaSondeCSFileHeaderV4))
+  expect_true(is.function(seasonder_readSeaSondeCSFileHeaderV5))
+  expect_true(is.function(seasonder_readSeaSondeCSFileHeaderV6))
 
 })
 
@@ -233,19 +238,19 @@ describe("read_and_qc_field", {
   # Simulate the behavior of seasonder_readCSField
   mocked_seasonder_readCSField <- mockthat::mock(123)  # Returns 123 by default
 
-  assign("qc_check_range", function(field_value, min, max) {
+  seasonder_the$qc_functions[["qc_check_range"]]<- function(field_value, min, max) {
     if (is.null(field_value) || field_value < min || field_value > max) {
       return(NULL)
     }
     return(field_value)
-  }, envir = seasonder_the)
+  }
 
-  assign("qc_check_not_null", function(field_value) {
+  seasonder_the$qc_functions[["qc_check_not_null"]]<-  function(field_value) {
     if (is.null(field_value)) {
       return(-999)
     }
     return(field_value)
-  }, envir = seasonder_the)
+  }
 
 
   it("reads a simple field and applies QC", {
@@ -287,6 +292,8 @@ describe("read_and_qc_field", {
 
     expect_equal(result, -999)  # -999 is our default value in case of NULL
   })
+
+  seasonder_load_qc_functions()
 
 })
 
@@ -446,9 +453,9 @@ describe("seasonder_readSeaSondeCSFileHeaderV1 works as expected", {
   mocked_block_function <- function(spec, connection, endian="big") {
     # Here, you can return any predefined value to simulate the function's behavior.
     list(
-      nCsFileVersion = 10,
+      nCsFileVersion = 10L,
       nDateTime = as.integer(Sys.Date()), # convert today's date to integer
-      nV1Extent = 1000
+      nV1Extent = 1000L
     )
   }
 
@@ -840,15 +847,15 @@ describe("readV6BlockData works as expected", {
     expect_equal(results$Var4,targetV4)
 
     targetV5 <- list(loop="L1",
-                                 data=list(
-                                   list(loop="L2",
-                                                    data=c("sampleValueVar5_6","sampleValueVar5_5","sampleValueVar5_4")
-                                   ),
-                                   list(loop="L2",
-                                                    data=c("sampleValueVar5_3","sampleValueVar5_2","sampleValueVar5_1")
-                                   )
+                     data=list(
+                       list(loop="L2",
+                            data=c("sampleValueVar5_6","sampleValueVar5_5","sampleValueVar5_4")
+                       ),
+                       list(loop="L2",
+                            data=c("sampleValueVar5_3","sampleValueVar5_2","sampleValueVar5_1")
+                       )
 
-                                 )
+                     )
     )
 
 
@@ -856,6 +863,111 @@ describe("readV6BlockData works as expected", {
   })
 
 })
+
+
+describe("seasonder_readSeaSondeCSFileHeaderV6 works as expected", {
+
+  mock_factory <- function(){
+
+
+    .outputs <- list(list(nCS6ByteSize=130L),
+                     list(
+                       nBlockKey = "REGB",
+                       nBlockDataSize = 52L
+                     ),
+                     list(
+                       nBlockKey = "UNKW",
+                       nBlockDataSize = 32L
+                     ),
+                     list(
+                       nBlockKey = "BRGR",
+                       nBlockDataSize = 22L
+                     )
+    )
+
+    .i <- 1
+
+
+    function(spec, connection, endian, prev_data) {
+
+      out <- .outputs[[.i]]
+      .i <<- .i +1
+
+      out
+    }
+
+
+
+  }
+
+
+
+  # Define your mock for readV6BlockData
+  mocked_block_data_function_factory <- function(){
+
+    .outputs <- list(
+      list(
+        Var1 = "TestValue1",
+        Var2 = "TestValue2"
+      ),
+      list(nBraggReject=list(loop="L1",data=c(0L,1L,2L,3L)))
+    )
+
+    .i <- 1
+
+    function(block_specs, connection, endian="big", prev_data = list()) {
+
+      out <- .outputs[[.i]]
+      .i <<- .i +1
+
+      out
+    }
+  }
+
+
+  # Mocked specs based on YAML
+  specs <- list(
+    nCS6ByteSize = list(type = "UInt32", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer")),
+    block_spec = list(
+      nBlockKey = list(type = "Char4", qc_fun = "qc_check_type", qc_params = list(expected_type = "character")),
+      nBlockDataSize = list(type = "UInt32", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer"))
+    ),
+    blocks = list(
+      REGB = list(
+        Var1 = list(type = "varType", qc_fun = "qc_fun_name", qc_params = list(param1 = "value1")),
+        Var2 = list(type = "varType", qc_fun = "qc_fun_name", qc_params = list(param1 = "value"))
+      ),
+      BRGR = list("repeat"=list(how_many="L1",what=list(nBraggReject=list(type = "varType", qc_fun = "qc_fun_name", qc_params = list(param1 = "value1")))))
+    )
+  )
+
+  it("returns correct block key", {
+    # Define your mock for seasonder_readSeaSondeCSFileBlock
+
+    con <- rawConnection(openssl::rand_bytes(100))
+    on.exit(close(con))
+    mocked_block_function <- mock_factory()
+    mocked_block_data_function <- mocked_block_data_function_factory()
+    results <- mockthat::with_mock(
+      seasonder_readSeaSondeCSFileBlock = mocked_block_function,
+      readV6BlockData = mocked_block_data_function,
+
+      {
+        seasonder_readSeaSondeCSFileHeaderV6(specs, con)
+      })
+    expect_true(!is.null(results$REGB))
+    expect_equal(results$REGB$Var1, "TestValue1")
+    expect_equal(results$REGB$Var2, "TestValue2")
+
+    expect_null(results$UNKW)
+
+    expect_equal(as.character(results$BRGR$nBraggReject$data),c("OK", "RejectNegBragg", "RejectPosBragg", "RejectBoth"))
+  })
+
+
+
+})
+
 
 
 #### QC ####
@@ -916,3 +1028,26 @@ describe("QC functions work as expected", {
 
 
 
+#### Real data tests ####
+
+
+describe("CSS file",{
+
+
+  describe("Read header",{
+
+           specs <- seasonder_readYAMLSpecs(here::here("inst/specs/CS_V1.yaml"),"header")
+
+           it("should read the header",{
+              con <- file(here::here("tests/testthat/data/CSS_V6.cs"),"rb")
+              on.exit(close(con))
+
+              test <- expect_silent(seasonder_readSeaSondeCSFileHeader(specs,con))
+
+              expect_snapshot_value(test,style="serialize")
+
+           })
+
+           })
+
+})

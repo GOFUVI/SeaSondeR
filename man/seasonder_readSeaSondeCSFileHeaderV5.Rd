@@ -4,7 +4,12 @@
 \alias{seasonder_readSeaSondeCSFileHeaderV5}
 \title{Read SeaSonde File Header (Version 5)}
 \usage{
-seasonder_readSeaSondeCSFileHeaderV5(specs, connection, endian = "big")
+seasonder_readSeaSondeCSFileHeaderV5(
+  specs,
+  connection,
+  endian = "big",
+  prev_data = NULL
+)
 }
 \arguments{
 \item{specs}{A list containing specifications for reading the file.}

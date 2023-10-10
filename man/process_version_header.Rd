@@ -4,7 +4,14 @@
 \alias{process_version_header}
 \title{Process a Specific Version of the SeaSonde File Header}
 \usage{
-process_version_header(pool, version, specs, connection, endian = "big")
+process_version_header(
+  pool,
+  version,
+  specs,
+  connection,
+  endian = "big",
+  prev_data = NULL
+)
 }
 \arguments{
 \item{pool}{List. An accumulating list of processed headers from prior versions.}
