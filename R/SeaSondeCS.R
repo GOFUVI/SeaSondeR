@@ -28,7 +28,53 @@ seasonder_readSeaSondeCSFile <- function(filepath){
 
 
 
-seasonder_readSeaSondeCSFileData <- function(connection,header){
+seasonder_readSeaSondeCSFileData <- function(connection,header,endian="big"){
+
+
+  nRanges <- header$nRangeCells
+  nDoppler <- header$nDopplerCells
+  nCSKind <- header$nCsKind
+
+out <- list(SSA1=matrix(NA_real_,nRanges*nDoppler,ncol = nDoppler,byrow = T),
+            SSA2=matrix(NA_real_,nRanges*nDoppler,ncol = nDoppler,byrow = T),
+            SSA3=matrix(NA_real_,nRanges*nDoppler,ncol = nDoppler,byrow = T),
+
+            CS12=matrix(complex(real=NA_real_,imaginary = NA_real_),nRanges*nDoppler,ncol = nDoppler,byrow = T),
+            CS13=matrix(complex(real=NA_real_,imaginary = NA_real_),nRanges*nDoppler,ncol = nDoppler,byrow = T),
+            CS23=matrix(complex(real=NA_real_,imaginary = NA_real_),nRanges*nDoppler,ncol = nDoppler,byrow = T),
+
+            QC=matrix(NA_real_,nRanges*nDoppler,ncol = nDoppler,byrow = T)
+            )
+
+
+  read_complex_vector <- function(connection,n,endian){
+
+    cplx_data <-  readBin(connection, what="numeric", n=n*2, size=4, endian=endian)
+    complex(real=cplx_data[rep(c(T,F),n)],imaginary = cplx_data[rep(c(F,T),n)])
+  }
+
+  for(i in seq_len(nRanges)){
+
+    out$SSA1[i,] <- readBin(connection, what="numeric", n=nDoppler, size=4, endian=endian)
+    out$SSA2[i,] <- readBin(connection, what="numeric", n=nDoppler, size=4, endian=endian)
+    out$SSA3[i,] <- readBin(connection, what="numeric", n=nDoppler, size=4, endian=endian)
+
+    out$CS12[i,] <- read_complex_vector(connection,nDoppler,endian)
+    out$CS13[i,] <- read_complex_vector(connection,nDoppler,endian)
+    out$CS23[i,] <- read_complex_vector(connection,nDoppler,endian)
+
+    if(nCSKind >=2){
+      out$QC[i,] <- readBin(connection, what="numeric", n=nDoppler, size=4, endian=endian)
+    }
+  }
+
+
+
+
+
+  return(out)
+
+
 
 }
 
@@ -126,7 +172,7 @@ seasonder_readCSField <- function(con, type, endian="big") {
          "SInt16"  = as.integer(read_values(2, "int")),
          "UInt32"  = as.integer(read_values(4, "int")),
          "SInt32"  = as.integer(read_values(4, "int")),
-         "Float"   = as.numeric(read_values(4, "double")),
+         "Float"   = as.numeric(read_values(4, "numeric")),
          "Double"  = as.numeric(read_values(8, "double")),
          "UInt64"  = {
            v <- read_values(1, "raw", n=8)

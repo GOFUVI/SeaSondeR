@@ -1050,4 +1050,24 @@ describe("CSS file",{
 
            })
 
+
+  describe("Full File",{
+
+    specs_header <- seasonder_readYAMLSpecs(here::here("inst/specs/CS_V1.yaml"),"header")
+
+
+    it("should read the header",{
+      con <- file(here::here("tests/testthat/data/CSS_V6.cs"),"rb")
+      on.exit(close(con))
+
+      header <- seasonder_readSeaSondeCSFileHeader(specs_header,con)
+
+      test <- expect_silent(seasonder_readSeaSondeCSFileData(con,header))
+
+      gc()
+
+    })
+
+  })
+
 })

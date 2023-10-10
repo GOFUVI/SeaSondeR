@@ -617,3 +617,4 @@ header:
                 min: 0
                 max: 3
                 expected_type: "integer"
+
