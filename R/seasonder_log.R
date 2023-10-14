@@ -122,6 +122,8 @@ seasonder_archive_expression_log <- function(expr, ...){
 #'
 #' @param msg A character string indicating the message to be logged and informed.
 #' @param log_level A character string indicating the level of the log ("info", "error", "fatal"). Default is "info".
+#' @param calling_function function where the condition happened. If NULL (default), the code tries to determine which one was.
+#' @param ... passed to `rlang::inform` (log_level="info") or `rlang::warn` (log_level="error").
 #' @return An invisible NULL. The function modifies the shared environment `seasonder_the` in place if logs are enabled, and informs the message if messages are enabled.
 #' @export
 #' @examples
@@ -132,12 +134,14 @@ seasonder_archive_expression_log <- function(expr, ...){
 #' my_function()
 #' }
 #'
-seasonder_logAndMessage <- function(msg,log_level="info") {
+seasonder_logAndMessage <- function(msg,log_level="info",calling_function=NULL,...) {
 
 
   # Get the name of the calling function
 
-  calling_function <- sys.call(-1)[[1]]
+  if(is.null(calling_function)){
+    calling_function <- sys.call(-1)[[1]]
+  }
 
   full_msg <- msg
 
@@ -156,11 +160,11 @@ seasonder_logAndMessage <- function(msg,log_level="info") {
   }
 
   if (seasonder_areMessagesEnabled() & log_level=="info") {
-    rlang::inform(full_msg)
+    rlang::inform(full_msg,...)
   }
 
   if (log_level=="error") {
-    rlang::warn(full_msg)
+    rlang::warn(full_msg,...)
   }
 
   if (seasonder_areLogsEnabled()) {
@@ -175,6 +179,8 @@ seasonder_logAndMessage <- function(msg,log_level="info") {
 #' It prefixes the abort message with the name of the calling function.
 #'
 #' @param msg A character string indicating the message
+#' @param calling_function function where the condition happened. If NULL (default), the code tries to determine which one was.
+#' @param ... passed to `rlang::abort`
 #' @return An invisible NULL. The function modifies the shared environment `seasonder_the` in place if logs are enabled.
 #' @export
 #' @examples
@@ -185,14 +191,14 @@ seasonder_logAndMessage <- function(msg,log_level="info") {
 #' my_function()
 #' }
 #'
-seasonder_logAndAbort <- function(msg) {
+seasonder_logAndAbort <- function(msg,calling_function=NULL,...) {
 
   log_level <- "fatal"
 
   # Get the name of the calling function
-
+if(is.null(calling_function)){
   calling_function <- sys.call(-1)[[1]]
-
+}
   full_msg <- msg
 
 
@@ -208,7 +214,7 @@ seasonder_logAndAbort <- function(msg) {
     full_msg <- msg
   }
 
-  rlang::abort(full_msg)
+  rlang::abort(full_msg,...)
 
 
   if (seasonder_areLogsEnabled()) {

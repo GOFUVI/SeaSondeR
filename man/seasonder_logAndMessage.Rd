@@ -4,12 +4,16 @@
 \alias{seasonder_logAndMessage}
 \title{Log and Inform Message in SeaSondeR}
 \usage{
-seasonder_logAndMessage(msg, log_level = "info")
+seasonder_logAndMessage(msg, log_level = "info", calling_function = NULL, ...)
 }
 \arguments{
 \item{msg}{A character string indicating the message to be logged and informed.}
 
 \item{log_level}{A character string indicating the level of the log ("info", "error", "fatal"). Default is "info".}
+
+\item{calling_function}{function where the condition happened. If NULL (default), the code tries to determine which one was.}
+
+\item{...}{passed to \code{rlang::inform} (log_level="info") or \code{rlang::warn} (log_level="error").}
 }
 \value{
 An invisible NULL. The function modifies the shared environment \code{seasonder_the} in place if logs are enabled, and informs the message if messages are enabled.

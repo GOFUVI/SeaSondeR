@@ -99,6 +99,11 @@ describe("seasonder_readCSField", {
     con <- rawConnection(as.raw(c(0x42, 0x29, 0xa3, 0xd7)))
     on.exit(close(con))
     expect_equal(seasonder_readCSField(con, "Float"), 42.41, tolerance = 0.0001)
+    close(con)
+    # Float for 42.41 in IEEE single precision is 0x4229a3d7
+    con <- rawConnection(as.raw(c(0x42, 0x2a, 0x00, 0x00)))
+    on.exit(close(con))
+    expect_equal(seasonder_readCSField(con, "Float"), 42.500001, tolerance = 0.0001)
 
   })
 
@@ -191,25 +196,33 @@ describe("seasonder_readCSField", {
 
 
 
-  it("should throw an error if connection is not open", {
+  it("should throw a seasonder_cs_field_reading_error if connection is not open", {
     con <- rawConnection(as.raw(c(0x12)))
     close(con)  # Close the connection before using it
-    expect_error(seasonder_readCSField(con, "UInt8"), "Connection is not open.")
+    expect_error(seasonder_readCSField(con, "UInt8"), "Connection is not open.",class = "seasonder_cs_field_reading_error")
+
   })
 
-  it("should throw an error if there is any problem while reading", {
+  it("should throw a seasonder_cs_field_reading_error if there is any problem while reading", {
     con <- textConnection("Test")
     on.exit(close(con))
-    expect_warning(seasonder_readCSField(con, "UInt8"), "Error while reading value.")
+    expect_error(seasonder_readCSField(con, "UInt8"), "Error while reading value.",class = "seasonder_cs_field_reading_error")
   })
 
-  it("should handle unknown types using seasonder_LogAndMessage", {
+  it("should throw a seasonder_cs_field_reading_error for unknown types", {
     con <- rawConnection(as.raw(c(0x12)))
     on.exit(close(con))
-    expect_warning(seasonder_readCSField(con, "UnknownType"), "seasonder_readCSField: Type Unknown: 'UnknownType'.")
+    expect_error(seasonder_readCSField(con, "UnknownType"), "seasonder_readCSField: Type Unknown: 'UnknownType'.",class = "seasonder_cs_field_reading_error")
 
   })
 
+  it("should throw a seasonder_cs_field_reading_error when reaching the end of the file", {
+    con <- rawConnection(as.raw(c(0x12)))
+    on.exit(close(con))
+    seasonder_readCSField(con, "UInt8")
+    expect_error(seasonder_readCSField(con, "UInt8"), "Read value of length 0. Possibly reached end of file.",class = "seasonder_cs_field_reading_error")
+
+  })
 
   it("should read CharN types correctly", {
     # Create a test for Char4
@@ -228,6 +241,35 @@ describe("seasonder_readCSField", {
     con <- rawConnection(charToRaw("T st!"))  # Create a raw connection with the string "T st!"
     on.exit(close(con))
     expect_equal(seasonder_readCSField(con, "Char5"), "T st!")
+  })
+
+  it("should provide a seasonder_skip_cs_field restart that returns a given value",{
+
+    con <- rawConnection(as.raw(c(0x12)))
+    close(con)  # Close the connection before using it
+    expect_warning(
+
+      res <- withCallingHandlers(seasonder_cs_field_reading_error= function(cond)  seasonder_skip_cs_field(cond,NA),
+                        seasonder_readCSField(con, "UInt8")
+                        ), "Connection is not open.")
+
+    expect_true(is.na(res))
+
+  })
+
+  it("should provide a seasonder_skip_cs_field restart that returns a given value",{
+
+    con <- rawConnection(as.raw(c(0x12)))
+    on.exit(close(con))
+    seasonder_readCSField(con, "UInt8")
+    expect_warning(
+
+      res <- withCallingHandlers(seasonder_cs_field_reading_error= function(cond)  seasonder_skip_cs_field(cond,NA),
+                                 seasonder_readCSField(con, "UInt8")
+      ), "Read value of length 0. Possibly reached end of file.")
+
+    expect_true(is.na(res))
+
   })
 
 })
@@ -332,6 +374,37 @@ describe("seasonder_readSeaSondeCSFileBlock", {
     expect_equal(names(result), c("temp", "pressure"))
     expect_equal(result$temp, 123)
     expect_equal(result$pressure, 456)
+  })
+
+  describe("when a field is skipped",{
+
+    it("should throw a warning and return the value",{
+
+
+      con <- rawConnection(as.raw(c(0x12)))
+
+      spec <- list(
+        temp = list(type = "UInt8", qc_fun = "qc_check_type", qc_params = list(expected_type="integer")),
+        pressure = list(type = "UInt8", qc_fun = "qc_check_type", qc_params = list(expected_type="integer"))
+      )
+
+      expect_warning(
+
+      result <- withCallingHandlers(seasonder_cs_field_reading_error= function(cond){
+
+        seasonder_skip_cs_field(cond,NA)
+
+        },
+      seasonder_readSeaSondeCSFileBlock(spec, connection = con)
+),"Field pressure: seasonder_readCSField: Error while reading value: Read value of length 0. Possibly reached end of file.")
+
+
+      expect_equal(result,list(temp=18,pressure=NA))
+
+
+
+    })
+
   })
 
 })
@@ -1036,19 +1109,19 @@ describe("CSS file",{
 
   describe("Read header",{
 
-           specs <- seasonder_readYAMLSpecs(here::here("inst/specs/CS_V1.yaml"),"header")
+    specs <- seasonder_readYAMLSpecs(here::here("inst/specs/CS_V1.yaml"),"header")
 
-           it("should read the header",{
-              con <- file(here::here("tests/testthat/data/CSS_V6.cs"),"rb")
-              on.exit(close(con))
+    it("should read the header",{
+      con <- file(here::here("tests/testthat/data/CSS_V6.cs"),"rb")
+      on.exit(close(con))
 
-              test <- expect_silent(seasonder_readSeaSondeCSFileHeader(specs,con))
+      test <- expect_silent(seasonder_readSeaSondeCSFileHeader(specs,con))
 
-              expect_snapshot_value(test,style="serialize")
+      expect_snapshot_value(test,style="serialize")
 
-           })
+    })
 
-           })
+  })
 
 
   describe("Full File",{
@@ -1064,10 +1137,95 @@ describe("CSS file",{
 
       test <- expect_silent(seasonder_readSeaSondeCSFileData(con,header))
 
-      gc()
+      expect_snapshot_value(test,style="serialize")
+
+
 
     })
 
   })
+
+})
+
+
+
+describe("seasonder_readSeaSondeCSFile",{
+
+
+  test_that("seasonder_readSeaSondeCSFile works correctly", {
+    # Setup mock functions
+
+        describe("File size validations", {
+          it("should return error for file size <= 10 bytes", {
+            # Create a mock file with size < 10
+
+            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
+                                                      list("fake_header_data")
+            )
+
+
+            # Mock para seasonder_readSeaSondeCSFileHeader
+            mock_readHeader <- mock_output_factory(
+              list(nCsFileVersion = 1, nV1Extent = 0)
+            )
+
+            # Mock para seasonder_readSeaSondeCSFileData
+            mock_readData <- mock_output_factory(
+              list("fake_data")
+            )
+
+            tmp <- tempfile()
+            writeLines(rep("a", 9), tmp)
+            result <-   mockthat::with_mock(
+              seasonder_readYAMLSpecs = mock_readYAMLSpecs,
+              seasonder_readSeaSondeCSFileHeader = mock_readHeader,
+              seasonder_readSeaSondeCSFileData = mock_readData,
+
+              seasonder_readSeaSondeCSFile(tmp, "fake_path")
+            )
+
+            expect_warning(result$header, "Invalid file size.")
+          })
+        })
+
+        describe("nCsFileVersion validations", {
+          it("should return error for nCsFileVersion outside [1, 32]", {
+            # Modify the mock for seasonder_readSeaSondeCSFileHeader
+
+            mock_readYAMLSpecs <- mock_output_factory(list(metadata = list(version = 1)),
+                                                      list(header = "fake_header_data")
+            )
+
+
+            # Mock para seasonder_readSeaSondeCSFileHeader
+            mock_readHeader <- mock_output_factory(
+              list(nCsFileVersion = 33, nV1Extent = 0)
+            )
+
+            # Mock para seasonder_readSeaSondeCSFileData
+            mock_readData <- mock_output_factory(
+              list(data = "fake_data")
+            )
+
+
+            result <- mock_readYAMLSpecs <- mock_output_factory(list(metadata = list(version = 1)),
+                                                                list(header = "fake_header_data")
+            )
+
+
+
+
+            # Mock para seasonder_readSeaSondeCSFileData
+           seasonder_readSeaSondeCSFile("fake_path", "fake_path")
+            expect_warning(result$header, "Invalid nCsFileVersion.")
+          })
+        })
+
+        # ... More tests can be added in similar fashion ...
+
+      }
+    )
+  })
+
 
 })

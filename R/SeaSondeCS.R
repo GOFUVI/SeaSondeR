@@ -1,82 +1,87 @@
+
+
+
 #' @export
 create_SeaSondeCS <- function(){
 
 }
 
+
+seasonder_skip_cs_file <- function(cond) invokeRestart("seasonder_skip_cs_file",cond)
 #' @export
-seasonder_readSeaSondeCSFile <- function(filepath){
+seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
+
+  conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFile",class="seasonder_read_cd_file_error",seasonder_cs_filepath=filepath,seasonder_cs_specs_path=specs_path)
+
+  withRestarts(
+    seasonder_skip_cs_file=function(cond){
+      seasonder_logAndMessage(glue::glue("An issue happened while processing the file {cond$seasonder_cs_filepath}, skipping. Issue: {condMessage(cond)}"),"error",calling_function = "seasonder_readSeaSondeCSFile",class="seasonder_skip_cs_file",parent=cond)
+      return(list(header=NULL,data=NULL))
+    },
+    {
+      connection <- file(filepath, "rb")
+      on.exit(close(connection), add = TRUE)
+
+      specs_metadata <- seasonder_readYAMLSpecs(specs_path, "metadata")
+      specs_header <- seasonder_readYAMLSpecs(specs_path, "header")
 
 
-  # Crear conexión y manejar endianidad
-  ...
+      yaml_version <- specs_metadata$version
+      if (!(yaml_version %in% seasonder_the$valid_yaml_seasondecs_versions)) {
+        rlang::inject(seasonder_logAndAbort("Unsupported version.",!!!conditions_params))
+      }
 
-  # Obtener especificaciones y comprobar versión
+      header <- seasonder_readSeaSondeCSFileHeader(specs_header, connection)
 
+      # Validaciones
+      file_size <- file.info(filepath)$size
 
+      if (file_size <= 10) rlang::inject(seasonder_logAndAbort("Invalid file size.",!!!conditions_params))
 
+      if (header$nCsFileVersion < 1 || header$nCsFileVersion > 32) rlang::inject(seasonder_logAndAbort("Invalid nCsFileVersion.",!!!conditions_params))
 
-  # Leer encabezado
-  header <- seasonder_readSeaSondeCSFileHeader(connection)
+      if (header$nCsFileVersion == 1 && (file_size <= 10 || header$nV1Extent < 0)) rlang::inject(seasonder_logAndAbort("Invalid file for version 1.",!!!conditions_params))
 
-  # Leer datos (podrías tener otro helper para esto)
-  data <- seasonder_readSeaSondeCSFileData(connection, header)
+      if (header$nCsFileVersion == 2 && (file_size <= 16 || header$nV1Extent < 6 || header$nV2Extend < 0)) rlang::inject(seasonder_logAndAbort("Invalid file for version 2.",!!!conditions_params))
 
-  # Retornar lista con encabezado y datos
-  list(header = header, data = data)
+      if (header$nCsFileVersion == 3 && (file_size <= 24 || header$nV1Extent < 14 || header$nV2Extend < 8 || header$nV3Extent < 0)) rlang::inject(seasonder_logAndAbort("Invalid file for version 3.",!!!conditions_params))
 
-}
+      if (header$nCsFileVersion == 4 && (file_size <= 72 || header$nV1Extent < 62 || header$nV2Extend < 56 || header$nV3Extent < 48 || header$nV4Extent < 0)) rlang::inject(seasonder_logAndAbort("Invalid file for version 4.",!!!conditions_params))
 
+      if (header$nCsFileVersion >= 5 && (file_size <= 100 || header$nV1Extent < 90 || header$nV2Extend < 84 || header$nV3Extent < 76 || header$nV4Extent < 28 || header$nV5Extent < 0)) rlang::inject(seasonder_logAndAbort("Invalid file for version >= 5.",!!!conditions_params))
 
+      if (header$nCsFileVersion >= 6 && header$nV5Extent < header$nCS6ByteSize + 4) rlang::inject(seasonder_logAndAbort("Invalid file for version >= 6.",!!!conditions_params))
 
-seasonder_readSeaSondeCSFileData <- function(connection,header,endian="big"){
+      if (header$nCsFileVersion < 4) {
+        header$nRangeCells <- 32
+        header$nDopplerCells <- 512
+      }
 
+      if (header$nCsFileVersion < 5) {
+        header$nSpectraChannels <- 3
+      }
 
-  nRanges <- header$nRangeCells
-  nDoppler <- header$nDopplerCells
-  nCSKind <- header$nCsKind
+      if (header$nRangeCells <= 0 || header$nRangeCells > 8192 || header$nDopplerCells <= 0 || header$nDopplerCells > 32768) rlang::inject(seasonder_logAndAbort("Invalid nRangeCells or nDopplerCells.",!!!conditions_params))
 
-out <- list(SSA1=matrix(NA_real_,nRanges*nDoppler,ncol = nDoppler,byrow = T),
-            SSA2=matrix(NA_real_,nRanges*nDoppler,ncol = nDoppler,byrow = T),
-            SSA3=matrix(NA_real_,nRanges*nDoppler,ncol = nDoppler,byrow = T),
+      header_size <- header$nV1Extent + 10
 
-            CS12=matrix(complex(real=NA_real_,imaginary = NA_real_),nRanges*nDoppler,ncol = nDoppler,byrow = T),
-            CS13=matrix(complex(real=NA_real_,imaginary = NA_real_),nRanges*nDoppler,ncol = nDoppler,byrow = T),
-            CS23=matrix(complex(real=NA_real_,imaginary = NA_real_),nRanges*nDoppler,ncol = nDoppler,byrow = T),
+      if (header$nCsKind <= 1 && file_size < (header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 36)) rlang::inject(seasonder_logAndAbort("Invalid file size for nCsKind <= 1.",!!!conditions_params))
 
-            QC=matrix(NA_real_,nRanges*nDoppler,ncol = nDoppler,byrow = T)
-            )
+      if (header$nCsKind >= 2 && file_size < (header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 40)) rlang::inject(seasonder_logAndAbort("Invalid file size for nCsKind >= 2.",!!!conditions_params))
 
+      data <- seasonder_readSeaSondeCSFileData(connection, header)
 
-  read_complex_vector <- function(connection,n,endian){
+      return(list(header = header, data = data))
 
-    cplx_data <-  readBin(connection, what="numeric", n=n*2, size=4, endian=endian)
-    complex(real=cplx_data[rep(c(T,F),n)],imaginary = cplx_data[rep(c(F,T),n)])
-  }
-
-  for(i in seq_len(nRanges)){
-
-    out$SSA1[i,] <- readBin(connection, what="numeric", n=nDoppler, size=4, endian=endian)
-    out$SSA2[i,] <- readBin(connection, what="numeric", n=nDoppler, size=4, endian=endian)
-    out$SSA3[i,] <- readBin(connection, what="numeric", n=nDoppler, size=4, endian=endian)
-
-    out$CS12[i,] <- read_complex_vector(connection,nDoppler,endian)
-    out$CS13[i,] <- read_complex_vector(connection,nDoppler,endian)
-    out$CS23[i,] <- read_complex_vector(connection,nDoppler,endian)
-
-    if(nCSKind >=2){
-      out$QC[i,] <- readBin(connection, what="numeric", n=nDoppler, size=4, endian=endian)
-    }
-  }
-
-
-
-
-
-  return(out)
-
-
+    })
 
 }
+
+
+
+
+
+
 
 
 
@@ -111,7 +116,7 @@ seasonder_raw_to_int <- function(r,signed=F){
 
 }
 
-
+seasonder_skip_cs_field <- function(cond,value) invokeRestart("seasonder_skip_cs_field",cond,value)
 
 #' Read a CSField from a Binary Connection
 #'
@@ -122,90 +127,110 @@ seasonder_raw_to_int <- function(r,signed=F){
 #' @param type A character string identifying the type of data to read.
 #' @param endian A character string indicating the byte order. Options are "big" and "little" (default is "big").
 #' @return The value read from the connection.
+#' @importFrom rlang !!!
 #' @examples
 #' con <- rawConnection(as.raw(c(0x12)))
 #' seasonder_readCSField(con, "UInt8")
 #' @seealso seasonder_raw_to_int For converting raw to 64-bit integers.
 seasonder_readCSField <- function(con, type, endian="big") {
+  conditions_params <- list(calling_function = "seasonder_readCSField",class="seasonder_cs_field_reading_error",seasonder_cs_field_type=type,seasonder_cs_endian=endian)
+  out <- withRestarts(seasonder_skip_cs_field=function(cond,value){
 
-  # Check if the connection is open. If not, raise an error.
-  open_con <- try(isOpen(con),silent = T)
-  if (!inherits(open_con,"try-error")) {
-    if(!open_con){
-      seasonder_logAndAbort("Connection is not open.")
+    seasonder_logAndMessage(glue::glue("Skipping CS field, returning {value}: {conditionMessage(cond)}"), "error",calling_function = "seasonder_readCSField",class="seasonder_cs_field_skipped", parent=cond,seasonder_cs_field_value=value)
+    return(value)
+  },
+  {
+
+    # Check if the connection is open. If not, raise an error.
+    open_con <- try(isOpen(con),silent = T)
+    if (!inherits(open_con,"try-error")) {
+      if(!open_con){
+        rlang::inject(seasonder_logAndAbort("Connection is not open.",!!!conditions_params))
+      }
+    }else{
+      rlang::inject(seasonder_logAndAbort("Connection is not open.",!!!conditions_params))
     }
-  }else{
-    seasonder_logAndAbort("Connection is not open.")
-  }
 
-  # Helper function to read values from the connection. This function takes care of potential
-  # reading errors and uses a specific format and byte size to read the values.
-  read_values <- function(bytes, format, n=1) {
-    res <- tryCatch(readBin(con, what=format, n=n, size=bytes, endian=endian),
-                    error = function(e) {
-                      seasonder_logAndMessage("Error while reading value.", "error")
-                      NULL
-                    })
-    return(res)
-  }
+    # Helper function to read values from the connection. This function takes care of potential
+    # reading errors and uses a specific format and byte size to read the values.
+    read_values <- function(bytes, format, n=1) {
+      res <- rlang::try_fetch({
+        out <- readBin(con, what=format, n=n, size=bytes, endian=endian)
+        if(length(out)==0){
+          rlang::abort("Read value of length 0. Possibly reached end of file.")
+        }
+        out
+      },
 
+      error = function(e) {
+        rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading value: {conditionMessage(e)}"),!!!conditions_params, parent=e))
+      })
 
-
-  # Check if it's CharN
-  if (grepl("^Char[0-9]+$", type)) {
-
-    # Read N characters
-    char_length <- as.integer(sub("^Char", "", type))
+      return(res)
+    }
 
 
-    chars <- read_values(1, "raw",char_length)
-    out <- rawToChar(chars)
-    return(out)
-  }
 
-  # Determine the data type specified and read it from the connection accordingly.
-  # If the data type is not recognized, raise an error.
-  switch(type,
-         "UInt8"   = as.integer(read_values(1, "raw")),
-         "SInt8"   = as.integer(read_values(1, "integer")),
-         "UInt16"  = as.integer(read_values(2, "int")),
-         "SInt16"  = as.integer(read_values(2, "int")),
-         "UInt32"  = as.integer(read_values(4, "int")),
-         "SInt32"  = as.integer(read_values(4, "int")),
-         "Float"   = as.numeric(read_values(4, "numeric")),
-         "Double"  = as.numeric(read_values(8, "double")),
-         "UInt64"  = {
-           v <- read_values(1, "raw", n=8)
-           seasonder_raw_to_int(v,signed=FALSE)
-         },
-         "SInt64"  = {
-           v <- read_values(1, "raw", n=8)
-           seasonder_raw_to_int(v,signed=TRUE)
-         },
-         "Complex" = {
-           # Read real and imaginary parts separately and then combine them into a complex number.
-           real_part <- as.numeric(read_values(4, "double"))
-           imag_part <- as.numeric(read_values(4, "double"))
-           complex(real = real_part, imaginary = imag_part)
-         },
-         "String"  = {
-           # Read characters until a null terminator (0) is encountered.
-           chars <- NULL
-           repeat {
-             char <- read_values(1, "raw")
-             if (char == as.raw(0)) break
-             chars <- c(chars, char)
-           }
+    # Check if it's CharN
+    if (grepl("^Char[0-9]+$", type)) {
 
-           rawToChar(do.call(c, list(chars)))
-         },
-         {
-           # Handle unrecognized data types.
-           seasonder_logAndMessage(glue::glue("Type Unknown: '{type}'."),"error")
-           return(NULL)
-         }
-  )
+      # Read N characters
+      char_length <- as.integer(sub("^Char", "", type))
+
+
+      chars <- read_values(1, "raw",char_length)
+      out <- rawToChar(chars)
+      return(out)
+    }
+
+    # Determine the data type specified and read it from the connection accordingly.
+    # If the data type is not recognized, raise an error.
+    switch(type,
+           "UInt8"   = as.integer(read_values(1, "raw")),
+           "SInt8"   = as.integer(read_values(1, "integer")),
+           "UInt16"  = as.integer(read_values(2, "int")),
+           "SInt16"  = as.integer(read_values(2, "int")),
+           "UInt32"  = as.integer(read_values(4, "int")),
+           "SInt32"  = as.integer(read_values(4, "int")),
+           "Float"   = as.numeric(read_values(4, "numeric")),
+           "Double"  = as.numeric(read_values(8, "double")),
+           "UInt64"  = {
+             v <- read_values(1, "raw", n=8)
+             seasonder_raw_to_int(v,signed=FALSE)
+           },
+           "SInt64"  = {
+             v <- read_values(1, "raw", n=8)
+             seasonder_raw_to_int(v,signed=TRUE)
+           },
+           "Complex" = {
+             # Read real and imaginary parts separately and then combine them into a complex number.
+             real_part <- as.numeric(read_values(4, "double"))
+             imag_part <- as.numeric(read_values(4, "double"))
+             complex(real = real_part, imaginary = imag_part)
+           },
+           "String"  = {
+             # Read characters until a null terminator (0) is encountered.
+             chars <- NULL
+             repeat {
+               char <- read_values(1, "raw")
+               if (char == as.raw(0)) break
+               chars <- c(chars, char)
+             }
+
+             rawToChar(do.call(c, list(chars)))
+           },
+           {
+             # Handle unrecognized data types.
+             rlang::inject(seasonder_logAndAbort(glue::glue("Type Unknown: '{type}'."),!!!conditions_params))
+
+           })
+  })
+
+  return(out)
+
 }
+
+
 
 #' Read and Quality Control a Single Field
 #'
@@ -236,17 +261,32 @@ read_and_qc_field <- function(field_spec, connection, endian="big") {
   # Extract the quality control parameters from the specifications
   qc_params <- field_spec$qc_params
 
+
+
   # Read the field using the helper function
-  field_value <- seasonder_readCSField(connection, field_type, endian=endian)
+  field_skipped <- FALSE
 
-  # Apply quality control
-  # Get the quality control function from the shared environment
-  qc_fun <- seasonder_the$qc_functions[[qc_fun_name]]
-  # Call the quality control function with the field value and the specified parameters
-  field_value_after_qc <- do.call(qc_fun, c(list(field_value), qc_params))
+  field_value <- rlang::try_fetch(seasonder_readCSField(connection, field_type, endian=endian),
+                                  seasonder_cs_field_skipped=function(cond){
+                                    field_skipped <<-TRUE
+                                    rlang::cnd_signal(cond)
+                                    return(cond$seasonder_cs_field_value)
 
-  # Return the value after quality control
-  return(field_value_after_qc)
+                                  }
+  )
+  if(!field_skipped){
+    # Apply quality control
+    # Get the quality control function from the shared environment
+    qc_fun <- seasonder_the$qc_functions[[qc_fun_name]]
+    # Call the quality control function with the field value and the specified parameters
+    field_value_after_qc <- do.call(qc_fun, c(list(field_value), qc_params))
+
+    # Return the value after quality control
+    return(field_value_after_qc)
+  }else{
+
+    return(field_value)
+  }
 }
 
 
@@ -300,13 +340,30 @@ read_and_qc_field <- function(field_spec, connection, endian="big") {
 #'
 seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian="big") {
   # Use purrr::map to apply the read_and_qc_field function to each field specification
-  results <- purrr::map(spec, \(field_spec) {
-    out <- try(read_and_qc_field(field_spec=field_spec,connection=connection, endian=endian))
-    if(inherits(out,"try-error")){
-      out <- NULL
-    }
-    out
-  })
+  results <-
+
+
+    withCallingHandlers(
+      purrr::map(spec, \(field_spec)
+                 read_and_qc_field(field_spec=field_spec,connection=connection, endian=endian)),
+      purrr_error_indexed=function(err){
+        parent_err <- err$parent
+
+        parent_err$message <- glue::glue("Field {names(spec)[err$location]}: {err$parent$message}")
+
+        rlang::cnd_signal(parent_err)
+
+      })
+
+
+
+
+
+
+
+
+
+
 
   # Return the results
   return(results)
@@ -440,6 +497,7 @@ seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "bi
 
   # Step 3: Data Transformation
   # Calculate CenterFreq using the provided formula.
+
   results$CenterFreq <- results$fStartFreqMHz + results$fBandwidthKHz/2 * -2^(results$bSweepUp == 0)
 
   # Return the final results, including the CenterFreq.
@@ -698,6 +756,77 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
 }
 
 
+
+# TODO: Improve error management
+#' Read SeaSonde Cross Spectra (CS) File Data
+#'
+#' This function reads the SeaSonde CS file data based on the provided header information.
+#' The CS file data includes the antenna voltage squared self spectra (`SSA*`) and the
+#' antenna cross spectra (`CSxy`). Additionally, a quality matrix (`QC`) is read when the header's
+#' `nCsKind` is greater than or equal to 2.
+#'
+#' @param connection A connection object to the CS file.
+#' @param header A list containing the header information. This is typically the output
+#'   of the `seasonder_readSeaSondeCSFileHeader` function.
+#' @param endian Character string indicating the byte order. Options are "big" (default) or "little".
+#'
+#' @details
+#' - `SSA*`: Represents the Antenna * voltage squared self spectra. These are matrices
+#'   where each row corresponds to a range and each column to a Doppler cell.
+#' - `CSxy`: Represents the cross spectra between two antennas x and y. These are complex matrices.
+#' - `QC`: Quality matrix with values ranging from zero to one. A value less than one indicates
+#'   that the SpectraAverager skipped some data during averaging.
+#'
+#' @return A list containing the matrices for `SSA*`, `CSxy`, and `QC` (when applicable).
+#'
+#' @examples
+#' \dontrun{
+#'   con <- file("path_to_CS_file", "rb")
+#'   header <- seasonder_readSeaSondeCSFileHeader(specs, con)
+#'   data <- seasonder_readSeaSondeCSFileData(con, header)
+#'   close(con)
+#' }
+#' @export
+seasonder_readSeaSondeCSFileData <- function(connection, header, endian="big") {
+  # Extracting information from the header
+  nRanges <- header$nRangeCells
+  nDoppler <- header$nDopplerCells
+  nCSKind <- header$nCsKind
+
+  # Initialize matrices for the spectra
+  out <- list(
+    SSA1 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
+    SSA2 = matrix(rep(NA_real_, NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
+    SSA3 = matrix(rep(NA_real_, NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
+    CS12 = matrix(rep(NA_real_, complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
+    CS13 = matrix(rep(NA_real_, complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
+    CS23 = matrix(rep(NA_real_, complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
+    QC = matrix(rep(NA_real_, NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE)
+  )
+
+  # Helper function to read complex vectors
+  read_complex_vector <- function(connection, n, endian) {
+    cplx_data <- readBin(connection, what="numeric", n = n * 2, size = 4, endian = endian)
+
+    complex(real = cplx_data[rep(c(TRUE, FALSE), n/2)], imaginary = cplx_data[rep(c(FALSE, TRUE), n/2)])
+  }
+
+  # Read data for each range
+  for(i in seq_len(nRanges)) {
+    out$SSA1[i,] <- readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian)
+    out$SSA2[i,] <- readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian)
+    out$SSA3[i,] <- readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian)
+
+    out$CS12[i,] <-  read_complex_vector(connection, nDoppler, endian)
+    out$CS13[i,] <- read_complex_vector(connection, nDoppler, endian)
+    out$CS23[i,] <- read_complex_vector(connection, nDoppler, endian)
+    if(nCSKind >= 2) {
+      out$QC[i,] <- readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian)
+    }
+  }
+  return(out)
+}
+
 #### Transform functions ####
 
 seasonder_the$transform_functions <- list()
@@ -825,3 +954,15 @@ seasonder_load_qc_functions <- function(){
 
 }
 seasonder_load_qc_functions()
+
+
+# Conditions
+
+cs_file_reading_error <- function(e,filepath=NULL,calling_function=NULL){
+
+  message <- glue::glue("An issue happened while processing the file {filepath}. Issue: {as.character(e)}")
+
+  seasonder_logAndAbort(message,calling_function = calling_function,parent=e,filepath=filepath,class="cs_file_reading_issure")
+
+
+}

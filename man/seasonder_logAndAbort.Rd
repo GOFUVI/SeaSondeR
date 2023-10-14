@@ -4,10 +4,14 @@
 \alias{seasonder_logAndAbort}
 \title{Log and Abort Message in SeaSondeR}
 \usage{
-seasonder_logAndAbort(msg)
+seasonder_logAndAbort(msg, calling_function = NULL, ...)
 }
 \arguments{
 \item{msg}{A character string indicating the message}
+
+\item{calling_function}{function where the condition happened. If NULL (default), the code tries to determine which one was.}
+
+\item{...}{passed to \code{rlang::abort}}
 }
 \value{
 An invisible NULL. The function modifies the shared environment \code{seasonder_the} in place if logs are enabled.
