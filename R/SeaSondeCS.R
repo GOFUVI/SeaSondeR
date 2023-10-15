@@ -8,10 +8,11 @@ create_SeaSondeCS <- function(){
 
 
 seasonder_skip_cs_file <- function(cond) invokeRestart("seasonder_skip_cs_file",cond)
+
 #' @export
 seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
 
-  conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFile",class="seasonder_read_cd_file_error",seasonder_cs_filepath=filepath,seasonder_cs_specs_path=specs_path)
+  conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFile",class="seasonder_read_cs_file_error",seasonder_cs_filepath=filepath,seasonder_cs_specs_path=specs_path)
 
   withRestarts(
     seasonder_skip_cs_file=function(cond){
@@ -19,7 +20,12 @@ seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
       return(list(header=NULL,data=NULL))
     },
     {
-      connection <- file(filepath, "rb")
+
+
+      connection <- rlang::try_fetch(
+        file(filepath, "rb"),
+        error=function(e) rlang::inject(seasonder_logAndMessage(glue::glue("Could no open connection to file {filepath}. Reason: {condMessage(e)}."),"error",!!!conditions_params,parent=e))
+      )
       on.exit(close(connection), add = TRUE)
 
       specs_metadata <- seasonder_readYAMLSpecs(specs_path, "metadata")
@@ -116,6 +122,7 @@ seasonder_raw_to_int <- function(r,signed=F){
 
 }
 
+#' @export
 seasonder_skip_cs_field <- function(cond,value) invokeRestart("seasonder_skip_cs_field",cond,value)
 
 #' Read a CSField from a Binary Connection
@@ -129,108 +136,165 @@ seasonder_skip_cs_field <- function(cond,value) invokeRestart("seasonder_skip_cs
 #' @return The value read from the connection.
 #' @importFrom rlang !!!
 #' @examples
+#' \dontrun{
 #' con <- rawConnection(as.raw(c(0x12)))
 #' seasonder_readCSField(con, "UInt8")
+#' }
 #' @seealso seasonder_raw_to_int For converting raw to 64-bit integers.
+#'
+#'
+#' @section Supported Data Types:
+#' This function provides support for reading a variety of data types from a binary connection. The following data types are recognized and can be used for the \code{type} argument:
+#'
+#' \describe{
+#'   \item{\code{CharN}}{Reads N characters from the connection where N is a positive integer. For example, \code{Char5} would read five characters.}
+#'
+#'   \item{\code{UInt8}}{Reads an 8-bit unsigned integer.}
+#'
+#'   \item{\code{SInt8}}{Reads an 8-bit signed integer.}
+#'
+#'   \item{\code{UInt16}}{Reads a 16-bit unsigned integer.}
+#'
+#'   \item{\code{SInt16}}{Reads a 16-bit signed integer.}
+#'
+#'   \item{\code{UInt32}}{Reads a 32-bit unsigned integer.}
+#'
+#'   \item{\code{SInt32}}{Reads a 32-bit signed integer.}
+#'
+#'   \item{\code{Float}}{Reads a single-precision floating-point number.}
+#'
+#'   \item{\code{Double}}{Reads a double-precision floating-point number.}
+#'
+#'   \item{\code{UInt64}}{Reads a 64-bit unsigned integer.}
+#'
+#'   \item{\code{SInt64}}{Reads a 64-bit signed integer.}
+#'
+#'   \item{\code{Complex}}{Reads a complex number by separately reading the real and imaginary parts, which are each represented as double-precision floating-point numbers.}
+#'
+#'   \item{\code{String}}{Reads a null-terminated string.}
+#'}
+#'
+#' If the provided \code{type} does not match any of the supported data types, the function raises an error.
+#'
+#' @section Error Management:
+#' This function utilizes the `rlang` package to manage errors and provide detailed and structured error messages:
+#'
+#' \strong{Error Classes}:
+#' \itemize{
+#'   \item \code{seasonder_cs_field_reading_error}: General error related to reading a CSField from the binary connection.
+#'   \item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped due to a reading error.
+#' }
+#'
+#' \strong{Error Cases}:
+#' \itemize{
+#'   \item Connection is not open.
+#'   \item Error while reading value from connection.
+#'   \item Read value of length 0 from connection (likely reached end of file).
+#'   \item Unrecognized data type specified.
+#' }
+#'
+#' \strong{Restart Options}:
+#' This function provides a structured mechanism to recover from errors during its execution using the `rlang::withRestarts` function. The following restart option is available:
+#'
+#' \describe{
+#'   \item{\code{seasonder_skip_cs_field(cond, value)}}{This allows for the graceful handling of reading errors. If this restart is invoked, the function will log an error message indicating that a specific CSField reading was skipped and will return the value specified. The restart takes two arguments: \code{cond} (the condition or error that occurred) and \code{value} (the value to return if this CSField reading is skipped). To invoke this restart during a condition or error, you can use the helper function \code{seasonder_skip_cs_field(cond, value)}.
+#'   \itemize{
+#'     \item \strong{Usage}: In a custom condition handler, you can call \code{seasonder_skip_cs_field(cond, yourDesiredReturnValue)} to trigger this restart and skip the current CSField reading.
+#'     \item \strong{Effect}: If invoked, the function logs an error message detailing the reason for skipping, and then returns the value specified in the restart function call.
+#'   }}
+#'}
 seasonder_readCSField <- function(con, type, endian="big") {
-  conditions_params <- list(calling_function = "seasonder_readCSField",class="seasonder_cs_field_reading_error",seasonder_cs_field_type=type,seasonder_cs_endian=endian)
-  out <- withRestarts(seasonder_skip_cs_field=function(cond,value){
 
-    seasonder_logAndMessage(glue::glue("Skipping CS field, returning {value}: {conditionMessage(cond)}"), "error",calling_function = "seasonder_readCSField",class="seasonder_cs_field_skipped", parent=cond,seasonder_cs_field_value=value)
+  # Parameters used for error messages and logging.
+  conditions_params <- list(calling_function = "seasonder_readCSField",class="seasonder_cs_field_reading_error",seasonder_cs_field_type=type,seasonder_cs_endian=endian)
+
+  out <- withRestarts(seasonder_skip_cs_field=function(cond,value){
+    # Log the error message and skip the CS field.
+    seasonder_logAndMessage(glue::glue("Skipping CS field, returning {value}: {conditionMessage(cond)}"), "error", calling_function = "seasonder_readCSField", class="seasonder_cs_field_skipped", parent=cond, seasonder_cs_field_value=value)
     return(value)
   },
   {
-
-    # Check if the connection is open. If not, raise an error.
-    open_con <- try(isOpen(con),silent = T)
-    if (!inherits(open_con,"try-error")) {
-      if(!open_con){
-        rlang::inject(seasonder_logAndAbort("Connection is not open.",!!!conditions_params))
+    # Ensure the connection is open before proceeding.
+    open_con <- try(isOpen(con), silent = T)
+    if (!inherits(open_con, "try-error")) {
+      if(!open_con) {
+        rlang::inject(seasonder_logAndAbort("Connection is not open.", !!!conditions_params))
       }
-    }else{
-      rlang::inject(seasonder_logAndAbort("Connection is not open.",!!!conditions_params))
+    } else {
+      rlang::inject(seasonder_logAndAbort("Connection is not open.", !!!conditions_params,parent=attr(open_con,"condition")))
     }
 
-    # Helper function to read values from the connection. This function takes care of potential
-    # reading errors and uses a specific format and byte size to read the values.
+    # Helper function to safely read from the connection.
     read_values <- function(bytes, format, n=1) {
       res <- rlang::try_fetch({
         out <- readBin(con, what=format, n=n, size=bytes, endian=endian)
-        if(length(out)==0){
+        # If nothing is read, it could be the end of the file.
+        if(length(out) == 0) {
           rlang::abort("Read value of length 0. Possibly reached end of file.")
         }
         out
       },
-
       error = function(e) {
-        rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading value: {conditionMessage(e)}"),!!!conditions_params, parent=e))
+        rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading value: {conditionMessage(e)}"), !!!conditions_params, parent=e))
       })
 
       return(res)
     }
 
-
-
-    # Check if it's CharN
+    # Process data types that involve reading character strings.
     if (grepl("^Char[0-9]+$", type)) {
-
-      # Read N characters
+      # Extract the number of characters to read.
       char_length <- as.integer(sub("^Char", "", type))
-
-
-      chars <- read_values(1, "raw",char_length)
+      chars <- read_values(1, "raw", char_length)
       out <- rawToChar(chars)
       return(out)
     }
 
-    # Determine the data type specified and read it from the connection accordingly.
-    # If the data type is not recognized, raise an error.
+    # Determine and read the specific data type from the connection.
     switch(type,
-           "UInt8"   = as.integer(read_values(1, "raw")),
-           "SInt8"   = as.integer(read_values(1, "integer")),
-           "UInt16"  = as.integer(read_values(2, "int")),
-           "SInt16"  = as.integer(read_values(2, "int")),
-           "UInt32"  = as.integer(read_values(4, "int")),
-           "SInt32"  = as.integer(read_values(4, "int")),
-           "Float"   = as.numeric(read_values(4, "numeric")),
-           "Double"  = as.numeric(read_values(8, "double")),
-           "UInt64"  = {
+           "UInt8" = as.integer(read_values(1, "raw")),
+           "SInt8" = as.integer(read_values(1, "integer")),
+           "UInt16" = as.integer(read_values(2, "int")),
+           "SInt16" = as.integer(read_values(2, "int")),
+           "UInt32" = as.integer(read_values(4, "int")),
+           "SInt32" = as.integer(read_values(4, "int")),
+           "Float" = as.numeric(read_values(4, "numeric")),
+           "Double" = as.numeric(read_values(8, "double")),
+           "UInt64" = {
              v <- read_values(1, "raw", n=8)
-             seasonder_raw_to_int(v,signed=FALSE)
+             seasonder_raw_to_int(v, signed=FALSE)
            },
-           "SInt64"  = {
+           "SInt64" = {
              v <- read_values(1, "raw", n=8)
-             seasonder_raw_to_int(v,signed=TRUE)
+             seasonder_raw_to_int(v, signed=TRUE)
            },
            "Complex" = {
-             # Read real and imaginary parts separately and then combine them into a complex number.
+             # Read both the real and imaginary components.
              real_part <- as.numeric(read_values(4, "double"))
              imag_part <- as.numeric(read_values(4, "double"))
              complex(real = real_part, imaginary = imag_part)
            },
-           "String"  = {
-             # Read characters until a null terminator (0) is encountered.
+           "String" = {
+             # Keep reading characters until a null terminator is found.
              chars <- NULL
              repeat {
                char <- read_values(1, "raw")
                if (char == as.raw(0)) break
                chars <- c(chars, char)
              }
-
              rawToChar(do.call(c, list(chars)))
            },
            {
-             # Handle unrecognized data types.
-             rlang::inject(seasonder_logAndAbort(glue::glue("Type Unknown: '{type}'."),!!!conditions_params))
-
+             # Raise an error for unknown data types.
+             rlang::inject(seasonder_logAndAbort(glue::glue("Type Unknown: '{type}'."), !!!conditions_params))
            })
   })
-
   return(out)
-
 }
 
 
+#' @export
+seasonder_rerun_qc_with_fun <- function(cond,qc_fun) invokeRestart("seasonder_rerun_qc_with_fun",cond,qc_fun)
 
 #' Read and Quality Control a Single Field
 #'
@@ -249,11 +313,52 @@ seasonder_readCSField <- function(con, type, endian="big") {
 #' @param connection A connection to the binary file.
 #' @param endian A character string indicating the byte order. Options are "big" and "little" (default is "big").
 #'
+#'
 #' @return The value of the field after quality control. Can be the original value, a transformed value,
 #'   or NULL if the value fails quality control. The exact behavior of the quality control function, including
 #'   the handling of NULL values, is detailed in `seasonder_readSeaSondeCSFileBlock`.
 #'
+#'
+#' @section Error Management:
+#'
+#' The `read_and_qc_field` function uses the `rlang` package to manage errors and conditions
+#' in a structured way. This documentation section details the classes of errors/conditions
+#' generated, the cases considered, and the restart options provided.
+#'
+#' \strong {Error/Condition Classes}:
+#' \itemize{
+#'   \item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped during reading.
+#'   \item \code{seasonder_cs_field_qc_fun_rerun}: Condition that indicates a rerun of the quality control function was triggered.
+#'   \item \code{seasonder_cs_field_qc_fun_not_defined_error}: Error raised when the quality control function specified is not found in the shared environment `seasonder_the`.
+#'   \item \code{seasonder_cs_field_qc_fun_error}: Error raised when an issue occurs while applying the quality control function.
+#' }
+#'
+#' \strong {Error/Condition Cases}:
+#' \itemize{
+#'   \item If a CSField is skipped during reading, the condition \code{seasonder_cs_field_skipped} is used to skip QC and then is re-signaled.
+#'   \item If an alternate QC is rerun using the \code{seasonder_rerun_qc_with_fun} restart, the condition \code{seasonder_cs_field_qc_fun_rerun} is signaled.
+#'   \item If the quality control function specified is not found in the shared environment `seasonder_the`, the error \code{seasonder_cs_field_qc_fun_not_defined_error} is raised.
+#'   \item If there's an issue applying the quality control function, the error \code{seasonder_cs_field_qc_fun_error} is raised.
+#' }
+#'
+#' \strong {Restart Options}:
+#' The function provides structured mechanisms to recover from errors/conditions during its execution using `withRestarts`. The following restart options are available:
+#'
+#' \itemize{
+#'   \item \code{seasonder_rerun_qc_with_fun}: Allows for rerunning QC with an alternate function.
+#'     \itemize{
+#'     \item \strong{Usage}: In a custom condition handler, you can call \code{seasonder_rerun_qc_with_fun(cond, alternateQCfunction)} to trigger this restart and run an alternate QC using \code{alternateQCfunction}. \code{alternateQCfunction} will be used as follows alternateQCfunction(x) being x the value. No extra parameters are passed.
+#'     \item \strong{Effect}: If invoked, the function logs an info message detailing the reason of the rerun, and then returns the value returned by \code{alternateQCfunction}.
+#'     }
+#' }
+#'
+#' It's also important to note that within `read_and_qc_field`, the function `seasonder_readCSField` is used. This function has its own error management and restart options, which are detailed in its documentation.
+#'
 read_and_qc_field <- function(field_spec, connection, endian="big") {
+
+  # Parameters used for error messages and logging.
+  conditions_params <- list(calling_function = "read_and_qc_field")
+
   # Extract the field type from the specifications
   field_type <- field_spec$type
   # Extract the quality control function name from the specifications
@@ -275,12 +380,32 @@ read_and_qc_field <- function(field_spec, connection, endian="big") {
                                   }
   )
   if(!field_skipped){
-    # Apply quality control
-    # Get the quality control function from the shared environment
-    qc_fun <- seasonder_the$qc_functions[[qc_fun_name]]
-    # Call the quality control function with the field value and the specified parameters
-    field_value_after_qc <- do.call(qc_fun, c(list(field_value), qc_params))
 
+    field_value_after_qc <-  withRestarts(
+      seasonder_rerun_qc_with_fun=function(cond,qc_fun){
+        value <- cond$seasonder_value
+        rlang::inject(seasonder_logAndMessage(glue::glue("Rerunning QC on value {value}."),"info",class="seasonder_cs_field_qc_fun_rerun",!!!conditions_params,parent=cond))
+        return(qc_fun(value))
+
+      },
+      {
+
+        # Apply quality control
+
+        if(!qc_fun_name %in% names(seasonder_the$qc_functions)){
+          rlang::inject(seasonder_logAndAbort(glue::glue("QC function '{qc_fun_name}' not defined."),!!!conditions_params,class="seasonder_cs_field_qc_fun_not_defined_error",seasonder_value=field_value))
+        }
+
+        # Get the quality control function from the shared environment
+        qc_fun <- seasonder_the$qc_functions[[qc_fun_name]]
+
+        # Call the quality control function with the field value and the specified parameters
+        field_value_after_qc <- rlang::try_fetch(
+          rlang::inject(qc_fun(field_value,!!!qc_params)),
+          error=function(e) rlang::inject(seasonder_logAndAbort(glue::glue("An issue happened while applying QC function '{qc_fun_name}'."),!!!conditions_params,class="seasonder_cs_field_qc_fun_error",seasonder_value=field_value,parent=e))
+        )
+        field_value_after_qc
+      })
     # Return the value after quality control
     return(field_value_after_qc)
   }else{

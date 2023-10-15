@@ -32,3 +32,40 @@ This auxiliary function reads a field from a binary file using a provided specif
 applies a quality control function on the retrieved data. The expectations and functioning of the
 quality control functions are described in detail in the documentation for \code{seasonder_readSeaSondeCSFileBlock}.
 }
+\section{Error Management}{
+
+
+The \code{read_and_qc_field} function uses the \code{rlang} package to manage errors and conditions
+in a structured way. This documentation section details the classes of errors/conditions
+generated, the cases considered, and the restart options provided.
+
+\strong {Error/Condition Classes}:
+\itemize{
+\item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped during reading.
+\item \code{seasonder_cs_field_qc_fun_rerun}: Condition that indicates a rerun of the quality control function was triggered.
+\item \code{seasonder_cs_field_qc_fun_not_defined_error}: Error raised when the quality control function specified is not found in the shared environment \code{seasonder_the}.
+\item \code{seasonder_cs_field_qc_fun_error}: Error raised when an issue occurs while applying the quality control function.
+}
+
+\strong {Error/Condition Cases}:
+\itemize{
+\item If a CSField is skipped during reading, the condition \code{seasonder_cs_field_skipped} is used to skip QC and then is re-signaled.
+\item If an alternate QC is rerun using the \code{seasonder_rerun_qc_with_fun} restart, the condition \code{seasonder_cs_field_qc_fun_rerun} is signaled.
+\item If the quality control function specified is not found in the shared environment \code{seasonder_the}, the error \code{seasonder_cs_field_qc_fun_not_defined_error} is raised.
+\item If there's an issue applying the quality control function, the error \code{seasonder_cs_field_qc_fun_error} is raised.
+}
+
+\strong {Restart Options}:
+The function provides structured mechanisms to recover from errors/conditions during its execution using \code{withRestarts}. The following restart options are available:
+
+\itemize{
+\item \code{seasonder_rerun_qc_with_fun}: Allows for rerunning QC with an alternate function.
+\itemize{
+\item \strong{Usage}: In a custom condition handler, you can call \code{seasonder_rerun_qc_with_fun(cond, alternateQCfunction)} to trigger this restart and run an alternate QC using \code{alternateQCfunction}. \code{alternateQCfunction} will be used as follows alternateQCfunction(x) being x the value. No extra parameters are passed.
+\item \strong{Effect}: If invoked, the function logs an info message detailing the reason of the rerun, and then returns the value returned by \code{alternateQCfunction}.
+}
+}
+
+It's also important to note that within \code{read_and_qc_field}, the function \code{seasonder_readCSField} is used. This function has its own error management and restart options, which are detailed in its documentation.
+}
+

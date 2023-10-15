@@ -33,16 +33,11 @@ describe("seasonder_readYAMLSpecs", {
 
   it("returns error when YAML file does not exist", {
     expect_error(seasonder_readYAMLSpecs("non_existent.yaml", c("header", "general")),
-                 "File not found.")
+                 "File 'non_existent.yaml' not found.",class="seasonder_read_yaml_file_error")
   })
 
 
-  it("returns error for invalid YAML version", {
-    skip("Not needed here")
-    file_path <- create_test_yaml("invalid_version.yaml", invalid_version_content)
-    expect_error(seasonder_readYAMLSpecs(file_path, c("header", "general")),
-                 "Unsupported version.")
-  })
+
 
   it("can extract the general header", {
     file_path <- create_test_yaml("valid.yaml", valid_content)
@@ -61,13 +56,13 @@ describe("seasonder_readYAMLSpecs", {
   it("returns error for invalid path", {
     file_path <- create_test_yaml("valid.yaml", valid_content)
     expect_error(seasonder_readYAMLSpecs(file_path, c("header", "nonexistent")),
-                 "Invalid path.")
+                 glue::glue("Invalid specs path 'header' for file '{file_path}'."),class="seasonder_read_yaml_file_error")
   })
 
   it("returns error for invalid YAML content", {
     file_path <- create_test_yaml("invalid_content.yaml", "invalid: yaml:: content")
     expect_error(seasonder_readYAMLSpecs(file_path, c("header", "general")),
-                 "Invalid YAML structure.")
+                 glue::glue("Invalid YAML structure in file '{file_path}'."),class="seasonder_read_yaml_file_error")
   })
 
 

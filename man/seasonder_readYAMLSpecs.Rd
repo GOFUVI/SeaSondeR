@@ -21,6 +21,22 @@ provided path.
 This function reads a YAML file containing specifications, handles potential
 reading errors, and extracts specific information based on a provided path.
 }
+\section{Error Handling}{
+
+The function has built-in error handling which aborts the function's execution and logs
+detailed error messages in case of:
+\itemize{
+\item File not found.
+\item Error in reading the YAML content.
+\item If the read YAML content is not of list type.
+\item If no data is found for the provided path in the YAML content.
+}
+Errors generated are of class \code{"seasonder_read_yaml_file_error"}.
+Detailed error information including the file path and path within the file
+is provided. For logging and aborting, this function utilizes the
+\code{\link[=seasonder_logAndAbort]{seasonder_logAndAbort}} function.
+}
+
 \examples{
 \dontrun{
 # Assuming a YAML file named "example.yaml" exists with appropriate content

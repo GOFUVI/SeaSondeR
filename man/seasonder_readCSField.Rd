@@ -20,9 +20,76 @@ The value read from the connection.
 This function reads specific data types from a binary connection,
 supporting various types including integer, float, double, complex, and strings.
 }
+\section{Supported Data Types}{
+
+This function provides support for reading a variety of data types from a binary connection. The following data types are recognized and can be used for the \code{type} argument:
+
+\describe{
+\item{\code{CharN}}{Reads N characters from the connection where N is a positive integer. For example, \code{Char5} would read five characters.}
+
+\item{\code{UInt8}}{Reads an 8-bit unsigned integer.}
+
+\item{\code{SInt8}}{Reads an 8-bit signed integer.}
+
+\item{\code{UInt16}}{Reads a 16-bit unsigned integer.}
+
+\item{\code{SInt16}}{Reads a 16-bit signed integer.}
+
+\item{\code{UInt32}}{Reads a 32-bit unsigned integer.}
+
+\item{\code{SInt32}}{Reads a 32-bit signed integer.}
+
+\item{\code{Float}}{Reads a single-precision floating-point number.}
+
+\item{\code{Double}}{Reads a double-precision floating-point number.}
+
+\item{\code{UInt64}}{Reads a 64-bit unsigned integer.}
+
+\item{\code{SInt64}}{Reads a 64-bit signed integer.}
+
+\item{\code{Complex}}{Reads a complex number by separately reading the real and imaginary parts, which are each represented as double-precision floating-point numbers.}
+
+\item{\code{String}}{Reads a null-terminated string.}
+}
+
+If the provided \code{type} does not match any of the supported data types, the function raises an error.
+}
+
+\section{Error Management}{
+
+This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
+
+\strong{Error Classes}:
+\itemize{
+\item \code{seasonder_cs_field_reading_error}: General error related to reading a CSField from the binary connection.
+\item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped due to a reading error.
+}
+
+\strong{Error Cases}:
+\itemize{
+\item Connection is not open.
+\item Error while reading value from connection.
+\item Read value of length 0 from connection (likely reached end of file).
+\item Unrecognized data type specified.
+}
+
+\strong{Restart Options}:
+This function provides a structured mechanism to recover from errors during its execution using the \code{rlang::withRestarts} function. The following restart option is available:
+
+\describe{
+\item{\code{seasonder_skip_cs_field(cond, value)}}{This allows for the graceful handling of reading errors. If this restart is invoked, the function will log an error message indicating that a specific CSField reading was skipped and will return the value specified. The restart takes two arguments: \code{cond} (the condition or error that occurred) and \code{value} (the value to return if this CSField reading is skipped). To invoke this restart during a condition or error, you can use the helper function \code{seasonder_skip_cs_field(cond, value)}.
+\itemize{
+\item \strong{Usage}: In a custom condition handler, you can call \code{seasonder_skip_cs_field(cond, yourDesiredReturnValue)} to trigger this restart and skip the current CSField reading.
+\item \strong{Effect}: If invoked, the function logs an error message detailing the reason for skipping, and then returns the value specified in the restart function call.
+}}
+}
+}
+
 \examples{
+\dontrun{
 con <- rawConnection(as.raw(c(0x12)))
 seasonder_readCSField(con, "UInt8")
+}
 }
 \seealso{
 seasonder_raw_to_int For converting raw to 64-bit integers.

@@ -250,8 +250,8 @@ describe("seasonder_readCSField", {
     expect_warning(
 
       res <- withCallingHandlers(seasonder_cs_field_reading_error= function(cond)  seasonder_skip_cs_field(cond,NA),
-                        seasonder_readCSField(con, "UInt8")
-                        ), "Connection is not open.")
+                                 seasonder_readCSField(con, "UInt8")
+      ), "Connection is not open.")
 
     expect_true(is.na(res))
 
@@ -335,11 +335,107 @@ describe("read_and_qc_field", {
     expect_equal(result, -999)  # -999 is our default value in case of NULL
   })
 
+  describe("Error handling",{
+
+    describe("when a seasonder_cs_field_skipped condition is raised",{
+      it("should rethrown it and skip the QC",{
+
+
+        qc_called <- FALSE
+
+
+        seasonder_the$qc_functions$qc_check_not_null<-function(...){
+          qc_called <<-TRUE
+        }
+
+
+
+        field_spec <-  list(type = "UInt8", qc_fun = "qc_check_not_null", qc_params = list())
+
+
+        expect_condition({
+
+          result <-   withCallingHandlers(seasonder_cs_field_reading_error= function(cond){
+
+            seasonder_skip_cs_field(cond,NA)
+
+          },
+
+          read_and_qc_field(field_spec, connection = con)
+          )},class = "seasonder_cs_field_skipped")
+
+        expect_false(qc_called)
+        expect_true(is.na(result))
+
+
+
+      })
+    })
+    describe("When a qc function is not found",{
+      it("should thrown an seasonder_cs_field_qc_fun_error error",{
+        con <- rawConnection(as.raw(c(0x12)))
+        on.exit(close(con))
+        field_spec <-  list(type = "UInt8", qc_fun = "qc_error", qc_params = list())
+        mocked_seasonder_readCSField <- mockthat::mock(123)
+
+        seasonder_the$qc_functions$qc_error<-function(...){
+
+          rlang::abort("QC Error")
+        }
+
+
+        mockthat::with_mock(seasonder_readCSField=mocked_seasonder_readCSField,
+                            expect_error(read_and_qc_field(field_spec, connection = con ),"An issue happened while applying QC function 'qc_error'.",class = "seasonder_cs_field_qc_fun_error"))
+
+      })
+    })
+
+    describe("When a qc function throws an error",{
+      it("should thrown an seasonder_cs_field_qc_fun_not_defined_error error",{
+        con <- rawConnection(as.raw(c(0x12)))
+        on.exit(close(con))
+        field_spec <-  list(type = "UInt8", qc_fun = "qc_not existing", qc_params = list())
+        mocked_seasonder_readCSField <- mockthat::mock(123)
+
+        mockthat::with_mock(seasonder_readCSField=mocked_seasonder_readCSField,
+                            expect_error(read_and_qc_field(field_spec, connection = con ),"QC function 'qc_not existing' not defined.",class = "seasonder_cs_field_qc_fun_not_defined_error"))
+
+      })
+    })
+
+
+    describe("seasonder_rerun_qc_with_fun restart",{
+      it("should apply the new qc function to the value and throw a seasonder_cs_field_qc_fun_rerun condition",{
+        con <- rawConnection(as.raw(c(0x12)))
+        on.exit(close(con))
+        field_spec <-  list(type = "UInt8", qc_fun = "qc_error", qc_params = list())
+        mocked_seasonder_readCSField <- mockthat::mock(123)
+
+        seasonder_the$qc_functions$qc_error<-function(...){
+
+          rlang::abort("QC Error")
+        }
+        alternate_qc_called <- FALSE
+
+        alternate_qc <- function(x){
+          alternate_qc_called <<-TRUE
+          6
+        }
+
+        expect_condition(
+        result <- withCallingHandlers(seasonder_cs_field_qc_fun_error=function(cond) seasonder_rerun_qc_with_fun(cond,alternate_qc),
+        mockthat::with_mock(seasonder_readCSField=mocked_seasonder_readCSField,
+                            read_and_qc_field(field_spec, connection = con ))
+        ),"Rerunning QC on value 123.",class="seasonder_cs_field_qc_fun_rerun")
+        expect_equal(result,6)
+
+    })
+  })
   seasonder_load_qc_functions()
 
 })
 
-
+})
 describe("seasonder_readSeaSondeCSFileBlock", {
 
   it("returns a named list of values", {
@@ -390,13 +486,13 @@ describe("seasonder_readSeaSondeCSFileBlock", {
 
       expect_warning(
 
-      result <- withCallingHandlers(seasonder_cs_field_reading_error= function(cond){
+        result <- withCallingHandlers(seasonder_cs_field_reading_error= function(cond){
 
-        seasonder_skip_cs_field(cond,NA)
+          seasonder_skip_cs_field(cond,NA)
 
         },
-      seasonder_readSeaSondeCSFileBlock(spec, connection = con)
-),"Field pressure: seasonder_readCSField: Error while reading value: Read value of length 0. Possibly reached end of file.")
+        seasonder_readSeaSondeCSFileBlock(spec, connection = con)
+        ),"Field pressure: seasonder_readCSField: Error while reading value: Read value of length 0. Possibly reached end of file.")
 
 
       expect_equal(result,list(temp=18,pressure=NA))
@@ -1155,77 +1251,77 @@ describe("seasonder_readSeaSondeCSFile",{
   test_that("seasonder_readSeaSondeCSFile works correctly", {
     # Setup mock functions
 
-        describe("File size validations", {
-          it("should return error for file size <= 10 bytes", {
-            # Create a mock file with size < 10
+    describe("File size validations", {
+      it("should return error for file size <= 10 bytes", {
+        # Create a mock file with size < 10
 
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_data")
-            )
-
-
-            # Mock para seasonder_readSeaSondeCSFileHeader
-            mock_readHeader <- mock_output_factory(
-              list(nCsFileVersion = 1, nV1Extent = 0)
-            )
-
-            # Mock para seasonder_readSeaSondeCSFileData
-            mock_readData <- mock_output_factory(
-              list("fake_data")
-            )
-
-            tmp <- tempfile()
-            writeLines(rep("a", 9), tmp)
-            result <-   mockthat::with_mock(
-              seasonder_readYAMLSpecs = mock_readYAMLSpecs,
-              seasonder_readSeaSondeCSFileHeader = mock_readHeader,
-              seasonder_readSeaSondeCSFileData = mock_readData,
-
-              seasonder_readSeaSondeCSFile(tmp, "fake_path")
-            )
-
-            expect_warning(result$header, "Invalid file size.")
-          })
-        })
-
-        describe("nCsFileVersion validations", {
-          it("should return error for nCsFileVersion outside [1, 32]", {
-            # Modify the mock for seasonder_readSeaSondeCSFileHeader
-
-            mock_readYAMLSpecs <- mock_output_factory(list(metadata = list(version = 1)),
-                                                      list(header = "fake_header_data")
-            )
+        mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
+                                                  list("fake_header_data")
+        )
 
 
-            # Mock para seasonder_readSeaSondeCSFileHeader
-            mock_readHeader <- mock_output_factory(
-              list(nCsFileVersion = 33, nV1Extent = 0)
-            )
+        # Mock para seasonder_readSeaSondeCSFileHeader
+        mock_readHeader <- mock_output_factory(
+          list(nCsFileVersion = 1, nV1Extent = 0)
+        )
 
-            # Mock para seasonder_readSeaSondeCSFileData
-            mock_readData <- mock_output_factory(
-              list(data = "fake_data")
-            )
+        # Mock para seasonder_readSeaSondeCSFileData
+        mock_readData <- mock_output_factory(
+          list("fake_data")
+        )
+
+        tmp <- tempfile()
+        writeLines(rep("a", 9), tmp)
+        result <-   mockthat::with_mock(
+          seasonder_readYAMLSpecs = mock_readYAMLSpecs,
+          seasonder_readSeaSondeCSFileHeader = mock_readHeader,
+          seasonder_readSeaSondeCSFileData = mock_readData,
+
+          seasonder_readSeaSondeCSFile(tmp, "fake_path")
+        )
+
+        expect_warning(result$header, "Invalid file size.")
+      })
+    })
+
+    describe("nCsFileVersion validations", {
+      it("should return error for nCsFileVersion outside [1, 32]", {
+        # Modify the mock for seasonder_readSeaSondeCSFileHeader
+
+        mock_readYAMLSpecs <- mock_output_factory(list(metadata = list(version = 1)),
+                                                  list(header = "fake_header_data")
+        )
 
 
-            result <- mock_readYAMLSpecs <- mock_output_factory(list(metadata = list(version = 1)),
-                                                                list(header = "fake_header_data")
-            )
+        # Mock para seasonder_readSeaSondeCSFileHeader
+        mock_readHeader <- mock_output_factory(
+          list(nCsFileVersion = 33, nV1Extent = 0)
+        )
+
+        # Mock para seasonder_readSeaSondeCSFileData
+        mock_readData <- mock_output_factory(
+          list(data = "fake_data")
+        )
+
+
+        result <- mock_readYAMLSpecs <- mock_output_factory(list(metadata = list(version = 1)),
+                                                            list(header = "fake_header_data")
+        )
 
 
 
 
-            # Mock para seasonder_readSeaSondeCSFileData
-           seasonder_readSeaSondeCSFile("fake_path", "fake_path")
-            expect_warning(result$header, "Invalid nCsFileVersion.")
-          })
-        })
+        # Mock para seasonder_readSeaSondeCSFileData
+        seasonder_readSeaSondeCSFile("fake_path", "fake_path")
+        expect_warning(result$header, "Invalid nCsFileVersion.")
+      })
+    })
 
-        # ... More tests can be added in similar fashion ...
+    # ... More tests can be added in similar fashion ...
 
-      }
-    )
-  })
+  }
+  )
+})
 
 
 })

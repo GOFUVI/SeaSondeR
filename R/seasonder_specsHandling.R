@@ -16,6 +16,19 @@ seasonder_the$valid_yaml_seasondecs_versions <- c("1.0.0")
 #' @seealso \code{\link[yaml]{read_yaml}} for the underlying YAML reading.
 #' @seealso \code{\link[purrr]{pluck}} for the data extraction mechanism used.
 #'
+#' @section Error Handling:
+#' The function has built-in error handling which aborts the function's execution and logs
+#' detailed error messages in case of:
+#' \itemize{
+#'  \item File not found.
+#'  \item Error in reading the YAML content.
+#'  \item If the read YAML content is not of list type.
+#'  \item If no data is found for the provided path in the YAML content.
+#' }
+#' Errors generated are of class \code{"seasonder_read_yaml_file_error"}.
+#' Detailed error information including the file path and path within the file
+#' is provided. For logging and aborting, this function utilizes the
+#' \code{\link[=seasonder_logAndAbort]{seasonder_logAndAbort}} function.
 #'
 #' @examples
 #' \dontrun{
@@ -25,38 +38,34 @@ seasonder_the$valid_yaml_seasondecs_versions <- c("1.0.0")
 #' }
 #'
 seasonder_readYAMLSpecs <- function(file_path, path) {
+
+  conditions_params <- list(calling_function = "seasonder_readYAMLSpecs",class="seasonder_read_yaml_file_error",seasonder_yaml_file_path=file_path,seasonder_yaml_specs_path=path)
   # Check if the file exists
   if (!file.exists(file_path)) {
-    seasonder_logAndAbort("File not found.")
+    rlang::inject(seasonder_logAndAbort(glue::glue("File '{file_path}' not found."),!!!conditions_params))
   }
 
   # Read the content from the YAML file
-  yaml_content <- tryCatch({
+  yaml_content <- rlang::try_fetch({
     yaml::read_yaml(file_path)
   }, error = function(e) {
-    seasonder_logAndAbort("Reading error. The file might not be a valid YAML.")
+    rlang::inject(seasonder_logAndAbort(glue::glue("Reading error. The file '{file_path}' might not be a valid YAML. Reason: {condMessage(e)}"),!!!conditions_params,parent=e))
   })
 
   # If the content is not a list, throw an error
   if (!is.list(yaml_content)) {
-    seasonder_logAndAbort("Invalid YAML structure.")
+    rlang::inject(seasonder_logAndAbort(glue::glue("Invalid YAML structure in file '{file_path}'."),!!!conditions_params))
   }
-
-  # TODO: move to another function. This is a general specs reading function.
-  # # Check the YAML version
-  # yaml_version <- yaml_content$metadata$version
-  # if (!(yaml_version %in% seasonder_the$valid_yaml_seasondecs_versions)) {
-  #   seasonder_logAndAbort("Unsupported version.")
-  # }
 
   # Extract the desired data based on the given path
   extracted_data <- purrr::pluck(yaml_content, !!!path)
 
   # If no data is found for the provided path, throw an error
   if (is.null(extracted_data)) {
-    seasonder_logAndAbort("Invalid path.")
+    rlang::inject(seasonder_logAndAbort(glue::glue("Invalid specs path '{path}' for file '{file_path}'."),!!!conditions_params))
   }
 
   return(extracted_data)
 }
+
 
