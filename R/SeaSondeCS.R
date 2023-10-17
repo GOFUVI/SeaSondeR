@@ -822,7 +822,7 @@ seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "bi
           rlang::try_fetch(
             seasonder_the$transform_functions[[block$nBlockKey]](block_data),
             error = function(err){
-              rlang::inject(seasonder_logAndAbort(glue::glue("Error while applying transform function for V6 header block '{block$nBlockKey}': {conditionMessage(err)}"),!!!conditions_params, class = "seasonder_v6_transform_function_error", seasonder_block_data = block_data))
+              rlang::inject(seasonder_logAndAbort(glue::glue("Error while applying transform function for V6 header block '{block$nBlockKey}': {conditionMessage(err)}"),!!!conditions_params, class = "seasonder_v6_transform_function_error",parent = err, seasonder_block_data = block_data))
             })
         )
       }
@@ -834,7 +834,7 @@ seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "bi
       rlang::try_fetch(
         seek(connection, where = block$nBlockDataSize, origin = "current", rw = "read"),
         error = function(err){
-          rlang::inject(seasonder_logAndAbort(glue::glue("Error while skipping block '{block$nBlockKey}': {conditionMessage(err)}"),!!!conditions_params, class = "seasonder_v6_skip_block_error"))
+          rlang::inject(seasonder_logAndAbort(glue::glue("Error while skipping block '{block$nBlockKey}': {conditionMessage(err)}"),!!!conditions_params, parent = err, class = "seasonder_v6_skip_block_error"))
         })
     }
 
@@ -982,6 +982,8 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
 #' }
 #' @export
 seasonder_readSeaSondeCSFileData <- function(connection, header, endian="big") {
+  conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFileData",class = "seasonder_cs_data_reading_error")
+
   # Extracting information from the header
   nRanges <- header$nRangeCells
   nDoppler <- header$nDopplerCells
@@ -1000,22 +1002,47 @@ seasonder_readSeaSondeCSFileData <- function(connection, header, endian="big") {
 
   # Helper function to read complex vectors
   read_complex_vector <- function(connection, n, endian) {
-    cplx_data <- readBin(connection, what="numeric", n = n * 2, size = 4, endian = endian)
+    cplx_data <- readBin(connection, what = "numeric", n = n * 2, size = 4, endian = endian)
 
     complex(real = cplx_data[rep(c(TRUE, FALSE), n/2)], imaginary = cplx_data[rep(c(FALSE, TRUE), n/2)])
   }
 
   # Read data for each range
-  for(i in seq_len(nRanges)) {
-    out$SSA1[i,] <- readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian)
-    out$SSA2[i,] <- readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian)
-    out$SSA3[i,] <- readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian)
+  for (i in seq_len(nRanges)) {
 
-    out$CS12[i,] <-  read_complex_vector(connection, nDoppler, endian)
-    out$CS13[i,] <- read_complex_vector(connection, nDoppler, endian)
-    out$CS23[i,] <- read_complex_vector(connection, nDoppler, endian)
-    if(nCSKind >= 2) {
-      out$QC[i,] <- readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian)
+    out$SSA1[i,] <- rlang::try_fetch(error = function(cond){
+      rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading SSA1 data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "SSA1"))
+    },
+    readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian))
+
+    out$SSA2[i,] <- rlang::try_fetch(error = function(cond){
+      rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading SSA2 data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "SSA2"))
+    },
+    readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian))
+
+    out$SSA3[i,] <- rlang::try_fetch(error = function(cond){
+      rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading SSA3 data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "SSA3"))
+    },
+    readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian))
+
+    out$CS12[i,] <- rlang::try_fetch(error = function(cond){
+      rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading CS12 data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "CS12"))
+    },
+      read_complex_vector(connection, nDoppler, endian))
+    out$CS13[i,] <-  rlang::try_fetch(error = function(cond){
+      rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading CS13 data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "CS13"))
+    },
+    read_complex_vector(connection, nDoppler, endian))
+
+    out$CS23[i,] <-  rlang::try_fetch(error = function(cond){
+      rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading CS23 data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "CS23"))
+    },
+    read_complex_vector(connection, nDoppler, endian))
+    if (nCSKind >= 2) {
+      out$QC[i,] <- rlang::try_fetch(error = function(cond){
+        rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading QC data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "QC"))
+      },
+      readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian))
     }
   }
   return(out)
