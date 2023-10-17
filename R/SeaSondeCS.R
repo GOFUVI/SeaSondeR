@@ -465,27 +465,17 @@ read_and_qc_field <- function(field_spec, connection, endian="big") {
 #'
 seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian="big") {
   # Use purrr::map to apply the read_and_qc_field function to each field specification
-  results <-
+  results <- withCallingHandlers(
+    purrr::map(spec, \(field_spec)
+               read_and_qc_field(field_spec=field_spec,connection=connection, endian=endian)),
+    purrr_error_indexed=function(err){
+      parent_err <- err$parent
 
+      parent_err$message <- glue::glue("Field {names(spec)[err$location]}: {err$parent$message}")
 
-    withCallingHandlers(
-      purrr::map(spec, \(field_spec)
-                 read_and_qc_field(field_spec=field_spec,connection=connection, endian=endian)),
-      purrr_error_indexed=function(err){
-        parent_err <- err$parent
+      rlang::cnd_signal(parent_err)
 
-        parent_err$message <- glue::glue("Field {names(spec)[err$location]}: {err$parent$message}")
-
-        rlang::cnd_signal(parent_err)
-
-      })
-
-
-
-
-
-
-
+    })
 
 
 
@@ -496,9 +486,10 @@ seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian="big") {
 
 
 seasonder_check_specs <- function(specs, fields){
+
   fields %>% purrr::walk(\(field){
     if(is.null(purrr::pluck(specs,field))){
-      seasonder_logAndAbort(glue::glue("Specifications for field '{field}' not provided"))
+      seasonder_logAndAbort(glue::glue("Specifications for field '{field}' not provided"),calling_function = "seasonder_check_specs",class="spsr_field_specification_missing_error")
     }
   })
 }
@@ -688,7 +679,7 @@ readV6BlockData <- function(specs, connection, endian="big", prev_data=NULL, rem
   # browser(expr= "nReceiverModel" %in% names(specs))
 
   # If there are remaining loops to process, handle the repeated block recursively
-  if(length(remaining_loops) > 0) {
+  if (length(remaining_loops) > 0) {
     # Get the current loop variable and its repetition count from prev_data
     loop_var <- remaining_loops[1]
     num_repeats <- prev_data[[loop_var]]
@@ -727,7 +718,7 @@ readV6BlockData <- function(specs, connection, endian="big", prev_data=NULL, rem
   }
 
   # If the specs contain a "repeat" key, handle the repeated block
-  if("repeat" %in% names(specs)) {
+  if ("repeat" %in% names(specs)) {
     repeat_specs <- specs[["repeat"]]
     remaining_loops <- repeat_specs$how_many
 
@@ -742,6 +733,10 @@ readV6BlockData <- function(specs, connection, endian="big", prev_data=NULL, rem
   return(out)
 }
 
+#' @export
+seasonder_v6_skip_transformation <- function(cond,value) invokeRestart("seasonder_v6_skip_transformation",cond,value)
+
+
 #' Read SeaSonde CS File Header V6
 #'
 #' This function reads the header of a SeaSonde CS File Version 6.
@@ -755,9 +750,50 @@ readV6BlockData <- function(specs, connection, endian="big", prev_data=NULL, rem
 #'
 #' @return A list containing the read data, organized based on the block keys.
 #'
+#' @section Error Management and Conditions:
+#'
+#' The \code{seasonder_readSeaSondeCSFileHeaderV6} function contains multiple layers of error and condition management to ensure robust data reading and appropriate error reporting.
+#'
+#' \strong{Error and Condition Classes}:
+#'
+#' The function might raise the following conditions:
+#'
+#' \itemize{
+#' \item \code{seasonder_v6_block_transformacion_skipped}: Triggered when a transformation for a specific block is skipped.
+#' \item \code{seasonder_v6_transform_function_error}: Triggered when there's an error while applying the transformation function for a V6 header block.
+#' \item \code{seasonder_v6_skip_block_error}: Triggered when there's an error while skipping a block.
+#'}
+#'
+#' \string{Error Cases}:
+#'
+#' The following are the scenarios when errors or conditions are raised:
+#'
+#'\itemize{
+#' \item Transformation Failure: If there's a recognized block key and the transformation function associated with it fails.
+#' \item Error in Transformation Function Application: If there's an error while applying the transformation function for a recognized V6 header block.
+#' \item Error in Skipping Block: If there's an error while skipping a block when the block key is not recognized.
+#'}
+#'
+#' \strong{Restart Options}:
+#'
+#' The function provides the following restart option:
+#'
+#' \code{seasonder_v6_skip_transformation}: This restart allows users to skip the transformation for a specific block and instead return the provided value.
+#'
+#' \strong{Effects of Restart Options}:
+#'
+#' Using the \code{seasonder_v6_skip_transformation} restart:
+#' \itemize{
+#' \item The error message gets logged.
+#' \item The transformation that caused the error gets skipped.
+#' \item The provided value for that block is returned.
+#'}
+#'
+#' Proper error management ensures the integrity of the reading process and provides detailed feedback to users regarding issues and potential resolutions.
+#'
 #' @export
 seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "big", prev_data = NULL) {
-
+  conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFileHeaderV6")
   # Step 1: Specification Validation
   seasonder_check_specs(specs, c("nCS6ByteSize","block_spec"))
 
@@ -777,14 +813,29 @@ seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "bi
 
       # Apply transformations if they exist
       if (!is.null(seasonder_the$transform_functions[[block$nBlockKey]])) {
-        block_data <- seasonder_the$transform_functions[[block$nBlockKey]](block_data)
+        block_data <- withRestarts(
+          seasonder_v6_skip_transformation = function(cond, value){
+            # Log the error message and skip the CS field.
+            rlang::inject(seasonder_logAndMessage(glue::glue("Skipping transformation for block '{block$nBlockKey}', returning provided value: {conditionMessage(cond)}"), "error",!!!conditions_params, class = "seasonder_v6_block_transformacion_skipped", parent = cond, new_seasonder_block_data = value))
+            return(value)
+          },
+          rlang::try_fetch(
+            seasonder_the$transform_functions[[block$nBlockKey]](block_data),
+            error = function(err){
+              rlang::inject(seasonder_logAndAbort(glue::glue("Error while applying transform function for V6 header block '{block$nBlockKey}': {conditionMessage(err)}"),!!!conditions_params, class = "seasonder_v6_transform_function_error", seasonder_block_data = block_data))
+            })
+        )
       }
 
       # Store the results
       results[[block$nBlockKey]] <- block_data
     } else {
       # If the block key is not recognized, skip bytes as per the block data size
-      seek(connection, block$nBlockDataSize, origin = "current")
+      rlang::try_fetch(
+        seek(connection, where = block$nBlockDataSize, origin = "current", rw = "read"),
+        error = function(err){
+          rlang::inject(seasonder_logAndAbort(glue::glue("Error while skipping block '{block$nBlockKey}': {conditionMessage(err)}"),!!!conditions_params, class = "seasonder_v6_skip_block_error"))
+        })
     }
 
     # Subtract the current read size from nCS6ByteSize
@@ -861,7 +912,14 @@ process_version_header <- function(pool, version, specs, connection, endian = "b
 #'
 seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big") {
   # Read the general header (Version 1)
-  header_v1 <- seasonder_readSeaSondeCSFileHeaderV1(specs$V1, connection, endian)
+  withCallingHandlers(
+    header_v1 <- seasonder_readSeaSondeCSFileHeaderV1(specs$V1, connection, endian),
+    error=function(err){
+      err$message <- glue::glue("Header version 1: {conditionMessage(err)}")
+
+      rlang::cnd_signal(err)
+    }
+  )
 
   # Extract the file version to determine subsequent headers to process
   file_version <- header_v1$nCsFileVersion
@@ -869,13 +927,24 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
   # Create a list of header versions to process
   versions_to_process <- 2:file_version
 
+
+
   # Reduce the list of versions to process them sequentially
-  header_pool <- purrr::reduce(versions_to_process, \(pool, version){
+  header_pool <- withCallingHandlers(
+    purrr::reduce(versions_to_process, \(pool, version){
 
-    out <- process_version_header(pool = pool, version = version, specs = specs, connection = connection, endian = endian, prev_data = pool)
+      out <- process_version_header(pool = pool, version = version, specs = specs, connection = connection, endian = endian, prev_data = pool)
 
-    out
-  }, .init = header_v1)
+      out
+    }, .init = header_v1),
+    purrr_error_indexed=function(err){
+
+      parent_err <- err$parent
+
+      parent_err$message <- glue::glue("Header version {versions_to_process[err$location]}: {conditionMessage(err$parent)}")
+
+      rlang::cnd_signal(parent_err)
+    })
 
   return(header_pool)
 }

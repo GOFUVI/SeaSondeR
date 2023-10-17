@@ -423,17 +423,17 @@ describe("read_and_qc_field", {
         }
 
         expect_condition(
-        result <- withCallingHandlers(seasonder_cs_field_qc_fun_error=function(cond) seasonder_rerun_qc_with_fun(cond,alternate_qc),
-        mockthat::with_mock(seasonder_readCSField=mocked_seasonder_readCSField,
-                            read_and_qc_field(field_spec, connection = con ))
-        ),"Rerunning QC on value 123.",class="seasonder_cs_field_qc_fun_rerun")
+          result <- withCallingHandlers(seasonder_cs_field_qc_fun_error=function(cond) seasonder_rerun_qc_with_fun(cond,alternate_qc),
+                                        mockthat::with_mock(seasonder_readCSField=mocked_seasonder_readCSField,
+                                                            read_and_qc_field(field_spec, connection = con ))
+          ),"Rerunning QC on value 123.",class="seasonder_cs_field_qc_fun_rerun")
         expect_equal(result,6)
 
+      })
     })
-  })
-  seasonder_load_qc_functions()
+    seasonder_load_qc_functions()
 
-})
+  })
 
 })
 describe("seasonder_readSeaSondeCSFileBlock", {
@@ -609,6 +609,50 @@ describe("seasonder_readSeaSondeCSFileHeader", {
     expect_equal(mockthat::mock_n_called(mock_header_v1), 1)
     expect_equal(mockthat::mock_n_called(mock_header_v2), 1)
 
+  })
+
+  describe("when there is an error in one of the headers",{
+    it("should rethrown the error indicating which header was responsible",{
+
+      it("processes the headers correctly when file version is 3", {
+
+        # Mocked headers
+        mock_header_v1 <- mockthat::mock(
+          list(
+            nCsFileVersion = 3,  # Indicamos que es versión 3 para el test
+            nDateTime = as.POSIXct("2023-09-23 10:00:00"),
+            nV1Extent = 62
+          )
+        )
+
+        mock_header_v2 <- mockthat::mock(
+          list(
+            nCsKind = 2,
+            someField = "example"
+          )
+        )
+
+
+
+        # Empty specs for this test
+        specs <- list(
+          V1 = list(),
+          V2 = list(),
+          V3 = list()
+        )
+
+        expect_error( # Execute with mocks
+          result <- mockthat::with_mock(
+            seasonder_readSeaSondeCSFileHeader(specs, NULL),
+            seasonder_readSeaSondeCSFileHeaderV1 = mock_header_v1,
+            seasonder_readSeaSondeCSFileHeaderV2 = mock_header_v2
+          ),"Header version 2",class="spsr_field_specification_missing_error")
+
+
+
+      })
+
+    })
   })
 
 })
@@ -1036,62 +1080,32 @@ describe("readV6BlockData works as expected", {
 
 describe("seasonder_readSeaSondeCSFileHeaderV6 works as expected", {
 
-  mock_factory <- function(){
+
+  mock_block_header_outputs <- list(list(nCS6ByteSize=130L),
+                                    list(
+                                      nBlockKey = "REGB",
+                                      nBlockDataSize = 52L
+                                    ),
+                                    list(
+                                      nBlockKey = "UNKW",
+                                      nBlockDataSize = 32L
+                                    ),
+                                    list(
+                                      nBlockKey = "BRGR",
+                                      nBlockDataSize = 22L
+                                    ))
 
 
-    .outputs <- list(list(nCS6ByteSize=130L),
-                     list(
-                       nBlockKey = "REGB",
-                       nBlockDataSize = 52L
-                     ),
-                     list(
-                       nBlockKey = "UNKW",
-                       nBlockDataSize = 32L
-                     ),
-                     list(
-                       nBlockKey = "BRGR",
-                       nBlockDataSize = 22L
-                     )
-    )
-
-    .i <- 1
-
-
-    function(spec, connection, endian, prev_data) {
-
-      out <- .outputs[[.i]]
-      .i <<- .i +1
-
-      out
-    }
+  mock_block_data_outputs <- list(
+    list(
+      Var1 = "TestValue1",
+      Var2 = "TestValue2"
+    ),
+    list(nBraggReject=list(loop="L1",data=c(0L,1L,2L,3L)))
+  )
 
 
 
-  }
-
-
-
-  # Define your mock for readV6BlockData
-  mocked_block_data_function_factory <- function(){
-
-    .outputs <- list(
-      list(
-        Var1 = "TestValue1",
-        Var2 = "TestValue2"
-      ),
-      list(nBraggReject=list(loop="L1",data=c(0L,1L,2L,3L)))
-    )
-
-    .i <- 1
-
-    function(block_specs, connection, endian="big", prev_data = list()) {
-
-      out <- .outputs[[.i]]
-      .i <<- .i +1
-
-      out
-    }
-  }
 
 
   # Mocked specs based on YAML
@@ -1106,7 +1120,7 @@ describe("seasonder_readSeaSondeCSFileHeaderV6 works as expected", {
         Var1 = list(type = "varType", qc_fun = "qc_fun_name", qc_params = list(param1 = "value1")),
         Var2 = list(type = "varType", qc_fun = "qc_fun_name", qc_params = list(param1 = "value"))
       ),
-      BRGR = list("repeat"=list(how_many="L1",what=list(nBraggReject=list(type = "varType", qc_fun = "qc_fun_name", qc_params = list(param1 = "value1")))))
+      BRGR = list("repeat" = list(how_many = "L1",what = list(nBraggReject = list(type = "varType", qc_fun = "qc_fun_name", qc_params = list(param1 = "value1")))))
     )
   )
 
@@ -1115,8 +1129,8 @@ describe("seasonder_readSeaSondeCSFileHeaderV6 works as expected", {
 
     con <- rawConnection(openssl::rand_bytes(100))
     on.exit(close(con))
-    mocked_block_function <- mock_factory()
-    mocked_block_data_function <- mocked_block_data_function_factory()
+    mocked_block_function <- mock_output_factory(!!!mock_block_header_outputs)
+    mocked_block_data_function <- mock_output_factory(!!!mock_block_data_outputs)
     results <- mockthat::with_mock(
       seasonder_readSeaSondeCSFileBlock = mocked_block_function,
       readV6BlockData = mocked_block_data_function,
@@ -1133,7 +1147,102 @@ describe("seasonder_readSeaSondeCSFileHeaderV6 works as expected", {
     expect_equal(as.character(results$BRGR$nBraggReject$data),c("OK", "RejectNegBragg", "RejectPosBragg", "RejectBoth"))
   })
 
+  describe("when a transform function results in an error",{
 
+    it("raises a seasonder_v6_transform_function_error",{
+
+
+      seasonder_the$transform_functions[["REGB"]] <- function(x) {
+        rlang::abort("Transform error")
+      }
+
+
+      con <- rawConnection(openssl::rand_bytes(100))
+      on.exit(close(con))
+      mocked_block_function <- mock_output_factory(!!!mock_block_header_outputs)
+      mocked_block_data_function <- mock_output_factory(!!!mock_block_data_outputs)
+      err <- expect_error({
+        results <- mockthat::with_mock(
+          seasonder_readSeaSondeCSFileBlock = mocked_block_function,
+          readV6BlockData = mocked_block_data_function,
+
+          {
+            seasonder_readSeaSondeCSFileHeaderV6(specs, con)
+          })
+
+      },"Error while applying transform function for V6 header block 'REGB': Transform error",class = "seasonder_v6_transform_function_error")
+      expect_equal(err$seasonder_block_data,list(
+        Var1 = "TestValue1",
+        Var2 = "TestValue2"
+      ))
+    })
+
+    it("provides a seasonder_v6_skip_transformation restart",{
+
+
+      seasonder_the$transform_functions[["REGB"]] <- function(x) {
+        rlang::abort("Transform error")
+      }
+
+
+      con <- rawConnection(openssl::rand_bytes(100))
+      on.exit(close(con))
+      mocked_block_function <- mock_output_factory(!!!mock_block_header_outputs)
+      mocked_block_data_function <- mock_output_factory(!!!mock_block_data_outputs)
+      expect_condition({
+
+
+        results <- withCallingHandlers(seasonder_v6_transform_function_error = function(cond){
+
+          val <- cond$seasonder_block_data
+
+          seasonder_v6_skip_transformation(cond,list(other_var = "alternative value"))
+        },
+        {
+          mockthat::with_mock(
+            seasonder_readSeaSondeCSFileBlock = mocked_block_function,
+            readV6BlockData = mocked_block_data_function,
+
+            {
+              seasonder_readSeaSondeCSFileHeaderV6(specs, con)
+            })
+
+        })
+      },"Skipping transformation for block 'REGB'",class = "seasonder_v6_block_transformacion_skipped")
+
+      expect_equal(results$REGB,list(other_var = "alternative value"))
+    })
+
+  })
+
+  describe("when a block is not recognized and there is a problem skipping it",{
+
+    it("raises a seasonder_v6_skip_block_error",{
+
+
+      seasonder_the$transform_functions[["REGB"]] <- function(x) {
+        close(con)
+      }
+
+
+      con <- rawConnection(openssl::rand_bytes(100))
+
+      mocked_block_function <- mock_output_factory(!!!mock_block_header_outputs)
+      mocked_block_data_function <- mock_output_factory(!!!mock_block_data_outputs)
+      expect_error({
+        results <- mockthat::with_mock(
+          seasonder_readSeaSondeCSFileBlock = mocked_block_function,
+          readV6BlockData = mocked_block_data_function,
+
+          {
+            seasonder_readSeaSondeCSFileHeaderV6(specs, con)
+          })
+
+      },"Error while skipping block",class = "seasonder_v6_skip_block_error")
+
+    })
+
+  })
 
 })
 

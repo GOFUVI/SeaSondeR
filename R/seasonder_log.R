@@ -191,12 +191,12 @@ seasonder_logAndMessage <- function(msg,log_level="info",calling_function=NULL,.
 #' my_function()
 #' }
 #'
-seasonder_logAndAbort <- function(msg,calling_function=NULL,...) {
+seasonder_logAndAbort <- function(msg, calling_function=NULL, ...) {
 
   log_level <- "fatal"
 
   # Get the name of the calling function
-if(is.null(calling_function)){
+if (is.null(calling_function)) {
   calling_function <- sys.call(-1)[[1]]
 }
   full_msg <- msg
