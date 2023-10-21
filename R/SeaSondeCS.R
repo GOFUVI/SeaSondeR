@@ -6,6 +6,64 @@ create_SeaSondeCS <- function(){
 
 }
 
+#' Validate SeaSondeR CS File Data
+#'
+#' This function performs multiple validation checks on a provided CS file in the SeaSondeR system.
+#' It checks the file for various conditions to determine if it meets the SeaSondeR standards.
+#'
+#' @param filepath A character string indicating the path to the CS file to validate.
+#' @param header A list containing header information of the CS file.
+#'
+#' @details The function performs the following validation checks:
+#' \enumerate{
+#'   \item Verifies that the file size is greater than 10 bytes.
+#'   \item Validates the `nCsFileVersion` field in the header to ensure it's between 1 and 32.
+#'   \item Depending on the `nCsFileVersion`, verifies the appropriate file size, and the extent of various version headers (`nV1Extent`, `nV2Extent`, etc.).
+#'   \item Validates the `nRangeCells` and `nDopplerCells` fields to ensure they are within permissible ranges.
+#'   \item Depending on the `nCsKind` value, validates the file size against expected sizes based on `nRangeCells`, `nSpectraChannels`, and `nDopplerCells`.
+#' }
+#' Any violations of these conditions will invoke the `seasonder_logAndAbort` function, logging the error and aborting the process.
+#'
+#' @return NULL invisibly. The function mainly serves to validate and will stop execution and log an error using `seasonder_logAndAbort` if any condition fails.
+#'
+#' @seealso \code{\link{seasonder_logAndAbort}}
+#' @references Cross Spectra File Format Version 6. CODAR. 2016
+seasonder_validateCSFileData <- function(filepath, header) {
+
+  conditions_params <- list(calling_function = "seasonder_validateCSFileData",class = "seasonder_validate_cs_file_error",seasonder_cs_filepath = filepath, seasonder_cs_header = header)
+
+  # Validations
+  file_size <- file.info(filepath)$size
+
+  header_size <- header$nV1Extent + 10
+
+  if (file_size <= 10) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file size {file_size} in file {filepath}."),!!!conditions_params))
+
+  if (header$nCsFileVersion < 1 || header$nCsFileVersion > 32) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid nCsFileVersion {header$nCsFileVersion} in file {filepath}."),!!!conditions_params))
+
+  if (header$nCsFileVersion == 1 && (file_size <= 10 || header$nV1Extent < 0)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file for version 1 in file {filepath}. size: {file_size}, header extent V1 {header$nV1Extent}."),!!!conditions_params))
+
+  if (header$nCsFileVersion == 2 && (file_size <= 16 || header$nV1Extent < 6 || header$nV2Extent < 0)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file for version 2  in file {filepath}. size: {file_size}, header extent V1 {header$nV1Extent}, V2 {header$nV2Extent}."),!!!conditions_params))
+
+  if (header$nCsFileVersion == 3 && (file_size <= 24 || header$nV1Extent < 14 || header$nV2Extent < 8 || header$nV3Extent < 0)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file for version 3 in file {filepath}. size: {file_size}, header extent V1 {header$nV1Extent}, V2 {header$nV2Extent}, V3 {header$nV3Extent}."),!!!conditions_params))
+
+  if (header$nCsFileVersion == 4 && (file_size <= 72 || header$nV1Extent < 62 || header$nV2Extent < 56 || header$nV3Extent < 48 || header$nV4Extent < 0)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file for version 4 in file {filepath}. size: {file_size}, header extent V1 {header$nV1Extent}, V2 {header$nV2Extent}, V3 {header$nV3Extent}, V4 {header$nV4Extent}."),!!!conditions_params))
+
+  if (header$nCsFileVersion >= 5 && (file_size <= 100 || header$nV1Extent < 90 || header$nV2Extent < 84 || header$nV3Extent < 76 || header$nV4Extent < 28 || header$nV5Extent < 0)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file for version >= 5 in file {filepath}. size: {file_size}, header extent V1 {header$nV1Extent}, V2 {header$nV2Extent}, V3 {header$nV3Extent}, V4 {header$nV4Extent}, V5 {header$nV5Extent}."),!!!conditions_params))
+
+  if (header$nCsFileVersion >= 6 && header$nV5Extent < header$nCS6ByteSize + 4) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file for version >= 6 in file {filepath}. size: {file_size}, header extent V5 {header$nV5Extent}, V6 {header$nCS6ByteSize}."),!!!conditions_params))
+
+
+  if (header$nRangeCells <= 0 || header$nRangeCells > 8192 || header$nDopplerCells <= 0 || header$nDopplerCells > 32768) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid nRangeCells or nDopplerCells in file {filepath}. nRangeCells: {header$nRangeCells}, nDopplerCells: {header$nDopplerCells}."),!!!conditions_params))
+
+
+  if (header$nCsKind == 1 && file_size < (header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 36)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file size for nCsKind 1 in file {filepath}. Expected >= {(header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 36)}, actual: {file_size}."),!!!conditions_params))
+
+  if (header$nCsKind == 2 && file_size < (header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 40)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file size for nCsKind 2 in file {filepath}. Expected >= {(header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 40)}, actual: {file_size}."),!!!conditions_params))
+
+  return(NULL)
+
+}
 
 seasonder_skip_cs_file <- function(cond) invokeRestart("seasonder_skip_cs_file",cond)
 
@@ -16,7 +74,7 @@ seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
 
   withRestarts(
     seasonder_skip_cs_file=function(cond){
-      seasonder_logAndMessage(glue::glue("An issue happened while processing the file {cond$seasonder_cs_filepath}, skipping. Issue: {conditionMessage(cond)}"),"error",calling_function = "seasonder_readSeaSondeCSFile",class="seasonder_skip_cs_file",parent=cond)
+      seasonder_logAndMessage(glue::glue("An issue happened while processing the file {cond$seasonder_cs_filepath %||% ''}, skipping. Issue: {conditionMessage(cond)}"),"error",calling_function = "seasonder_readSeaSondeCSFile",class="seasonder_cs_file_skipped",parent=cond)
       return(list(header=NULL,data=NULL))
     },
     {
@@ -24,7 +82,9 @@ seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
 
       connection <- rlang::try_fetch(
         suppressWarnings(file(filepath, "rb")),
-        error=function(e) rlang::inject(seasonder_logAndAbort(glue::glue("Could no open connection to file {filepath}. Reason: {conditionMessage(e)}."),!!!conditions_params,parent=e))
+        error = function(e) {
+          rlang::inject(seasonder_logAndAbort(glue::glue("Could no open connection to file {filepath %||% ''}. Reason: {conditionMessage(e)}."),!!!conditions_params,parent=e))
+        }
       )
       on.exit(close(connection), add = TRUE)
 
@@ -39,25 +99,6 @@ seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
 
       header <- seasonder_readSeaSondeCSFileHeader(specs_header, connection)
 
-      # Validaciones
-      file_size <- file.info(filepath)$size
-
-      if (file_size <= 10) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file size {file_size} in file {filepath}."),!!!conditions_params))
-
-      if (header$nCsFileVersion < 1 || header$nCsFileVersion > 32) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid nCsFileVersion {header$nCsFileVersion} in file {filepath}."),!!!conditions_params))
-
-      if (header$nCsFileVersion == 1 && (file_size <= 10 || header$nV1Extent < 0)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file for version 1 in file {filepath}. size: {file_size}, header extent V1 {header$nV1Extent}."),!!!conditions_params))
-
-      if (header$nCsFileVersion == 2 && (file_size <= 16 || header$nV1Extent < 6 || header$nV2Extent < 0)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file for version 2  in file {filepath}. size: {file_size}, header extent V1 {header$nV1Extent}, V2 {header$nV2Extent}."),!!!conditions_params))
-
-      if (header$nCsFileVersion == 3 && (file_size <= 24 || header$nV1Extent < 14 || header$nV2Extent < 8 || header$nV3Extent < 0)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file for version 3 in file {filepath}. size: {file_size}, header extent V1 {header$nV1Extent}, V2 {header$nV2Extent}, V3 {header$nV3Extent}."),!!!conditions_params))
-
-      if (header$nCsFileVersion == 4 && (file_size <= 72 || header$nV1Extent < 62 || header$nV2Extent < 56 || header$nV3Extent < 48 || header$nV4Extent < 0)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file for version 4 in file {filepath}. size: {file_size}, header extent V1 {header$nV1Extent}, V2 {header$nV2Extent}, V3 {header$nV3Extent}, V4 {header$nV4Extent}."),!!!conditions_params))
-
-      if (header$nCsFileVersion >= 5 && (file_size <= 100 || header$nV1Extent < 90 || header$nV2Extent < 84 || header$nV3Extent < 76 || header$nV4Extent < 28 || header$nV5Extent < 0)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file for version >= 5 in file {filepath}. size: {file_size}, header extent V1 {header$nV1Extent}, V2 {header$nV2Extent}, V3 {header$nV3Extent}, V4 {header$nV4Extent}, V5 {header$nV5Extent}."),!!!conditions_params))
-
-      if (header$nCsFileVersion >= 6 && header$nV5Extent < header$nCS6ByteSize + 4) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file for version >= 6 in file {filepath}. size: {file_size}, header extent V5 {header$nV5Extent}, V6 {header$nCS6ByteSize}."),!!!conditions_params))
-
       if (header$nCsFileVersion < 4) {
         header$nRangeCells <- 32
         header$nDopplerCells <- 512
@@ -67,13 +108,8 @@ seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
         header$nSpectraChannels <- 3
       }
 
-      if (header$nRangeCells <= 0 || header$nRangeCells > 8192 || header$nDopplerCells <= 0 || header$nDopplerCells > 32768) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid nRangeCells or nDopplerCells  in file {filepath}. nRangeCells: {header$nRangeCells}, nDopplerCells: {header$nDopplerCells}."),!!!conditions_params))
+      seasonder_validateCSFileData(filepath, header)
 
-      header_size <- header$nV1Extent + 10
-
-      if (header$nCsKind == 1 && file_size < (header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 36)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file size for nCsKind 1 in file {filepath}. Expected >= {(header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 36)}, actual: {file_size}."),!!!conditions_params))
-
-      if (header$nCsKind == 2 && file_size < (header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 40)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file size for nCsKind  2 in file {filepath}. Expected >= {(header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 40)}, actual: {file_size}."),!!!conditions_params))
 
       data <-  seasonder_readSeaSondeCSFileData(connection, header)
 

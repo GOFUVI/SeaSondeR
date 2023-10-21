@@ -42,14 +42,14 @@ seasonder_readYAMLSpecs <- function(file_path, path) {
   conditions_params <- list(calling_function = "seasonder_readYAMLSpecs",class="seasonder_read_yaml_file_error",seasonder_yaml_file_path=file_path,seasonder_yaml_specs_path=path)
   # Check if the file exists
   if (!file.exists(file_path)) {
-    rlang::inject(seasonder_logAndAbort(glue::glue("File '{file_path}' not found."),!!!conditions_params))
+    rlang::inject(seasonder_logAndAbort(glue::glue("File '{file_path %||% ''}' not found."),!!!conditions_params))
   }
 
   # Read the content from the YAML file
   yaml_content <- rlang::try_fetch({
     yaml::read_yaml(file_path)
   }, error = function(e) {
-    rlang::inject(seasonder_logAndAbort(glue::glue("Reading error. The file '{file_path}' might not be a valid YAML. Reason: {condMessage(e)}"),!!!conditions_params,parent=e))
+    rlang::inject(seasonder_logAndAbort(glue::glue("Reading error. The file '{file_path %||% ''}' might not be a valid YAML. Reason: {condMessage(e)}"),!!!conditions_params,parent=e))
   })
 
   # If the content is not a list, throw an error

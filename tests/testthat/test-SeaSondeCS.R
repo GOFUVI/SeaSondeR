@@ -94,16 +94,23 @@ describe("seasonder_readCSField", {
 
   })
 
-  it("should read a Float correctly", {
-    # Float for 42.41 in IEEE single precision is 0x4229a3d7
-    con <- rawConnection(as.raw(c(0x42, 0x29, 0xa3, 0xd7)))
-    on.exit(close(con))
-    expect_equal(seasonder_readCSField(con, "Float"), 42.41, tolerance = 0.0001)
-    close(con)
-    # Float for 42.41 in IEEE single precision is 0x4229a3d7
-    con <- rawConnection(as.raw(c(0x42, 0x2a, 0x00, 0x00)))
-    on.exit(close(con))
-    expect_equal(seasonder_readCSField(con, "Float"), 42.500001, tolerance = 0.0001)
+  describe("should read a Float correctly", {
+    it("case 1",{
+      # Float for 42.41 in IEEE single precision is 0x4229a3d7
+      con <- rawConnection(as.raw(c(0x42, 0x29, 0xa3, 0xd7)))
+      on.exit(close(con))
+      expect_equal(seasonder_readCSField(con, "Float"), 42.41, tolerance = 0.0001)
+    })
+
+    it("case 2",{
+
+      # Float for 42.41 in IEEE single precision is 0x4229a3d7
+      con <- rawConnection(as.raw(c(0x42, 0x2a, 0x00, 0x00)))
+      on.exit(close(con))
+      expect_equal(seasonder_readCSField(con, "Float"), 42.500001, tolerance = 0.0001)
+
+    })
+
 
   })
 
@@ -247,11 +254,12 @@ describe("seasonder_readCSField", {
 
     con <- rawConnection(as.raw(c(0x12)))
     close(con)  # Close the connection before using it
-    expect_warning(
+    expect_warning({
 
-      res <- withCallingHandlers(seasonder_cs_field_reading_error= function(cond)  seasonder_skip_cs_field(cond,NA),
+      res <- withCallingHandlers(seasonder_cs_field_reading_error = function(cond)  seasonder_skip_cs_field(cond,NA),
                                  seasonder_readCSField(con, "UInt8")
-      ), "Connection is not open.")
+      )
+    }, "Connection is not open.")
 
     expect_true(is.na(res))
 
@@ -262,11 +270,12 @@ describe("seasonder_readCSField", {
     con <- rawConnection(as.raw(c(0x12)))
     on.exit(close(con))
     seasonder_readCSField(con, "UInt8")
-    expect_warning(
+    expect_warning({
 
       res <- withCallingHandlers(seasonder_cs_field_reading_error= function(cond)  seasonder_skip_cs_field(cond,NA),
                                  seasonder_readCSField(con, "UInt8")
-      ), "Read value of length 0. Possibly reached end of file.")
+      )
+    }, "Read value of length 0. Possibly reached end of file.")
 
     expect_true(is.na(res))
 
@@ -411,22 +420,23 @@ describe("read_and_qc_field", {
         field_spec <-  list(type = "UInt8", qc_fun = "qc_error", qc_params = list())
         mocked_seasonder_readCSField <- mockthat::mock(123)
 
-        seasonder_the$qc_functions$qc_error<-function(...){
+        seasonder_the$qc_functions$qc_error <- function(...){
 
           rlang::abort("QC Error")
         }
         alternate_qc_called <- FALSE
 
         alternate_qc <- function(x){
-          alternate_qc_called <<-TRUE
+          alternate_qc_called <<- TRUE
           6
         }
 
-        expect_condition(
+        expect_condition({
           result <- withCallingHandlers(seasonder_cs_field_qc_fun_error=function(cond) seasonder_rerun_qc_with_fun(cond,alternate_qc),
                                         mockthat::with_mock(seasonder_readCSField=mocked_seasonder_readCSField,
                                                             read_and_qc_field(field_spec, connection = con ))
-          ),"Rerunning QC on value 123.",class="seasonder_cs_field_qc_fun_rerun")
+          )
+        },"Rerunning QC on value 123.",class="seasonder_cs_field_qc_fun_rerun")
         expect_equal(result,6)
 
       })
@@ -478,7 +488,7 @@ describe("seasonder_readSeaSondeCSFileBlock", {
 
 
       con <- rawConnection(as.raw(c(0x12)))
-
+      on.exit(close(con))
       spec <- list(
         temp = list(type = "UInt8", qc_fun = "qc_check_type", qc_params = list(expected_type="integer")),
         pressure = list(type = "UInt8", qc_fun = "qc_check_type", qc_params = list(expected_type="integer"))
@@ -1246,10 +1256,829 @@ describe("seasonder_readSeaSondeCSFileHeaderV6 works as expected", {
 
 })
 
+describe("seasonder_validateCSFileData",{
+  describe("file size <=10",{
+    it("should throw an error",{
+
+      header_mock <- list("fake_header_data")
+
+      tmp <- tempfile()
+      writeBin(openssl::rand_bytes(10),tmp)
+
+      expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                   "Invalid file size",
+                   class="seasonder_validate_cs_file_error"
+      )
+    })
+  })
+  describe("wrong CS file version",{
+    it("should throw an error",{
+
+      header_mock <- list(nCsFileVersion=0)
+
+      tmp <- tempfile()
+      writeBin(openssl::rand_bytes(11),tmp)
+
+      expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                   "Invalid nCsFileVersion",
+                   class="seasonder_validate_cs_file_error"
+      )
+    })
+  })
+
+  describe("invalid CS file version 1",{
+    describe("case 0: correct",{
+      it("should not throw an error",{
+
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 1,
+                            nV1Extent = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(1769482),tmp)
+
+        expect_no_error(seasonder_validateCSFileData(tmp, header_mock))
+      })
+    })
+    describe("case 1: wrong v1 extent",{
+      it("should throw an error",{
+
+
+        header_mock <- list(nCsFileVersion = 1,
+                            nV1Extent = -1)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(11),tmp)
+
+        expect_error(
+          seasonder_validateCSFileData(tmp, header_mock),
+          "Invalid file for version 1",
+          class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+  })
+
+  describe("invalid CS file version 2",{
+    describe("case 0: correct",{
+      it("should not throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 2,
+                            nV1Extent = 6,
+                            nV2Extent = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(1769488),tmp)
+
+        expect_no_error(seasonder_validateCSFileData(tmp, header_mock))
+      })
+    })
+    describe("case 1: wrong file size",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nCsFileVersion = 2,
+                            nV1Extent = 6,
+                            nV2Extent = 0)
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(16),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version 2",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+    describe("case 2: wrong v1 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nCsFileVersion = 2,
+                            nV1Extent = 5,
+                            nV2Extent = 0)
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(17),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version 2",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+    describe("case 3: wrong v2 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nCsFileVersion = 2,
+                            nV1Extent = 6,
+                            nV2Extent = -1)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(17),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version 2",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+  })
+
+  describe("invalid CS file version 3",{
+    describe("case 0: correct",{
+      it("should not throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+
+                            nCsFileVersion = 3,
+                            nV1Extent = 14,
+                            nV2Extent = 8,
+                            nV3Extent = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(1769496),tmp)
+
+        expect_no_error(seasonder_validateCSFileData(tmp, header_mock))
+      })
+    })
+    describe("case 1: wrong file size",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nCsFileVersion = 3,
+                            nV1Extent = 14,
+                            nV2Extent = 8,
+                            nV3Extent = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(24),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version 3",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+    describe("case 2: wrong v1 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nCsFileVersion = 3,
+                            nV1Extent = 13,
+                            nV2Extent = 8,
+                            nV3Extent = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(25),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version 3",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+    describe("case 3: wrong v2 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nCsFileVersion = 3,
+                            nV1Extent = 14,
+                            nV2Extent = 7,
+                            nV3Extent = 0)
+
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(25),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version 3",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+    describe("case 4: wrong v3 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nCsFileVersion = 3,
+                            nV1Extent = 14,
+                            nV2Extent = 8,
+                            nV3Extent = -1)
+
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(25),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version 3",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+  })
+
+  describe("invalid CS file version 4",{
+    describe("case 0: correct",{
+      it("should not throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 4,
+                            nV1Extent = 62,
+                            nV2Extent = 56,
+                            nV3Extent = 48,
+                            nV4Extent = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(1769544),tmp)
+
+        expect_no_error(seasonder_validateCSFileData(tmp, header_mock))
+      })
+    })
+    describe("case 1: wrong file size",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nCsFileVersion = 4,
+                            nV1Extent = 62,
+                            nV2Extent = 56,
+                            nV3Extent = 48,
+                            nV4Extent = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(72),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version 4",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+    describe("case 2: wrong v1 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nCsFileVersion = 4,
+                            nV1Extent = 61,
+                            nV2Extent = 56,
+                            nV3Extent = 48,
+                            nV4Extent = 0)
+
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(73),tmp)
+
+        expect_error(
+          seasonder_validateCSFileData(tmp, header_mock),
+          "Invalid file for version 4",
+          class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+    describe("case 3: wrong v2 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nCsFileVersion = 4,
+                            nV1Extent = 62,
+                            nV2Extent = 55,
+                            nV3Extent = 48,
+                            nV4Extent = 0)
+
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(73),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version 4",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+    describe("case 4: wrong v3 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nCsFileVersion = 4,
+                            nV1Extent = 62,
+                            nV2Extent = 56,
+                            nV3Extent = 47,
+                            nV4Extent = 0)
+
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(73),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version 4",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+
+    describe("case 5: wrong v4 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nCsFileVersion = 4,
+                            nV1Extent = 62,
+                            nV2Extent = 56,
+                            nV3Extent = 48,
+                            nV4Extent = -1)
+
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(73),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version 4",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+  })
+
+  describe("invalid CS file version 5",{
+    describe("case 0: correct",{
+      it("should not throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 5,
+                            nV1Extent = 90,
+                            nV2Extent = 84,
+                            nV3Extent = 76,
+                            nV4Extent = 28,
+                            nV5Extent = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(1769572),tmp)
+
+        expect_no_error(seasonder_validateCSFileData(tmp, header_mock))
+      })
+    })
+    describe("case 1: wrong file size",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 5,
+                            nV1Extent = 90,
+                            nV2Extent = 84,
+                            nV3Extent = 76,
+                            nV4Extent = 28,
+                            nV5Extent = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(100),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version >= 5",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+    describe("case 2: wrong v1 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 5,
+                            nV1Extent = 89,
+                            nV2Extent = 84,
+                            nV3Extent = 76,
+                            nV4Extent = 28,
+                            nV5Extent = 0)
+
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(101),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version >= 5",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+    describe("case 3: wrong v2 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 5,
+                            nV1Extent = 90,
+                            nV2Extent = 83,
+                            nV3Extent = 76,
+                            nV4Extent = 28,
+                            nV5Extent = 0)
+
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(101),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version >= 5",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+    describe("case 4: wrong v3 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 5,
+                            nV1Extent = 90,
+                            nV2Extent = 84,
+                            nV3Extent = 75,
+                            nV4Extent = 28,
+                            nV5Extent = 0)
+
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(101),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version >= 5",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+
+    describe("case 5: wrong v4 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 5,
+                            nV1Extent = 90,
+                            nV2Extent = 84,
+                            nV3Extent = 76,
+                            nV4Extent = 27,
+                            nV5Extent = 0)
+
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(101),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version >= 5",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+    describe("case 6: wrong v5 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 5,
+                            nV1Extent = 90,
+                            nV2Extent = 84,
+                            nV3Extent = 76,
+                            nV4Extent = 28,
+                            nV5Extent = -1)
+
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(101),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version >= 5",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+  })
+
+
+  describe("invalid CS file version 6",{
+    describe("case 0: correct",{
+      it("should not throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 6,
+                            nV1Extent = 94,
+                            nV2Extent = 88,
+                            nV3Extent = 80,
+                            nV4Extent = 32,
+                            nV5Extent = 4,
+                            nCS6ByteSize = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(1769576),tmp)
+
+        expect_no_error(seasonder_validateCSFileData(tmp, header_mock))
+      })
+    })
+    describe("case 1: wrong v5 and v6 extent",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 6,
+                            nV1Extent = 94,
+                            nV2Extent = 88,
+                            nV3Extent = 80,
+                            nV4Extent = 32,
+                            nV5Extent = 3,
+                            nCS6ByteSize = 0)
+
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(105),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),
+                     "Invalid file for version >= 6",
+                     class="seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+
+  })
+
+
+  describe("wrong nRangeCells or nDopplerCells",{
+    describe("case 0: correct",{
+      it("should not throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 6,
+                            nV1Extent = 94,
+                            nV2Extent = 88,
+                            nV3Extent = 80,
+                            nV4Extent = 32,
+                            nV5Extent = 4,
+                            nCS6ByteSize = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(1769576),tmp)
+
+        expect_no_error(seasonder_validateCSFileData(tmp, header_mock))
+      })
+    })
+
+    describe("case 1: 0 nRangeCells",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 0,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 6,
+                            nV1Extent = 94,
+                            nV2Extent = 88,
+                            nV3Extent = 80,
+                            nV4Extent = 32,
+                            nV5Extent = 4,
+                            nCS6ByteSize = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(1769576),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),"Invalid nRangeCells or nDopplerCells in file",
+                     class = "seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+
+    describe("case 2: nRangeCells >8192",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 8193,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 6,
+                            nV1Extent = 94,
+                            nV2Extent = 88,
+                            nV3Extent = 80,
+                            nV4Extent = 32,
+                            nV5Extent = 4,
+                            nCS6ByteSize = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(1769576),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),"Invalid nRangeCells or nDopplerCells in file",
+                     class = "seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+    describe("case 3: 0 nDopplerCells ",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 0,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 6,
+                            nV1Extent = 94,
+                            nV2Extent = 88,
+                            nV3Extent = 80,
+                            nV4Extent = 32,
+                            nV5Extent = 4,
+                            nCS6ByteSize = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(1769576),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),"Invalid nRangeCells or nDopplerCells in file",
+                     class = "seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+    describe("case 4: nDopplerCells > 32768",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 32769,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 6,
+                            nV1Extent = 94,
+                            nV2Extent = 88,
+                            nV3Extent = 80,
+                            nV4Extent = 32,
+                            nV5Extent = 4,
+                            nCS6ByteSize = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(1769576),tmp)
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),"Invalid nRangeCells or nDopplerCells in file",
+                     class = "seasonder_validate_cs_file_error"
+        )
+      })
+    })
+  })
+
+
+  describe("Invalid file size for nCsKind 1 in file",{
+    describe("case 0: correct",{
+      it("should not throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 6,
+                            nV1Extent = 94,
+                            nV2Extent = 88,
+                            nV3Extent = 80,
+                            nV4Extent = 32,
+                            nV5Extent = 4,
+                            nCS6ByteSize = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(104 + 32 * 512 * 3 * 36),tmp)
+
+        expect_no_error(seasonder_validateCSFileData(tmp, header_mock))
+      })
+    })
+
+    describe("case 1: wrong size",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 1,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 6,
+                            nV1Extent = 94,
+                            nV2Extent = 88,
+                            nV3Extent = 80,
+                            nV4Extent = 32,
+                            nV5Extent = 4,
+                            nCS6ByteSize = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(-1 + 104 + 32 * 512 * 3 * 36),tmp)
+
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),"Invalid file size for nCsKind 1 in file",
+                     class = "seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+
+  })
+
+
+  describe("Invalid file size for nCsKind 1 in file",{
+    describe("case 0: correct",{
+      it("should not throw an error",{
+
+        header_mock <- list(nCsKind = 2,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 6,
+                            nV1Extent = 94,
+                            nV2Extent = 88,
+                            nV3Extent = 80,
+                            nV4Extent = 32,
+                            nV5Extent = 4,
+                            nCS6ByteSize = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(104 + 32 * 512 * 3 * 40),tmp)
+
+        expect_no_error(seasonder_validateCSFileData(tmp, header_mock))
+      })
+    })
+
+    describe("case 1: wrong file size",{
+      it("should throw an error",{
+
+        header_mock <- list(nCsKind = 2,
+                            nRangeCells = 32,
+                            nDopplerCells = 512,
+                            nSpectraChannels = 3,
+                            nCsFileVersion = 6,
+                            nV1Extent = 94,
+                            nV2Extent = 88,
+                            nV3Extent = 80,
+                            nV4Extent = 32,
+                            nV5Extent = 4,
+                            nCS6ByteSize = 0)
+
+        tmp <- tempfile()
+        writeBin(openssl::rand_bytes(-1 + 104 + 32 * 512 * 3 * 40),tmp)
+
+
+        expect_error(seasonder_validateCSFileData(tmp, header_mock),"Invalid file size for nCsKind 2 in file",
+                     class = "seasonder_validate_cs_file_error"
+        )
+      })
+    })
+
+
+  })
+})
+
 describe("seasonder_readSeaSondeCSFile",{
 
 
-  test_that("seasonder_readSeaSondeCSFile works correctly", {
+  describe("seasonder_readSeaSondeCSFile works correctly", {
     # Setup mock functions
 
 
@@ -1271,6 +2100,7 @@ describe("seasonder_readSeaSondeCSFile",{
 
       describe("if the specs file version is not correct",{
         it("should thrown an error",{
+
           mock_readYAMLSpecs <- mock_output_factory(list(version = "wrong version"),
                                                     list("fake_header_specs")
           )
@@ -1281,7 +2111,7 @@ describe("seasonder_readSeaSondeCSFile",{
           writeBin(openssl::rand_bytes(10),tmp)
           expect_error(
             mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                seasonder_readSeaSondeCSFile(tmp,"fakepath")
+                                seasonder_readSeaSondeCSFile(tmp, "fakepath")
             ),
             "Unsupported version",
             class="seasonder_read_cs_file_error"
@@ -1293,783 +2123,29 @@ describe("seasonder_readSeaSondeCSFile",{
         })
       })
 
-      describe("file size <=10",{
-        it("should throw an error",{
-          mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                    list("fake_header_specs")
-          )
 
-          mock_readSeaSondeCSFileHeader <- mockthat::mock("fake_header_data")
 
-          tmp <- tempfile()
-          writeBin(openssl::rand_bytes(10),tmp)
 
-          expect_error(
-            mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                seasonder_readSeaSondeCSFile(tmp,"fakepath")
-            ),
-            "Invalid file size",
-            class="seasonder_read_cs_file_error"
-          )
-        })
-      })
-      describe("wrong CS file version",{
-        it("should throw an error",{
-          mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                    list("fake_header_specs")
-          )
+      describe("restarts",{
 
-          mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsFileVersion=0))
+        describe("seasonder_skip_cs_file",{
 
-          tmp <- tempfile()
-          writeBin(openssl::rand_bytes(11),tmp)
+          it("should throw a seasonder_cs_file_skipped condition and return an empty file",{
 
-          expect_error(
-            mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                seasonder_readSeaSondeCSFile(tmp,"fakepath")
-            ),
-            "Invalid nCsFileVersion",
-            class="seasonder_read_cs_file_error"
-          )
-        })
-      })
+            expect_warning({
+              test <- withCallingHandlers(seasonder_read_cs_file_error = function(cond) seasonder_skip_cs_file(cond),
+                                          {
+                                            seasonder_readSeaSondeCSFile(NULL,NULL)
 
-      describe("invalid CS file version 1",{
-        describe("case 0: correct",{
-          it("should not throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
+                                          })
 
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nCsFileVersion = 1,
-                                                                 nV1Extent = 0))
+            },class="seasonder_cs_file_skipped")
 
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(1769482),tmp)
+            expect_equal(test,list(header=NULL,data=NULL))
 
-            expect_no_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              )
-            )
           })
+
         })
-        describe("case 1: wrong v1 extent",{
-          it("should throw an error",{
-
-
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsFileVersion = 1,
-                                                                 nV1Extent = -1))
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(11),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 1",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-
-      })
-
-      describe("invalid CS file version 2",{
-        describe("case 0: correct",{
-          it("should not throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nCsFileVersion = 2,
-                                                                 nV1Extent = 6,
-                                                                 nV2Extent = 0))
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(1769488),tmp)
-
-            expect_no_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              )
-            )
-          })
-        })
-        describe("case 1: wrong file size",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nCsFileVersion = 2,
-                                                                 nV1Extent = 6,
-                                                                 nV2Extent = 0))
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(16),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 2",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-        describe("case 2: wrong v1 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nCsFileVersion = 2,
-                                                                 nV1Extent = 5,
-                                                                 nV2Extent = 0))
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(17),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 2",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-        describe("case 3: wrong v2 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nCsFileVersion = 2,
-                                                                 nV1Extent = 6,
-                                                                 nV2Extent = -1))
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(17),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 2",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-      })
-
-      describe("invalid CS file version 3",{
-        describe("case 0: correct",{
-          it("should not throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nCsFileVersion = 3,
-                                                                 nV1Extent = 14,
-                                                                 nV2Extent = 8,
-                                                                 nV3Extent = 0))
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(1769496),tmp)
-
-            expect_no_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              )
-            )
-          })
-        })
-        describe("case 1: wrong file size",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nCsFileVersion = 3,
-                                                                 nV1Extent = 14,
-                                                                 nV2Extent = 8,
-                                                                 nV3Extent = 0))
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(24),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 3",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-        describe("case 2: wrong v1 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nCsFileVersion = 3,
-                                                                 nV1Extent = 13,
-                                                                 nV2Extent = 8,
-                                                                 nV3Extent = 0))
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(25),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 3",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-        describe("case 3: wrong v2 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nCsFileVersion = 3,
-                                                                 nV1Extent = 14,
-                                                                 nV2Extent = 7,
-                                                                 nV3Extent = 0))
-
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(25),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 3",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-
-        describe("case 4: wrong v3 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nCsFileVersion = 3,
-                                                                 nV1Extent = 14,
-                                                                 nV2Extent = 8,
-                                                                 nV3Extent = -1))
-
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(25),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 3",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-      })
-
-      describe("invalid CS file version 4",{
-        describe("case 0: correct",{
-          it("should not throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nCsFileVersion = 4,
-                                                                 nV1Extent = 62,
-                                                                 nV2Extent = 56,
-                                                                 nV3Extent = 48,
-                                                                 nV4Extent = 0))
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(1769544),tmp)
-
-            expect_no_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              )
-            )
-          })
-        })
-        describe("case 1: wrong file size",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nCsFileVersion = 4,
-                                                                 nV1Extent = 62,
-                                                                 nV2Extent = 56,
-                                                                 nV3Extent = 48,
-                                                                 nV4Extent = 0))
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(72),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 4",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-        describe("case 2: wrong v1 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nCsFileVersion = 4,
-                                                                 nV1Extent = 61,
-                                                                 nV2Extent = 56,
-                                                                 nV3Extent = 48,
-                                                                 nV4Extent = 0))
-
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(73),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 4",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-        describe("case 3: wrong v2 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nCsFileVersion = 4,
-                                                                 nV1Extent = 62,
-                                                                 nV2Extent = 55,
-                                                                 nV3Extent = 48,
-                                                                 nV4Extent = 0))
-
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(73),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 4",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-
-        describe("case 4: wrong v3 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nCsFileVersion = 4,
-                                                                 nV1Extent = 62,
-                                                                 nV2Extent = 56,
-                                                                 nV3Extent = 47,
-                                                                 nV4Extent = 0))
-
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(73),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 4",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-
-
-        describe("case 5: wrong v4 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nCsFileVersion = 4,
-                                                                 nV1Extent = 62,
-                                                                 nV2Extent = 56,
-                                                                 nV3Extent = 48,
-                                                                 nV4Extent = -1))
-
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(73),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version 4",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-      })
-
-      describe("invalid CS file version 5",{
-        describe("case 0: correct",{
-          it("should not throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nSpectraChannels = 3,
-                                                                 nCsFileVersion = 5,
-                                                                 nV1Extent = 90,
-                                                                 nV2Extent = 84,
-                                                                 nV3Extent = 76,
-                                                                 nV4Extent = 28,
-                                                                 nV5Extent = 0))
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(1769572),tmp)
-
-            expect_no_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              )
-            )
-          })
-        })
-        describe("case 1: wrong file size",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nSpectraChannels = 3,
-                                                                 nCsFileVersion = 5,
-                                                                 nV1Extent = 90,
-                                                                 nV2Extent = 84,
-                                                                 nV3Extent = 76,
-                                                                 nV4Extent = 28,
-                                                                 nV5Extent = 0))
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(100),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version >= 5",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-        describe("case 2: wrong v1 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nSpectraChannels = 3,
-                                                                 nCsFileVersion = 5,
-                                                                 nV1Extent = 89,
-                                                                 nV2Extent = 84,
-                                                                 nV3Extent = 76,
-                                                                 nV4Extent = 28,
-                                                                 nV5Extent = 0))
-
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(101),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version >= 5",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-        describe("case 3: wrong v2 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nSpectraChannels = 3,
-                                                                 nCsFileVersion = 5,
-                                                                 nV1Extent = 90,
-                                                                 nV2Extent = 83,
-                                                                 nV3Extent = 76,
-                                                                 nV4Extent = 28,
-                                                                 nV5Extent = 0))
-
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(101),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version >= 5",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-
-        describe("case 4: wrong v3 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nSpectraChannels = 3,
-                                                                 nCsFileVersion = 5,
-                                                                 nV1Extent = 90,
-                                                                 nV2Extent = 84,
-                                                                 nV3Extent = 75,
-                                                                 nV4Extent = 28,
-                                                                 nV5Extent = 0))
-
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(101),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version >= 5",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-
-
-        describe("case 5: wrong v4 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nSpectraChannels = 3,
-                                                                 nCsFileVersion = 5,
-                                                                 nV1Extent = 90,
-                                                                 nV2Extent = 84,
-                                                                 nV3Extent = 76,
-                                                                 nV4Extent = 27,
-                                                                 nV5Extent = 0))
-
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(101),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version >= 5",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-
-        describe("case 6: wrong v5 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nSpectraChannels = 3,
-                                                                 nCsFileVersion = 5,
-                                                                 nV1Extent = 90,
-                                                                 nV2Extent = 84,
-                                                                 nV3Extent = 76,
-                                                                 nV4Extent = 28,
-                                                                 nV5Extent = -1))
-
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(101),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version >= 5",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-
-      })
-
-
-      describe("invalid CS file version 6",{
-        describe("case 0: correct",{
-          it("should not throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nSpectraChannels = 3,
-                                                                 nCsFileVersion = 6,
-                                                                 nV1Extent = 94,
-                                                                 nV2Extent = 88,
-                                                                 nV3Extent = 80,
-                                                                 nV4Extent = 32,
-                                                                 nV5Extent = 4,
-                                                                 nCS6ByteSize = 0))
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(1769576),tmp)
-
-            expect_no_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              )
-            )
-          })
-        })
-        describe("case 1: wrong v5 and v6 extent",{
-          it("should throw an error",{
-            mock_readYAMLSpecs <- mock_output_factory(list(version = "1.0.0"),
-                                                      list("fake_header_specs")
-            )
-
-            mock_readSeaSondeCSFileHeader <- mockthat::mock(list(nCsKind = 1,
-                                                                 nRangeCells = 32,
-                                                                 nDopplerCells = 512,
-                                                                 nSpectraChannels = 3,
-                                                                 nCsFileVersion = 6,
-                                                                 nV1Extent = 94,
-                                                                 nV2Extent = 88,
-                                                                 nV3Extent = 80,
-                                                                 nV4Extent = 32,
-                                                                 nV5Extent = 3,
-                                                                 nCS6ByteSize = 0))
-
-
-            tmp <- tempfile()
-            writeBin(openssl::rand_bytes(105),tmp)
-
-            expect_error(
-              mockthat::with_mock(seasonder_readYAMLSpecs=mock_readYAMLSpecs,
-                                  seasonder_readSeaSondeCSFileHeader=mock_readSeaSondeCSFileHeader,
-                                  seasonder_readSeaSondeCSFile(tmp,"fakepath")
-              ),
-              "Invalid file for version >= 6",
-              class="seasonder_read_cs_file_error"
-            )
-          })
-        })
-
 
       })
 
@@ -2077,8 +2153,7 @@ describe("seasonder_readSeaSondeCSFile",{
 
 
 
-  }
-  )
+  })
 })
 
 #### QC ####
@@ -2167,7 +2242,7 @@ describe("CSS file",{
     specs_header <- seasonder_readYAMLSpecs(here::here("inst/specs/CS_V1.yaml"),"header")
 
 
-    it("should read the header",{
+    it("should read the data",{
       con <- file(here::here("tests/testthat/data/CSS_V6.cs"),"rb")
       on.exit(close(con))
 
@@ -2187,33 +2262,7 @@ describe("CSS file",{
 
 
 
-describe("seasonder_readSeaSondeCSFile",{
 
-
-  test_that("seasonder_readSeaSondeCSFile works correctly", {
-    # Setup mock functions
-
-
-    describe("error handling",{
-
-      describe("if there is a problem opening the connection",{
-        it("should throw an error",{
-
-          expect_error(seasonder_readSeaSondeCSFile("fakepath","fakepath"),
-                       "Could no open connection to file",
-                       class="seasonder_read_cs_file_error")
-
-        })
-
-      })
-
-
-    })
-
-
-  }
-  )
-})
 
 
 
