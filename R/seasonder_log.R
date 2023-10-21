@@ -1,3 +1,9 @@
+# Shared Environment for SeaSondeR Logs
+#
+# Update the shared environment to stores log messages
+# across different functions within the SeaSondeR package.
+seasonder_the$log <- character(0)
+
 # Initialize a variable 'logs_enabled' within the 'seasonder_the' environment
 # and set its value to TRUE. This variable will be used to control whether
 # logging is performed when using various functions in the SeaSondeR package.
@@ -36,8 +42,38 @@ seasonder_disableLogs <- function() seasonder_the$logs_enabled <- FALSE
 #' seasonder_areLogsEnabled()
 seasonder_areLogsEnabled <- function() seasonder_the$logs_enabled
 
+seasonder_appendLog <- function(log_str) {
+
+  seasonder_the$log <- append(seasonder_the$log,log_str)
+
+  invisible(seasonder_the$log)
+}
+
+seasonder_verifyLog <- function(message,level){
+  # match level to one of the allowed inputs
+  level <- match.arg(level,c("info","error","fatal"))
+
+  invisible(TRUE)
+}
+
+seasonder_logStr <- function(message,level) {
+
+  out <-  switch(level,
+                 "info" = glue::glue("[INFO] {Sys.time()}: {message}"),
+                 "error" = glue::glue("[ERROR] {Sys.time()}: {message}"),
+                 "fatal" = glue::glue("[FATAL] {Sys.time()}: {message}")
+  )
+
+  return(out)
+}
 
 
+#' @export
+seasonder_getLog <- function(n=100){
+
+  tail(seasonder_the$log,n = n)
+
+}
 
 #' seasonder_log function
 #'
@@ -51,68 +87,54 @@ seasonder_areLogsEnabled <- function() seasonder_the$logs_enabled
 #' seasonder_log("This is an info message")
 #' seasonder_log("This is an error message", "error")
 #' seasonder_log("This is a fatal message", "fatal")
-seasonder_log <- function(message, level=c("info","error","fatal")){
-  # match level to one of the allowed inputs
-  level <- match.arg(level)
+seasonder_log <- function(message, level="info"){
 
-  # signal a condition with the message
-  rlang::signal(message, "seasonder_log", level=level)
+  if (seasonder_areLogsEnabled()) {
+    seasonder_verifyLog(message,level)
+    log_str <- seasonder_logStr(message,level)
+
+    seasonder_appendLog(log_str)
+
+    # signal a condition with the message
+    rlang::signal(log_str, "seasonder_log", level = level)
+  }
 }
 
-#' seasonder_log_archiver function
-#'
-#' This function writes the logged message to a specific path based on the level of the log.
-#'
-#' @param object A list object that contains a 'level' and 'message' elements indicating the level and the message of the log respectively.
-#' @param log_path A character string indicating the default path where the logs will be stored. Default is a temporary file.
-#' @param log_info_path A character string indicating the path where the 'info' level logs will be stored. Default is 'log_path'.
-#' @param log_error_path A character string indicating the path where the 'error' level logs will be stored. Default is 'log_info_path'.
-#' @param log_fatal_path A character string indicating the path where the 'fatal' level logs will be stored. Default is 'log_error_path'.
-#' @return the log object
 #' @export
-#'
-#' @examples
-#' log <- list(level = "info", message = "This is an info message")
-#' seasonder_log_archiver(log)
-#' log <- list(level = "error", message = "This is an error message")
-#' seasonder_log_archiver(log)
-#' log <- list(level = "fatal", message = "This is a fatal message")
-#' seasonder_log_archiver(log)
-seasonder_log_archiver <- function(object, log_path=tempfile(), log_info_path=log_path, log_error_path=log_info_path, log_fatal_path=log_error_path){
+seasonder_logArchiver <- function(log_path=NULL, log_info_path=log_path, log_error_path=log_info_path, log_fatal_path=log_error_path){
 
-  # switch function to decide which function to call based on the log level
-  log_fun <- switch(object$level,
-                    "info" = function(x) write(glue::glue("[INFO] {Sys.time()}: {object$message}"), log_info_path, append = TRUE),
-                    "error" = function(x) write(glue::glue("[ERROR] {Sys.time()}: {object$message}"), log_error_path, append = TRUE),
-                    "fatal" = function(x) write(glue::glue("[FATAL] {Sys.time()}: {object$message}"), log_fatal_path, append = TRUE)
-  )
+  temp_file <- FALSE
 
-  # execute the selected log function
-  log_fun(object$level)
+  if (all(purrr::map_lgl(c(log_path,log_info_path,log_error_path,log_fatal_path),is.null))) {
+    log_path <- log_info_path <- log_error_path <- log_fatal_path <- tempfile()
+    temp_file <- TRUE
+  }
+
+
+  seasonder_the$log %>% purrr::walk(\(log_entry){
+    level <- stringr::str_extract(log_entry,"^\\[(INFO|ERROR|FATAL)\\]",group = 1)
+
+    # switch function to decide which function to call based on the log level
+    log_fun <- switch(level,
+                      "INFO" = function(x) if (!is.null(log_info_path)) write(log_entry, log_info_path, append = TRUE),
+                      "ERROR" = function(x) if (!is.null(log_error_path)) write(log_entry, log_error_path, append = TRUE),
+                      "FATAL" = function(x) if (!is.null(log_fatal_path)) write(log_entry, log_fatal_path, append = TRUE)
+    )
+
+    # execute the selected log function
+    try(log_fun(level))
+
+  })
+
+
 
   # return the log path
-  return(object)
+  if (temp_file) {
+    return(log_path)
+  }else{
+    return(NULL)
+  }
 }
-
-#' seasonder_archive_expression_log function
-#'
-#' This function wraps the provided expression `expr` in a tryCatch block and archives the log information
-#' whenever a 'seasonder_log' condition is signaled within the evaluated expression. The log message is archived
-#' by calling `seasonder_log_archiver` with the signaled condition `cond` and any additional parameters.
-#'
-#' @param expr An expression to be evaluated. This expression should signal a 'seasonder_log' condition using `seasonder_log` function when needed.
-#' @param ... Additional parameters passed to `seasonder_log_archiver` function.
-#' @return The result of evaluating the input expression `expr`.
-#' @export
-seasonder_archive_expression_log <- function(expr, ...){
-  # tryCatch block captures any errors or warnings generated within the expr
-  # withCallingHandlers ensures that any 'seasonder_log' conditions signaled within expr are captured and passed to seasonder_log_archiver
-  tryCatch(
-    withCallingHandlers(expr, seasonder_log = function(cond) seasonder_log_archiver(cond, ...))
-  )
-}
-
-
 
 
 #' Log and Inform Message in SeaSondeR
@@ -134,12 +156,12 @@ seasonder_archive_expression_log <- function(expr, ...){
 #' my_function()
 #' }
 #'
-seasonder_logAndMessage <- function(msg,log_level="info",calling_function=NULL,...) {
+seasonder_logAndMessage <- function(msg, log_level="info", calling_function=NULL, ...) {
 
 
   # Get the name of the calling function
 
-  if(is.null(calling_function)){
+  if (is.null(calling_function)) {
     calling_function <- sys.call(-1)[[1]]
   }
 
@@ -155,15 +177,15 @@ seasonder_logAndMessage <- function(msg,log_level="info",calling_function=NULL,.
     paste0(calling_function[1], ": ", full_msg)
   },silent = TRUE)
 
-  if(inherits(full_msg,"try-error")){
+  if (inherits(full_msg,"try-error")) {
     full_msg <- msg
   }
 
-  if (seasonder_areMessagesEnabled() & log_level=="info") {
+  if (seasonder_areMessagesEnabled() && log_level == "info") {
     rlang::inform(full_msg,...)
   }
 
-  if (log_level=="error") {
+  if (log_level == "error") {
     rlang::warn(full_msg,...)
   }
 
@@ -196,9 +218,9 @@ seasonder_logAndAbort <- function(msg, calling_function=NULL, ...) {
   log_level <- "fatal"
 
   # Get the name of the calling function
-if (is.null(calling_function)) {
-  calling_function <- sys.call(-1)[[1]]
-}
+  if (is.null(calling_function)) {
+    calling_function <- sys.call(-1)[[1]]
+  }
   full_msg <- msg
 
 
@@ -210,7 +232,7 @@ if (is.null(calling_function)) {
     paste0(calling_function[1], ": ", full_msg)
   },silent = TRUE)
 
-  if(inherits(full_msg,"try-error")){
+  if (inherits(full_msg,"try-error")) {
     full_msg <- msg
   }
 
@@ -220,4 +242,45 @@ if (is.null(calling_function)) {
   if (seasonder_areLogsEnabled()) {
     seasonder_log(full_msg, log_level)
   }
+}
+
+
+#' @export
+seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_quantile=0.9, min_threshold_secs=10){
+
+
+  log <- seasonder_the$log
+
+
+  timestamps <- stringr::str_extract(log,"^\\[(?:INFO|ERROR|FATAL)\\] (\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}\\.\\d*):",group = 1)
+  timestamps <- lubridate::ymd_hms(timestamps)
+
+
+  df <- data.frame(timestamps, log)
+
+  time_gaps <- difftime(timestamps, lag(timestamps, default = dplyr::first(timestamps)))
+
+  if (is.null(threshold)) {
+
+    threshold <- quantile(time_gaps,c(threshold_quantile)) %>%  magrittr::multiply_by(threshold_factor) %>% min(difftime(min_threshold_secs,0))
+  }
+
+
+
+  blocks <- df %>%
+    dplyr::arrange(timestamps) %>%
+    dplyr::mutate(time_gaps = time_gaps,time_block = cumsum(time_gaps > threshold)) %>%
+    dplyr::group_by(time_block) %>%
+    dplyr::group_split() %>%
+    purrr::map(\(block) dplyr::pull(block,"log"))
+
+
+  return(blocks)
+
+}
+
+
+#' @export
+seasonder_lastLog <- function(...){
+  seasonder_splitLog(...) %>% dplyr::last()
 }

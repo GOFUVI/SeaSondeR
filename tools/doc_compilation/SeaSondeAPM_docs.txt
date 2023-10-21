@@ -1,0 +1,617 @@
+Start function seasonder_createSeaSondeAPM
+\name{seasonder_createSeaSondeAPM}
+\alias{seasonder_createSeaSondeAPM}
+\title{Create a SeaSondeAPM Object}
+\usage{
+seasonder_createSeaSondeAPM(
+  calibration_matrix = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 2,
+    ncol = 0),
+  ...
+)
+}
+\arguments{
+\item{calibration_matrix}{A 2 x b complex matrix, where b is the number of bearings for calibration.}
+
+\item{...}{Additional named attributes that will be passed to \code{\link{seasonder_initializeAttributesSeaSondeAPM}}.}
+}
+\value{
+A SeaSondeAPM object containing a complex matrix with class attribute 'SeaSondeAPM' and
+additional attributes for metadata. Row names are set "A13" and "A23" and column names are set to be the values in BEAR.
+}
+\description{
+This function creates a SeaSondeAPM object to store antenna pattern calibration data.
+}
+\details{
+The function performs the following operations:
+\enumerate{
+\item Validates the \code{calibration_matrix} with code{\link{seasonder_validateCalibrationMatrixSeaSondeAPM}}.
+\item Initializes all other attributes either with default or user-provided values.
+\item Merges the initialized attributes into \code{calibration_matrix}.
+\item Sets the object's class to 'SeaSondeAPM'.
+}
+
+For more details on the attributes, see \code{\link{seasonder_initializeAttributesSeaSondeAPM}}.
+}
+\examples{
+cal_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2)
+apm <- seasonder_createSeaSondeAPM(cal_matrix)
+
+apm <- seasonder_createSeaSondeAPM(cal_matrix,Creator="Me")
+print(attr(apm,"Creator"))
+# [1] "Me"
+
+}
+\seealso{
+\code{\link{seasonder_validateCalibrationMatrixSeaSondeAPM}},
+\code{\link{seasonder_initializeAttributesSeaSondeAPM}}
+}
+End function seasonder_createSeaSondeAPM
+
+Start function seasonder_initializeAttributesSeaSondeAPM
+\name{seasonder_initializeAttributesSeaSondeAPM}
+\alias{seasonder_initializeAttributesSeaSondeAPM}
+\title{Initialize Attributes for a SeaSondeAPM Object}
+\usage{
+seasonder_initializeAttributesSeaSondeAPM(calibration_matrix, ...)
+}
+\arguments{
+\item{calibration_matrix}{A 2 x b complex matrix, where b is the number of bearings for calibration.}
+
+\item{...}{Additional named attributes that may override the defaults.}
+}
+\value{
+A list containing initialized attributes for a SeaSondeAPM object.
+}
+\description{
+This function initializes attributes for a SeaSondeAPM object, including metadata and properties.
+}
+\details{
+The function initializes the following attributes:
+\itemize{
+\item \code{quality_matrix}: A 2 x b complex matrix for quality data, where b is the number of bearings.
+\item \code{BEAR}: A numeric vector for bearings (degrees).
+\item \code{Type}: Character string for antenna pattern type.
+\item \code{Creator}: Object creator name. Default is an empty character vector.
+\item \code{SiteName}: Site name (not the same as SiteCode). Default is an empty character vector.
+\item \code{SiteOrigin}: Numeric vector with two elements representing the Station GPS location. Default is \code{c(0,0)}.
+\item \code{FileName}: Default is an empty character vector.
+\item \code{CreateTimeStamp}: APM file creation time. Default is current system date and time.
+\item \code{ProcessingSteps}: Processing steps applied to this object. Default is an empty character vector.
+\item \code{AmplitudeFactors}: Numeric vector with two elements for the amplitude factors. Default is \code{c(0,0)}.
+\item \code{AntennaBearing}: Default is an empty numeric vector.
+\item \code{StationCode}: 4-character station code. Default is an empty character vector.
+\item \code{BearingResolution}: In degrees. Default is an empty numeric vector.
+\item \code{Smoothing}: Numeric vector indicating smoothing applied to the antenna pattern. Default is an empty numeric vector.
+\item \code{CommentLine}: Metadata lines in the data file not matching any other attribute. Default is an empty character vector.
+\item \code{FileID}: File's UUID. Default is an empty character vector.
+\item \code{PhaseCorrections}: Numeric vector with two elements for phase corrections. Default is \code{c(0,0)}.
+}
+
+Each attribute has a corresponding setter and getter function, following the naming pattern \code{seasonder_set/get_SeaSondeAPM_*}, where * is the name of the attribute. For example, to set the 'Type' attribute, you would use \code{seasonder_set_SeaSondeAPM_Type(seasonde_apm_obj,new_value)}. To get the same, you would use \code{seasonder_get_SeaSondeAPM_Type(seasonde_apm_obj,new_value)}.
+
+Please see \code{\link{seasonder_validateAttributesSeaSondeAPM}} for details in attributes validation.
+}
+\examples{
+# Create a calibration_matrix
+cal_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2, ncol = 2)
+
+# Initialize attributes with default settings
+attr_list <- seasonder_initializeAttributesSeaSondeAPM(calibration_matrix = cal_matrix)
+str(attr_list)
+
+# Initialize attributes with custom 'Type'
+attr_list_custom <- seasonder_initializeAttributesSeaSondeAPM(calibration_matrix = cal_matrix,
+Type = "Custom Pattern")
+str(attr_list_custom)
+
+}
+\seealso{
+\code{\link{seasonder_createSeaSondeAPM}},
+\code{\link{seasonder_validateAttributesSeaSondeAPM}}
+}
+End function seasonder_initializeAttributesSeaSondeAPM
+
+Start function seasonder_validateCalibrationMatrixSeaSondeAPM
+\name{seasonder_validateCalibrationMatrixSeaSondeAPM}
+\alias{seasonder_validateCalibrationMatrixSeaSondeAPM}
+\title{Validate Calibration Matrix for a SeaSondeAPM Object}
+\usage{
+seasonder_validateCalibrationMatrixSeaSondeAPM(matrix)
+}
+\arguments{
+\item{matrix}{A 2 x b complex matrix for calibration, where b is the number of bearings.}
+}
+\value{
+TRUE if the matrix is valid. The function will stop execution and display an error message if the matrix is invalid.
+}
+\description{
+This function validates the input calibration_matrix to ensure it meets the required specifications
+for use in a SeaSondeAPM object.
+}
+\details{
+The function performs the following validation checks:
+\enumerate{
+\item Confirms that the input is a matrix.
+\item Verifies that the matrix has exactly two rows.
+\item Checks that the matrix contains only complex numbers.
+}
+
+If any of these validation steps fail, the function will log a fatal error and stop the execution using \code{rlang::abort}.
+}
+\examples{
+# Invalid matrix: not a matrix
+invalid_matrix1 <- c(1, 2)
+# This will cause an error
+# seasonder_validateCalibrationMatrixSeaSondeAPM(invalid_matrix1)
+
+# Invalid matrix: not two rows
+invalid_matrix2 <- matrix(complex(real = c(1, 2, 3), imaginary = c(4, 5, 6)), nrow = 3)
+# This will cause an error
+# seasonder_validateCalibrationMatrixSeaSondeAPM(invalid_matrix2)
+
+# Valid matrix
+valid_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2)
+seasonder_validateCalibrationMatrixSeaSondeAPM(valid_matrix)  # No error
+
+}
+\seealso{
+\code{\link{seasonder_createSeaSondeAPM}}
+}
+End function seasonder_validateCalibrationMatrixSeaSondeAPM
+
+Start function seasonder_validateAttributesSeaSondeAPM
+\name{seasonder_validateAttributesSeaSondeAPM}
+\alias{seasonder_validateAttributesSeaSondeAPM}
+\title{Validate Attributes for a SeaSondeAPM Object}
+\usage{
+seasonder_validateAttributesSeaSondeAPM(seasonde_apm_obj)
+}
+\arguments{
+\item{seasonde_apm_obj}{A SeaSondeAPM object whose attributes are to be validated.}
+}
+\value{
+TRUE if all attributes are valid. The function will stop execution and display an error message if any of the attributes are invalid.
+}
+\description{
+This function validates the attributes of a given SeaSondeAPM object to ensure they meet the required specifications.
+}
+\details{
+The function performs validation on the following attributes of the SeaSondeAPM object:
+\itemize{
+\item quality_matrix
+\item BEAR
+\item Type
+\item Creator
+\item SiteName
+\item SiteOrigin
+\item FileName
+\item CreateTimeStamp
+\item ProcessingSteps
+\item AmplitudeFactors
+\item AntennaBearing
+\item StationCode
+\item BearingResolution
+\item Smoothing
+\item CommentLine
+\item FileID
+\item PhaseCorrections
+}
+
+It internally calls specific validation functions for each of these attributes. If any of the attributes are found to be invalid, the function will stop execution and display an error message.
+
+For more details on the attributes, see \code{\link{seasonder_initializeAttributesSeaSondeAPM}}.
+}
+\examples{
+# Create a mock SeaSondeAPM object with valid attributes
+mock_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2)
+mock_apm <- seasonder_createSeaSondeAPM(mock_matrix)
+
+# Validate attributes
+valid <- seasonder_validateAttributesSeaSondeAPM(mock_apm)
+print(valid)  # Should print TRUE if all attributes are valid
+
+}
+\seealso{
+\code{\link{validate_SeaSondeAPM_quality_matrix}},
+\code{\link{validate_SeaSondeAPM_BEAR}},
+\code{\link{validate_SeaSondeAPM_Type}},
+\code{\link{validate_SeaSondeAPM_Creator}},
+\code{\link{validate_SeaSondeAPM_SiteName}},
+\code{\link{validate_SeaSondeAPM_SiteOrigin}},
+\code{\link{validate_SeaSondeAPM_FileName}},
+\code{\link{validate_SeaSondeAPM_CreateTimeStamp}},
+\code{\link{validate_SeaSondeAPM_ProcessingSteps}},
+\code{\link{validate_SeaSondeAPM_AmplitudeFactors}},
+\code{\link{validate_SeaSondeAPM_AntennaBearing}},
+\code{\link{validate_SeaSondeAPM_StationCode}},
+\code{\link{validate_SeaSondeAPM_BearingResolution}},
+\code{\link{validate_SeaSondeAPM_Smoothing}},
+\code{\link{validate_SeaSondeAPM_CommentLine}},
+\code{\link{validate_SeaSondeAPM_FileID}},
+\code{\link{validate_SeaSondeAPM_PhaseCorrections}}
+}
+End function seasonder_validateAttributesSeaSondeAPM
+
+Start function validate_SeaSondeAPM_quality_matrix
+\name{validate_SeaSondeAPM_quality_matrix}
+\alias{validate_SeaSondeAPM_quality_matrix}
+\title{Validate quality_matrix Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_quality_matrix(matrix, seasonde_apm_obj)
+}
+\arguments{
+\item{matrix}{The matrix to be validated.}
+
+\item{seasonde_apm_obj}{The SeaSondeAPM object for compatibility check.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided quality_matrix is a 2-row complex matrix.
+It also checks if the number of columns matches that of the calibration_matrix in the given SeaSondeAPM object.
+}
+End function validate_SeaSondeAPM_quality_matrix
+
+Start function validate_SeaSondeAPM_BEAR
+\name{validate_SeaSondeAPM_BEAR}
+\alias{validate_SeaSondeAPM_BEAR}
+\title{Validate BEAR Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_BEAR(vector, seasonde_apm_obj)
+}
+\arguments{
+\item{vector}{The numeric vector to be validated.}
+
+\item{seasonde_apm_obj}{The SeaSondeAPM object for compatibility check.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided BEAR is a numeric vector and if its length
+matches the number of columns in the calibration_matrix of the given SeaSondeAPM object.
+It also validates that the bearings are between -180 and 180 degrees.
+}
+End function validate_SeaSondeAPM_BEAR
+
+Start function validate_SeaSondeAPM_Type
+\name{validate_SeaSondeAPM_Type}
+\alias{validate_SeaSondeAPM_Type}
+\title{Validate Type Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_Type(type)
+}
+\arguments{
+\item{type}{The character string to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided Type is a character string.
+}
+End function validate_SeaSondeAPM_Type
+
+Start function validate_SeaSondeAPM_Creator
+\name{validate_SeaSondeAPM_Creator}
+\alias{validate_SeaSondeAPM_Creator}
+\title{Validate Creator Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_Creator(creator)
+}
+\arguments{
+\item{creator}{The character string to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided Creator is a character string.
+}
+End function validate_SeaSondeAPM_Creator
+
+Start function validate_SeaSondeAPM_SiteName
+\name{validate_SeaSondeAPM_SiteName}
+\alias{validate_SeaSondeAPM_SiteName}
+\title{Validate SiteName Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_SiteName(site_name)
+}
+\arguments{
+\item{site_name}{The character string to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided SiteName is a character string.
+}
+End function validate_SeaSondeAPM_SiteName
+
+Start function validate_SeaSondeAPM_SiteOrigin
+\name{validate_SeaSondeAPM_SiteOrigin}
+\alias{validate_SeaSondeAPM_SiteOrigin}
+\title{Validate SiteOrigin Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_SiteOrigin(site_origin)
+}
+\arguments{
+\item{site_origin}{The numeric vector to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided SiteOrigin is a numeric vector of length 2.
+}
+End function validate_SeaSondeAPM_SiteOrigin
+
+Start function validate_SeaSondeAPM_FileName
+\name{validate_SeaSondeAPM_FileName}
+\alias{validate_SeaSondeAPM_FileName}
+\title{Validate FileName Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_FileName(file_name)
+}
+\arguments{
+\item{file_name}{The character string to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided FileName is a character string.
+}
+End function validate_SeaSondeAPM_FileName
+
+Start function validate_SeaSondeAPM_CreateTimeStamp
+\name{validate_SeaSondeAPM_CreateTimeStamp}
+\alias{validate_SeaSondeAPM_CreateTimeStamp}
+\title{Validate CreateTimeStamp Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_CreateTimeStamp(timestamp)
+}
+\arguments{
+\item{timestamp}{The Date object to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided CreateTimeStamp is a POSIXct Date object.
+}
+End function validate_SeaSondeAPM_CreateTimeStamp
+
+Start function validate_SeaSondeAPM_ProcessingSteps
+\name{validate_SeaSondeAPM_ProcessingSteps}
+\alias{validate_SeaSondeAPM_ProcessingSteps}
+\title{Validate ProcessingSteps Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_ProcessingSteps(steps)
+}
+\arguments{
+\item{steps}{The character vector to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided ProcessingSteps is a character vector.
+}
+End function validate_SeaSondeAPM_ProcessingSteps
+
+Start function validate_SeaSondeAPM_AmplitudeFactors
+\name{validate_SeaSondeAPM_AmplitudeFactors}
+\alias{validate_SeaSondeAPM_AmplitudeFactors}
+\title{Validate AmplitudeFactors Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_AmplitudeFactors(factors)
+}
+\arguments{
+\item{factors}{The numeric vector to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided AmplitudeFactors is a numeric vector of length 2.
+}
+End function validate_SeaSondeAPM_AmplitudeFactors
+
+Start function validate_SeaSondeAPM_AntennaBearing
+\name{validate_SeaSondeAPM_AntennaBearing}
+\alias{validate_SeaSondeAPM_AntennaBearing}
+\title{Validate AntennaBearing Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_AntennaBearing(bearing)
+}
+\arguments{
+\item{bearing}{The numeric value to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided AntennaBearing is a numeric value.
+}
+End function validate_SeaSondeAPM_AntennaBearing
+
+Start function validate_SeaSondeAPM_StationCode
+\name{validate_SeaSondeAPM_StationCode}
+\alias{validate_SeaSondeAPM_StationCode}
+\title{Validate StationCode Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_StationCode(code)
+}
+\arguments{
+\item{code}{The character string to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided StationCode is an empty character string or a 4-character string of length 1.
+}
+End function validate_SeaSondeAPM_StationCode
+
+Start function validate_SeaSondeAPM_BearingResolution
+\name{validate_SeaSondeAPM_BearingResolution}
+\alias{validate_SeaSondeAPM_BearingResolution}
+\title{Validate BearingResolution Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_BearingResolution(resolution)
+}
+\arguments{
+\item{resolution}{The numeric value to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided BearingResolution is a numeric value.
+}
+End function validate_SeaSondeAPM_BearingResolution
+
+Start function validate_SeaSondeAPM_Smoothing
+\name{validate_SeaSondeAPM_Smoothing}
+\alias{validate_SeaSondeAPM_Smoothing}
+\title{Validate Smoothing Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_Smoothing(smoothing)
+}
+\arguments{
+\item{smoothing}{The numeric value to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided Smoothing is a numeric value.
+}
+End function validate_SeaSondeAPM_Smoothing
+
+Start function validate_SeaSondeAPM_CommentLine
+\name{validate_SeaSondeAPM_CommentLine}
+\alias{validate_SeaSondeAPM_CommentLine}
+\title{Validate CommentLine Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_CommentLine(comment)
+}
+\arguments{
+\item{comment}{The character string to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided CommentLine is a character string.
+}
+End function validate_SeaSondeAPM_CommentLine
+
+Start function validate_SeaSondeAPM_FileID
+\name{validate_SeaSondeAPM_FileID}
+\alias{validate_SeaSondeAPM_FileID}
+\title{Validate FileID Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_FileID(id)
+}
+\arguments{
+\item{id}{The unique character string to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided FileID is a unique character string.
+}
+End function validate_SeaSondeAPM_FileID
+
+Start function validate_SeaSondeAPM_PhaseCorrections
+\name{validate_SeaSondeAPM_PhaseCorrections}
+\alias{validate_SeaSondeAPM_PhaseCorrections}
+\title{Validate PhaseCorrections Attribute for a SeaSondeAPM Object}
+\usage{
+validate_SeaSondeAPM_PhaseCorrections(corrections)
+}
+\arguments{
+\item{corrections}{The numeric vector to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided PhaseCorrections attribute is a numeric
+vector of length 2.
+}
+End function validate_SeaSondeAPM_PhaseCorrections
+
+Start function read_matrix_row
+\name{read_matrix_row}
+\alias{read_matrix_row}
+\title{Read a Row from a Matrix Represented as Text Lines}
+\usage{
+read_matrix_row(lines, start, number_of_lines_to_read)
+}
+\arguments{
+\item{lines}{The array of lines, each representing part of the row.}
+
+\item{start}{The start index of the lines to read from.}
+
+\item{number_of_lines_to_read}{The number of lines to read to form the row.}
+}
+\value{
+Returns a numeric vector containing the row values.
+}
+\description{
+This function reads a row of numbers from a matrix, which is represented
+as an array of text lines. It's used to facilitate reading data from
+SeaSonde APM files.
+}
+End function read_matrix_row
+
+Start function parse_metadata_line
+\name{parse_metadata_line}
+\alias{parse_metadata_line}
+\title{Parse a Metadata Line from a SeaSonde APM File}
+\usage{
+parse_metadata_line(line)
+}
+\arguments{
+\item{line}{The line of text to parse.}
+}
+\value{
+Returns a list containing the attribute name and its value.
+}
+\description{
+This function takes a single line from a SeaSonde APM file and parses it into
+a named attribute and its corresponding value.
+}
+End function parse_metadata_line
+
+Start function seasonder_readSeaSondeAPMFile
+\name{seasonder_readSeaSondeAPMFile}
+\alias{seasonder_readSeaSondeAPMFile}
+\title{Read and Parse a SeaSonde APM File}
+\usage{
+seasonder_readSeaSondeAPMFile(file_path, ...)
+}
+\arguments{
+\item{file_path}{The path to the SeaSonde APM file to read.}
+
+\item{...}{Additional arguments passed to the object creation function (See \code{\link{seasonder_createSeaSondeAPM}} for more details).}
+}
+\value{
+Returns a SeaSondeAPM object containing the parsed data.
+}
+\description{
+This function reads a SeaSonde APM file and returns a SeaSondeAPM object containing
+the parsed data.
+}
+\seealso{
+\code{\link{seasonder_createSeaSondeAPM}}
+
+\code{\link{seasonder_validateAttributesSeaSondeAPM}}
+}
+End function seasonder_readSeaSondeAPMFile
+

@@ -28,3 +28,46 @@ A list containing the read data, organized based on the block keys.
 This function reads the header of a SeaSonde CS File Version 6.
 It sequentially reads blocks based on the provided specifications and returns the read data.
 }
+\section{Error Management and Conditions}{
+
+
+The \code{seasonder_readSeaSondeCSFileHeaderV6} function contains multiple layers of error and condition management to ensure robust data reading and appropriate error reporting.
+
+\strong{Error and Condition Classes}:
+
+The function might raise the following conditions:
+
+\itemize{
+\item \code{seasonder_v6_block_transformacion_skipped}: Triggered when a transformation for a specific block is skipped.
+\item \code{seasonder_v6_transform_function_error}: Triggered when there's an error while applying the transformation function for a V6 header block.
+\item \code{seasonder_v6_skip_block_error}: Triggered when there's an error while skipping a block.
+}
+
+\string{Error Cases}:
+
+The following are the scenarios when errors or conditions are raised:
+
+\itemize{
+\item Transformation Failure: If there's a recognized block key and the transformation function associated with it fails.
+\item Error in Transformation Function Application: If there's an error while applying the transformation function for a recognized V6 header block.
+\item Error in Skipping Block: If there's an error while skipping a block when the block key is not recognized.
+}
+
+\strong{Restart Options}:
+
+The function provides the following restart option:
+
+\code{seasonder_v6_skip_transformation}: This restart allows users to skip the transformation for a specific block and instead return the provided value.
+
+\strong{Effects of Restart Options}:
+
+Using the \code{seasonder_v6_skip_transformation} restart:
+\itemize{
+\item The error message gets logged.
+\item The transformation that caused the error gets skipped.
+\item The provided value for that block is returned.
+}
+
+Proper error management ensures the integrity of the reading process and provides detailed feedback to users regarding issues and potential resolutions.
+}
+
