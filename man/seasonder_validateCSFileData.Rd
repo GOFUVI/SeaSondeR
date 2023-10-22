@@ -27,8 +27,14 @@ The function performs the following validation checks:
 \item Validates the \code{nRangeCells} and \code{nDopplerCells} fields to ensure they are within permissible ranges.
 \item Depending on the \code{nCsKind} value, validates the file size against expected sizes based on \code{nRangeCells}, \code{nSpectraChannels}, and \code{nDopplerCells}.
 }
-Any violations of these conditions will invoke the \code{seasonder_logAndAbort} function, logging the error and aborting the process.
 }
+\section{Error Management and Conditions}{
+
+
+As described abobe, the function validates multiple conditions. Each error condition is associated with a specific error message and an error class \code{seasonder_validate_cs_file_error}.
+Any violations of these conditions will invoke the \code{\link{seasonder_logAndAbort}} function, logging the error and aborting the process.
+}
+
 \references{
 Cross Spectra File Format Version 6. CODAR. 2016
 }

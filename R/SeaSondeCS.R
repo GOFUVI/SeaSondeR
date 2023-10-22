@@ -22,7 +22,12 @@ create_SeaSondeCS <- function(){
 #'   \item Validates the `nRangeCells` and `nDopplerCells` fields to ensure they are within permissible ranges.
 #'   \item Depending on the `nCsKind` value, validates the file size against expected sizes based on `nRangeCells`, `nSpectraChannels`, and `nDopplerCells`.
 #' }
-#' Any violations of these conditions will invoke the `seasonder_logAndAbort` function, logging the error and aborting the process.
+#'
+#' @section Error Management and Conditions:
+#'
+#' As described abobe, the function validates multiple conditions. Each error condition is associated with a specific error message and an error class \code{seasonder_validate_cs_file_error}.
+#' Any violations of these conditions will invoke the \code{\link{seasonder_logAndAbort}} function, logging the error and aborting the process.
+#'
 #'
 #' @return NULL invisibly. The function mainly serves to validate and will stop execution and log an error using `seasonder_logAndAbort` if any condition fails.
 #'
@@ -67,7 +72,65 @@ seasonder_validateCSFileData <- function(filepath, header) {
 
 seasonder_skip_cs_file <- function(cond) invokeRestart("seasonder_skip_cs_file",cond)
 
+#' Read SeaSonde Cross Spectra (CS) File
+#'
+#' This function reads and processes a SeaSonde CS file, extracting both its header and data.
+#'
+#' @param filepath A character string specifying the path to the SeaSonde CS file.
+#' @param specs_path A character string specifying the path to the YAML specifications for the CS file.
+#'
+#' @details
+#' The function starts by establishing a connection to the CS file specified by \code{filepath}.
+#' It then reads the necessary metadata and header specifications from the \code{specs_path}.
+#' Based on the CS file version determined from its header, it applies specific adjustments
+#' to the header data. After processing the header, the function validates the CS file data
+#' using \code{\link{seasonder_validateCSFileData}} and then reads the data itself via
+#' \code{\link{seasonder_readSeaSondeCSFileData}}.
+#'
+#' @section Error Management:
+#' This function utilizes the `rlang` package to manage errors and provide detailed and structured error messages:
+#'
+#' \strong{Error Classes}:
+#' \itemize{
+#'   \item \code{seasonder_read_cs_file_error}: An error class that indicates a general problem when attempting to read the SeaSonde CS file.
+#'   \item \code{seasonder_cs_file_skipped}: Condition indicating that the processing of a CS file was skipped due to an error.
+#' }
+#'
+#' \strong{Error Cases}:
+#' \itemize{
+#'   \item Failure to open a connection to the file.
+#'   \item Unsupported version found in the specs file.
+#'   \item Any other error that can arise from dependent functions such as `seasonder_readSeaSondeCSFileHeader` and `seasonder_readSeaSondeCSFileData`.
+#' }
+#'
+#' \strong{Restart Options}:
+#' This function provides a structured mechanism to recover from errors during its execution using the `rlang::withRestarts` function. The following restart option is available:
+#'
+#' \describe{
+#'   \item{\code{seasonder_skip_cs_file(cond)}}{This allows for the graceful handling of file reading errors. If this restart is invoked, the function will log an error message indicating that the processing of a specific CS file was skipped and will return a list with `header=NULL` and `data=NULL`. The restart takes one argument: \code{cond} (the condition or error that occurred).
+#'   \itemize{
+#'     \item \strong{Usage}: In a custom condition handler, you can call \code{seasonder_skip_cs_file(cond)} to trigger this restart and skip the processing of the current CS file.
+#'     \item \strong{Effect}: If invoked, the function logs an error message detailing the reason for skipping the file and then returns a list with both the header and data set to NULL.
+#'   }}
+#'}
+#' @return A list containing two components:
+#' \itemize{
+#'   \item \code{header}: A list containing the processed header information of the CS file.
+#'   \item \code{data}: A list containing the processed data of the CS file. The structure
+#'     of this list depends on the content of the CS file and can contain components such as
+#'     `SSA*`, `CSxy`, and `QC`.
+#' }
+#'
+#' @seealso
+#' \code{\link{seasonder_validateCSFileData}},
+#' \code{\link{seasonder_readSeaSondeCSFileHeader}},
+#' \code{\link{seasonder_readSeaSondeCSFileData}},
+#' \code{\link{seasonder_logAndMessage}},
+#' \code{\link{seasonder_logAndAbort}}
+#'
+#' @references Cross Spectra File Format Version 6. CODAR. 2016
 #' @export
+#'
 seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
 
   conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFile",class="seasonder_read_cs_file_error",seasonder_cs_filepath=filepath,seasonder_cs_specs_path=specs_path)
@@ -989,7 +1052,7 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
 
 
 
-# TODO: Improve error management
+
 #' Read SeaSonde Cross Spectra (CS) File Data
 #'
 #' This function reads the SeaSonde CS file data based on the provided header information.
