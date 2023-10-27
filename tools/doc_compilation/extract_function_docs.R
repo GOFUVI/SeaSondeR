@@ -8,7 +8,7 @@ files <- list.files(doc_path,"*.Rd",full.names = T)
 docs <- files %>% purrr::map(\(f) readLines(f) %>% purrr::discard(\(line) stringr::str_detect(line,"^%")) %>% c(glue::glue("Start function {stringr::str_remove(basename(f),'\\\\.Rd$')}"),.,glue::glue("End function {stringr::str_remove(basename(f),'\\\\.Rd$')}"),"")) %>% magrittr::set_names(stringr::str_remove(basename(files),"\\.Rd$"))
 
 
-source_files <- c("SeaSondeAPM","SeaSondeCS")
+source_files <- c("SeaSondeRAPM","SeaSondeCS")
 
 source_files %>% purrr::walk(\(sf){
 
