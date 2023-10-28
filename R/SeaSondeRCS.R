@@ -1,5 +1,135 @@
 #### SeaSondeRCS ####
 
+
+
+#' Create a New SeaSondeRCS Object
+#'
+#' This function constructs a new SeaSondeRCS object with the provided header, data, and version information.
+#'
+#' @param header A list containing header information for the SeaSondeRCS object.
+#' @param data A list containing the data fields for the SeaSondeRCS object.
+#'
+#' @return A SeaSondeRCS object with the specified header, data, and version.
+#'
+#' @examples
+#' \dontrun{
+#' header <- list(nRangeCells = 10, nDopplerCells = 20)
+#' data <- list(SSA1 = matrix(1:200, ncol = 20), SSA2 = matrix(201:400, ncol = 20))
+#' seaSondeObj <- new_SeaSondeRCS(header, data)
+#' }
+#'
+new_SeaSondeRCS <- function(header, data){
+
+
+
+  structure(list(header = header,
+                 data = data),
+            version = 1, # An integer indicating the version of the SeaSondeRCS object. Current is 1.
+            ProcessingSteps = character(0),
+            class = "SeaSondeRCS")
+}
+
+#' Create a SeaSondeRCS object
+#'
+#' This function creates a SeaSondeRCS object either from a file path or directly from a list containing header and data.
+#'
+#' @param x Either a character string specifying the path to the SeaSonde CS file or a list with header and data.
+#' @param specs_path A character string specifying the path to the YAML specifications for the CS file. Only used if x is a character string.
+#'
+#' @return A SeaSondeRCS object.
+#' @seealso
+#' \code{\link{new_SeaSondeRCS}}, \code{\link{seasonder_validateCSDataStructure}}, \code{\link{seasonder_logAndAbort}}
+#'
+#' @section Error Management:
+#' This function utilizes the `rlang` package to manage errors and provide detailed and structured error messages:
+#'
+#' \strong{Error Classes}:
+#' \itemize{
+#'   \item \code{seasonder_CS_file_not_found_error}: Error raised when the specified file path does not exist.
+#'   \item \code{seasonder_CS_missing_nRange_nDoppler_error}: Error raised when the `nRangeCells` or `nDopplerCells` are not present in the header data.
+#'   \item \code{seasonder_CS_data_structure_validation_error}: An error class indicating a problem with the data structure of the CrossSpectra (CS) data (defined in the `seasonder_validateCSDataStructure` function).
+#' }
+#'
+#' \strong{Error Cases}:
+#' \itemize{
+#'   \item File specified does not exist.
+#'   \item `nRangeCells` or `nDopplerCells` not present in header data.
+#'   \item Issues related to data structure validation (detailed in the `seasonder_validateCSDataStructure` function).
+#' }
+#'
+#' \strong{Restart Options}:
+#' This function does not provide specific restart options. However, it relies on the error and condition handling mechanisms provided by the `rlang` package and the `seasonder_logAndAbort` function.
+#'
+#' @export
+seasonder_createSeaSondeRCS <- function(x, specs_path = NULL) {
+  UseMethod("seasonder_createSeaSondeRCS")
+}
+
+#' @export
+seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL) {
+  # Extracting nRanges and nDoppler from header
+  nRanges <- x$header$nRangeCells
+  nDoppler <- x$header$nDopplerCells
+
+  # Checking if nRanges and nDoppler are present in the header
+  if (is.null(nRanges) || is.null(nDoppler)) {
+    seasonder_logAndAbort(glue::glue("nRangeCells or nDopplerCells not present in header data."), calling_function = "seasonder_createSeaSondeRCS.list", class = "seasonder_CS_missing_nRange_nDoppler_error", seasonder_nRange = nRanges, seasonder_nDoppler = nDoppler)
+  }
+
+  # Validating the structure of the data
+  seasonder_validateCSDataStructure(x$data, nRanges, nDoppler)
+
+  # Creating the SeaSondeRCS object
+  new_SeaSondeRCS(x$header, x$data)
+}
+
+#' @export
+seasonder_createSeaSondeRCS.character <- function(x, specs_path) {
+  # Checking if the file exists
+  if (!file.exists(x)) {
+    seasonder_logAndAbort(glue::glue("File '{x}' does not exist."), calling_function = "seasonder_createSeaSondeRCS.character", class = "seasonder_CS_file_not_found_error")
+  }
+
+  # Reading the SeaSonde CS file
+  result <- seasonder_readSeaSondeCSFile(x, specs_path)
+
+  # Extracting nRanges and nDoppler from header
+  nRanges <- result$header$nRangeCells
+  nDoppler <- result$header$nDopplerCells
+
+  # Checking if nRanges and nDoppler are present in the header
+  if (is.null(nRanges) || is.null(nDoppler)) {
+    seasonder_logAndAbort(glue::glue("nRangeCells or nDopplerCells not present in header data."), calling_function = "seasonder_createSeaSondeRCS.character", class = "seasonder_CS_missing_nRange_nDoppler_error", seasonder_nRange = nRanges, seasonder_nDoppler = nDoppler)
+  }
+
+  # Validating the structure of the data
+  seasonder_validateCSDataStructure(result$data, nRanges, nDoppler)
+
+  # Creating the SeaSondeRCS object
+  out <- new_SeaSondeRCS(result$header, result$data)
+
+out %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_creation_step_text(x))
+
+  return(out)
+}
+
+##### Validation #####
+
+#' Validate ProcessingSteps Attribute for a SeaSondeRCS Object
+#'
+#' This function validates if the provided ProcessingSteps is a character vector.
+#'
+#' @param steps The character vector to be validated.
+#' @return Returns TRUE if the validation passes.
+validate_SeaSondeRCS_ProcessingSteps <- function(steps) {
+  if (!is.character(steps)) {
+    seasonder_logAndAbort("ProcessingSteps must be a character vector.", calling_function = "validate_SeaSondeRCS_ProcessingSteps")
+
+  }
+  return(TRUE)
+}
+
+
 #' Validate the Data Structure of CrossSpectra Data
 #'
 #' This function checks the validity of the `data` structure for CrossSpectra (CS) data. It ensures that all required fields are present,
@@ -90,114 +220,46 @@ seasonder_validateCSDataStructure <- function(data, nRanges, nDoppler) {
 }
 
 
-#' Create a New SeaSondeRCS Object
-#'
-#' This function constructs a new SeaSondeRCS object with the provided header, data, and version information.
-#'
-#' @param header A list containing header information for the SeaSondeRCS object.
-#' @param data A list containing the data fields for the SeaSondeRCS object.
-#'
-#' @return A SeaSondeRCS object with the specified header, data, and version.
-#'
-#' @examples
-#' \dontrun{
-#' header <- list(nRangeCells = 10, nDopplerCells = 20)
-#' data <- list(SSA1 = matrix(1:200, ncol = 20), SSA2 = matrix(201:400, ncol = 20))
-#' seaSondeObj <- new_SeaSondeRCS(header, data)
-#' }
-#'
-new_SeaSondeRCS <- function(header, data){
+##### Setters #####
 
 
 
-  structure(list(header = header,
-                 data = data),
-            version = 1, # An integer indicating the version of the SeaSondeRCS object. Current is 1.
-            class = "SeaSondeRCS")
-}
 
-#' Create a SeaSondeRCS object
+#' Setter for ProcessingSteps
 #'
-#' This function creates a SeaSondeRCS object either from a file path or directly from a list containing header and data.
-#'
-#' @param x Either a character string specifying the path to the SeaSonde CS file or a list with header and data.
-#' @param specs_path A character string specifying the path to the YAML specifications for the CS file. Only used if x is a character string.
-#'
-#' @return A SeaSondeRCS object.
-#' @seealso
-#' \code{\link{new_SeaSondeRCS}}, \code{\link{seasonder_validateCSDataStructure}}, \code{\link{seasonder_logAndAbort}}
-#'
-#' @section Error Management:
-#' This function utilizes the `rlang` package to manage errors and provide detailed and structured error messages:
-#'
-#' \strong{Error Classes}:
-#' \itemize{
-#'   \item \code{seasonder_CS_file_not_found_error}: Error raised when the specified file path does not exist.
-#'   \item \code{seasonder_CS_missing_nRange_nDoppler_error}: Error raised when the `nRangeCells` or `nDopplerCells` are not present in the header data.
-#'   \item \code{seasonder_CS_data_structure_validation_error}: An error class indicating a problem with the data structure of the CrossSpectra (CS) data (defined in the `seasonder_validateCSDataStructure` function).
-#' }
-#'
-#' \strong{Error Cases}:
-#' \itemize{
-#'   \item File specified does not exist.
-#'   \item `nRangeCells` or `nDopplerCells` not present in header data.
-#'   \item Issues related to data structure validation (detailed in the `seasonder_validateCSDataStructure` function).
-#' }
-#'
-#' \strong{Restart Options}:
-#' This function does not provide specific restart options. However, it relies on the error and condition handling mechanisms provided by the `rlang` package and the `seasonder_logAndAbort` function.
+#' @param seasonde_apm_obj SeaSonderCS object
+#' @param new_value new value
+#' @param append append the new step or replace previous steps? Default: TRUE
 #'
 #' @export
-seasonder_createSeaSondeRCS <- function(x, specs_path = NULL) {
-  UseMethod("seasonder_createSeaSondeRCS")
-}
+seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonde_apm_obj, new_value,append=TRUE) {
 
-#' @export
-seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL) {
-  # Extracting nRanges and nDoppler from header
-  nRanges <- x$header$nRangeCells
-  nDoppler <- x$header$nDopplerCells
 
-  # Checking if nRanges and nDoppler are present in the header
-  if (is.null(nRanges) || is.null(nDoppler)) {
-    seasonder_logAndAbort(glue::glue("nRangeCells or nDopplerCells not present in header data."), calling_function = "seasonder_createSeaSondeRCS.list", class = "seasonder_CS_missing_nRange_nDoppler_error", seasonder_nRange = nRanges, seasonder_nDoppler = nDoppler)
+
+  if (append) {
+    steps <-  seasonder_getSeaSondeRCS_ProcessingSteps(seasonde_apm_obj)
+    new_value <- c(steps,new_value)
   }
+  validate_SeaSondeRCS_ProcessingSteps(new_value)
+  modified_obj <- seasonde_apm_obj
 
-  # Validating the structure of the data
-  seasonder_validateCSDataStructure(x$data, nRanges, nDoppler)
+  attributes(modified_obj)$ProcessingSteps <- new_value
 
-  # Creating the SeaSondeRCS object
-  new_SeaSondeRCS(x$header, x$data)
+
+  return(modified_obj)
 }
-
-#' @export
-seasonder_createSeaSondeRCS.character <- function(x, specs_path) {
-  # Checking if the file exists
-  if (!file.exists(x)) {
-    seasonder_logAndAbort(glue::glue("File '{x}' does not exist."), calling_function = "seasonder_createSeaSondeRCS.character", class = "seasonder_CS_file_not_found_error")
-  }
-
-  # Reading the SeaSonde CS file
-  result <- seasonder_readSeaSondeCSFile(x, specs_path)
-
-  # Extracting nRanges and nDoppler from header
-  nRanges <- result$header$nRangeCells
-  nDoppler <- result$header$nDopplerCells
-
-  # Checking if nRanges and nDoppler are present in the header
-  if (is.null(nRanges) || is.null(nDoppler)) {
-    seasonder_logAndAbort(glue::glue("nRangeCells or nDopplerCells not present in header data."), calling_function = "seasonder_createSeaSondeRCS.character", class = "seasonder_CS_missing_nRange_nDoppler_error", seasonder_nRange = nRanges, seasonder_nDoppler = nDoppler)
-  }
-
-  # Validating the structure of the data
-  seasonder_validateCSDataStructure(result$data, nRanges, nDoppler)
-
-  # Creating the SeaSondeRCS object
-  new_SeaSondeRCS(result$header, result$data)
-}
-
 
 ##### Getters #####
+
+
+#' Getter for ProcessingSteps
+#'
+#' @param seasonde_apm_obj SeaSonderCS object
+#'
+#' @export
+seasonder_getSeaSondeRCS_ProcessingSteps <- function(seasonde_apm_obj) {
+  return(attributes(seasonde_apm_obj)$ProcessingSteps)
+}
 
 #' Get the version value from a SeaSondeRCS object
 #'
@@ -266,6 +328,23 @@ seasonder_getnRangeCells <- function(seasonder_obj) {
 #' @export
 seasonder_getnDopplerCells <- function(seasonder_obj) {
   return(seasonder_getCSHeaderByPath(seasonder_obj, "nDopplerCells"))
+}
+
+
+#### Processing_steps ####
+
+#' Generate Creation Step Text
+#'
+#' This function generates a text message indicating the time an CS object was created based on the current system time and the provided file path.
+#'
+#' @param file_path A character string specifying the path to the file.
+#'
+#' @return
+#' A character string with the formatted message indicating the time of creation and the file path.
+#'
+SeaSondeRCS_creation_step_text <- function(file_path) {
+  # Use glue to format the message with the current system time and the provided file path
+  glue::glue("{Sys.time()}: Created from {file_path}.")
 }
 
 
@@ -481,14 +560,57 @@ seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
 
 
 
+#' Convert an integer to raw bytes using a 64-bit representation
+#'
+#' This function converts an integer to a raw byte representation using a 64-bit (8-byte) format.
+#' It leverages the `bit64` package to handle the 64-bit integer representation and conversion.
+#'
+#' @param x An integer to be converted to raw bytes.
+#'
+#' @return A raw vector representing the 64-bit format of the provided integer.
+#'
+#' @details
+#' The function follows these steps:
+#' 1. Convert the integer to a 64-bit format using `bit64::as.integer64`.
+#' 2. Convert the 64-bit integer to a bit string.
+#' 3. Split the bit string into individual bits.
+#' 4. Reorder the bits into groups of 8, reversing the order within each group.
+#' 5. Convert the reordered bits back to raw bytes.
+#'
+#' @seealso
+#' \code{\link[bit64]{as.integer64}}
+#'
+#' @examples
+#' \dontrun{
+#' int_val <- 1234567890
+#' raw_val <- seasonder_int_to_raw(int_val)
+#' cat(rawToChar(raw_val))
+#' }
+#'
 #' @importFrom bit64 as.integer64
-seasonder_int_to_raw <- function(x){
+seasonder_int_to_raw <- function(x) {
 
-  out <- as.raw(packBits(c(t(matrix(as.integer(strsplit(bit64::as.bitstring(bit64::as.integer64(x)),"")[[1]]),ncol=8,byrow = T)[,8:1])),"raw"))
+  # Convert the integer to a 64-bit bitstring
+  x_bitstr <- bit64::as.bitstring(bit64::as.integer64(x))
 
-  out
+  # Split the bitstring into individual bits
+  x_bits <- strsplit(x_bitstr, "")[[1]]
 
+  # Convert the bits to integers and reorder them
+  x_integers <- as.integer(x_bits)
+  x_integers_mtrx_rev <- matrix(x_integers, ncol = 8, byrow = TRUE)[, 8:1]
+  x_integers_mtrx_rev_transposed <- t(x_integers_mtrx_rev)
+
+  # Flatten the matrix into a vector
+  x_int_vect <- c(x_integers_mtrx_rev_transposed)
+
+  # Convert the bit sequence to raw bytes
+  x_packed <- packBits(x_int_vect, "raw")
+  out <- as.raw(x_packed)
+
+  return(out)
 }
+
 
 #' Convert a Raw Vector to a 64-bit Integer
 #'
@@ -917,14 +1039,54 @@ seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian="big") {
 }
 
 
-seasonder_check_specs <- function(specs, fields){
+#' Validate Field Specifications
+#'
+#' This function checks if the provided specifications (`specs`) contain entries for all the required fields listed in `fields`.
+#'
+#' @param specs A list containing field specifications.
+#' @param fields A character vector of field names to be checked in the `specs`.
+#'
+#' @details
+#' The function iterates over each field in the `fields` vector and checks if there is an associated entry in the `specs` list.
+#' If any field is missing, an error is thrown using `seasonder_logAndAbort` indicating the missing field specification.
+#'
+#' @section Condition Management:
+#' This function utilizes the `rlang` package to manage errors and conditions, and provide detailed and structured condition messages:
+#'
+#' \strong{Condition Classes}:
+#' \itemize{
+#'   \item \code{spsr_field_specification_missing_error}: This error is thrown when a required field specification is missing from the `specs` list.
+#' }
+#'
+#' \strong{Condition Cases}:
+#' \itemize{
+#'   \item Required field specification is missing.
+#' }
+#'
+#' @seealso
+#' \code{\link{seasonder_logAndAbort}}
+#'
+#' @examples
+#' \dontrun{
+#' specs <- list(field1 = "spec1", field2 = "spec2")
+#' fields <- c("field1", "field2", "field3")
+#' seasonder_check_specs(specs, fields) # Throws an error since spec for 'field3' is missing
+#' }
+#'
+seasonder_check_specs <- function(specs, fields) {
 
-  fields %>% purrr::walk(\(field){
-    if(is.null(purrr::pluck(specs,field))){
-      seasonder_logAndAbort(glue::glue("Specifications for field '{field}' not provided"),calling_function = "seasonder_check_specs",class="spsr_field_specification_missing_error")
+  # Use purrr::walk to iterate over each field and check its presence in the specs
+  fields %>% purrr::walk(function(field) {
+    # Check if the field is present in the specs
+    if (is.null(purrr::pluck(specs, field))) {
+      # If not, throw an error indicating the missing field specification
+      seasonder_logAndAbort(glue::glue("Specifications for field '{field}' not provided"),
+                            calling_function = "seasonder_check_specs",
+                            class = "spsr_field_specification_missing_error")
     }
   })
 }
+
 
 #' Read SeaSonde File Header (Version 1)
 #'

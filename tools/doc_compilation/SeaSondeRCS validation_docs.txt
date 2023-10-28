@@ -1,0 +1,79 @@
+Start function seasonder_validateCSDataStructure
+\name{seasonder_validateCSDataStructure}
+\alias{seasonder_validateCSDataStructure}
+\title{Validate the Data Structure of CrossSpectra Data}
+\usage{
+seasonder_validateCSDataStructure(data, nRanges, nDoppler)
+}
+\arguments{
+\item{data}{A list representing the CrossSpectra (CS) data. It should contain fields "SSA1", "SSA2", "SSA3", "CS12", "CS13", "CS23", and "QC".}
+
+\item{nRanges}{An integer specifying the expected number of range cells.}
+
+\item{nDoppler}{An integer specifying the expected number of Doppler cells.}
+}
+\value{
+Invisible NULL if the data structure is valid. Otherwise, an error is thrown.
+}
+\description{
+This function checks the validity of the \code{data} structure for CrossSpectra (CS) data. It ensures that all required fields are present,
+the dimensions of the matrices are correct based on \code{nRanges} and \code{nDoppler}, and that the types of the data fields are as expected.
+}
+\details{
+The function expects the following structure for the \code{data} list:
+\itemize{
+\item \code{SSA1}, \code{SSA2}, \code{SSA3}, \code{QC}: Matrices with numeric values, with dimensions \code{nRanges} x \code{nDoppler}.
+\item \code{CS12}, \code{CS13}, \code{CS23}: Matrices with complex values, with dimensions \code{nRanges} x \code{nDoppler}.
+}
+}
+\section{Error Management}{
+
+This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
+
+\strong{Error Classes}:
+\itemize{
+\item \code{seasonder_CS_data_structure_validation_error}: An error class indicating a problem with the data structure of the CrossSpectra (CS) data.
+}
+
+\strong{Error Cases}:
+\itemize{
+\item Missing fields in the data.
+\item Incorrect dimensions for the matrices in the data.
+\item Incorrect data type for the fields in the data.
+}
+}
+
+\examples{
+\dontrun{
+data <- list(
+  SSA1 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
+  SSA2 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
+  # ... other fields
+)
+seasonder_validateCSDataStructure(data, 10, 20)
+}
+
+}
+\seealso{
+\code{\link{seasonder_logAndAbort}}
+}
+End function seasonder_validateCSDataStructure
+
+Start function validate_SeaSondeRCS_ProcessingSteps
+\name{validate_SeaSondeRCS_ProcessingSteps}
+\alias{validate_SeaSondeRCS_ProcessingSteps}
+\title{Validate ProcessingSteps Attribute for a SeaSondeRCS Object}
+\usage{
+validate_SeaSondeRCS_ProcessingSteps(steps)
+}
+\arguments{
+\item{steps}{The character vector to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided ProcessingSteps is a character vector.
+}
+End function validate_SeaSondeRCS_ProcessingSteps
+

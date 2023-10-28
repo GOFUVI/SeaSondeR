@@ -1,0 +1,181 @@
+Start function seasonder_createSeaSondeRCS
+\name{seasonder_createSeaSondeRCS}
+\alias{seasonder_createSeaSondeRCS}
+\title{Create a SeaSondeRCS object}
+\usage{
+seasonder_createSeaSondeRCS(x, specs_path = NULL)
+}
+\arguments{
+\item{x}{Either a character string specifying the path to the SeaSonde CS file or a list with header and data.}
+
+\item{specs_path}{A character string specifying the path to the YAML specifications for the CS file. Only used if x is a character string.}
+}
+\value{
+A SeaSondeRCS object.
+}
+\description{
+This function creates a SeaSondeRCS object either from a file path or directly from a list containing header and data.
+}
+\section{Error Management}{
+
+This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
+
+\strong{Error Classes}:
+\itemize{
+\item \code{seasonder_CS_file_not_found_error}: Error raised when the specified file path does not exist.
+\item \code{seasonder_CS_missing_nRange_nDoppler_error}: Error raised when the \code{nRangeCells} or \code{nDopplerCells} are not present in the header data.
+\item \code{seasonder_CS_data_structure_validation_error}: An error class indicating a problem with the data structure of the CrossSpectra (CS) data (defined in the \code{seasonder_validateCSDataStructure} function).
+}
+
+\strong{Error Cases}:
+\itemize{
+\item File specified does not exist.
+\item \code{nRangeCells} or \code{nDopplerCells} not present in header data.
+\item Issues related to data structure validation (detailed in the \code{seasonder_validateCSDataStructure} function).
+}
+
+\strong{Restart Options}:
+This function does not provide specific restart options. However, it relies on the error and condition handling mechanisms provided by the \code{rlang} package and the \code{seasonder_logAndAbort} function.
+}
+
+\seealso{
+\code{\link{new_SeaSondeRCS}}, \code{\link{seasonder_validateCSDataStructure}}, \code{\link{seasonder_logAndAbort}}
+}
+End function seasonder_createSeaSondeRCS
+
+Start function new_SeaSondeRCS
+\name{new_SeaSondeRCS}
+\alias{new_SeaSondeRCS}
+\title{Create a New SeaSondeRCS Object}
+\usage{
+new_SeaSondeRCS(header, data)
+}
+\arguments{
+\item{header}{A list containing header information for the SeaSondeRCS object.}
+
+\item{data}{A list containing the data fields for the SeaSondeRCS object.}
+}
+\value{
+A SeaSondeRCS object with the specified header, data, and version.
+}
+\description{
+This function constructs a new SeaSondeRCS object with the provided header, data, and version information.
+}
+\examples{
+\dontrun{
+header <- list(nRangeCells = 10, nDopplerCells = 20)
+data <- list(SSA1 = matrix(1:200, ncol = 20), SSA2 = matrix(201:400, ncol = 20))
+seaSondeObj <- new_SeaSondeRCS(header, data)
+}
+
+}
+End function new_SeaSondeRCS
+
+Start function seasonder_getCSHeaderByPath
+\name{seasonder_getCSHeaderByPath}
+\alias{seasonder_getCSHeaderByPath}
+\title{Retrieve a value from the SeaSondeRCS header by a specific path}
+\usage{
+seasonder_getCSHeaderByPath(seasonder_obj, path)
+}
+\arguments{
+\item{seasonder_obj}{A SeaSondeRCS object.}
+
+\item{path}{A character vector specifying the field or nested fields to retrieve.}
+}
+\value{
+The value at the specified path in the header. If the path is not found, NULL is returned and a warning is thrown.
+}
+\description{
+This function retrieves a specific value from the SeaSondeRCS object's header based on the provided path.
+The path can be a single field name or a list of nested field names.
+}
+\section{Condition Management}{
+
+This function utilizes the \code{rlang} package to manage errors and conditions, and provide detailed and structured condition messages:
+
+\strong{Condition Classes}:
+\itemize{
+\item \code{seasonder_SeaSonderCS_field_not_found_in_header}: Indicates that the specified path was not found in the header.
+}
+
+\strong{Condition Cases}:
+\itemize{
+\item Field or nested fields specified by the path are not found in the header.
+}
+}
+
+End function seasonder_getCSHeaderByPath
+
+Start function seasonder_getnDopplerCells
+\name{seasonder_getnDopplerCells}
+\alias{seasonder_getnDopplerCells}
+\title{Get the nDopplerCells value from a SeaSondeRCS object}
+\usage{
+seasonder_getnDopplerCells(seasonder_obj)
+}
+\arguments{
+\item{seasonder_obj}{A SeaSondeRCS object.}
+}
+\value{
+The nDopplerCells value.
+}
+\description{
+Get the nDopplerCells value from a SeaSondeRCS object
+}
+End function seasonder_getnDopplerCells
+
+Start function seasonder_getnRangeCells
+\name{seasonder_getnRangeCells}
+\alias{seasonder_getnRangeCells}
+\title{Get the nRangeCells value from a SeaSondeRCS object}
+\usage{
+seasonder_getnRangeCells(seasonder_obj)
+}
+\arguments{
+\item{seasonder_obj}{A SeaSondeRCS object.}
+}
+\value{
+The nRangeCells value.
+}
+\description{
+Get the nRangeCells value from a SeaSondeRCS object
+}
+End function seasonder_getnRangeCells
+
+Start function seasonder_getVersion.SeaSondeRCS
+\name{seasonder_getVersion.SeaSondeRCS}
+\alias{seasonder_getVersion.SeaSondeRCS}
+\title{Get the version value from a SeaSondeRCS object}
+\usage{
+\method{seasonder_getVersion}{SeaSondeRCS}(seasonder_obj)
+}
+\arguments{
+\item{seasonder_obj}{A SeaSondeRCS object.}
+}
+\value{
+The version value.
+}
+\description{
+Get the version value from a SeaSondeRCS object
+}
+End function seasonder_getVersion.SeaSondeRCS
+
+Start function SeaSondeRCS_creation_step_text
+\name{SeaSondeRCS_creation_step_text}
+\alias{SeaSondeRCS_creation_step_text}
+\title{Generate Creation Step Text}
+\usage{
+SeaSondeRCS_creation_step_text(file_path)
+}
+\arguments{
+\item{file_path}{A character string specifying the path to the file.}
+}
+\value{
+A character string with the formatted message indicating the time of creation and the file path.
+}
+\description{
+This function generates a text message indicating the time an CS object was created based on the current system time and the provided file path.
+}
+End function SeaSondeRCS_creation_step_text
+

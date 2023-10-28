@@ -265,7 +265,7 @@ describe("file reading",{
     file_path <- here::here("tests/testthat/data/MeasPattern.txt")
     msg <- glue::glue("2022-01-02 03:45:03: Created from {file_path}.")
     mk <- mockthat::mock(msg)
-    mockthat::with_mock(creation_step_text=mk,
+    mockthat::with_mock(SeaSondeRAPM_creation_step_text=mk,
     test <- seasonder_readSeaSondeRAPMFile(file_path,
                                           SiteName="Estación Cies",
                                           Type="Measured Pattern",

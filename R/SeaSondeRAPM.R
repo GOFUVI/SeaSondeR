@@ -148,7 +148,20 @@ seasonder_initializeAttributesSeaSondeRAPM <- function(calibration_matrix,...) {
 
 #### Processing_steps ####
 
-creation_step_text <- function(file_path) glue::glue("{Sys.time()}: Created from {file_path}.")
+#' Generate Creation Step Text
+#'
+#' This function generates a text message indicating the time an APM object was created based on the current system time and the provided file path.
+#'
+#' @param file_path A character string specifying the path to the file.
+#'
+#' @return
+#' A character string with the formatted message indicating the time of creation and the file path.
+#'
+SeaSondeRAPM_creation_step_text <- function(file_path) {
+  # Use glue to format the message with the current system time and the provided file path
+  glue::glue("{Sys.time()}: Created from {file_path}.")
+}
+
 
 #### Validation ####
 
@@ -1013,7 +1026,7 @@ seasonder_getSeaSondeRAPM_FileID <- function(seasonde_apm_obj) {
 }
 
 
-#### Lectura de fichero ####
+#### File Reading ####
 
 #' Read a Row from a Matrix Represented as Text Lines
 #'
@@ -1156,7 +1169,7 @@ seasonder_readSeaSondeRAPMFile <- function(file_path,...) {
   out <- seasonder_setSeaSondeRAPM_FileName(out,basename(file_path))
 
 
-  out %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(creation_step_text(file_path))
+  out %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_creation_step_text(file_path))
 
   # Validar los atributos después de la lectura
   seasonder_validateAttributesSeaSondeRAPM(out)

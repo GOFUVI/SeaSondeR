@@ -1,0 +1,56 @@
+Start function seasonder_getSeaSondeRCS_ProcessingSteps
+\name{seasonder_getSeaSondeRCS_ProcessingSteps}
+\alias{seasonder_getSeaSondeRCS_ProcessingSteps}
+\title{Getter for ProcessingSteps}
+\usage{
+seasonder_getSeaSondeRCS_ProcessingSteps(seasonde_apm_obj)
+}
+\arguments{
+\item{seasonde_apm_obj}{SeaSonderCS object}
+}
+\description{
+Getter for ProcessingSteps
+}
+End function seasonder_getSeaSondeRCS_ProcessingSteps
+
+Start function seasonder_getVersion.SeaSondeRCS
+\name{seasonder_getVersion.SeaSondeRCS}
+\alias{seasonder_getVersion.SeaSondeRCS}
+\title{Get the version value from a SeaSondeRCS object}
+\usage{
+\method{seasonder_getVersion}{SeaSondeRCS}(seasonder_obj)
+}
+\arguments{
+\item{seasonder_obj}{A SeaSondeRCS object.}
+}
+\value{
+The version value.
+}
+\description{
+Get the version value from a SeaSondeRCS object
+}
+End function seasonder_getVersion.SeaSondeRCS
+
+Start function seasonder_setSeaSondeRCS_ProcessingSteps
+\name{seasonder_setSeaSondeRCS_ProcessingSteps}
+\alias{seasonder_setSeaSondeRCS_ProcessingSteps}
+\title{Setter for ProcessingSteps}
+\usage{
+seasonder_setSeaSondeRCS_ProcessingSteps(
+  seasonde_apm_obj,
+  new_value,
+  append = TRUE
+)
+}
+\arguments{
+\item{seasonde_apm_obj}{SeaSonderCS object}
+
+\item{new_value}{new value}
+
+\item{append}{append the new step or replace previous steps? Default: TRUE}
+}
+\description{
+Setter for ProcessingSteps
+}
+End function seasonder_setSeaSondeRCS_ProcessingSteps
+

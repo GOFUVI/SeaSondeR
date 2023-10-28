@@ -1,0 +1,131 @@
+Start function seasonder_createSeaSondeRAPM
+\name{seasonder_createSeaSondeRAPM}
+\alias{seasonder_createSeaSondeRAPM}
+\title{Create a SeaSondeRAPM Object}
+\usage{
+seasonder_createSeaSondeRAPM(
+  calibration_matrix = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 2,
+    ncol = 0),
+  ...
+)
+}
+\arguments{
+\item{calibration_matrix}{A 2 x b complex matrix, where b is the number of bearings for calibration.}
+
+\item{...}{Additional named attributes that will be passed to \code{\link{seasonder_initializeAttributesSeaSondeRAPM}}.}
+}
+\value{
+A SeaSondeRAPM object containing a complex matrix with class attribute 'SeaSondeRAPM' and
+additional attributes for metadata. Row names are set "A13" and "A23" and column names are set to be the values in BEAR.
+}
+\description{
+This function creates a SeaSondeRAPM object to store antenna pattern calibration data.
+}
+\details{
+The function performs the following operations:
+\enumerate{
+\item Validates the \code{calibration_matrix} with code{\link{seasonder_validateCalibrationMatrixSeaSondeRAPM}}.
+\item Initializes all other attributes either with default or user-provided values.
+\item Merges the initialized attributes into \code{calibration_matrix}.
+\item Sets the object's class to 'SeaSondeRAPM'.
+}
+
+For more details on the attributes, see \code{\link{seasonder_initializeAttributesSeaSondeRAPM}}.
+}
+\examples{
+cal_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2)
+apm <- seasonder_createSeaSondeRAPM(cal_matrix)
+
+apm <- seasonder_createSeaSondeRAPM(cal_matrix,Creator="Me")
+print(attr(apm,"Creator"))
+# [1] "Me"
+
+}
+\seealso{
+\code{\link{seasonder_validateCalibrationMatrixSeaSondeRAPM}},
+\code{\link{seasonder_initializeAttributesSeaSondeRAPM}}
+}
+End function seasonder_createSeaSondeRAPM
+
+Start function seasonder_initializeAttributesSeaSondeRAPM
+\name{seasonder_initializeAttributesSeaSondeRAPM}
+\alias{seasonder_initializeAttributesSeaSondeRAPM}
+\title{Initialize Attributes for a SeaSondeRAPM Object}
+\usage{
+seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix, ...)
+}
+\arguments{
+\item{calibration_matrix}{A 2 x b complex matrix, where b is the number of bearings for calibration.}
+
+\item{...}{Additional named attributes that may override the defaults.}
+}
+\value{
+A list containing initialized attributes for a SeaSondeRAPM object.
+}
+\description{
+This function initializes attributes for a SeaSondeRAPM object, including metadata and properties.
+}
+\details{
+The function initializes the following attributes:
+\itemize{
+\item \code{quality_matrix}: A 2 x b complex matrix for quality data, where b is the number of bearings.
+\item \code{BEAR}: A numeric vector for bearings (degrees).
+\item \code{Type}: Character string for antenna pattern type.
+\item \code{Creator}: Object creator name. Default is an empty character vector.
+\item \code{SiteName}: Site name (not the same as SiteCode). Default is an empty character vector.
+\item \code{SiteOrigin}: Numeric vector with two elements representing the Station GPS location. Default is \code{c(0,0)}.
+\item \code{FileName}: Default is an empty character vector.
+\item \code{CreateTimeStamp}: APM file creation time. Default is current system date and time.
+\item \code{ProcessingSteps}: Processing steps applied to this object. Default is an empty character vector.
+\item \code{AmplitudeFactors}: Numeric vector with two elements for the amplitude factors. Default is \code{c(0,0)}.
+\item \code{AntennaBearing}: Default is an empty numeric vector.
+\item \code{StationCode}: 4-character station code. Default is an empty character vector.
+\item \code{BearingResolution}: In degrees. Default is an empty numeric vector.
+\item \code{Smoothing}: Numeric vector indicating smoothing applied to the antenna pattern. Default is an empty numeric vector.
+\item \code{CommentLine}: Metadata lines in the data file not matching any other attribute. Default is an empty character vector.
+\item \code{FileID}: File's UUID. Default is an empty character vector.
+\item \code{PhaseCorrections}: Numeric vector with two elements for phase corrections. Default is \code{c(0,0)}.
+}
+
+Each attribute has a corresponding setter and getter function, following the naming pattern \code{seasonder_set/getSeaSondeRAPM_*}, where * is the name of the attribute. For example, to set the 'Type' attribute, you would use \code{seasonder_setSeaSondeRAPM_Type(seasonde_apm_obj,new_value)}. To get the same, you would use \code{seasonder_getSeaSondeRAPM_Type(seasonde_apm_obj,new_value)}.
+
+Please see \code{\link{seasonder_validateAttributesSeaSondeRAPM}} for details in attributes validation.
+}
+\examples{
+# Create a calibration_matrix
+cal_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2, ncol = 2)
+
+# Initialize attributes with default settings
+attr_list <- seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix = cal_matrix)
+str(attr_list)
+
+# Initialize attributes with custom 'Type'
+attr_list_custom <- seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix = cal_matrix,
+Type = "Custom Pattern")
+str(attr_list_custom)
+
+}
+\seealso{
+\code{\link{seasonder_createSeaSondeRAPM}},
+\code{\link{seasonder_validateAttributesSeaSondeRAPM}}
+}
+End function seasonder_initializeAttributesSeaSondeRAPM
+
+Start function SeaSondeRAPM_creation_step_text
+\name{SeaSondeRAPM_creation_step_text}
+\alias{SeaSondeRAPM_creation_step_text}
+\title{Generate Creation Step Text}
+\usage{
+SeaSondeRAPM_creation_step_text(file_path)
+}
+\arguments{
+\item{file_path}{A character string specifying the path to the file.}
+}
+\value{
+A character string with the formatted message indicating the time of creation and the file path.
+}
+\description{
+This function generates a text message indicating the time an APM object was created based on the current system time and the provided file path.
+}
+End function SeaSondeRAPM_creation_step_text
+
