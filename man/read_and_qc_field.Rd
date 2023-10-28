@@ -39,7 +39,7 @@ The \code{read_and_qc_field} function uses the \code{rlang} package to manage er
 in a structured way. This documentation section details the classes of errors/conditions
 generated, the cases considered, and the restart options provided.
 
-\strong {Error/Condition Classes}:
+\strong{Error/Condition Classes}:
 \itemize{
 \item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped during reading.
 \item \code{seasonder_cs_field_qc_fun_rerun}: Condition that indicates a rerun of the quality control function was triggered.
@@ -47,7 +47,7 @@ generated, the cases considered, and the restart options provided.
 \item \code{seasonder_cs_field_qc_fun_error}: Error raised when an issue occurs while applying the quality control function.
 }
 
-\strong {Error/Condition Cases}:
+\strong{Error/Condition Cases}:
 \itemize{
 \item If a CSField is skipped during reading, the condition \code{seasonder_cs_field_skipped} is used to skip QC and then is re-signaled.
 \item If an alternate QC is rerun using the \code{seasonder_rerun_qc_with_fun} restart, the condition \code{seasonder_cs_field_qc_fun_rerun} is signaled.
@@ -55,7 +55,7 @@ generated, the cases considered, and the restart options provided.
 \item If there's an issue applying the quality control function, the error \code{seasonder_cs_field_qc_fun_error} is raised.
 }
 
-\strong {Restart Options}:
+\strong{Restart Options}:
 The function provides structured mechanisms to recover from errors/conditions during its execution using \code{withRestarts}. The following restart options are available:
 
 \itemize{

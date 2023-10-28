@@ -4,14 +4,12 @@
 \alias{new_SeaSondeRCS}
 \title{Create a New SeaSondeRCS Object}
 \usage{
-new_SeaSondeRCS(header, data, version = 1)
+new_SeaSondeRCS(header, data)
 }
 \arguments{
 \item{header}{A list containing header information for the SeaSondeRCS object.}
 
 \item{data}{A list containing the data fields for the SeaSondeRCS object.}
-
-\item{version}{An integer indicating the version of the SeaSondeRCS object. Default is 1.}
 }
 \value{
 A SeaSondeRCS object with the specified header, data, and version.

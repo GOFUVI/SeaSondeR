@@ -68,10 +68,17 @@ seasonder_logStr <- function(message,level) {
 }
 
 
+#' Retrieve the Last Logs
+#'
+#' This function fetches the most recent log entries from the global log variable `seasonder_the$log`.
+#'
+#' @param n An integer specifying the number of recent log entries to retrieve.
+#'
+#' @return Returns the `n` most recent log entries from the global log.
 #' @export
 seasonder_getLog <- function(n=100){
 
-  tail(seasonder_the$log,n = n)
+  utils::tail(seasonder_the$log,n = n)
 
 }
 
@@ -100,6 +107,17 @@ seasonder_log <- function(message, level="info"){
   }
 }
 
+#' Archive Log Entries
+#'
+#' Archives log entries based on their levels: INFO, ERROR, or FATAL. If paths are not provided,
+#' temporary files will be used.
+#'
+#' @param log_path Path to the main log file.
+#' @param log_info_path Path to the INFO level log file.
+#' @param log_error_path Path to the ERROR level log file.
+#' @param log_fatal_path Path to the FATAL level log file.
+#'
+#' @return If temporary files are used, the path to the main temporary log file is returned. Otherwise, NULL.
 #' @export
 seasonder_logArchiver <- function(log_path=NULL, log_info_path=log_path, log_error_path=log_info_path, log_fatal_path=log_error_path){
 
@@ -244,10 +262,22 @@ seasonder_logAndAbort <- function(msg, calling_function=NULL, ...) {
   }
 }
 
-
+#' Split Logs Based on Time Thresholds
+#'
+#' The function splits the log entries into blocks based on time gaps between timestamps. The threshold
+#' for splitting can be provided or calculated based on the gaps in the log timestamps.
+#'
+#' @param threshold The time difference threshold for splitting the logs. If NULL, it's calculated.
+#' @param threshold_factor Multiplicative factor applied to the calculated threshold.
+#' @param threshold_quantile Quantile used for threshold calculation if `threshold` is NULL.
+#' @param min_threshold_secs Minimum threshold in seconds.
+#'
+#' @return A list of log blocks, each block being a vector of log entries.
+#' @importFrom lubridate ymd_hms
 #' @export
 seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_quantile=0.9, min_threshold_secs=10){
 
+  time_block <- NULL
 
   log <- seasonder_the$log
 
@@ -258,18 +288,18 @@ seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_qua
 
   df <- data.frame(timestamps, log)
 
-  time_gaps <- difftime(timestamps, lag(timestamps, default = dplyr::first(timestamps)))
+  time_gaps <- difftime(timestamps, stats::lag(timestamps, default = dplyr::first(timestamps)))
 
   if (is.null(threshold)) {
 
-    threshold <- quantile(time_gaps,c(threshold_quantile)) %>%  magrittr::multiply_by(threshold_factor) %>% min(difftime(min_threshold_secs,0))
+    threshold <- stats::quantile(time_gaps,c(threshold_quantile)) %>%  magrittr::multiply_by(threshold_factor) %>% min(difftime(min_threshold_secs,0))
   }
 
 
 
   blocks <- df %>%
     dplyr::arrange(timestamps) %>%
-    dplyr::mutate(time_gaps = time_gaps,time_block = cumsum(time_gaps > threshold)) %>%
+    dplyr::mutate(time_gaps = time_gaps, time_block = cumsum(time_gaps > threshold)) %>%
     dplyr::group_by(time_block) %>%
     dplyr::group_split() %>%
     purrr::map(\(block) dplyr::pull(block,"log"))
@@ -280,6 +310,13 @@ seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_qua
 }
 
 
+#' Retrieve the Last Log Entry
+#'
+#' This function fetches and splits the log entries, then returns the last entry.
+#'
+#' @param ... Arguments to be passed to `seasonder_splitLog`.
+#'
+#' @return Returns the last log entry after splitting the log.
 #' @export
 seasonder_lastLog <- function(...){
   seasonder_splitLog(...) %>% dplyr::last()

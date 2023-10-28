@@ -30,6 +30,8 @@ seasonder_the$valid_yaml_seasondecs_versions <- c("1.0.0")
 #' is provided. For logging and aborting, this function utilizes the
 #' \code{\link[=seasonder_logAndAbort]{seasonder_logAndAbort}} function.
 #'
+#' @importFrom yaml read_yaml
+#'
 #' @examples
 #' \dontrun{
 #' # Assuming a YAML file named "example.yaml" exists with appropriate content

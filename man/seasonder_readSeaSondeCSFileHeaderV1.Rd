@@ -17,6 +17,8 @@ seasonder_readSeaSondeCSFileHeaderV1(
 \item{connection}{Connection object to the file.}
 
 \item{endian}{Character string specifying the endianness. Default is "big".}
+
+\item{prev_data}{previous header data}
 }
 \value{
 A list with the read and transformed results.

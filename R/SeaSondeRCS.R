@@ -96,7 +96,6 @@ seasonder_validateCSDataStructure <- function(data, nRanges, nDoppler) {
 #'
 #' @param header A list containing header information for the SeaSondeRCS object.
 #' @param data A list containing the data fields for the SeaSondeRCS object.
-#' @param version An integer indicating the version of the SeaSondeRCS object. Default is 1.
 #'
 #' @return A SeaSondeRCS object with the specified header, data, and version.
 #'
@@ -107,11 +106,13 @@ seasonder_validateCSDataStructure <- function(data, nRanges, nDoppler) {
 #' seaSondeObj <- new_SeaSondeRCS(header, data)
 #' }
 #'
-new_SeaSondeRCS <- function(header, data, version=1){
+new_SeaSondeRCS <- function(header, data){
+
+
 
   structure(list(header = header,
                  data = data),
-            version = version,
+            version = 1, # An integer indicating the version of the SeaSondeRCS object. Current is 1.
             class = "SeaSondeRCS")
 }
 
@@ -158,8 +159,8 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL) {
   nDoppler <- x$header$nDopplerCells
 
   # Checking if nRanges and nDoppler are present in the header
-  if(is.null(nRanges) || is.null(nDoppler)){
-    seasonder_logAndAbort(glue::glue("nRangeCells or nDopplerCells not present in header data."), calling_function = "seasonder_createSeaSondeRCS.list", class = "seasonder_CS_missing_nRange_nDoppler_error", seasonder_nRange=nRanges, seasonder_nDoppler=nDoppler)
+  if (is.null(nRanges) || is.null(nDoppler)) {
+    seasonder_logAndAbort(glue::glue("nRangeCells or nDopplerCells not present in header data."), calling_function = "seasonder_createSeaSondeRCS.list", class = "seasonder_CS_missing_nRange_nDoppler_error", seasonder_nRange = nRanges, seasonder_nDoppler = nDoppler)
   }
 
   # Validating the structure of the data
@@ -184,8 +185,8 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path) {
   nDoppler <- result$header$nDopplerCells
 
   # Checking if nRanges and nDoppler are present in the header
-  if(is.null(nRanges) || is.null(nDoppler)){
-    seasonder_logAndAbort(glue::glue("nRangeCells or nDopplerCells not present in header data."), calling_function = "seasonder_createSeaSondeRCS.character", class = "seasonder_CS_missing_nRange_nDoppler_error", seasonder_nRange=nRanges, seasonder_nDoppler=nDoppler)
+  if (is.null(nRanges) || is.null(nDoppler)) {
+    seasonder_logAndAbort(glue::glue("nRangeCells or nDopplerCells not present in header data."), calling_function = "seasonder_createSeaSondeRCS.character", class = "seasonder_CS_missing_nRange_nDoppler_error", seasonder_nRange = nRanges, seasonder_nDoppler = nDoppler)
   }
 
   # Validating the structure of the data
@@ -194,6 +195,79 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path) {
   # Creating the SeaSondeRCS object
   new_SeaSondeRCS(result$header, result$data)
 }
+
+
+##### Getters #####
+
+#' Get the version value from a SeaSondeRCS object
+#'
+#' @param seasonder_obj A SeaSondeRCS object.
+#' @return The version value.
+#' @export
+seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj){
+
+  attr(seasonder_obj,"version",exact = TRUE)
+}
+
+###### Header ######
+#' Retrieve a value from the SeaSondeRCS header by a specific path
+#'
+#' This function retrieves a specific value from the SeaSondeRCS object's header based on the provided path.
+#' The path can be a single field name or a list of nested field names.
+#'
+#' @param seasonder_obj A SeaSondeRCS object.
+#' @param path A character vector specifying the field or nested fields to retrieve.
+#'
+#' @return The value at the specified path in the header. If the path is not found, NULL is returned and a warning is thrown.
+#'
+#' @section Condition Management:
+#' This function utilizes the `rlang` package to manage errors and conditions, and provide detailed and structured condition messages:
+#'
+#' \strong{Condition Classes}:
+#' \itemize{
+#'   \item \code{seasonder_SeaSonderCS_field_not_found_in_header}: Indicates that the specified path was not found in the header.
+#' }
+#'
+#' \strong{Condition Cases}:
+#' \itemize{
+#'   \item Field or nested fields specified by the path are not found in the header.
+#' }
+#'
+#' @export
+seasonder_getCSHeaderByPath <- function(seasonder_obj, path) {
+  # Use purrr::pluck to extract the value from the header
+  result <- rlang::inject(purrr::pluck(seasonder_obj$header, !!!path))
+
+  # If the result is NULL, log a warning
+  if (is.null(result)) {
+    path_str <- paste0(path, collapse = "/")
+    warning_msg <- glue::glue("Field '{path_str}' not found in header.")
+    seasonder_logAndMessage(warning_msg, "error", calling_function = "seasonder_getCSHeaderByPath", class = "seasonder_SeaSonderCS_field_not_found_in_header")
+  }
+
+  return(result)
+}
+
+
+
+#' Get the nRangeCells value from a SeaSondeRCS object
+#'
+#' @param seasonder_obj A SeaSondeRCS object.
+#' @return The nRangeCells value.
+#' @export
+seasonder_getnRangeCells <- function(seasonder_obj) {
+  return(seasonder_getCSHeaderByPath(seasonder_obj, "nRangeCells"))
+}
+
+#' Get the nDopplerCells value from a SeaSondeRCS object
+#'
+#' @param seasonder_obj A SeaSondeRCS object.
+#' @return The nDopplerCells value.
+#' @export
+seasonder_getnDopplerCells <- function(seasonder_obj) {
+  return(seasonder_getCSHeaderByPath(seasonder_obj, "nDopplerCells"))
+}
+
 
 #### Read CS File ####
 
@@ -262,7 +336,31 @@ seasonder_validateCSFileData <- function(filepath, header) {
 
 }
 
-seasonder_skip_cs_file <- function(cond) invokeRestart("seasonder_skip_cs_file",cond)
+#' Skip SeaSonde Cross Spectra (CS) File Reading
+#'
+#' This function serves as a restart for `seasonder_readSeaSondeCSFile`. When invoked, it provides a
+#' mechanism to gracefully handle file reading errors by logging an error message and skipping the current file processing.
+#'
+#' @param cond The condition or error that occurred during the file reading process. This is used
+#' to log a detailed error message indicating the reason for skipping the file.
+#'
+#' @details
+#' This function is meant to be used within a custom condition handler. When a problematic condition
+#' arises during the processing of a SeaSonde CS file, you can call `seasonder_skip_cs_file(cond)` to
+#' trigger this restart, which allows for a graceful degradation by logging an error message and skipping the file.
+#'
+#' The effect of invoking this restart is twofold:
+#' 1. An error message detailing the reason for skipping the file is logged.
+#' 2. The calling function (`seasonder_readSeaSondeCSFile`) will immediately return a list with `header=NULL` and `data=NULL`.
+#'
+#' @seealso
+#' \code{\link{seasonder_readSeaSondeCSFile}},
+#'
+#' @return If invoked, the function returns a list with both `header` and `data` set to NULL.
+#' @export
+seasonder_skip_cs_file <- function(cond) {
+  invokeRestart("seasonder_skip_cs_file",cond)
+}
 
 #' Read SeaSonde Cross Spectra (CS) File
 #'
@@ -383,7 +481,7 @@ seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
 
 
 
-
+#' @importFrom bit64 as.integer64
 seasonder_int_to_raw <- function(x){
 
   out <- as.raw(packBits(c(t(matrix(as.integer(strsplit(bit64::as.bitstring(bit64::as.integer64(x)),"")[[1]]),ncol=8,byrow = T)[,8:1])),"raw"))
@@ -401,8 +499,10 @@ seasonder_int_to_raw <- function(x){
 #' @param signed Logical, indicating whether the conversion should consider the value as signed (default is FALSE for unsigned).
 #' @return A 64-bit integer representation of the raw vector.
 #' @examples
+#' \dontrun{
 #' r <- as.raw(c(0x12,0x34,0x56,0x78,0x90,0xAB,0xCD,0xEF))
 #' seasonder_raw_to_int(r, signed=TRUE)
+#' }
 seasonder_raw_to_int <- function(r,signed=F){
   # Convert raw values to bits and collapse into a single bit string.
   bit_str <- sapply(r,FUN = function(x) rev(rawToBits(x))) %>% as.integer() %>% paste0(collapse="")
@@ -415,8 +515,27 @@ seasonder_raw_to_int <- function(r,signed=F){
 
 }
 
+#' Skip Reading a CSField and Return a Specified Value
+#'
+#' This function is a convenience mechanism to invoke the `seasonder_skip_cs_field` restart option. It can be used in custom condition handlers when reading a CSField from a binary connection encounters an error or condition. When called, it indicates the intention to skip reading the current CSField and return a specific value.
+#'
+#' @param cond A condition or error that occurred while reading the CSField.
+#' @param value The desired return value to use in place of the CSField reading that encountered an error.
+#'
+#' @details
+#' During the execution of the `seasonder_readCSField` function, errors or conditions can occur. To provide a structured mechanism to handle such cases, the function utilizes the `rlang::withRestarts` mechanism, offering a restart option named `seasonder_skip_cs_field`. This restart allows the function to gracefully handle reading errors by logging a relevant error message and returning a specified value.
+#'
+#' The `seasonder_skip_cs_field` function provides an easy way to invoke this restart. When called within a custom condition handler, it signals the intention to skip the current CSField reading due to an error and specifies a return value.
+#'
+#' @return Returns the value specified by the `value` parameter.
+#'
+#' @seealso
+#' \code{\link{seasonder_readCSField}} for the primary function that utilizes this restart mechanism.
+#'
 #' @export
-seasonder_skip_cs_field <- function(cond,value) invokeRestart("seasonder_skip_cs_field",cond,value)
+seasonder_skip_cs_field <- function(cond,value){
+  invokeRestart("seasonder_skip_cs_field",cond,value)
+}
 
 #' Read a CSField from a Binary Connection
 #'
@@ -586,8 +705,28 @@ seasonder_readCSField <- function(con, type, endian="big") {
 }
 
 
+#' Structured Restart for Quality Control
+#'
+#' Provides a structured restart mechanism to rerun the quality control (QC) function
+#' with an alternative function during the execution of `read_and_qc_field`.
+#' This allows for a flexible error recovery strategy when the initial QC function fails
+#' or is deemed inadequate.
+#'
+#' This function is meant to be used within custom condition handlers for the
+#' `read_and_qc_field` function.
+#'
+#' @param cond The condition object captured during the execution of the
+#' `read_and_qc_field` function.
+#' @param qc_fun An alternate quality control function to apply. This function should accept
+#' the value from the field as its sole argument and return a QC-applied value.
+#'
+#' @return The value returned by the alternate QC function `qc_fun`.
+#' @seealso \code{\link{read_and_qc_field}} for more details on how this function fits
+#' into the error recovery mechanism of reading and quality control process.
 #' @export
-seasonder_rerun_qc_with_fun <- function(cond,qc_fun) invokeRestart("seasonder_rerun_qc_with_fun",cond,qc_fun)
+seasonder_rerun_qc_with_fun <- function(cond,qc_fun){
+  invokeRestart("seasonder_rerun_qc_with_fun",cond,qc_fun)
+}
 
 #' Read and Quality Control a Single Field
 #'
@@ -618,7 +757,7 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun) invokeRestart("seasonder_re
 #' in a structured way. This documentation section details the classes of errors/conditions
 #' generated, the cases considered, and the restart options provided.
 #'
-#' \strong {Error/Condition Classes}:
+#' \strong{Error/Condition Classes}:
 #' \itemize{
 #'   \item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped during reading.
 #'   \item \code{seasonder_cs_field_qc_fun_rerun}: Condition that indicates a rerun of the quality control function was triggered.
@@ -626,7 +765,7 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun) invokeRestart("seasonder_re
 #'   \item \code{seasonder_cs_field_qc_fun_error}: Error raised when an issue occurs while applying the quality control function.
 #' }
 #'
-#' \strong {Error/Condition Cases}:
+#' \strong{Error/Condition Cases}:
 #' \itemize{
 #'   \item If a CSField is skipped during reading, the condition \code{seasonder_cs_field_skipped} is used to skip QC and then is re-signaled.
 #'   \item If an alternate QC is rerun using the \code{seasonder_rerun_qc_with_fun} restart, the condition \code{seasonder_cs_field_qc_fun_rerun} is signaled.
@@ -634,7 +773,7 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun) invokeRestart("seasonder_re
 #'   \item If there's an issue applying the quality control function, the error \code{seasonder_cs_field_qc_fun_error} is raised.
 #' }
 #'
-#' \strong {Restart Options}:
+#' \strong{Restart Options}:
 #' The function provides structured mechanisms to recover from errors/conditions during its execution using `withRestarts`. The following restart options are available:
 #'
 #' \itemize{
@@ -795,6 +934,7 @@ seasonder_check_specs <- function(specs, fields){
 #' @param specs A list containing specifications for reading the file.
 #' @param connection Connection object to the file.
 #' @param endian Character string specifying the endianness. Default is "big".
+#' @param prev_data previous header data
 #'
 #' @return A list with the read and transformed results.
 seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "big", prev_data = NULL) {
@@ -827,6 +967,7 @@ seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "bi
 #' @param specs A list containing specifications for reading the file.
 #' @param connection Connection object to the file.
 #' @param endian Character string specifying the endianness. Default is "big".
+#' @param prev_data previous header data
 #'
 #' @return A list with the read results.
 seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "big", prev_data = NULL) {
@@ -853,6 +994,7 @@ seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "bi
 #' @param specs A list containing specifications for reading the file.
 #' @param connection Connection object to the file.
 #' @param endian Character string specifying the endianness. Default is "big".
+#' @param prev_data previous header data
 #'
 #' @return A list with the read results.
 #' @export
@@ -886,6 +1028,7 @@ seasonder_readSeaSondeCSFileHeaderV3 <- function(specs, connection, endian = "bi
 #' @param specs A list containing specifications for reading the file.
 #' @param connection Connection object to the file.
 #' @param endian Character string specifying the endianness. Default is "big".
+#' @param prev_data previous header data
 #'
 #' @return A list with the read and transformed results.
 #' @export
@@ -921,6 +1064,7 @@ seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "bi
 #' @param specs A list containing specifications for reading the file.
 #' @param connection Connection object to the file.
 #' @param endian Character string specifying the endianness. Default is "big".
+#' @param prev_data previous header data
 #'
 #' @return A list with the read and transformed results.
 #' @export
@@ -1026,8 +1170,39 @@ readV6BlockData <- function(specs, connection, endian="big", prev_data=NULL, rem
   return(out)
 }
 
+#' Trigger Restart for Skipping Transformation
+#'
+#' This function provides a mechanism to invoke a restart during the reading and
+#' transformation process of the SeaSonde CS File Version 6 header. It allows users
+#' to skip transformations that may have caused errors and proceed with a provided value.
+#'
+#' @param cond The condition object that triggered the restart.
+#' @param value The provided value to be used when the transformation is skipped.
+#'
+#' @details
+#' This function specifically triggers the `seasonder_v6_skip_transformation` restart
+#' that allows for skipping a block transformation in the reading process of the
+#' SeaSonde CS File Version 6 header. When triggered, it logs an error message,
+#' skips the problematic transformation, and returns the provided value for the block.
+#'
+#' @section Integration with SeaSonde CS File Reading:
+#'
+#' The restart mechanism of this function is integrated within the
+#' \code{seasonder_readSeaSondeCSFileHeaderV6} function. If an error occurs during
+#' the transformation process of a specific block, the restart provides users with
+#' an option to skip the problematic transformation and proceed with a fallback value.
+#'
+#' @seealso
+#' \code{\link{seasonder_readSeaSondeCSFileHeaderV6}} for the primary function where
+#' this restart mechanism is used.
+#'
+#' @return This function does not have a standard return value. Instead, it triggers a restart
+#' that can be caught by an enclosing context to handle the error and decide how to proceed.
+#'
 #' @export
-seasonder_v6_skip_transformation <- function(cond,value) invokeRestart("seasonder_v6_skip_transformation",cond,value)
+seasonder_v6_skip_transformation <- function(cond, value) {
+  invokeRestart("seasonder_v6_skip_transformation", cond, value)
+}
 
 
 #' Read SeaSonde CS File Header V6
@@ -1057,7 +1232,7 @@ seasonder_v6_skip_transformation <- function(cond,value) invokeRestart("seasonde
 #' \item \code{seasonder_v6_skip_block_error}: Triggered when there's an error while skipping a block.
 #'}
 #'
-#' \string{Error Cases}:
+#' \strong{Error Cases}:
 #'
 #' The following are the scenarios when errors or conditions are raised:
 #'
@@ -1163,6 +1338,7 @@ seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "bi
 #'        a version number and contain the required information to process that version's header.
 #' @param connection Connection object. The file connection pointing to the SeaSonde file.
 #' @param endian Character string. Specifies the byte order for reading data. Can be "big" (default)
+#' @param prev_data previous header data
 #'        or "little". Use the appropriate value depending on the system architecture and the
 #'        file's source.
 #'
@@ -1417,10 +1593,6 @@ seasonder_the$qc_functions <- list()
 #'
 #' @return The original field_value if it matches the expected_type; otherwise, an error is raised.
 #'
-#'
-#' @examples
-#' qc_check_type(100L, "integer") # Returns 100L
-#' qc_check_type("100", "integer") # Raises error
 qc_check_type <- function(field_value, expected_type) {
   if (!inherits(field_value, expected_type)) {
     seasonder_logAndAbort(glue::glue("QC Error: Value does not have the expected type: {expected_type}"))
@@ -1442,13 +1614,6 @@ qc_check_type <- function(field_value, expected_type) {
 #' @param expected_type (optional) The expected type of the field_value. Default is NULL.
 #'
 #' @return The original field_value if it's within range and matches the expected_type; otherwise, an error is raised.
-#'
-#'
-#' @examples
-#' qc_check_range(15L, 1, 32, "integer") # Returns 15L
-#' qc_check_range(40L, 1, 32, "integer") # Raises error
-#' qc_check_range("15", 1, 32, "integer") # Raises error
-#' qc_check_range(15L, 1, 32) # Returns 15L
 qc_check_range <- function(field_value, min, max, expected_type = NULL) {
   # Si se proporciona un tipo esperado, verifica el tipo antes de comprobar el rango
   if (!is.null(expected_type)) {
@@ -1470,13 +1635,3 @@ seasonder_load_qc_functions <- function(){
 seasonder_load_qc_functions()
 
 
-# Conditions
-
-cs_file_reading_error <- function(e,filepath=NULL,calling_function=NULL){
-
-  message <- glue::glue("An issue happened while processing the file {filepath}. Issue: {as.character(e)}")
-
-  seasonder_logAndAbort(message,calling_function = calling_function,parent=e,filepath=filepath,class="cs_file_reading_issure")
-
-
-}

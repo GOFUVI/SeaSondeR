@@ -24,7 +24,9 @@ a version number and contain the required information to process that version's 
 
 \item{connection}{Connection object. The file connection pointing to the SeaSonde file.}
 
-\item{endian}{Character string. Specifies the byte order for reading data. Can be "big" (default)
+\item{endian}{Character string. Specifies the byte order for reading data. Can be "big" (default)}
+
+\item{prev_data}{previous header data
 or "little". Use the appropriate value depending on the system architecture and the
 file's source.}
 }

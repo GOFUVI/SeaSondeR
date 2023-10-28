@@ -45,7 +45,7 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
   colnames(calibration_matrix) <- attributes_list$BEAR
 
   calibration_matrix <- attributes_list %>% purrr::reduce2(names(attributes_list),\(cal_matrix_so_far,attribute,attribute_name){
-    setter_fun <- get(glue::glue("seasonder_set_SeaSondeRAPM_{attribute_name}"))
+    setter_fun <- get(glue::glue("seasonder_setSeaSondeRAPM_{attribute_name}"))
     cal_matrix_so_far %<>% setter_fun(new_value=attribute)
 
   },.init = calibration_matrix)
@@ -54,6 +54,7 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
   # Assign class
   class(calibration_matrix) <- c("SeaSondeRAPM",class(calibration_matrix))
 
+  attr(calibration_matrix,"version") <- 1
 
   seasonder_logAndMessage("seasonder_createSeaSondeRAPM: APM object created successfully.", "info")
 
@@ -90,7 +91,7 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
 #' - \code{FileID}: File's UUID. Default is an empty character vector.
 #' - \code{PhaseCorrections}: Numeric vector with two elements for phase corrections. Default is \code{c(0,0)}.
 #'
-#' Each attribute has a corresponding setter and getter function, following the naming pattern \code{seasonder_set/get_SeaSondeRAPM_*}, where * is the name of the attribute. For example, to set the 'Type' attribute, you would use \code{seasonder_set_SeaSondeRAPM_Type(seasonde_apm_obj,new_value)}. To get the same, you would use \code{seasonder_get_SeaSondeRAPM_Type(seasonde_apm_obj,new_value)}.
+#' Each attribute has a corresponding setter and getter function, following the naming pattern \code{seasonder_set/getSeaSondeRAPM_*}, where * is the name of the attribute. For example, to set the 'Type' attribute, you would use \code{seasonder_setSeaSondeRAPM_Type(seasonde_apm_obj,new_value)}. To get the same, you would use \code{seasonder_getSeaSondeRAPM_Type(seasonde_apm_obj,new_value)}.
 #'
 #' Please see \code{\link{seasonder_validateAttributesSeaSondeRAPM}} for details in attributes validation.
 #'
@@ -583,18 +584,35 @@ validate_SeaSondeRAPM_PhaseCorrections <- function(corrections) {
 
 
 
-#### Getters y Setters ####
+####' Getters y Setters ####
 
 
-# Getter for quality_matrix
+#' Get the version value from a SeaSondeRAPM object
+#'
+#' @param seasonder_obj A SeaSondeRAPM object.
+#' @return The version value.
 #' @export
-seasonder_get_SeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj) {
+seasonder_getVersion.SeaSondeRAPM <- function(seasonder_obj){
+
+  attr(seasonder_obj,"version",exact = TRUE)
+}
+
+#' Getter for quality_matrix
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
+#' @export
+seasonder_getSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$quality_matrix)
 }
 
-# Setter for quality_matrix
+#' Setter for quality_matrix
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_quality_matrix(new_value,seasonde_apm_obj)
   modified_obj <- seasonde_apm_obj
 
@@ -606,46 +624,67 @@ seasonder_set_SeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj, new_valu
 }
 
 
-# Getter for BEAR
+#' Getter for BEAR
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_BEAR <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_BEAR <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$BEAR)
 }
 
-# Setter for BEAR
+#' Setter for BEAR
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_BEAR <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_BEAR <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_BEAR(new_value,seasonde_apm_obj)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$BEAR <- new_value
   return(modified_obj)
 }
 
-# Getter for PhaseCorrections
+#' Getter for PhaseCorrections
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$PhaseCorrections)
 }
 
-# Setter for PhaseCorrections
+#' Setter for PhaseCorrections
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_PhaseCorrections(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$PhaseCorrections <- new_value
   return(modified_obj)
 }
 
-# Getter for Type
+#' Getter for Type
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_Type <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_Type <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$Type)
 }
 
 
-# Setter for Type
+#' Setter for Type
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_Type <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_Type <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_Type(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$Type <- new_value
@@ -653,15 +692,22 @@ seasonder_set_SeaSondeRAPM_Type <- function(seasonde_apm_obj, new_value) {
 }
 
 
-# Getter for Creator
+#' Getter for Creator
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_Creator <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_Creator <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$Creator)
 }
 
-# Setter for Creator
+#' Setter for Creator
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_Creator <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_Creator <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_Creator(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$Creator <- new_value
@@ -670,15 +716,22 @@ seasonder_set_SeaSondeRAPM_Creator <- function(seasonde_apm_obj, new_value) {
 
 
 
-# Getter for SiteName
+#' Getter for SiteName
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_SiteName <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_SiteName <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$SiteName)
 }
 
-# Setter for SiteName
+#' Setter for SiteName
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_SiteName <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_SiteName <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_SiteName(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$SiteName <- new_value
@@ -687,16 +740,23 @@ seasonder_set_SeaSondeRAPM_SiteName <- function(seasonde_apm_obj, new_value) {
 
 
 
-# Getter for SiteOrigin
+#' Getter for SiteOrigin
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$SiteOrigin)
 }
 
 
-# Setter for SiteOrigin
+#' Setter for SiteOrigin
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_SiteOrigin(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$SiteOrigin <- new_value
@@ -704,16 +764,23 @@ seasonder_set_SeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj, new_value) {
 }
 
 
-# Getter for FileName
+#' Getter for FileName
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_FileName <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_FileName <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$FileName)
 }
 
 
-# Setter for FileName
+#' Setter for FileName
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_FileName <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_FileName <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_FileName(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$FileName <- new_value
@@ -721,16 +788,23 @@ seasonder_set_SeaSondeRAPM_FileName <- function(seasonde_apm_obj, new_value) {
 }
 
 
-# Getter for CreateTimeStamp
+#' Getter for CreateTimeStamp
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$CreateTimeStamp)
 }
 
 
-# Setter for CreateTimeStamp
+#' Setter for CreateTimeStamp
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_CreateTimeStamp(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$CreateTimeStamp <- new_value
@@ -738,21 +812,29 @@ seasonder_set_SeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj, new_val
 }
 
 
-# Getter for ProcessingSteps
+#' Getter for ProcessingSteps
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$ProcessingSteps)
 }
 
 
-# Setter for ProcessingSteps
+#' Setter for ProcessingSteps
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#' @param append append the new step or replace previous steps? Default: TRUE
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj, new_value,append=TRUE) {
+seasonder_setSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj, new_value,append=TRUE) {
 
 
 
-  if(append){
-    steps <-  seasonder_get_SeaSondeRAPM_ProcessingSteps(seasonde_apm_obj)
+  if (append) {
+    steps <-  seasonder_getSeaSondeRAPM_ProcessingSteps(seasonde_apm_obj)
     new_value <- c(steps,new_value)
   }
   validate_SeaSondeRAPM_ProcessingSteps(new_value)
@@ -765,16 +847,23 @@ seasonder_set_SeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj, new_val
 }
 
 
-# Getter for AmplitudeFactors
+#' Getter for AmplitudeFactors
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$AmplitudeFactors)
 }
 
 
-# Setter for AmplitudeFactors
+#' Setter for AmplitudeFactors
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_AmplitudeFactors(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$AmplitudeFactors <- new_value
@@ -782,16 +871,23 @@ seasonder_set_SeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj, new_va
 }
 
 
-# Getter for AntennaBearing
+#' Getter for AntennaBearing
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$AntennaBearing)
 }
 
 
-# Setter for AntennaBearing
+#' Setter for AntennaBearing
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_AntennaBearing(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$AntennaBearing <- new_value
@@ -799,16 +895,23 @@ seasonder_set_SeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj, new_valu
 }
 
 
-# Getter for StationCode
+#' Getter for StationCode
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_StationCode <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_StationCode <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$StationCode)
 }
 
 
-# Setter for StationCode
+#' Setter for StationCode
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_StationCode <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_StationCode <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_StationCode(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$StationCode <- new_value
@@ -816,15 +919,22 @@ seasonder_set_SeaSondeRAPM_StationCode <- function(seasonde_apm_obj, new_value) 
 }
 
 
-# Getter for BearingResolution
+#' Getter for BearingResolution
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$BearingResolution)
 }
 
-# Setter for BearingResolution
+#' Setter for BearingResolution
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_BearingResolution(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$BearingResolution <- new_value
@@ -833,15 +943,22 @@ seasonder_set_SeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj, new_v
 
 
 
-# Getter for Smoothing
+#' Getter for Smoothing
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_Smoothing <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$Smoothing)
 }
 
-# Setter for Smoothing
+#' Setter for Smoothing
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_Smoothing <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_Smoothing(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$Smoothing <- new_value
@@ -849,24 +966,35 @@ seasonder_set_SeaSondeRAPM_Smoothing <- function(seasonde_apm_obj, new_value) {
 }
 
 
-# Getter for CommentLine
+#' Getter for CommentLine
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_CommentLine <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$CommentLine)
 }
 
-# Setter for CommentLine
+#' Setter for CommentLine
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_CommentLine <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_CommentLine(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$CommentLine <- new_value
   return(modified_obj)
 }
 
-# Setter for FileID
+#' Setter for FileID
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#' @param new_value new value
+#'
 #' @export
-seasonder_set_SeaSondeRAPM_FileID <- function(seasonde_apm_obj, new_value) {
+seasonder_setSeaSondeRAPM_FileID <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_FileID(new_value)
   modified_obj <- seasonde_apm_obj
   attributes(modified_obj)$FileID <- new_value
@@ -875,9 +1003,12 @@ seasonder_set_SeaSondeRAPM_FileID <- function(seasonde_apm_obj, new_value) {
 
 
 
-# Getter for FileID
+#' Getter for FileID
+#'
+#' @param seasonde_apm_obj SeaSonderAPM object
+#'
 #' @export
-seasonder_get_SeaSondeRAPM_FileID <- function(seasonde_apm_obj) {
+seasonder_getSeaSondeRAPM_FileID <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$FileID)
 }
 
@@ -995,7 +1126,7 @@ seasonder_readSeaSondeRAPMFile <- function(file_path,...) {
 
   out <- seasonder_createSeaSondeRAPM(calibration_matrix = calibration_matrix,quality_matrix=quality_matrix,BEAR=BEAR,...)
 
-  out <- seasonder_set_SeaSondeRAPM_quality_matrix(out,new_value = quality_matrix)
+  out <- seasonder_setSeaSondeRAPM_quality_matrix(out,new_value = quality_matrix)
 
   metadata_start <- A23IQ_start + number_of_lines_to_read
   metadata_lines <- lines[(metadata_start):length(lines)]
@@ -1009,7 +1140,7 @@ seasonder_readSeaSondeRAPMFile <- function(file_path,...) {
     if (attribute_name == "Unknown") {
       comment_lines <- c(comment_lines, value)
     } else {
-      setter_fun <- get(glue::glue("seasonder_set_SeaSondeRAPM_{attribute_name}"))
+      setter_fun <- get(glue::glue("seasonder_setSeaSondeRAPM_{attribute_name}"))
       out <- setter_fun(out, new_value=value)
     }
   }
@@ -1017,15 +1148,15 @@ seasonder_readSeaSondeRAPMFile <- function(file_path,...) {
   # Si hay comentarios, añadirlos al objeto
   if (length(comment_lines) > 0) {
     comment_str <- paste(comment_lines, collapse = "; ")
-    setter_fun <- get("seasonder_set_SeaSondeRAPM_CommentLine")
+    setter_fun <- get("seasonder_setSeaSondeRAPM_CommentLine")
     out <- setter_fun(out, new_value = comment_str)
   }
 
 
-  out <- seasonder_set_SeaSondeRAPM_FileName(out,basename(file_path))
+  out <- seasonder_setSeaSondeRAPM_FileName(out,basename(file_path))
 
 
-  out %<>% seasonder_set_SeaSondeRAPM_ProcessingSteps(creation_step_text(file_path))
+  out %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(creation_step_text(file_path))
 
   # Validar los atributos después de la lectura
   seasonder_validateAttributesSeaSondeRAPM(out)

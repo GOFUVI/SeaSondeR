@@ -22,9 +22,3 @@ The original field_value if it's within range and matches the expected_type; oth
 This function verifies if a given value lies within a specified range
 and matches the expected type, if provided.
 }
-\examples{
-qc_check_range(15L, 1, 32, "integer") # Returns 15L
-qc_check_range(40L, 1, 32, "integer") # Raises error
-qc_check_range("15", 1, 32, "integer") # Raises error
-qc_check_range(15L, 1, 32) # Returns 15L
-}

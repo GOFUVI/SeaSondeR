@@ -43,7 +43,7 @@ The function might raise the following conditions:
 \item \code{seasonder_v6_skip_block_error}: Triggered when there's an error while skipping a block.
 }
 
-\string{Error Cases}:
+\strong{Error Cases}:
 
 The following are the scenarios when errors or conditions are raised:
 

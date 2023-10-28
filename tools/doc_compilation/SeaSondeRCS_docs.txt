@@ -1,0 +1,1175 @@
+Start function seasonder_validateCSDataStructure
+\name{seasonder_validateCSDataStructure}
+\alias{seasonder_validateCSDataStructure}
+\title{Validate the Data Structure of CrossSpectra Data}
+\usage{
+seasonder_validateCSDataStructure(data, nRanges, nDoppler)
+}
+\arguments{
+\item{data}{A list representing the CrossSpectra (CS) data. It should contain fields "SSA1", "SSA2", "SSA3", "CS12", "CS13", "CS23", and "QC".}
+
+\item{nRanges}{An integer specifying the expected number of range cells.}
+
+\item{nDoppler}{An integer specifying the expected number of Doppler cells.}
+}
+\value{
+Invisible NULL if the data structure is valid. Otherwise, an error is thrown.
+}
+\description{
+This function checks the validity of the \code{data} structure for CrossSpectra (CS) data. It ensures that all required fields are present,
+the dimensions of the matrices are correct based on \code{nRanges} and \code{nDoppler}, and that the types of the data fields are as expected.
+}
+\details{
+The function expects the following structure for the \code{data} list:
+\itemize{
+\item \code{SSA1}, \code{SSA2}, \code{SSA3}, \code{QC}: Matrices with numeric values, with dimensions \code{nRanges} x \code{nDoppler}.
+\item \code{CS12}, \code{CS13}, \code{CS23}: Matrices with complex values, with dimensions \code{nRanges} x \code{nDoppler}.
+}
+}
+\section{Error Management}{
+
+This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
+
+\strong{Error Classes}:
+\itemize{
+\item \code{seasonder_CS_data_structure_validation_error}: An error class indicating a problem with the data structure of the CrossSpectra (CS) data.
+}
+
+\strong{Error Cases}:
+\itemize{
+\item Missing fields in the data.
+\item Incorrect dimensions for the matrices in the data.
+\item Incorrect data type for the fields in the data.
+}
+}
+
+\examples{
+\dontrun{
+data <- list(
+  SSA1 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
+  SSA2 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
+  # ... other fields
+)
+seasonder_validateCSDataStructure(data, 10, 20)
+}
+
+}
+\seealso{
+\code{\link{seasonder_logAndAbort}}
+}
+End function seasonder_validateCSDataStructure
+
+Start function new_SeaSondeRCS
+\name{new_SeaSondeRCS}
+\alias{new_SeaSondeRCS}
+\title{Create a New SeaSondeRCS Object}
+\usage{
+new_SeaSondeRCS(header, data)
+}
+\arguments{
+\item{header}{A list containing header information for the SeaSondeRCS object.}
+
+\item{data}{A list containing the data fields for the SeaSondeRCS object.}
+}
+\value{
+A SeaSondeRCS object with the specified header, data, and version.
+}
+\description{
+This function constructs a new SeaSondeRCS object with the provided header, data, and version information.
+}
+\examples{
+\dontrun{
+header <- list(nRangeCells = 10, nDopplerCells = 20)
+data <- list(SSA1 = matrix(1:200, ncol = 20), SSA2 = matrix(201:400, ncol = 20))
+seaSondeObj <- new_SeaSondeRCS(header, data)
+}
+
+}
+End function new_SeaSondeRCS
+
+Start function seasonder_createSeaSondeRCS
+\name{seasonder_createSeaSondeRCS}
+\alias{seasonder_createSeaSondeRCS}
+\title{Create a SeaSondeRCS object}
+\usage{
+seasonder_createSeaSondeRCS(x, specs_path = NULL)
+}
+\arguments{
+\item{x}{Either a character string specifying the path to the SeaSonde CS file or a list with header and data.}
+
+\item{specs_path}{A character string specifying the path to the YAML specifications for the CS file. Only used if x is a character string.}
+}
+\value{
+A SeaSondeRCS object.
+}
+\description{
+This function creates a SeaSondeRCS object either from a file path or directly from a list containing header and data.
+}
+\section{Error Management}{
+
+This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
+
+\strong{Error Classes}:
+\itemize{
+\item \code{seasonder_CS_file_not_found_error}: Error raised when the specified file path does not exist.
+\item \code{seasonder_CS_missing_nRange_nDoppler_error}: Error raised when the \code{nRangeCells} or \code{nDopplerCells} are not present in the header data.
+\item \code{seasonder_CS_data_structure_validation_error}: An error class indicating a problem with the data structure of the CrossSpectra (CS) data (defined in the \code{seasonder_validateCSDataStructure} function).
+}
+
+\strong{Error Cases}:
+\itemize{
+\item File specified does not exist.
+\item \code{nRangeCells} or \code{nDopplerCells} not present in header data.
+\item Issues related to data structure validation (detailed in the \code{seasonder_validateCSDataStructure} function).
+}
+
+\strong{Restart Options}:
+This function does not provide specific restart options. However, it relies on the error and condition handling mechanisms provided by the \code{rlang} package and the \code{seasonder_logAndAbort} function.
+}
+
+\seealso{
+\code{\link{new_SeaSondeRCS}}, \code{\link{seasonder_validateCSDataStructure}}, \code{\link{seasonder_logAndAbort}}
+}
+End function seasonder_createSeaSondeRCS
+
+Start function seasonder_getVersion.SeaSondeRCS
+\name{seasonder_getVersion.SeaSondeRCS}
+\alias{seasonder_getVersion.SeaSondeRCS}
+\title{Get the version value from a SeaSondeRCS object}
+\usage{
+\method{seasonder_getVersion}{SeaSondeRCS}(seasonder_obj)
+}
+\arguments{
+\item{seasonder_obj}{A SeaSondeRCS object.}
+}
+\value{
+The version value.
+}
+\description{
+Get the version value from a SeaSondeRCS object
+}
+End function seasonder_getVersion.SeaSondeRCS
+
+Start function seasonder_getCSHeaderByPath
+\name{seasonder_getCSHeaderByPath}
+\alias{seasonder_getCSHeaderByPath}
+\title{Retrieve a value from the SeaSondeRCS header by a specific path}
+\usage{
+seasonder_getCSHeaderByPath(seasonder_obj, path)
+}
+\arguments{
+\item{seasonder_obj}{A SeaSondeRCS object.}
+
+\item{path}{A character vector specifying the field or nested fields to retrieve.}
+}
+\value{
+The value at the specified path in the header. If the path is not found, NULL is returned and a warning is thrown.
+}
+\description{
+This function retrieves a specific value from the SeaSondeRCS object's header based on the provided path.
+The path can be a single field name or a list of nested field names.
+}
+\section{Condition Management}{
+
+This function utilizes the \code{rlang} package to manage errors and conditions, and provide detailed and structured condition messages:
+
+\strong{Condition Classes}:
+\itemize{
+\item \code{seasonder_SeaSonderCS_field_not_found_in_header}: Indicates that the specified path was not found in the header.
+}
+
+\strong{Condition Cases}:
+\itemize{
+\item Field or nested fields specified by the path are not found in the header.
+}
+}
+
+End function seasonder_getCSHeaderByPath
+
+Start function seasonder_getnRangeCells
+\name{seasonder_getnRangeCells}
+\alias{seasonder_getnRangeCells}
+\title{Get the nRangeCells value from a SeaSondeRCS object}
+\usage{
+seasonder_getnRangeCells(seasonder_obj)
+}
+\arguments{
+\item{seasonder_obj}{A SeaSondeRCS object.}
+}
+\value{
+The nRangeCells value.
+}
+\description{
+Get the nRangeCells value from a SeaSondeRCS object
+}
+End function seasonder_getnRangeCells
+
+Start function seasonder_getnDopplerCells
+\name{seasonder_getnDopplerCells}
+\alias{seasonder_getnDopplerCells}
+\title{Get the nDopplerCells value from a SeaSondeRCS object}
+\usage{
+seasonder_getnDopplerCells(seasonder_obj)
+}
+\arguments{
+\item{seasonder_obj}{A SeaSondeRCS object.}
+}
+\value{
+The nDopplerCells value.
+}
+\description{
+Get the nDopplerCells value from a SeaSondeRCS object
+}
+End function seasonder_getnDopplerCells
+
+Start function seasonder_validateCSFileData
+\name{seasonder_validateCSFileData}
+\alias{seasonder_validateCSFileData}
+\title{Validate SeaSondeR CS File Data}
+\usage{
+seasonder_validateCSFileData(filepath, header)
+}
+\arguments{
+\item{filepath}{A character string indicating the path to the CS file to validate.}
+
+\item{header}{A list containing header information of the CS file.}
+}
+\value{
+NULL invisibly. The function mainly serves to validate and will stop execution and log an error using \code{seasonder_logAndAbort} if any condition fails.
+}
+\description{
+This function performs multiple validation checks on a provided CS file in the SeaSondeR system.
+It checks the file for various conditions to determine if it meets the SeaSondeR standards.
+}
+\details{
+The function performs the following validation checks:
+\enumerate{
+\item Verifies that the file size is greater than 10 bytes.
+\item Validates the \code{nCsFileVersion} field in the header to ensure it's between 1 and 32.
+\item Depending on the \code{nCsFileVersion}, verifies the appropriate file size, and the extent of various version headers (\code{nV1Extent}, \code{nV2Extent}, etc.).
+\item Validates the \code{nRangeCells} and \code{nDopplerCells} fields to ensure they are within permissible ranges.
+\item Depending on the \code{nCsKind} value, validates the file size against expected sizes based on \code{nRangeCells}, \code{nSpectraChannels}, and \code{nDopplerCells}.
+}
+}
+\section{Error Management and Conditions}{
+
+
+As described abobe, the function validates multiple conditions. Each error condition is associated with a specific error message and an error class \code{seasonder_validate_cs_file_error}.
+Any violations of these conditions will invoke the \code{\link{seasonder_logAndAbort}} function, logging the error and aborting the process.
+}
+
+\references{
+Cross Spectra File Format Version 6. CODAR. 2016
+}
+\seealso{
+\code{\link{seasonder_logAndAbort}}
+}
+End function seasonder_validateCSFileData
+
+Start function seasonder_skip_cs_file
+\name{seasonder_skip_cs_file}
+\alias{seasonder_skip_cs_file}
+\title{Skip SeaSonde Cross Spectra (CS) File Reading}
+\usage{
+seasonder_skip_cs_file(cond)
+}
+\arguments{
+\item{cond}{The condition or error that occurred during the file reading process. This is used
+to log a detailed error message indicating the reason for skipping the file.}
+}
+\value{
+If invoked, the function returns a list with both \code{header} and \code{data} set to NULL.
+}
+\description{
+This function serves as a restart for \code{seasonder_readSeaSondeCSFile}. When invoked, it provides a
+mechanism to gracefully handle file reading errors by logging an error message and skipping the current file processing.
+}
+\details{
+This function is meant to be used within a custom condition handler. When a problematic condition
+arises during the processing of a SeaSonde CS file, you can call \code{seasonder_skip_cs_file(cond)} to
+trigger this restart, which allows for a graceful degradation by logging an error message and skipping the file.
+
+The effect of invoking this restart is twofold:
+\enumerate{
+\item An error message detailing the reason for skipping the file is logged.
+\item The calling function (\code{seasonder_readSeaSondeCSFile}) will immediately return a list with \code{header=NULL} and \code{data=NULL}.
+}
+}
+\seealso{
+\code{\link{seasonder_readSeaSondeCSFile}},
+}
+End function seasonder_skip_cs_file
+
+Start function seasonder_readSeaSondeCSFile
+\name{seasonder_readSeaSondeCSFile}
+\alias{seasonder_readSeaSondeCSFile}
+\title{Read SeaSonde Cross Spectra (CS) File}
+\usage{
+seasonder_readSeaSondeCSFile(filepath, specs_path)
+}
+\arguments{
+\item{filepath}{A character string specifying the path to the SeaSonde CS file.}
+
+\item{specs_path}{A character string specifying the path to the YAML specifications for the CS file.}
+}
+\value{
+A list containing two components:
+\itemize{
+\item \code{header}: A list containing the processed header information of the CS file.
+\item \code{data}: A list containing the processed data of the CS file. The structure
+of this list depends on the content of the CS file and can contain components such as
+\verb{SSA*}, \code{CSxy}, and \code{QC}.
+}
+}
+\description{
+This function reads and processes a SeaSonde CS file, extracting both its header and data.
+}
+\details{
+The function starts by establishing a connection to the CS file specified by \code{filepath}.
+It then reads the necessary metadata and header specifications from the \code{specs_path}.
+Based on the CS file version determined from its header, it applies specific adjustments
+to the header data. After processing the header, the function validates the CS file data
+using \code{\link{seasonder_validateCSFileData}} and then reads the data itself via
+\code{\link{seasonder_readSeaSondeCSFileData}}.
+}
+\section{Error Management}{
+
+This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
+
+\strong{Error Classes}:
+\itemize{
+\item \code{seasonder_read_cs_file_error}: An error class that indicates a general problem when attempting to read the SeaSonde CS file.
+\item \code{seasonder_cs_file_skipped}: Condition indicating that the processing of a CS file was skipped due to an error.
+}
+
+\strong{Error Cases}:
+\itemize{
+\item Failure to open a connection to the file.
+\item Unsupported version found in the specs file.
+\item Any other error that can arise from dependent functions such as \code{seasonder_readSeaSondeCSFileHeader} and \code{seasonder_readSeaSondeCSFileData}.
+}
+
+\strong{Restart Options}:
+This function provides a structured mechanism to recover from errors during its execution using the \code{rlang::withRestarts} function. The following restart option is available:
+
+\describe{
+\item{\code{seasonder_skip_cs_file(cond)}}{This allows for the graceful handling of file reading errors. If this restart is invoked, the function will log an error message indicating that the processing of a specific CS file was skipped and will return a list with \code{header=NULL} and \code{data=NULL}. The restart takes one argument: \code{cond} (the condition or error that occurred).
+\itemize{
+\item \strong{Usage}: In a custom condition handler, you can call \code{seasonder_skip_cs_file(cond)} to trigger this restart and skip the processing of the current CS file.
+\item \strong{Effect}: If invoked, the function logs an error message detailing the reason for skipping the file and then returns a list with both the header and data set to NULL.
+}}
+}
+}
+
+\references{
+Cross Spectra File Format Version 6. CODAR. 2016
+}
+\seealso{
+\code{\link{seasonder_validateCSFileData}},
+\code{\link{seasonder_readSeaSondeCSFileHeader}},
+\code{\link{seasonder_readSeaSondeCSFileData}},
+\code{\link{seasonder_logAndMessage}},
+\code{\link{seasonder_logAndAbort}}
+}
+End function seasonder_readSeaSondeCSFile
+
+Start function seasonder_raw_to_int
+\name{seasonder_raw_to_int}
+\alias{seasonder_raw_to_int}
+\title{Convert a Raw Vector to a 64-bit Integer}
+\usage{
+seasonder_raw_to_int(r, signed = F)
+}
+\arguments{
+\item{r}{A raw vector to be converted.}
+
+\item{signed}{Logical, indicating whether the conversion should consider the value as signed (default is FALSE for unsigned).}
+}
+\value{
+A 64-bit integer representation of the raw vector.
+}
+\description{
+This function converts a raw vector to a 64-bit integer,
+handling both signed and unsigned conversions.
+}
+\examples{
+\dontrun{
+r <- as.raw(c(0x12,0x34,0x56,0x78,0x90,0xAB,0xCD,0xEF))
+seasonder_raw_to_int(r, signed=TRUE)
+}
+}
+End function seasonder_raw_to_int
+
+Start function seasonder_skip_cs_field
+\name{seasonder_skip_cs_field}
+\alias{seasonder_skip_cs_field}
+\title{Skip Reading a CSField and Return a Specified Value}
+\usage{
+seasonder_skip_cs_field(cond, value)
+}
+\arguments{
+\item{cond}{A condition or error that occurred while reading the CSField.}
+
+\item{value}{The desired return value to use in place of the CSField reading that encountered an error.}
+}
+\value{
+Returns the value specified by the \code{value} parameter.
+}
+\description{
+This function is a convenience mechanism to invoke the \code{seasonder_skip_cs_field} restart option. It can be used in custom condition handlers when reading a CSField from a binary connection encounters an error or condition. When called, it indicates the intention to skip reading the current CSField and return a specific value.
+}
+\details{
+During the execution of the \code{seasonder_readCSField} function, errors or conditions can occur. To provide a structured mechanism to handle such cases, the function utilizes the \code{rlang::withRestarts} mechanism, offering a restart option named \code{seasonder_skip_cs_field}. This restart allows the function to gracefully handle reading errors by logging a relevant error message and returning a specified value.
+
+The \code{seasonder_skip_cs_field} function provides an easy way to invoke this restart. When called within a custom condition handler, it signals the intention to skip the current CSField reading due to an error and specifies a return value.
+}
+\seealso{
+\code{\link{seasonder_readCSField}} for the primary function that utilizes this restart mechanism.
+}
+End function seasonder_skip_cs_field
+
+Start function seasonder_readCSField
+\name{seasonder_readCSField}
+\alias{seasonder_readCSField}
+\title{Read a CSField from a Binary Connection}
+\usage{
+seasonder_readCSField(con, type, endian = "big")
+}
+\arguments{
+\item{con}{A connection object to a binary file.}
+
+\item{type}{A character string identifying the type of data to read.}
+
+\item{endian}{A character string indicating the byte order. Options are "big" and "little" (default is "big").}
+}
+\value{
+The value read from the connection.
+}
+\description{
+This function reads specific data types from a binary connection,
+supporting various types including integer, float, double, complex, and strings.
+}
+\section{Supported Data Types}{
+
+This function provides support for reading a variety of data types from a binary connection. The following data types are recognized and can be used for the \code{type} argument:
+
+\describe{
+\item{\code{CharN}}{Reads N characters from the connection where N is a positive integer. For example, \code{Char5} would read five characters.}
+
+\item{\code{UInt8}}{Reads an 8-bit unsigned integer.}
+
+\item{\code{SInt8}}{Reads an 8-bit signed integer.}
+
+\item{\code{UInt16}}{Reads a 16-bit unsigned integer.}
+
+\item{\code{SInt16}}{Reads a 16-bit signed integer.}
+
+\item{\code{UInt32}}{Reads a 32-bit unsigned integer.}
+
+\item{\code{SInt32}}{Reads a 32-bit signed integer.}
+
+\item{\code{Float}}{Reads a single-precision floating-point number.}
+
+\item{\code{Double}}{Reads a double-precision floating-point number.}
+
+\item{\code{UInt64}}{Reads a 64-bit unsigned integer.}
+
+\item{\code{SInt64}}{Reads a 64-bit signed integer.}
+
+\item{\code{Complex}}{Reads a complex number by separately reading the real and imaginary parts, which are each represented as double-precision floating-point numbers.}
+
+\item{\code{String}}{Reads a null-terminated string.}
+}
+
+If the provided \code{type} does not match any of the supported data types, the function raises an error.
+}
+
+\section{Error Management}{
+
+This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
+
+\strong{Error Classes}:
+\itemize{
+\item \code{seasonder_cs_field_reading_error}: General error related to reading a CSField from the binary connection.
+\item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped due to a reading error.
+}
+
+\strong{Error Cases}:
+\itemize{
+\item Connection is not open.
+\item Error while reading value from connection.
+\item Read value of length 0 from connection (likely reached end of file).
+\item Unrecognized data type specified.
+}
+
+\strong{Restart Options}:
+This function provides a structured mechanism to recover from errors during its execution using the \code{rlang::withRestarts} function. The following restart option is available:
+
+\describe{
+\item{\code{seasonder_skip_cs_field(cond, value)}}{This allows for the graceful handling of reading errors. If this restart is invoked, the function will log an error message indicating that a specific CSField reading was skipped and will return the value specified. The restart takes two arguments: \code{cond} (the condition or error that occurred) and \code{value} (the value to return if this CSField reading is skipped). To invoke this restart during a condition or error, you can use the helper function \code{seasonder_skip_cs_field(cond, value)}.
+\itemize{
+\item \strong{Usage}: In a custom condition handler, you can call \code{seasonder_skip_cs_field(cond, yourDesiredReturnValue)} to trigger this restart and skip the current CSField reading.
+\item \strong{Effect}: If invoked, the function logs an error message detailing the reason for skipping, and then returns the value specified in the restart function call.
+}}
+}
+}
+
+\examples{
+\dontrun{
+con <- rawConnection(as.raw(c(0x12)))
+seasonder_readCSField(con, "UInt8")
+}
+}
+\seealso{
+seasonder_raw_to_int For converting raw to 64-bit integers.
+}
+End function seasonder_readCSField
+
+Start function seasonder_rerun_qc_with_fun
+\name{seasonder_rerun_qc_with_fun}
+\alias{seasonder_rerun_qc_with_fun}
+\title{Structured Restart for Quality Control}
+\usage{
+seasonder_rerun_qc_with_fun(cond, qc_fun)
+}
+\arguments{
+\item{cond}{The condition object captured during the execution of the
+\code{read_and_qc_field} function.}
+
+\item{qc_fun}{An alternate quality control function to apply. This function should accept
+the value from the field as its sole argument and return a QC-applied value.}
+}
+\value{
+The value returned by the alternate QC function \code{qc_fun}.
+}
+\description{
+Provides a structured restart mechanism to rerun the quality control (QC) function
+with an alternative function during the execution of \code{read_and_qc_field}.
+This allows for a flexible error recovery strategy when the initial QC function fails
+or is deemed inadequate.
+}
+\details{
+This function is meant to be used within custom condition handlers for the
+\code{read_and_qc_field} function.
+}
+\seealso{
+\code{\link{read_and_qc_field}} for more details on how this function fits
+into the error recovery mechanism of reading and quality control process.
+}
+End function seasonder_rerun_qc_with_fun
+
+Start function read_and_qc_field
+\name{read_and_qc_field}
+\alias{read_and_qc_field}
+\title{Read and Quality Control a Single Field}
+\usage{
+read_and_qc_field(field_spec, connection, endian = "big")
+}
+\arguments{
+\item{field_spec}{A list containing the specifications for the field to read.
+It should contain:
+\itemize{
+\item \code{type}: the type of data to read, passed to \code{seasonder_readCSField}.
+\item \code{qc_fun}: the name of a quality control function. As detailed in \code{seasonder_readSeaSondeCSFileBlock},
+this function should be present in the shared environment \code{seasonder_the} and must accept
+\code{field_value} as its first argument, followed by any other arguments specified in \code{qc_params}.
+\item \code{qc_params}: a list of additional parameters to pass to the quality control function. See
+\code{seasonder_readSeaSondeCSFileBlock} for detailed expectations of the QC function behavior.
+}}
+
+\item{connection}{A connection to the binary file.}
+
+\item{endian}{A character string indicating the byte order. Options are "big" and "little" (default is "big").}
+}
+\value{
+The value of the field after quality control. Can be the original value, a transformed value,
+or NULL if the value fails quality control. The exact behavior of the quality control function, including
+the handling of NULL values, is detailed in \code{seasonder_readSeaSondeCSFileBlock}.
+}
+\description{
+This auxiliary function reads a field from a binary file using a provided specification and
+applies a quality control function on the retrieved data. The expectations and functioning of the
+quality control functions are described in detail in the documentation for \code{seasonder_readSeaSondeCSFileBlock}.
+}
+\section{Error Management}{
+
+
+The \code{read_and_qc_field} function uses the \code{rlang} package to manage errors and conditions
+in a structured way. This documentation section details the classes of errors/conditions
+generated, the cases considered, and the restart options provided.
+
+\strong{Error/Condition Classes}:
+\itemize{
+\item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped during reading.
+\item \code{seasonder_cs_field_qc_fun_rerun}: Condition that indicates a rerun of the quality control function was triggered.
+\item \code{seasonder_cs_field_qc_fun_not_defined_error}: Error raised when the quality control function specified is not found in the shared environment \code{seasonder_the}.
+\item \code{seasonder_cs_field_qc_fun_error}: Error raised when an issue occurs while applying the quality control function.
+}
+
+\strong{Error/Condition Cases}:
+\itemize{
+\item If a CSField is skipped during reading, the condition \code{seasonder_cs_field_skipped} is used to skip QC and then is re-signaled.
+\item If an alternate QC is rerun using the \code{seasonder_rerun_qc_with_fun} restart, the condition \code{seasonder_cs_field_qc_fun_rerun} is signaled.
+\item If the quality control function specified is not found in the shared environment \code{seasonder_the}, the error \code{seasonder_cs_field_qc_fun_not_defined_error} is raised.
+\item If there's an issue applying the quality control function, the error \code{seasonder_cs_field_qc_fun_error} is raised.
+}
+
+\strong{Restart Options}:
+The function provides structured mechanisms to recover from errors/conditions during its execution using \code{withRestarts}. The following restart options are available:
+
+\itemize{
+\item \code{seasonder_rerun_qc_with_fun}: Allows for rerunning QC with an alternate function.
+\itemize{
+\item \strong{Usage}: In a custom condition handler, you can call \code{seasonder_rerun_qc_with_fun(cond, alternateQCfunction)} to trigger this restart and run an alternate QC using \code{alternateQCfunction}. \code{alternateQCfunction} will be used as follows alternateQCfunction(x) being x the value. No extra parameters are passed.
+\item \strong{Effect}: If invoked, the function logs an info message detailing the reason of the rerun, and then returns the value returned by \code{alternateQCfunction}.
+}
+}
+
+It's also important to note that within \code{read_and_qc_field}, the function \code{seasonder_readCSField} is used. This function has its own error management and restart options, which are detailed in its documentation.
+}
+
+End function read_and_qc_field
+
+Start function seasonder_readSeaSondeCSFileBlock
+\name{seasonder_readSeaSondeCSFileBlock}
+\alias{seasonder_readSeaSondeCSFileBlock}
+\title{Read and Apply Quality Control to a Block of Fields}
+\usage{
+seasonder_readSeaSondeCSFileBlock(spec, connection, endian = "big")
+}
+\arguments{
+\item{spec}{A named list of specifications for fields to read. Each specification should be in
+the form:
+list(type = "data_type", qc_fun = "qc_function_name", qc_params = list(param1 = value1, ...))
+Where:
+\itemize{
+\item \code{type}: is the data type to read, which will be passed to \code{seasonder_readCSField}.
+\item \code{qc_fun}: is the name of a quality control function. This function should be present in the
+shared environment \code{seasonder_the} and must accept \code{field_value} as its first argument,
+followed by any other arguments specified in \code{qc_params}.
+\item \code{qc_params}: is a list of additional parameters to pass to the quality control function.
+}}
+
+\item{connection}{A connection to the binary file.}
+
+\item{endian}{A character string indicating the byte order. Options are "big" and "little" (default is "big").}
+}
+\value{
+A named list where each entry corresponds to a field that has been read. Each key is
+the field name, and its associated value is the data for that field after quality control.
+}
+\description{
+Reads a block of fields from a binary file based on provided specifications. Each field is read
+and then processed with a specified quality control function.
+}
+\details{
+The quality control (QC) functions (\code{qc_fun}) specified within \code{spec} play a pivotal role in ensuring the
+reliability of the data that's read. Here's the expected behavior of these QC functions:
+\itemize{
+\item \strong{Input}:
+\itemize{
+\item \code{field_value}: Value of the field that has been read from the binary file using the \code{seasonder_readCSField} function.
+\item \code{...}: Additional parameters specified in \code{qc_params} that are passed to \code{qc_fun} for quality control.
+}
+\item \strong{Functioning}:
+The QC function receives a read value and performs checks or transformations based on defined rules or parameters.
+\itemize{
+\item \strong{On QC failure}:
+\itemize{
+\item The QC function itself is responsible for determining the action to take. It can log an error, return a default
+value, impute the value, and more.
+\item For critical errors, the QC function could halt the execution. However, note that logging is managed by the QC
+function and won't necessarily halt execution in every case.
+}
+\item \strong{On success}:
+The QC function will return the value (either unchanged or transformed).
+}
+\item \strong{Output}:
+Value that has been validated or transformed based on quality control rules.
+\item \strong{Additional Notes}:
+\itemize{
+\item The action on QC failure is directly implemented within the QC function.
+\item Reading errors are managed by the \code{seasonder_readCSField} function, which returns NULL in the case of an error. It
+is up to the QC function to decide what to do if it receives a NULL.
+}
+}
+}
+End function seasonder_readSeaSondeCSFileBlock
+
+Start function seasonder_readSeaSondeCSFileHeaderV1
+\name{seasonder_readSeaSondeCSFileHeaderV1}
+\alias{seasonder_readSeaSondeCSFileHeaderV1}
+\title{Read SeaSonde File Header (Version 1)}
+\usage{
+seasonder_readSeaSondeCSFileHeaderV1(
+  specs,
+  connection,
+  endian = "big",
+  prev_data = NULL
+)
+}
+\arguments{
+\item{specs}{A list containing specifications for reading the file.}
+
+\item{connection}{Connection object to the file.}
+
+\item{endian}{Character string specifying the endianness. Default is "big".}
+
+\item{prev_data}{previous header data}
+}
+\value{
+A list with the read and transformed results.
+}
+\description{
+Reads the header of a SeaSonde file (Version 1) based on the provided specifications.
+Transforms the date-time fields and returns the results.
+}
+End function seasonder_readSeaSondeCSFileHeaderV1
+
+Start function seasonder_readSeaSondeCSFileHeaderV2
+\name{seasonder_readSeaSondeCSFileHeaderV2}
+\alias{seasonder_readSeaSondeCSFileHeaderV2}
+\title{Read SeaSonde File Header (Version 2)}
+\usage{
+seasonder_readSeaSondeCSFileHeaderV2(
+  specs,
+  connection,
+  endian = "big",
+  prev_data = NULL
+)
+}
+\arguments{
+\item{specs}{A list containing specifications for reading the file.}
+
+\item{connection}{Connection object to the file.}
+
+\item{endian}{Character string specifying the endianness. Default is "big".}
+
+\item{prev_data}{previous header data}
+}
+\value{
+A list with the read results.
+}
+\description{
+Reads the header of a SeaSonde file (Version 2) based on the provided specifications.
+}
+End function seasonder_readSeaSondeCSFileHeaderV2
+
+Start function seasonder_readSeaSondeCSFileHeaderV3
+\name{seasonder_readSeaSondeCSFileHeaderV3}
+\alias{seasonder_readSeaSondeCSFileHeaderV3}
+\title{Read SeaSonde File Header (Version 3)}
+\usage{
+seasonder_readSeaSondeCSFileHeaderV3(
+  specs,
+  connection,
+  endian = "big",
+  prev_data = NULL
+)
+}
+\arguments{
+\item{specs}{A list containing specifications for reading the file.}
+
+\item{connection}{Connection object to the file.}
+
+\item{endian}{Character string specifying the endianness. Default is "big".}
+
+\item{prev_data}{previous header data}
+}
+\value{
+A list with the read results.
+}
+\description{
+Reads the header of a SeaSonde file (Version 3) based on the provided specifications.
+Adds nRangeCells, nDopplerCells, and nFirstRangeCell as constant values to the results.
+}
+End function seasonder_readSeaSondeCSFileHeaderV3
+
+Start function seasonder_readSeaSondeCSFileHeaderV4
+\name{seasonder_readSeaSondeCSFileHeaderV4}
+\alias{seasonder_readSeaSondeCSFileHeaderV4}
+\title{Read SeaSonde File Header (Version 4)}
+\usage{
+seasonder_readSeaSondeCSFileHeaderV4(
+  specs,
+  connection,
+  endian = "big",
+  prev_data = NULL
+)
+}
+\arguments{
+\item{specs}{A list containing specifications for reading the file.}
+
+\item{connection}{Connection object to the file.}
+
+\item{endian}{Character string specifying the endianness. Default is "big".}
+
+\item{prev_data}{previous header data}
+}
+\value{
+A list with the read and transformed results.
+}
+\description{
+Reads the header of a SeaSonde file (Version 4) based on the provided specifications.
+Transforms the CenterFreq field and returns the results.
+}
+End function seasonder_readSeaSondeCSFileHeaderV4
+
+Start function seasonder_readSeaSondeCSFileHeaderV5
+\name{seasonder_readSeaSondeCSFileHeaderV5}
+\alias{seasonder_readSeaSondeCSFileHeaderV5}
+\title{Read SeaSonde File Header (Version 5)}
+\usage{
+seasonder_readSeaSondeCSFileHeaderV5(
+  specs,
+  connection,
+  endian = "big",
+  prev_data = NULL
+)
+}
+\arguments{
+\item{specs}{A list containing specifications for reading the file.}
+
+\item{connection}{Connection object to the file.}
+
+\item{endian}{Character string specifying the endianness. Default is "big".}
+
+\item{prev_data}{previous header data}
+}
+\value{
+A list with the read and transformed results.
+}
+\description{
+Reads the header of a SeaSonde file (Version 5) based on the provided specifications.
+Performs applicable transformations and returns the results.
+}
+End function seasonder_readSeaSondeCSFileHeaderV5
+
+Start function readV6BlockData
+\name{readV6BlockData}
+\alias{readV6BlockData}
+\title{Read Version 6 Block Data}
+\usage{
+readV6BlockData(
+  specs,
+  connection,
+  endian = "big",
+  prev_data = NULL,
+  remaining_loops = NULL
+)
+}
+\arguments{
+\item{specs}{A list. Specifications detailing the structure and content of the data blocks.
+Contains variable names, types, quality check functions, and other related attributes.
+For repeated blocks, a 'repeat' key is added which details the loop structure and
+nested specifications.}
+
+\item{connection}{A connection object. Represents the connection to the data source. It's passed
+to the lower-level reading function.}
+
+\item{endian}{A character string. Specifies the byte order to be used. Default is "big".
+Passed to the lower-level reading function.}
+
+\item{prev_data}{A list. Previous data or metadata that might be required to inform the reading
+process, such as loop lengths for repeated blocks. Default is NULL.}
+
+\item{remaining_loops}{A character vector. Details the remaining loops to be processed for
+repeated blocks. Internally used for recursive processing. Default is NULL.
+If provided, it should always be in sync with the repeat specifications.}
+}
+\value{
+A list. Contains the read and processed data based on the provided specifications.
+Regular variables are returned at the top level. Repeated blocks are nested lists with
+'loop' and 'data' keys detailing the loop variable and corresponding data.
+}
+\description{
+This function reads and processes regular and repeated blocks of data
+based on provided specifications. Regular blocks are read directly, while
+repeated blocks are processed recursively based on a set of loops provided
+in the specifications.
+}
+End function readV6BlockData
+
+Start function seasonder_v6_skip_transformation
+\name{seasonder_v6_skip_transformation}
+\alias{seasonder_v6_skip_transformation}
+\title{Trigger Restart for Skipping Transformation}
+\usage{
+seasonder_v6_skip_transformation(cond, value)
+}
+\arguments{
+\item{cond}{The condition object that triggered the restart.}
+
+\item{value}{The provided value to be used when the transformation is skipped.}
+}
+\value{
+This function does not have a standard return value. Instead, it triggers a restart
+that can be caught by an enclosing context to handle the error and decide how to proceed.
+}
+\description{
+This function provides a mechanism to invoke a restart during the reading and
+transformation process of the SeaSonde CS File Version 6 header. It allows users
+to skip transformations that may have caused errors and proceed with a provided value.
+}
+\details{
+This function specifically triggers the \code{seasonder_v6_skip_transformation} restart
+that allows for skipping a block transformation in the reading process of the
+SeaSonde CS File Version 6 header. When triggered, it logs an error message,
+skips the problematic transformation, and returns the provided value for the block.
+}
+\section{Integration with SeaSonde CS File Reading}{
+
+
+The restart mechanism of this function is integrated within the
+\code{seasonder_readSeaSondeCSFileHeaderV6} function. If an error occurs during
+the transformation process of a specific block, the restart provides users with
+an option to skip the problematic transformation and proceed with a fallback value.
+}
+
+\seealso{
+\code{\link{seasonder_readSeaSondeCSFileHeaderV6}} for the primary function where
+this restart mechanism is used.
+}
+End function seasonder_v6_skip_transformation
+
+Start function seasonder_readSeaSondeCSFileHeaderV6
+\name{seasonder_readSeaSondeCSFileHeaderV6}
+\alias{seasonder_readSeaSondeCSFileHeaderV6}
+\title{Read SeaSonde CS File Header V6}
+\usage{
+seasonder_readSeaSondeCSFileHeaderV6(
+  specs,
+  connection,
+  endian = "big",
+  prev_data = NULL
+)
+}
+\arguments{
+\item{specs}{A list of specifications for reading the file header. It should contain three main elements:
+\code{nCS6ByteSize}, \code{block_spec}, and \code{blocks}, each containing further specifications for reading various parts of the header.}
+
+\item{connection}{A connection object to the SeaSonde CS file.}
+
+\item{endian}{The byte order for reading the file. Default is "big".}
+
+\item{prev_data}{Previous data, if any, that might affect the current reading. Default is NULL.}
+}
+\value{
+A list containing the read data, organized based on the block keys.
+}
+\description{
+This function reads the header of a SeaSonde CS File Version 6.
+It sequentially reads blocks based on the provided specifications and returns the read data.
+}
+\section{Error Management and Conditions}{
+
+
+The \code{seasonder_readSeaSondeCSFileHeaderV6} function contains multiple layers of error and condition management to ensure robust data reading and appropriate error reporting.
+
+\strong{Error and Condition Classes}:
+
+The function might raise the following conditions:
+
+\itemize{
+\item \code{seasonder_v6_block_transformacion_skipped}: Triggered when a transformation for a specific block is skipped.
+\item \code{seasonder_v6_transform_function_error}: Triggered when there's an error while applying the transformation function for a V6 header block.
+\item \code{seasonder_v6_skip_block_error}: Triggered when there's an error while skipping a block.
+}
+
+\strong{Error Cases}:
+
+The following are the scenarios when errors or conditions are raised:
+
+\itemize{
+\item Transformation Failure: If there's a recognized block key and the transformation function associated with it fails.
+\item Error in Transformation Function Application: If there's an error while applying the transformation function for a recognized V6 header block.
+\item Error in Skipping Block: If there's an error while skipping a block when the block key is not recognized.
+}
+
+\strong{Restart Options}:
+
+The function provides the following restart option:
+
+\code{seasonder_v6_skip_transformation}: This restart allows users to skip the transformation for a specific block and instead return the provided value.
+
+\strong{Effects of Restart Options}:
+
+Using the \code{seasonder_v6_skip_transformation} restart:
+\itemize{
+\item The error message gets logged.
+\item The transformation that caused the error gets skipped.
+\item The provided value for that block is returned.
+}
+
+Proper error management ensures the integrity of the reading process and provides detailed feedback to users regarding issues and potential resolutions.
+}
+
+End function seasonder_readSeaSondeCSFileHeaderV6
+
+Start function process_version_header
+\name{process_version_header}
+\alias{process_version_header}
+\title{Process a Specific Version of the SeaSonde File Header}
+\usage{
+process_version_header(
+  pool,
+  version,
+  specs,
+  connection,
+  endian = "big",
+  prev_data = NULL
+)
+}
+\arguments{
+\item{pool}{List. An accumulating list of processed headers from prior versions.}
+
+\item{version}{Integer. The specific version of the header to be processed. E.g., for version 3,
+the function \code{seasonder_readSeaSondeCSFileHeaderV3} should be present.}
+
+\item{specs}{List. Header specifications for each version. Each entry should correspond to
+a version number and contain the required information to process that version's header.}
+
+\item{connection}{Connection object. The file connection pointing to the SeaSonde file.}
+
+\item{endian}{Character string. Specifies the byte order for reading data. Can be "big" (default)}
+
+\item{prev_data}{previous header data
+or "little". Use the appropriate value depending on the system architecture and the
+file's source.}
+}
+\value{
+List. A combination of the initial \code{pool} and the processed header for the given \code{version}.
+Fields in the current header will overwrite or append to the pool as described above.
+}
+\description{
+This function processes a specified version of the SeaSonde file header. It identifies the
+appropriate header function for the given version, processes the header, and then updates
+the accumulating pool of header data. Specifically:
+}
+\details{
+\enumerate{
+\item For fields in the current header that overlap with the accumulated pool, the
+current header's values overwrite those in the pool.
+\item Fields that are unique to the current header are appended to the pool.
+}
+}
+\section{Assumptions}{
+
+This function assumes that the desired version-specific \verb{seasonder_readSeaSondeCSFileHeaderV*}
+functions are available in the global environment.
+}
+
+End function process_version_header
+
+Start function seasonder_readSeaSondeCSFileHeader
+\name{seasonder_readSeaSondeCSFileHeader}
+\alias{seasonder_readSeaSondeCSFileHeader}
+\title{Read the SeaSonde CS File Header}
+\usage{
+seasonder_readSeaSondeCSFileHeader(specs, connection, endian = "big")
+}
+\arguments{
+\item{specs}{List of header specifications for each version.}
+
+\item{connection}{The file connection.}
+
+\item{endian}{Character string indicating the byte order, either "big" (default) or "little".}
+}
+\value{
+A combined list of all processed headers up to the file version.
+}
+\description{
+This function reads and processes the header of a SeaSonde CS file. It initially reads
+the general header (Version 1) to determine the file version. Subsequent headers are processed
+based on the file version.
+}
+End function seasonder_readSeaSondeCSFileHeader
+
+Start function seasonder_readSeaSondeCSFileData
+\name{seasonder_readSeaSondeCSFileData}
+\alias{seasonder_readSeaSondeCSFileData}
+\title{Read SeaSonde Cross Spectra (CS) File Data}
+\usage{
+seasonder_readSeaSondeCSFileData(connection, header, endian = "big")
+}
+\arguments{
+\item{connection}{A connection object to the CS file.}
+
+\item{header}{A list containing the header information. This is typically the output
+of the \code{seasonder_readSeaSondeCSFileHeader} function.}
+
+\item{endian}{Character string indicating the byte order. Options are "big" (default) or "little".}
+}
+\value{
+A list containing the matrices for \verb{SSA*}, \code{CSxy}, and \code{QC} (when applicable).
+}
+\description{
+This function reads the SeaSonde CS file data based on the provided header information.
+The CS file data includes the antenna voltage squared self spectra (\verb{SSA*}) and the
+antenna cross spectra (\code{CSxy}). Additionally, a quality matrix (\code{QC}) is read when the header's
+\code{nCsKind} is greater than or equal to 2.
+}
+\details{
+\itemize{
+\item \verb{SSA*}: Represents the Antenna * voltage squared self spectra. These are matrices
+where each row corresponds to a range and each column to a Doppler cell.
+\item \code{CSxy}: Represents the cross spectra between two antennas x and y. These are complex matrices.
+\item \code{QC}: Quality matrix with values ranging from zero to one. A value less than one indicates
+that the SpectraAverager skipped some data during averaging.
+}
+}
+\examples{
+\dontrun{
+  con <- file("path_to_CS_file", "rb")
+  header <- seasonder_readSeaSondeCSFileHeader(specs, con)
+  data <- seasonder_readSeaSondeCSFileData(con, header)
+  close(con)
+}
+}
+End function seasonder_readSeaSondeCSFileData
+
+Start function qc_check_type
+\name{qc_check_type}
+\alias{qc_check_type}
+\title{Quality Control - Check Type}
+\usage{
+qc_check_type(field_value, expected_type)
+}
+\arguments{
+\item{field_value}{The value whose type needs to be checked.}
+
+\item{expected_type}{The expected type of the field_value.}
+}
+\value{
+The original field_value if it matches the expected_type; otherwise, an error is raised.
+}
+\description{
+This function verifies if a given value is of the expected type.
+}
+End function qc_check_type
+
+Start function qc_check_range
+\name{qc_check_range}
+\alias{qc_check_range}
+\title{Quality Control - Check Range and Type}
+\usage{
+qc_check_range(field_value, min, max, expected_type = NULL)
+}
+\arguments{
+\item{field_value}{The value to be checked.}
+
+\item{min}{Minimum allowable value for field_value.}
+
+\item{max}{Maximum allowable value for field_value.}
+
+\item{expected_type}{(optional) The expected type of the field_value. Default is NULL.}
+}
+\value{
+The original field_value if it's within range and matches the expected_type; otherwise, an error is raised.
+}
+\description{
+This function verifies if a given value lies within a specified range
+and matches the expected type, if provided.
+}
+End function qc_check_range
+

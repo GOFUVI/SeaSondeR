@@ -39,7 +39,7 @@ The function initializes the following attributes:
 \item \code{PhaseCorrections}: Numeric vector with two elements for phase corrections. Default is \code{c(0,0)}.
 }
 
-Each attribute has a corresponding setter and getter function, following the naming pattern \code{seasonder_set/get_SeaSondeRAPM_*}, where * is the name of the attribute. For example, to set the 'Type' attribute, you would use \code{seasonder_set_SeaSondeRAPM_Type(seasonde_apm_obj,new_value)}. To get the same, you would use \code{seasonder_get_SeaSondeRAPM_Type(seasonde_apm_obj,new_value)}.
+Each attribute has a corresponding setter and getter function, following the naming pattern \code{seasonder_set/getSeaSondeRAPM_*}, where * is the name of the attribute. For example, to set the 'Type' attribute, you would use \code{seasonder_setSeaSondeRAPM_Type(seasonde_apm_obj,new_value)}. To get the same, you would use \code{seasonder_getSeaSondeRAPM_Type(seasonde_apm_obj,new_value)}.
 
 Please see \code{\link{seasonder_validateAttributesSeaSondeRAPM}} for details in attributes validation.
 }

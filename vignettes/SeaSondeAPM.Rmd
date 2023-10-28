@@ -114,9 +114,9 @@ In the SeaSondeRAPM system, each attribute is accompanied by a corresponding get
 
 The naming convention for these getter and setter functions is:
 
--   `seasonder_set_SeaSondeRAPM_<AttributeName>(seasonde_apm_obj, new_value)`: for setting the value of an attribute.
+-   `seasonder_setSeaSondeRAPM_<AttributeName>(seasonde_apm_obj, new_value)`: for setting the value of an attribute.
 
--   `seasonder_get_SeaSondeRAPM_<AttributeName>(seasonde_apm_obj)`: for retrieving the value of an attribute.
+-   `seasonder_getSeaSondeRAPM_<AttributeName>(seasonde_apm_obj)`: for retrieving the value of an attribute.
 
 Here, `<AttributeName>` is the name of the attribute you are interested in manipulating.
 
@@ -127,7 +127,7 @@ Here, `<AttributeName>` is the name of the attribute you are interested in manip
 To set the value of the 'Type' attribute in a `SeaSondeRAPM` object, you would use:
 
 ``` r
-seasonder_set_SeaSondeRAPM_Type(seasonde_apm_obj, new_value)
+seasonder_setSeaSondeRAPM_Type(seasonde_apm_obj, new_value)
 ```
 
 Here, `seasonde_apm_obj` is the `SeaSondeRAPM` object whose 'Type' attribute you want to set, and `new_value` is the value you want to assign to it.
@@ -137,7 +137,7 @@ Here, `seasonde_apm_obj` is the `SeaSondeRAPM` object whose 'Type' attribute you
 To get the value of the 'Type' attribute from a `SeaSondeRAPM` object, you would use:
 
 ``` r
-value = seasonder_get_SeaSondeRAPM_Type(seasonde_apm_obj)
+value = seasonder_getSeaSondeRAPM_Type(seasonde_apm_obj)
 ```
 
 Here, `seasonde_apm_obj` is the `SeaSondeRAPM` object whose 'Type' attribute you want to retrieve.

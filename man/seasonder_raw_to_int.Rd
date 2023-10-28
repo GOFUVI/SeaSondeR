@@ -19,6 +19,8 @@ This function converts a raw vector to a 64-bit integer,
 handling both signed and unsigned conversions.
 }
 \examples{
+\dontrun{
 r <- as.raw(c(0x12,0x34,0x56,0x78,0x90,0xAB,0xCD,0xEF))
 seasonder_raw_to_int(r, signed=TRUE)
+}
 }
