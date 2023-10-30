@@ -43,14 +43,14 @@ new_SeaSondeRCS <- function(header, data){
 #' @section Error Management:
 #' This function utilizes the `rlang` package to manage errors and provide detailed and structured error messages:
 #'
-#' \strong{Error Classes}:
+#' \strong{Condition Classes}:
 #' \itemize{
 #'   \item \code{seasonder_CS_file_not_found_error}: Error raised when the specified file path does not exist.
 #'   \item \code{seasonder_CS_missing_nRange_nDoppler_error}: Error raised when the `nRangeCells` or `nDopplerCells` are not present in the header data.
 #'   \item \code{seasonder_CS_data_structure_validation_error}: An error class indicating a problem with the data structure of the CrossSpectra (CS) data (defined in the `seasonder_validateCSDataStructure` function).
 #' }
 #'
-#' \strong{Error Cases}:
+#' \strong{Condition Cases}:
 #' \itemize{
 #'   \item File specified does not exist.
 #'   \item `nRangeCells` or `nDopplerCells` not present in header data.
@@ -149,12 +149,12 @@ validate_SeaSondeRCS_ProcessingSteps <- function(steps) {
 #' @section Error Management:
 #' This function utilizes the `rlang` package to manage errors and provide detailed and structured error messages:
 #'
-#' \strong{Error Classes}:
+#' \strong{Condition Classes}:
 #' \itemize{
 #'   \item \code{seasonder_CS_data_structure_validation_error}: An error class indicating a problem with the data structure of the CrossSpectra (CS) data.
 #' }
 #'
-#' \strong{Error Cases}:
+#' \strong{Condition Cases}:
 #' \itemize{
 #'   \item Missing fields in the data.
 #'   \item Incorrect dimensions for the matrices in the data.
@@ -368,15 +368,21 @@ SeaSondeRCS_creation_step_text <- function(file_path) {
 #'   \item Depending on the `nCsKind` value, validates the file size against expected sizes based on `nRangeCells`, `nSpectraChannels`, and `nDopplerCells`.
 #' }
 #'
-#' @section Error Management and Conditions:
+#' @section Condition Management:
+#' This function utilizes the `rlang` package to manage conditions and provide detailed and structured condition messages:
 #'
-#' As described abobe, the function validates multiple conditions. Each error condition is associated with a specific error message and an error class \code{seasonder_validate_cs_file_error}.
-#' Any violations of these conditions will invoke the \code{\link{seasonder_logAndAbort}} function, logging the error and aborting the process.
+#' \strong{Condition Classes}:
+#' \itemize{
+#'   \item \code{seasonder_validate_cs_file_error}: An error class that indicates a validation requirement was not met.
+#' }
 #'
+#' \strong{Condition Cases}:
+#' \itemize{
+#'   \item Failure on any validation test.
+#' }
 #'
 #' @return NULL invisibly. The function mainly serves to validate and will stop execution and log an error using `seasonder_logAndAbort` if any condition fails.
 #'
-#' @seealso \code{\link{seasonder_logAndAbort}}
 #' @references Cross Spectra File Format Version 6. CODAR. 2016
 seasonder_validateCSFileData <- function(filepath, header) {
 
@@ -456,16 +462,16 @@ seasonder_skip_cs_file <- function(cond) {
 #' using \code{\link{seasonder_validateCSFileData}} and then reads the data itself via
 #' \code{\link{seasonder_readSeaSondeCSFileData}}.
 #'
-#' @section Error Management:
-#' This function utilizes the `rlang` package to manage errors and provide detailed and structured error messages:
+#' @section Condition Management:
+#' This function utilizes the `rlang` package to manage conditions and provide detailed and structured condition messages:
 #'
-#' \strong{Error Classes}:
+#' \strong{Condition Classes}:
 #' \itemize{
 #'   \item \code{seasonder_read_cs_file_error}: An error class that indicates a general problem when attempting to read the SeaSonde CS file.
 #'   \item \code{seasonder_cs_file_skipped}: Condition indicating that the processing of a CS file was skipped due to an error.
 #' }
 #'
-#' \strong{Error Cases}:
+#' \strong{Condition Cases}:
 #' \itemize{
 #'   \item Failure to open a connection to the file.
 #'   \item Unsupported version found in the specs file.
@@ -710,16 +716,16 @@ seasonder_skip_cs_field <- function(cond,value){
 #'
 #' If the provided \code{type} does not match any of the supported data types, the function raises an error.
 #'
-#' @section Error Management:
-#' This function utilizes the `rlang` package to manage errors and provide detailed and structured error messages:
+#' @section Condition Management:
+#' This function utilizes the `rlang` package to manage conditions and provide detailed and structured condition messages:
 #'
-#' \strong{Error Classes}:
+#' \strong{Condition Classes}:
 #' \itemize{
 #'   \item \code{seasonder_cs_field_reading_error}: General error related to reading a CSField from the binary connection.
 #'   \item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped due to a reading error.
 #' }
 #'
-#' \strong{Error Cases}:
+#' \strong{Condition Cases}:
 #' \itemize{
 #'   \item Connection is not open.
 #'   \item Error while reading value from connection.
@@ -873,13 +879,10 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun){
 #'   the handling of NULL values, is detailed in `seasonder_readSeaSondeCSFileBlock`.
 #'
 #'
-#' @section Error Management:
+#' @section Condition Management:
+#' This function utilizes the `rlang` package to manage conditions and provide detailed and structured condition messages:
 #'
-#' The `read_and_qc_field` function uses the `rlang` package to manage errors and conditions
-#' in a structured way. This documentation section details the classes of errors/conditions
-#' generated, the cases considered, and the restart options provided.
-#'
-#' \strong{Error/Condition Classes}:
+#' \strong{Condition Classes}:
 #' \itemize{
 #'   \item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped during reading.
 #'   \item \code{seasonder_cs_field_qc_fun_rerun}: Condition that indicates a rerun of the quality control function was triggered.
@@ -887,7 +890,7 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun){
 #'   \item \code{seasonder_cs_field_qc_fun_error}: Error raised when an issue occurs while applying the quality control function.
 #' }
 #'
-#' \strong{Error/Condition Cases}:
+#' \strong{Condition Cases}:
 #' \itemize{
 #'   \item If a CSField is skipped during reading, the condition \code{seasonder_cs_field_skipped} is used to skip QC and then is re-signaled.
 #'   \item If an alternate QC is rerun using the \code{seasonder_rerun_qc_with_fun} restart, the condition \code{seasonder_cs_field_qc_fun_rerun} is signaled.
@@ -1051,7 +1054,7 @@ seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian="big") {
 #' If any field is missing, an error is thrown using `seasonder_logAndAbort` indicating the missing field specification.
 #'
 #' @section Condition Management:
-#' This function utilizes the `rlang` package to manage errors and conditions, and provide detailed and structured condition messages:
+#' This function utilizes the `rlang` package to manage conditions, and provide detailed and structured condition messages:
 #'
 #' \strong{Condition Classes}:
 #' \itemize{
@@ -1380,21 +1383,17 @@ seasonder_v6_skip_transformation <- function(cond, value) {
 #'
 #' @return A list containing the read data, organized based on the block keys.
 #'
-#' @section Error Management and Conditions:
+#' @section Condition Management:
+#' This function utilizes the `rlang` package to manage conditions and provide detailed and structured condition messages:
 #'
-#' The \code{seasonder_readSeaSondeCSFileHeaderV6} function contains multiple layers of error and condition management to ensure robust data reading and appropriate error reporting.
-#'
-#' \strong{Error and Condition Classes}:
-#'
-#' The function might raise the following conditions:
-#'
+#' \strong{Condition Classes}:
 #' \itemize{
 #' \item \code{seasonder_v6_block_transformacion_skipped}: Triggered when a transformation for a specific block is skipped.
 #' \item \code{seasonder_v6_transform_function_error}: Triggered when there's an error while applying the transformation function for a V6 header block.
 #' \item \code{seasonder_v6_skip_block_error}: Triggered when there's an error while skipping a block.
 #'}
 #'
-#' \strong{Error Cases}:
+#' \strong{Condition Cases}:
 #'
 #' The following are the scenarios when errors or conditions are raised:
 #'
@@ -1601,6 +1600,22 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
 #' - `CSxy`: Represents the cross spectra between two antennas x and y. These are complex matrices.
 #' - `QC`: Quality matrix with values ranging from zero to one. A value less than one indicates
 #'   that the SpectraAverager skipped some data during averaging.
+#' @section Condition Management:
+#' This function utilizes the `rlang` package to manage errors and conditions, providing detailed and structured messages:
+#'
+#' \strong{Error Classes}:
+#' \itemize{
+#'   \item \code{"seasonder_cs_data_reading_error"}: This error is thrown when there is a problem reading the CS file data. This could be due to issues with the connection object or the file itself.
+#'   \item \code{"seasonder_cs_missing_header_info_error"}: Thrown if essential header information such as `nRangeCells`, `nDopplerCells`, or `nCsKind` is missing or invalid.
+#' }
+#'
+#' \strong{Error Cases}:
+#' \itemize{
+#'   \item Connection object is not properly opened or is invalid.
+#'   \item Header information is incomplete or improperly formatted.
+#'   \item File read operations fail due to incorrect data size, type, or unexpected end of file.
+#'   \item Non-numeric values encountered where numeric spectra data is expected.
+#' }
 #'
 #' @return A list containing the matrices for `SSA*`, `CSxy`, and `QC` (when applicable).
 #'

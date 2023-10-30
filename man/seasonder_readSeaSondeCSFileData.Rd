@@ -32,6 +32,25 @@ where each row corresponds to a range and each column to a Doppler cell.
 that the SpectraAverager skipped some data during averaging.
 }
 }
+\section{Condition Management}{
+
+This function utilizes the \code{rlang} package to manage errors and conditions, providing detailed and structured messages:
+
+\strong{Error Classes}:
+\itemize{
+\item \code{"seasonder_cs_data_reading_error"}: This error is thrown when there is a problem reading the CS file data. This could be due to issues with the connection object or the file itself.
+\item \code{"seasonder_cs_missing_header_info_error"}: Thrown if essential header information such as \code{nRangeCells}, \code{nDopplerCells}, or \code{nCsKind} is missing or invalid.
+}
+
+\strong{Error Cases}:
+\itemize{
+\item Connection object is not properly opened or is invalid.
+\item Header information is incomplete or improperly formatted.
+\item File read operations fail due to incorrect data size, type, or unexpected end of file.
+\item Non-numeric values encountered where numeric spectra data is expected.
+}
+}
+
 \examples{
 \dontrun{
   con <- file("path_to_CS_file", "rb")

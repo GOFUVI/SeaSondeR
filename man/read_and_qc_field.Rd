@@ -32,14 +32,11 @@ This auxiliary function reads a field from a binary file using a provided specif
 applies a quality control function on the retrieved data. The expectations and functioning of the
 quality control functions are described in detail in the documentation for \code{seasonder_readSeaSondeCSFileBlock}.
 }
-\section{Error Management}{
+\section{Condition Management}{
 
+This function utilizes the \code{rlang} package to manage conditions and provide detailed and structured condition messages:
 
-The \code{read_and_qc_field} function uses the \code{rlang} package to manage errors and conditions
-in a structured way. This documentation section details the classes of errors/conditions
-generated, the cases considered, and the restart options provided.
-
-\strong{Error/Condition Classes}:
+\strong{Condition Classes}:
 \itemize{
 \item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped during reading.
 \item \code{seasonder_cs_field_qc_fun_rerun}: Condition that indicates a rerun of the quality control function was triggered.
@@ -47,7 +44,7 @@ generated, the cases considered, and the restart options provided.
 \item \code{seasonder_cs_field_qc_fun_error}: Error raised when an issue occurs while applying the quality control function.
 }
 
-\strong{Error/Condition Cases}:
+\strong{Condition Cases}:
 \itemize{
 \item If a CSField is skipped during reading, the condition \code{seasonder_cs_field_skipped} is used to skip QC and then is re-signaled.
 \item If an alternate QC is rerun using the \code{seasonder_rerun_qc_with_fun} restart, the condition \code{seasonder_cs_field_qc_fun_rerun} is signaled.

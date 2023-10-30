@@ -20,7 +20,7 @@ If any field is missing, an error is thrown using \code{seasonder_logAndAbort} i
 }
 \section{Condition Management}{
 
-This function utilizes the \code{rlang} package to manage errors and conditions, and provide detailed and structured condition messages:
+This function utilizes the \code{rlang} package to manage conditions, and provide detailed and structured condition messages:
 
 \strong{Condition Classes}:
 \itemize{

@@ -28,16 +28,21 @@ The function performs the following validation checks:
 \item Depending on the \code{nCsKind} value, validates the file size against expected sizes based on \code{nRangeCells}, \code{nSpectraChannels}, and \code{nDopplerCells}.
 }
 }
-\section{Error Management and Conditions}{
+\section{Condition Management}{
 
+This function utilizes the \code{rlang} package to manage conditions and provide detailed and structured condition messages:
 
-As described abobe, the function validates multiple conditions. Each error condition is associated with a specific error message and an error class \code{seasonder_validate_cs_file_error}.
-Any violations of these conditions will invoke the \code{\link{seasonder_logAndAbort}} function, logging the error and aborting the process.
+\strong{Condition Classes}:
+\itemize{
+\item \code{seasonder_validate_cs_file_error}: An error class that indicates a validation requirement was not met.
+}
+
+\strong{Condition Cases}:
+\itemize{
+\item Failure on any validation test.
+}
 }
 
 \references{
 Cross Spectra File Format Version 6. CODAR. 2016
-}
-\seealso{
-\code{\link{seasonder_logAndAbort}}
 }

@@ -28,22 +28,18 @@ A list containing the read data, organized based on the block keys.
 This function reads the header of a SeaSonde CS File Version 6.
 It sequentially reads blocks based on the provided specifications and returns the read data.
 }
-\section{Error Management and Conditions}{
+\section{Condition Management}{
 
+This function utilizes the \code{rlang} package to manage conditions and provide detailed and structured condition messages:
 
-The \code{seasonder_readSeaSondeCSFileHeaderV6} function contains multiple layers of error and condition management to ensure robust data reading and appropriate error reporting.
-
-\strong{Error and Condition Classes}:
-
-The function might raise the following conditions:
-
+\strong{Condition Classes}:
 \itemize{
 \item \code{seasonder_v6_block_transformacion_skipped}: Triggered when a transformation for a specific block is skipped.
 \item \code{seasonder_v6_transform_function_error}: Triggered when there's an error while applying the transformation function for a V6 header block.
 \item \code{seasonder_v6_skip_block_error}: Triggered when there's an error while skipping a block.
 }
 
-\strong{Error Cases}:
+\strong{Condition Cases}:
 
 The following are the scenarios when errors or conditions are raised:
 

@@ -31,17 +31,17 @@ to the header data. After processing the header, the function validates the CS f
 using \code{\link{seasonder_validateCSFileData}} and then reads the data itself via
 \code{\link{seasonder_readSeaSondeCSFileData}}.
 }
-\section{Error Management}{
+\section{Condition Management}{
 
-This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
+This function utilizes the \code{rlang} package to manage conditions and provide detailed and structured condition messages:
 
-\strong{Error Classes}:
+\strong{Condition Classes}:
 \itemize{
 \item \code{seasonder_read_cs_file_error}: An error class that indicates a general problem when attempting to read the SeaSonde CS file.
 \item \code{seasonder_cs_file_skipped}: Condition indicating that the processing of a CS file was skipped due to an error.
 }
 
-\strong{Error Cases}:
+\strong{Condition Cases}:
 \itemize{
 \item Failure to open a connection to the file.
 \item Unsupported version found in the specs file.

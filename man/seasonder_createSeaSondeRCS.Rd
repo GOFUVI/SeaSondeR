@@ -21,14 +21,14 @@ This function creates a SeaSondeRCS object either from a file path or directly f
 
 This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
 
-\strong{Error Classes}:
+\strong{Condition Classes}:
 \itemize{
 \item \code{seasonder_CS_file_not_found_error}: Error raised when the specified file path does not exist.
 \item \code{seasonder_CS_missing_nRange_nDoppler_error}: Error raised when the \code{nRangeCells} or \code{nDopplerCells} are not present in the header data.
 \item \code{seasonder_CS_data_structure_validation_error}: An error class indicating a problem with the data structure of the CrossSpectra (CS) data (defined in the \code{seasonder_validateCSDataStructure} function).
 }
 
-\strong{Error Cases}:
+\strong{Condition Cases}:
 \itemize{
 \item File specified does not exist.
 \item \code{nRangeCells} or \code{nDopplerCells} not present in header data.

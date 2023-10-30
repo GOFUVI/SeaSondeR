@@ -65,33 +65,50 @@ TIME timestamp but with higher resolution. ZONE time use TOOL Name and version o
 
 This is a multidimensional array of auto-spectrum and cross-spectrum data. In the CSS and CSA, it also includes information on data quality.
 
-# **SeaSondeRCS Class**
+# SeaSondeRCS Class
 
-## **Descripción**
+## Description
 
-\
-La clase **`SeaSondeRCS`** es una representación en R de los archivos CS (Cross-spectra) de SeaSonde. Esta clase facilita la lectura, manipulación y análisis de los datos contenidos en estos archivos, proporcionando una estructura coherente y fácil de usar para los usuarios que trabajan con datos de SeaSonde en R.
+The SeaSondeRCS class is an R representation of the SeaSonde CS (Cross-spectra) files. This class facilitates the reading, manipulation and analysis of the data contained in these files, providing a consistent and easy-to-use structure for users working with SeaSonde data in R.
 
-## **Propósito**
+## Purpose
 
-\
-El propósito principal de la clase **`SeaSondeRCS`** es proporcionar una interfaz unificada para trabajar con archivos CS en R. Esto incluye la capacidad de leer archivos CS, acceder a sus metadatos y datos, y realizar análisis específicos relacionados con los datos de SeaSonde. Al encapsular estos datos en una clase específica, se simplifica el proceso de trabajar con estos archivos y se garantiza una mayor consistencia y fiabilidad en los análisis.
+The main purpose of the SeaSondeRCS class is to provide a unified interface for working with CS files in R. This includes the ability to read CS files, access their metadata and data, and perform specific analyses related to SeaSonde data. By encapsulating this data in a specific class, the process of working with these files is simplified and greater consistency and reliability of analysis is ensured.
 
-## **Ejemplo de creación**
+## Example of creation
 
-\
-Para crear una instancia de la clase **`SeaSondeRCS`**, puedes utilizar el siguiente código en R:
+To create an instance of the SeaSondeRCS class, you can use the following code in R:
 
 ```{r}
 
-# Cargar la biblioteca necesaria
 library(SeaSondeR)
+# Create a SeaSondeRCS object form a CS file
+CS_file <- "path/to/CSQ_o_CSS_o_CSA/file"
 
-# Crear un objeto SeaSondeRCS desde un archivo CS
-archivo_CS <- "ruta/del/archivo/CSQ_o_CSS_o_CSA"
-specs_path <- "ruta/del/archivo/especificaciones.yaml" # Si es necesario
-objeto_SeaSondeRCS <- seasonder_createSeaSondeRCS(x = archivo_CS, specs_path = specs_path)
+SeaSondeRCS_object <- seasonder_createSeaSondeRCS(x = CS_file)
 
 ```
+
+In this example a SeaSondeRCS object is created from a CS file path.
+
+## Error Management in SeaSondeRCS Class
+
+The **`SeaSondeRCS`** class in R is equipped with a comprehensive error management system that ensures robust handling of issues that may arise during the creation and manipulation of SeaSonde cross-spectra (CS) files. This system is built using the **`rlang`** package, which provides detailed and structured error messages, making it easier for users to diagnose and address problems.
+
+### Condition Classes
+
+Several error classes have been defined to categorize common issues:
+
+-   **`seasonder_CS_file_not_found_error`**: Triggered when the specified file path does not exist.
+
+-   **`seasonder_CS_missing_nRange_nDoppler_error`**: Raised when the **`nRangeCells`** or **`nDopplerCells`** are not present in the header data.
+
+-   **`seasonder_CS_data_structure_validation_error`**: Indicates a problem with the data structure of the CS data, as defined in the **`seasonder_validateCSDataStructure`** function.
+
+-   **`seasonder_read_cs_file_error`**: An error class that indicates a general problem when attempting to read the SeaSonde CS file.
+
+### Other condition classes
+
+-   **`seasonder_cs_file_skipped`**: Condition indicating that the processing of a CS file was skipped due to an error.
 
 # References

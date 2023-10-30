@@ -55,17 +55,17 @@ This function provides support for reading a variety of data types from a binary
 If the provided \code{type} does not match any of the supported data types, the function raises an error.
 }
 
-\section{Error Management}{
+\section{Condition Management}{
 
-This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
+This function utilizes the \code{rlang} package to manage conditions and provide detailed and structured condition messages:
 
-\strong{Error Classes}:
+\strong{Condition Classes}:
 \itemize{
 \item \code{seasonder_cs_field_reading_error}: General error related to reading a CSField from the binary connection.
 \item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped due to a reading error.
 }
 
-\strong{Error Cases}:
+\strong{Condition Cases}:
 \itemize{
 \item Connection is not open.
 \item Error while reading value from connection.

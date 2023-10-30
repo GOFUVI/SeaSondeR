@@ -58,13 +58,13 @@ If the provided \code{type} does not match any of the supported data types, the 
 
 This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
 
-\strong{Error Classes}:
+\strong{Condition Classes}:
 \itemize{
 \item \code{seasonder_cs_field_reading_error}: General error related to reading a CSField from the binary connection.
 \item \code{seasonder_cs_field_skipped}: Condition that indicates a CSField was skipped due to a reading error.
 }
 
-\strong{Error Cases}:
+\strong{Condition Cases}:
 \itemize{
 \item Connection is not open.
 \item Error while reading value from connection.
@@ -378,7 +378,7 @@ The function might raise the following conditions:
 \item \code{seasonder_v6_skip_block_error}: Triggered when there's an error while skipping a block.
 }
 
-\strong{Error Cases}:
+\strong{Condition Cases}:
 
 The following are the scenarios when errors or conditions are raised:
 

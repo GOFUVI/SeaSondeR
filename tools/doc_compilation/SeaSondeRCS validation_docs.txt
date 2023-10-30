@@ -30,12 +30,12 @@ The function expects the following structure for the \code{data} list:
 
 This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
 
-\strong{Error Classes}:
+\strong{Condition Classes}:
 \itemize{
 \item \code{seasonder_CS_data_structure_validation_error}: An error class indicating a problem with the data structure of the CrossSpectra (CS) data.
 }
 
-\strong{Error Cases}:
+\strong{Condition Cases}:
 \itemize{
 \item Missing fields in the data.
 \item Incorrect dimensions for the matrices in the data.
