@@ -1,6 +1,7 @@
 ---
 title: "Cross-Spectra Files"
 output: rmarkdown::html_vignette
+bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{Cross-Spectra}
   %\VignetteEngine{knitr::rmarkdown}
@@ -20,52 +21,77 @@ library(SeaSondeR)
 
 ## Introduction
 
-Cross-spectra files contain a snapshot of the state of the ocean in cross-spectral format, calculated from the measurements of the three antennas. These data represent the reflected energy (self spectrum) for each detectable distance and Doppler velocity and also the cross product of the spectra (cross spectra) of the antennas relative to each other. These files are used to calculate radial velocity vectors and ocean state.
+Cross-spectra (CS) files contain a snapshot of the state of the ocean in cross-spectral format, calculated from the measurements of the three antennas. These data represent the reflected energy (self spectrum) for each detectable distance and Doppler velocity and also the cross product of the spectra (cross spectra) of the antennas relative to each other. These files are used to calculate radial velocity vectors and ocean state. The following information about the CS files is an extract from @SeaSonde-CSFileFormatV6, please see that document for more details on reading these types of files.
 
 The files in this format are the raw cross spectra (CSQ) and the short time cross spectra (CSS). SeaSondeAcquisition creates the CSQs in the Spectra Series folder. SpectraAverager then reads the CSQs and produces CSS/CSAs in the SpectraToProcess folder. In a standard SeaSonde a CSS covers 15 minutes, with a file every 10 minutes. The CSA files are files produced by the SpectraSlider app and are an average of the corresponding CSS. The CSAs are used to process the second-order energy for obtaining wave height estimates. Both CSS and CSA are passed to the AnalyzeSpectra app to obtain radials and swell respectively.
 
 They are binary files with the data in Big-Endian (Most Significant Byte first) which implies that in Intel we have to invert the order of the bytes to read the data. IEEE decimal values are used with single (4 bytes) and double (8 bytes) precision. Integer values are two's complement.
 
 The file structure is:
-- Header section of variable size, which has been increasing with each version.
-- Data section, which can have two types of contents
 
-## Header Section
+-   Header section of variable size, which has been increasing with each version.
+
+-   Data section, which can have two types of contents
+
+    ## Header Section
+
 Depending on the version of the file, it contains the following. Each higher version includes the info of the previous ones.
 
 ### Version 1
+
 TimeStamp: seconds since January 1, 1904 of the local time of the station computer. For CSQs it is the start of data acquisition. For CSS it is the time of the center of the averaged data.
 
 ### Version 2
+
 Data type: CSQ or CSS/CSA
 
 ### Version 3
+
 Site name
 
 ### Version 4
-Coverage in minutes of data. CSQ is usually about 5 minutes, CSS averages 15 minutes, CSA averages 60 minutes.
-Information about the initial frequency of each scan, Sweep rate, Sweep bandwidth, Sweep Freq direction.
-Number of Dopple cells (usually 512).
-Number of range cells (nominally 32 in CSQ and 31 in CSS/CSA).
-Index of the first range cell. Nominally 0 in CSQ, CSS usually uses 1 because SpectraAverager cuts the first range cell as useless. May take other values if the spectrum has been reduced to a certain range of interest.
-Cell distance in kilometers. The distance of a cell is the index of cell -1 + the index of the first cell * the distance between cells.
+
+Coverage in minutes of data. CSQ is usually about 5 minutes, CSS averages 15 minutes, CSA averages 60 minutes. Information about the initial frequency of each scan, Sweep rate, Sweep bandwidth, Sweep Freq direction. Number of Dopple cells (usually 512). Number of range cells (nominally 32 in CSQ and 31 in CSS/CSA). Index of the first range cell. Nominally 0 in CSQ, CSS usually uses 1 because SpectraAverager cuts the first range cell as useless. May take other values if the spectrum has been reduced to a certain range of interest. Cell distance in kilometers. The distance of a cell is the index of cell -1 + the index of the first cell \* the distance between cells.
 
 ### Version 5
-Output interval in minutes.
-Number of active antennas.
-Number of antennas used in the spectra.
-Indicator of which antennas are in use.
+
+Output interval in minutes. Number of active antennas. Number of antennas used in the spectra. Indicator of which antennas are in use.
 
 ### Version 6 (this section is variable in size and contains optional metadata).
-TIME timestamp but with higher resolution.
-ZONE time use
-TOOL Name and version of the application(s) that processed the data in the file.
-ANTG Receive Antenna Gain corrections. It is an indicator of the power balance between the receiving antennas, which is used in SpectraPlotterMap to display the spectra. When applying antenna pattern or amplitude corrections they do not use this because they already take into account any kind of difference between the antennas.
-FOLS Radial/Elliptical First Order Lines to delineate the first order region.
-WOLS Wave Processing First Order Lones to delineate the first order region.
-RCVI a description of the receiver, including, among others, the receiver gain in dB.
-The conversion of the autospectrum to dBm is done as 10*lob10(abs(autospectrum)) + receiver gain (if in the RCVI block, otherwise use -34.2 dB).
 
-##  Data section
+TIME timestamp but with higher resolution. ZONE time use TOOL Name and version of the application(s) that processed the data in the file. ANTG Receive Antenna Gain corrections. It is an indicator of the power balance between the receiving antennas, which is used in SpectraPlotterMap to display the spectra. When applying antenna pattern or amplitude corrections they do not use this because they already take into account any kind of difference between the antennas. FOLS Radial/Elliptical First Order Lines to delineate the first order region. WOLS Wave Processing First Order Lones to delineate the first order region. RCVI a description of the receiver, including, among others, the receiver gain in dB. The conversion of the autospectrum to dBm is done as 10\*lob10(abs(autospectrum)) + receiver gain (if in the RCVI block, otherwise use -34.2 dB).
+
+## Data section
+
 This is a multidimensional array of auto-spectrum and cross-spectrum data. In the CSS and CSA, it also includes information on data quality.
-For more details on reading these types of files see Cross Spectra File Format Version 6.
+
+# **SeaSondeRCS Class**
+
+## **Descripción**
+
+\
+La clase **`SeaSondeRCS`** es una representación en R de los archivos CS (Cross-spectra) de SeaSonde. Esta clase facilita la lectura, manipulación y análisis de los datos contenidos en estos archivos, proporcionando una estructura coherente y fácil de usar para los usuarios que trabajan con datos de SeaSonde en R.
+
+## **Propósito**
+
+\
+El propósito principal de la clase **`SeaSondeRCS`** es proporcionar una interfaz unificada para trabajar con archivos CS en R. Esto incluye la capacidad de leer archivos CS, acceder a sus metadatos y datos, y realizar análisis específicos relacionados con los datos de SeaSonde. Al encapsular estos datos en una clase específica, se simplifica el proceso de trabajar con estos archivos y se garantiza una mayor consistencia y fiabilidad en los análisis.
+
+## **Ejemplo de creación**
+
+\
+Para crear una instancia de la clase **`SeaSondeRCS`**, puedes utilizar el siguiente código en R:
+
+```{r}
+
+# Cargar la biblioteca necesaria
+library(SeaSondeR)
+
+# Crear un objeto SeaSondeRCS desde un archivo CS
+archivo_CS <- "ruta/del/archivo/CSQ_o_CSS_o_CSA"
+specs_path <- "ruta/del/archivo/especificaciones.yaml" # Si es necesario
+objeto_SeaSondeRCS <- seasonder_createSeaSondeRCS(x = archivo_CS, specs_path = specs_path)
+
+```
+
+# References
