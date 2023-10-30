@@ -2293,23 +2293,43 @@ describe("SeaSondeRCS",{
   describe("seasonder_createSeaSondeRCS", {
 
     # Mock de seasonder_validateCSDataStructure para comprobar que se llama
-
-
-    it("creates a SeaSondeRCS object from a character input (file path)", {
-      mocked_validate_function <- mockthat::mock(NULL)
-      mocked_read_function <- mockthat::mock(list(header = list(nRangeCells = 10, nDopplerCells = 20), data = list()))
-      tmp_file <- tempfile()
-      writeLines(" ", tmp_file)
-      mockthat::with_mock(seasonder_readSeaSondeCSFile = mocked_read_function, seasonder_validateCSDataStructure = mocked_validate_function, {
-        result <- seasonder_createSeaSondeRCS(tmp_file,"fake/specs/path")
-        expect_equal(class(result), "SeaSondeRCS")
-        expect_equal(result$header$nRangeCells, 10)
-        expect_equal(result$header$nDopplerCells, 20)
-        expect_equal(mockthat::mock_n_called(mocked_read_function),1)
-        expect_equal(mockthat::mock_args(mocked_read_function),list(filepath=tmp_file,specs_path="fake/specs/path"))
-        expect_equal(mockthat::mock_n_called(mocked_validate_function),1)
-      })
+describe("seasonder_createSeaSondeRCS.character",{
+  it("creates a SeaSondeRCS object from a character input (file path)", {
+    mocked_validate_function <- mockthat::mock(NULL)
+    mocked_read_function <- mockthat::mock(list(header = list(nRangeCells = 10, nDopplerCells = 20), data = list()))
+    tmp_file <- tempfile()
+    writeLines(" ", tmp_file)
+    mockthat::with_mock(seasonder_readSeaSondeCSFile = mocked_read_function, seasonder_validateCSDataStructure = mocked_validate_function, {
+      result <- seasonder_createSeaSondeRCS(tmp_file,"fake/specs/path")
+      expect_equal(class(result), "SeaSondeRCS")
+      expect_equal(result$header$nRangeCells, 10)
+      expect_equal(result$header$nDopplerCells, 20)
+      expect_equal(mockthat::mock_n_called(mocked_read_function),1)
+      expect_equal(mockthat::mock_args(mocked_read_function),list(filepath=tmp_file,specs_path="fake/specs/path"))
+      expect_equal(mockthat::mock_n_called(mocked_validate_function),1)
     })
+  })
+
+  it("should use the package CS specs definitions file as default for the specs path",{
+    mocked_validate_function <- mockthat::mock(NULL)
+    mocked_read_function <- mockthat::mock(list(header = list(nRangeCells = 10, nDopplerCells = 20), data = list()))
+    tmp_file <- tempfile()
+    writeLines(" ", tmp_file)
+    mockthat::with_mock(seasonder_readSeaSondeCSFile = mocked_read_function, seasonder_validateCSDataStructure = mocked_validate_function, {
+      result <- seasonder_createSeaSondeRCS(tmp_file)
+      expect_equal(class(result), "SeaSondeRCS")
+      expect_equal(result$header$nRangeCells, 10)
+      expect_equal(result$header$nDopplerCells, 20)
+      expect_equal(mockthat::mock_n_called(mocked_read_function),1)
+      expect_equal(mockthat::mock_arg(mocked_read_function,"specs_path"),system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+      expect_equal(mockthat::mock_n_called(mocked_validate_function),1)
+    })
+
+
+  })
+})
+
+
 
     it("creates a SeaSondeRCS object from a list input", {
       mocked_validate_function <- mockthat::mock(NULL)

@@ -84,7 +84,7 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL) {
 }
 
 #' @export
-seasonder_createSeaSondeRCS.character <- function(x, specs_path) {
+seasonder_createSeaSondeRCS.character <- function(x, specs_path=system.file("specs","CS_V1.yaml",package = "SeaSondeR")) {
   # Checking if the file exists
   if (!file.exists(x)) {
     seasonder_logAndAbort(glue::glue("File '{x}' does not exist."), calling_function = "seasonder_createSeaSondeRCS.character", class = "seasonder_CS_file_not_found_error")
