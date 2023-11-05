@@ -26,7 +26,3 @@ or is deemed inadequate.
 This function is meant to be used within custom condition handlers for the
 \code{read_and_qc_field} function.
 }
-\seealso{
-\code{\link{read_and_qc_field}} for more details on how this function fits
-into the error recovery mechanism of reading and quality control process.
-}

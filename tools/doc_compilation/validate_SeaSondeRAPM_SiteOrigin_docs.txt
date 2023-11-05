@@ -1,0 +1,15 @@
+\name{validate_SeaSondeRAPM_SiteOrigin}
+\alias{validate_SeaSondeRAPM_SiteOrigin}
+\title{Validate SiteOrigin Attribute for a SeaSondeRAPM Object}
+\usage{
+validate_SeaSondeRAPM_SiteOrigin(site_origin)
+}
+\arguments{
+\item{site_origin}{The numeric vector to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided SiteOrigin is a numeric vector of length 2.
+}

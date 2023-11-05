@@ -64,9 +64,9 @@ This function provides a structured mechanism to recover from errors during its 
 Cross Spectra File Format Version 6. CODAR. 2016
 }
 \seealso{
+\code{\link{seasonder_skip_cs_file}},
 \code{\link{seasonder_validateCSFileData}},
 \code{\link{seasonder_readSeaSondeCSFileHeader}},
 \code{\link{seasonder_readSeaSondeCSFileData}},
-\code{\link{seasonder_logAndMessage}},
-\code{\link{seasonder_logAndAbort}}
+\code{\link{seasonder_readYAMLSpecs}}
 }

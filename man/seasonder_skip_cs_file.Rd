@@ -28,6 +28,3 @@ The effect of invoking this restart is twofold:
 \item The calling function (\code{seasonder_readSeaSondeCSFile}) will immediately return a list with \code{header=NULL} and \code{data=NULL}.
 }
 }
-\seealso{
-\code{\link{seasonder_readSeaSondeCSFile}},
-}

@@ -1,0 +1,12 @@
+\name{seasonder_getSeaSondeRAPM_Creator}
+\alias{seasonder_getSeaSondeRAPM_Creator}
+\title{Getter for Creator}
+\usage{
+seasonder_getSeaSondeRAPM_Creator(seasonde_apm_obj)
+}
+\arguments{
+\item{seasonde_apm_obj}{SeaSonderAPM object}
+}
+\description{
+Getter for Creator
+}

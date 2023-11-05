@@ -26,3 +26,7 @@ A list with the read results.
 \description{
 Reads the header of a SeaSonde file (Version 2) based on the provided specifications.
 }
+\seealso{
+\code{\link{seasonder_check_specs}}
+\code{\link{seasonder_readSeaSondeCSFileBlock}}
+}

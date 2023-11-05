@@ -34,6 +34,3 @@ cat(rawToChar(raw_val))
 }
 
 }
-\seealso{
-\code{\link[bit64]{as.integer64}}
-}

@@ -1,0 +1,14 @@
+\name{seasonder_setSeaSondeRAPM_SiteOrigin}
+\alias{seasonder_setSeaSondeRAPM_SiteOrigin}
+\title{Setter for SiteOrigin}
+\usage{
+seasonder_setSeaSondeRAPM_SiteOrigin(seasonde_apm_obj, new_value)
+}
+\arguments{
+\item{seasonde_apm_obj}{SeaSonderAPM object}
+
+\item{new_value}{new value}
+}
+\description{
+Setter for SiteOrigin
+}

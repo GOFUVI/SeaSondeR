@@ -1,12 +1,19 @@
 here::i_am("tools/doc_compilation/extract_function_docs.R")
 
+devtools::document(roclets = c('rd', 'collate', 'namespace'))
+
 list.files(here::here("tools/doc_compilation"),pattern = "\\.txt$",full.names = T) %>% purrr::walk(file.remove)
 
 doc_path <- here::here("man")
 
 files <- list.files(doc_path,"*.Rd",full.names = T)
 
-docs <- files %>% purrr::map(\(f) readLines(f) %>% purrr::discard(\(line) stringr::str_detect(line,"^%")) %>% c(glue::glue("Start function {stringr::str_remove(basename(f),'\\\\.Rd$')}"),.,glue::glue("End function {stringr::str_remove(basename(f),'\\\\.Rd$')}"),"")) %>% magrittr::set_names(stringr::str_remove(basename(files),"\\.Rd$"))
+# docs <- files %>% purrr::map(\(f) readLines(f) %>% purrr::discard(\(line) stringr::str_detect(line,"^%")) %>% c(glue::glue("Start function {stringr::str_remove(basename(f),'\\\\.Rd$')}"),.,glue::glue("End function {stringr::str_remove(basename(f),'\\\\.Rd$')}"),"")) %>% magrittr::set_names(stringr::str_remove(basename(files),"\\.Rd$"))
+
+docs <- files %>% purrr::map(\(f) readLines(f) %>% purrr::discard(\(line) stringr::str_detect(line,"^%"))) %>% magrittr::set_names(stringr::str_remove(basename(files),"\\.Rd$"))
+
+docs_descriptions <- docs %>% purrr::map(\(doc) paste0(doc,collapse = "") %>% stringr::str_extract("\\\\description\\{(.*?)\\}",group = 1)) %>% purrr::map2(names(.),\(description,doc_name) glue::glue("Function {doc_name}: {description}")) %>% magrittr::set_names(names(docs))
+
 
 
 source_files <- list(
@@ -27,25 +34,44 @@ source_files <- list(
   "seasonder_log" = list()
 )
 
+
+library(reticulate)
+
+use_virtualenv("r-reticulate",required = T)
+
+py_run_string(glue::glue("import jiggybase;
+                         jiggybase.JiggyBase('{Sys.getenv('JIGGYBASE_KEY')}').collection('SeaSondeR').delete_docs(delete_all=True)"
+))
+
+
 source_files %>% purrr::walk2(names(.),\(sf,sf_name){
 
-  f_names <- readLines(here::here(glue::glue("R/{sf_name}.R"))) %>% purrr::keep(\(x) stringr::str_detect(x,"^.*?\\s*?<-\\s*?function")) %>%
-    purrr::map_chr(\(x) stringr::str_extract(x,"^(.*?)\\s*?<-\\s*?function",group=1))
+
+  sf %>% purrr::walk2(names(.),\(fun_group,fun_group_name){
+    f_names <- readLines(here::here(glue::glue("R/{sf_name}.R"))) %>% purrr::keep(\(x) stringr::str_detect(x,"^.*?\\s*?<-\\s*?function")) %>%
+      purrr::map_chr(\(x) stringr::str_extract(x,"^(.*?)\\s*?<-\\s*?function",group=1)) %>% purrr::keep(\(f_name) f_name %in% fun_group)
+
+    f_names %>% purrr::walk(\(f_name){
+
+      doc_path <- here::here(glue::glue("tools/doc_compilation/{f_name}_docs.txt"))
+      out <- docs[[f_name]]
+      writeLines(out,doc_path)
+
+      doc_description <- glue::glue("Source file: {sf_name}.Doc group: {fun_group_name}. Description: {docs_descriptions[[f_name]]}")
+      title <-  glue::glue('R documentation for function {f_name}.')
+      py_run_string(glue::glue('import jiggybase;
+                           from  jiggybase.models import DocumentMetadata, Source;
+                           jiggybase.JiggyBase("{Sys.getenv("JIGGYBASE_KEY")}").collection("SeaSondeR").upsert_file("{doc_path}", metadata=DocumentMetadata(source=Source.file, title="{title}",description="{doc_description}"))'
+      ))
+
+    })
+  })
 
 
-  f_names <- sf %>% purrr::reduce2(names(.),\(f_names_so_far,specific_doc,specific_doc_name){
-
-
-    out <- docs[specific_doc] %>% purrr::compact() %>% unlist()
-    writeLines(out,here::here(glue::glue("tools/doc_compilation/{specific_doc_name}_docs.txt")))
-    dplyr::setdiff(f_names_so_far,specific_doc)
-  },.init=f_names)
-  if(length(f_names)>0){
-    out <- docs[f_names] %>% purrr::compact() %>% unlist()
-
-    writeLines(out,here::here(glue::glue("tools/doc_compilation/{sf_name}_other_docs.txt")))
-  }
 
 })
+
+
+
 
 

@@ -21,3 +21,7 @@ This function reads and processes the header of a SeaSonde CS file. It initially
 the general header (Version 1) to determine the file version. Subsequent headers are processed
 based on the file version.
 }
+\seealso{
+\code{\link{seasonder_readSeaSondeCSFileHeaderV1}}
+\code{\link{process_version_header}}
+}

@@ -63,3 +63,6 @@ is up to the QC function to decide what to do if it receives a NULL.
 }
 }
 }
+\seealso{
+\code{\link{read_and_qc_field}}
+}

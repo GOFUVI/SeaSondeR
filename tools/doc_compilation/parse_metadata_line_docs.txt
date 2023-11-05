@@ -1,0 +1,16 @@
+\name{parse_metadata_line}
+\alias{parse_metadata_line}
+\title{Parse a Metadata Line from a SeaSonde APM File}
+\usage{
+parse_metadata_line(line)
+}
+\arguments{
+\item{line}{The line of text to parse.}
+}
+\value{
+Returns a list containing the attribute name and its value.
+}
+\description{
+This function takes a single line from a SeaSonde APM file and parses it into
+a named attribute and its corresponding value.
+}

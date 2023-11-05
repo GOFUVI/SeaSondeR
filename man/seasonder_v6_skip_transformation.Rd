@@ -35,7 +35,3 @@ the transformation process of a specific block, the restart provides users with
 an option to skip the problematic transformation and proceed with a fallback value.
 }
 
-\seealso{
-\code{\link{seasonder_readSeaSondeCSFileHeaderV6}} for the primary function where
-this restart mechanism is used.
-}

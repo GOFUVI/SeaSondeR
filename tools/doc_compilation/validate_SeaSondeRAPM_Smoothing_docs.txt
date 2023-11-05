@@ -1,0 +1,15 @@
+\name{validate_SeaSondeRAPM_Smoothing}
+\alias{validate_SeaSondeRAPM_Smoothing}
+\title{Validate Smoothing Attribute for a SeaSondeRAPM Object}
+\usage{
+validate_SeaSondeRAPM_Smoothing(smoothing)
+}
+\arguments{
+\item{smoothing}{The numeric value to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided Smoothing is a numeric value.
+}

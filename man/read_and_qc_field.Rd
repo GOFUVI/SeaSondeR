@@ -62,7 +62,11 @@ The function provides structured mechanisms to recover from errors/conditions du
 \item \strong{Effect}: If invoked, the function logs an info message detailing the reason of the rerun, and then returns the value returned by \code{alternateQCfunction}.
 }
 }
+}
+
+\seealso{
+\code{\link{seasonder_rerun_qc_with_fun}},
+\code{\link{seasonder_readCSField}}
 
 It's also important to note that within \code{read_and_qc_field}, the function \code{seasonder_readCSField} is used. This function has its own error management and restart options, which are detailed in its documentation.
 }
-

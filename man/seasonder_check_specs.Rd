@@ -41,6 +41,3 @@ seasonder_check_specs(specs, fields) # Throws an error since spec for 'field3' i
 }
 
 }
-\seealso{
-\code{\link{seasonder_logAndAbort}}
-}

@@ -52,3 +52,10 @@ This function assumes that the desired version-specific \verb{seasonder_readSeaS
 functions are available in the global environment.
 }
 
+\seealso{
+\code{\link{seasonder_readSeaSondeCSFileHeaderV2}}
+\code{\link{seasonder_readSeaSondeCSFileHeaderV3}}
+\code{\link{seasonder_readSeaSondeCSFileHeaderV4}}
+\code{\link{seasonder_readSeaSondeCSFileHeaderV5}}
+\code{\link{seasonder_readSeaSondeCSFileHeaderV6}}
+}

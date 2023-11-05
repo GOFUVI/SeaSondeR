@@ -67,3 +67,9 @@ Using the \code{seasonder_v6_skip_transformation} restart:
 Proper error management ensures the integrity of the reading process and provides detailed feedback to users regarding issues and potential resolutions.
 }
 
+\seealso{
+\code{\link{seasonder_check_specs}}
+\code{\link{seasonder_readSeaSondeCSFileBlock}}
+\code{\link{readV6BlockData}}
+\code{\link{seasonder_v6_skip_transformation}}
+}

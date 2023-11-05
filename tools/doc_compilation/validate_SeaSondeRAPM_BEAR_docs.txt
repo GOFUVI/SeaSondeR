@@ -1,0 +1,19 @@
+\name{validate_SeaSondeRAPM_BEAR}
+\alias{validate_SeaSondeRAPM_BEAR}
+\title{Validate BEAR Attribute for a SeaSondeRAPM Object}
+\usage{
+validate_SeaSondeRAPM_BEAR(vector, seasonde_apm_obj)
+}
+\arguments{
+\item{vector}{The numeric vector to be validated.}
+
+\item{seasonde_apm_obj}{The SeaSondeRAPM object for compatibility check.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided BEAR is a numeric vector and if its length
+matches the number of columns in the calibration_matrix of the given SeaSondeRAPM object.
+It also validates that the bearings are between -180 and 180 degrees.
+}

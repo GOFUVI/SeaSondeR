@@ -17,11 +17,3 @@ A SeaSondeRCS object with the specified header, data, and version.
 \description{
 This function constructs a new SeaSondeRCS object with the provided header, data, and version information.
 }
-\examples{
-\dontrun{
-header <- list(nRangeCells = 10, nDopplerCells = 20)
-data <- list(SSA1 = matrix(1:200, ncol = 20), SSA2 = matrix(201:400, ncol = 20))
-seaSondeObj <- new_SeaSondeRCS(header, data)
-}
-
-}

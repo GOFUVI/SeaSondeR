@@ -42,3 +42,6 @@ based on provided specifications. Regular blocks are read directly, while
 repeated blocks are processed recursively based on a set of loops provided
 in the specifications.
 }
+\seealso{
+\code{\link{readV6BlockData}}
+}

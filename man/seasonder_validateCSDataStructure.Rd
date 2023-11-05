@@ -55,6 +55,3 @@ seasonder_validateCSDataStructure(data, 10, 20)
 }
 
 }
-\seealso{
-\code{\link{seasonder_logAndAbort}}
-}

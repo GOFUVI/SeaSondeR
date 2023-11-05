@@ -1,0 +1,15 @@
+\name{validate_SeaSondeRAPM_FileID}
+\alias{validate_SeaSondeRAPM_FileID}
+\title{Validate FileID Attribute for a SeaSondeRAPM Object}
+\usage{
+validate_SeaSondeRAPM_FileID(id)
+}
+\arguments{
+\item{id}{The unique character string to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided FileID is a unique character string.
+}

@@ -1,0 +1,12 @@
+\name{seasonder_getSeaSondeRAPM_AntennaBearing}
+\alias{seasonder_getSeaSondeRAPM_AntennaBearing}
+\title{Getter for AntennaBearing}
+\usage{
+seasonder_getSeaSondeRAPM_AntennaBearing(seasonde_apm_obj)
+}
+\arguments{
+\item{seasonde_apm_obj}{SeaSonderAPM object}
+}
+\description{
+Getter for AntennaBearing
+}

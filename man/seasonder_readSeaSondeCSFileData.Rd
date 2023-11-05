@@ -51,11 +51,3 @@ This function utilizes the \code{rlang} package to manage errors and conditions,
 }
 }
 
-\examples{
-\dontrun{
-  con <- file("path_to_CS_file", "rb")
-  header <- seasonder_readSeaSondeCSFileHeader(specs, con)
-  data <- seasonder_readSeaSondeCSFileData(con, header)
-  close(con)
-}
-}

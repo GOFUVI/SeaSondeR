@@ -1,0 +1,14 @@
+\name{seasonder_setSeaSondeRAPM_SiteName}
+\alias{seasonder_setSeaSondeRAPM_SiteName}
+\title{Setter for SiteName}
+\usage{
+seasonder_setSeaSondeRAPM_SiteName(seasonde_apm_obj, new_value)
+}
+\arguments{
+\item{seasonde_apm_obj}{SeaSonderAPM object}
+
+\item{new_value}{new value}
+}
+\description{
+Setter for SiteName
+}

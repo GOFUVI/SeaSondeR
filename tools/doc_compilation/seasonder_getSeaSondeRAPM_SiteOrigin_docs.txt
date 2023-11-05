@@ -1,0 +1,12 @@
+\name{seasonder_getSeaSondeRAPM_SiteOrigin}
+\alias{seasonder_getSeaSondeRAPM_SiteOrigin}
+\title{Getter for SiteOrigin}
+\usage{
+seasonder_getSeaSondeRAPM_SiteOrigin(seasonde_apm_obj)
+}
+\arguments{
+\item{seasonde_apm_obj}{SeaSonderAPM object}
+}
+\description{
+Getter for SiteOrigin
+}

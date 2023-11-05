@@ -27,3 +27,7 @@ A list with the read and transformed results.
 Reads the header of a SeaSonde file (Version 5) based on the provided specifications.
 Performs applicable transformations and returns the results.
 }
+\seealso{
+\code{\link{seasonder_check_specs}}
+\code{\link{seasonder_readSeaSondeCSFileBlock}}
+}

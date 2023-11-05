@@ -1,0 +1,25 @@
+\name{seasonder_readSeaSondeCSFileHeader}
+\alias{seasonder_readSeaSondeCSFileHeader}
+\title{Read the SeaSonde CS File Header}
+\usage{
+seasonder_readSeaSondeCSFileHeader(specs, connection, endian = "big")
+}
+\arguments{
+\item{specs}{List of header specifications for each version.}
+
+\item{connection}{The file connection.}
+
+\item{endian}{Character string indicating the byte order, either "big" (default) or "little".}
+}
+\value{
+A combined list of all processed headers up to the file version.
+}
+\description{
+This function reads and processes the header of a SeaSonde CS file. It initially reads
+the general header (Version 1) to determine the file version. Subsequent headers are processed
+based on the file version.
+}
+\seealso{
+\code{\link{seasonder_readSeaSondeCSFileHeaderV1}}
+\code{\link{process_version_header}}
+}

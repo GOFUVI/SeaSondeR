@@ -1,0 +1,15 @@
+\name{seasonder_getVersion.SeaSondeRCS}
+\alias{seasonder_getVersion.SeaSondeRCS}
+\title{Get the version value from a SeaSondeRCS object}
+\usage{
+\method{seasonder_getVersion}{SeaSondeRCS}(seasonder_obj)
+}
+\arguments{
+\item{seasonder_obj}{A SeaSondeRCS object.}
+}
+\value{
+The version value.
+}
+\description{
+Get the version value from a SeaSondeRCS object
+}

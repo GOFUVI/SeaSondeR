@@ -1,0 +1,15 @@
+\name{validate_SeaSondeRAPM_Creator}
+\alias{validate_SeaSondeRAPM_Creator}
+\title{Validate Creator Attribute for a SeaSondeRAPM Object}
+\usage{
+validate_SeaSondeRAPM_Creator(creator)
+}
+\arguments{
+\item{creator}{The character string to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided Creator is a character string.
+}

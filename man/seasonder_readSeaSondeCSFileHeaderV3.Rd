@@ -27,3 +27,7 @@ A list with the read results.
 Reads the header of a SeaSonde file (Version 3) based on the provided specifications.
 Adds nRangeCells, nDopplerCells, and nFirstRangeCell as constant values to the results.
 }
+\seealso{
+\code{\link{seasonder_check_specs}}
+\code{\link{seasonder_readSeaSondeCSFileBlock}}
+}

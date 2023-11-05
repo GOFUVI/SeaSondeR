@@ -1,0 +1,15 @@
+\name{validate_SeaSondeRAPM_ProcessingSteps}
+\alias{validate_SeaSondeRAPM_ProcessingSteps}
+\title{Validate ProcessingSteps Attribute for a SeaSondeRAPM Object}
+\usage{
+validate_SeaSondeRAPM_ProcessingSteps(steps)
+}
+\arguments{
+\item{steps}{The character vector to be validated.}
+}
+\value{
+Returns TRUE if the validation passes.
+}
+\description{
+This function validates if the provided ProcessingSteps is a character vector.
+}

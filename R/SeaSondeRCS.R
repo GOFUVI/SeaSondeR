@@ -11,12 +11,6 @@
 #'
 #' @return A SeaSondeRCS object with the specified header, data, and version.
 #'
-#' @examples
-#' \dontrun{
-#' header <- list(nRangeCells = 10, nDopplerCells = 20)
-#' data <- list(SSA1 = matrix(1:200, ncol = 20), SSA2 = matrix(201:400, ncol = 20))
-#' seaSondeObj <- new_SeaSondeRCS(header, data)
-#' }
 #'
 new_SeaSondeRCS <- function(header, data){
 
@@ -38,7 +32,10 @@ new_SeaSondeRCS <- function(header, data){
 #'
 #' @return A SeaSondeRCS object.
 #' @seealso
-#' \code{\link{new_SeaSondeRCS}}, \code{\link{seasonder_validateCSDataStructure}}, \code{\link{seasonder_logAndAbort}}
+#' \code{\link{new_SeaSondeRCS}}
+#' \code{\link{seasonder_validateCSDataStructure}}
+#' \code{\link{seasonder_readSeaSondeCSFile}}
+#' \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}}
 #'
 #' @section Error Management:
 #' This function utilizes the `rlang` package to manage errors and provide detailed and structured error messages:
@@ -162,9 +159,6 @@ validate_SeaSondeRCS_ProcessingSteps <- function(steps) {
 #' }
 #'
 #' @return Invisible NULL if the data structure is valid. Otherwise, an error is thrown.
-#'
-#' @seealso
-#' \code{\link{seasonder_logAndAbort}}
 #'
 #' @export
 #'
@@ -383,6 +377,7 @@ SeaSondeRCS_creation_step_text <- function(file_path) {
 #'
 #' @return NULL invisibly. The function mainly serves to validate and will stop execution and log an error using `seasonder_logAndAbort` if any condition fails.
 #'
+#'
 #' @references Cross Spectra File Format Version 6. CODAR. 2016
 seasonder_validateCSFileData <- function(filepath, header) {
 
@@ -438,8 +433,6 @@ seasonder_validateCSFileData <- function(filepath, header) {
 #' 1. An error message detailing the reason for skipping the file is logged.
 #' 2. The calling function (`seasonder_readSeaSondeCSFile`) will immediately return a list with `header=NULL` and `data=NULL`.
 #'
-#' @seealso
-#' \code{\link{seasonder_readSeaSondeCSFile}},
 #'
 #' @return If invoked, the function returns a list with both `header` and `data` set to NULL.
 #' @export
@@ -497,11 +490,11 @@ seasonder_skip_cs_file <- function(cond) {
 #' }
 #'
 #' @seealso
+#' \code{\link{seasonder_skip_cs_file}},
 #' \code{\link{seasonder_validateCSFileData}},
 #' \code{\link{seasonder_readSeaSondeCSFileHeader}},
 #' \code{\link{seasonder_readSeaSondeCSFileData}},
-#' \code{\link{seasonder_logAndMessage}},
-#' \code{\link{seasonder_logAndAbort}}
+#' \code{\link{seasonder_readYAMLSpecs}}
 #'
 #' @references Cross Spectra File Format Version 6. CODAR. 2016
 #' @export
@@ -583,8 +576,6 @@ seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
 #' 4. Reorder the bits into groups of 8, reversing the order within each group.
 #' 5. Convert the reordered bits back to raw bytes.
 #'
-#' @seealso
-#' \code{\link[bit64]{as.integer64}}
 #'
 #' @examples
 #' \dontrun{
@@ -657,8 +648,6 @@ seasonder_raw_to_int <- function(r,signed=F){
 #'
 #' @return Returns the value specified by the `value` parameter.
 #'
-#' @seealso
-#' \code{\link{seasonder_readCSField}} for the primary function that utilizes this restart mechanism.
 #'
 #' @export
 seasonder_skip_cs_field <- function(cond,value){
@@ -680,8 +669,9 @@ seasonder_skip_cs_field <- function(cond,value){
 #' con <- rawConnection(as.raw(c(0x12)))
 #' seasonder_readCSField(con, "UInt8")
 #' }
-#' @seealso seasonder_raw_to_int For converting raw to 64-bit integers.
-#'
+#' @seealso
+#' \code{\link{seasonder_skip_cs_field}},
+#' \code{\link{seasonder_raw_to_int}}
 #'
 #' @section Supported Data Types:
 #' This function provides support for reading a variety of data types from a binary connection. The following data types are recognized and can be used for the \code{type} argument:
@@ -849,8 +839,6 @@ seasonder_readCSField <- function(con, type, endian="big") {
 #' the value from the field as its sole argument and return a QC-applied value.
 #'
 #' @return The value returned by the alternate QC function `qc_fun`.
-#' @seealso \code{\link{read_and_qc_field}} for more details on how this function fits
-#' into the error recovery mechanism of reading and quality control process.
 #' @export
 seasonder_rerun_qc_with_fun <- function(cond,qc_fun){
   invokeRestart("seasonder_rerun_qc_with_fun",cond,qc_fun)
@@ -909,8 +897,13 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun){
 #'     }
 #' }
 #'
+#' @seealso
+#' \code{\link{seasonder_rerun_qc_with_fun}},
+#' \code{\link{seasonder_readCSField}}
+#'
 #' It's also important to note that within `read_and_qc_field`, the function `seasonder_readCSField` is used. This function has its own error management and restart options, which are detailed in its documentation.
 #'
+
 read_and_qc_field <- function(field_spec, connection, endian="big") {
 
   # Parameters used for error messages and logging.
@@ -1017,9 +1010,12 @@ read_and_qc_field <- function(field_spec, connection, endian="big") {
 #'   - Reading errors are managed by the `seasonder_readCSField` function, which returns NULL in the case of an error. It
 #'     is up to the QC function to decide what to do if it receives a NULL.
 #'
+#' @seealso
+#' \code{\link{read_and_qc_field}}
+#'
 #' @return A named list where each entry corresponds to a field that has been read. Each key is
 #'   the field name, and its associated value is the data for that field after quality control.
-#'
+
 seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian="big") {
   # Use purrr::map to apply the read_and_qc_field function to each field specification
   results <- withCallingHandlers(
@@ -1066,8 +1062,6 @@ seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian="big") {
 #'   \item Required field specification is missing.
 #' }
 #'
-#' @seealso
-#' \code{\link{seasonder_logAndAbort}}
 #'
 #' @examples
 #' \dontrun{
@@ -1100,6 +1094,10 @@ seasonder_check_specs <- function(specs, fields) {
 #' @param connection Connection object to the file.
 #' @param endian Character string specifying the endianness. Default is "big".
 #' @param prev_data previous header data
+#'
+#' @seealso
+#' \code{\link{seasonder_check_specs}}
+#' \code{\link{seasonder_readSeaSondeCSFileBlock}}
 #'
 #' @return A list with the read and transformed results.
 seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "big", prev_data = NULL) {
@@ -1134,6 +1132,10 @@ seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "bi
 #' @param endian Character string specifying the endianness. Default is "big".
 #' @param prev_data previous header data
 #'
+#' @seealso
+#' \code{\link{seasonder_check_specs}}
+#' \code{\link{seasonder_readSeaSondeCSFileBlock}}
+#'
 #' @return A list with the read results.
 seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
@@ -1160,6 +1162,10 @@ seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "bi
 #' @param connection Connection object to the file.
 #' @param endian Character string specifying the endianness. Default is "big".
 #' @param prev_data previous header data
+#'
+#' @seealso
+#' \code{\link{seasonder_check_specs}}
+#' \code{\link{seasonder_readSeaSondeCSFileBlock}}
 #'
 #' @return A list with the read results.
 #' @export
@@ -1194,6 +1200,10 @@ seasonder_readSeaSondeCSFileHeaderV3 <- function(specs, connection, endian = "bi
 #' @param connection Connection object to the file.
 #' @param endian Character string specifying the endianness. Default is "big".
 #' @param prev_data previous header data
+#'
+#' @seealso
+#' \code{\link{seasonder_check_specs}}
+#' \code{\link{seasonder_readSeaSondeCSFileBlock}}
 #'
 #' @return A list with the read and transformed results.
 #' @export
@@ -1230,6 +1240,10 @@ seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "bi
 #' @param connection Connection object to the file.
 #' @param endian Character string specifying the endianness. Default is "big".
 #' @param prev_data previous header data
+#'
+#' @seealso
+#' \code{\link{seasonder_check_specs}}
+#' \code{\link{seasonder_readSeaSondeCSFileBlock}}
 #'
 #' @return A list with the read and transformed results.
 #' @export
@@ -1274,6 +1288,10 @@ seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "bi
 #'         Regular variables are returned at the top level. Repeated blocks are nested lists with
 #'         'loop' and 'data' keys detailing the loop variable and corresponding data.
 #' @importFrom purrr list_transpose map
+#'
+#' @seealso
+#' \code{\link{readV6BlockData}}
+#'
 #'
 #' @export
 readV6BlockData <- function(specs, connection, endian="big", prev_data=NULL, remaining_loops=NULL) {
@@ -1357,9 +1375,6 @@ readV6BlockData <- function(specs, connection, endian="big", prev_data=NULL, rem
 #' the transformation process of a specific block, the restart provides users with
 #' an option to skip the problematic transformation and proceed with a fallback value.
 #'
-#' @seealso
-#' \code{\link{seasonder_readSeaSondeCSFileHeaderV6}} for the primary function where
-#' this restart mechanism is used.
 #'
 #' @return This function does not have a standard return value. Instead, it triggers a restart
 #' that can be caught by an enclosing context to handle the error and decide how to proceed.
@@ -1419,6 +1434,13 @@ seasonder_v6_skip_transformation <- function(cond, value) {
 #'}
 #'
 #' Proper error management ensures the integrity of the reading process and provides detailed feedback to users regarding issues and potential resolutions.
+#'
+#' @seealso
+#' \code{\link{seasonder_check_specs}}
+#' \code{\link{seasonder_readSeaSondeCSFileBlock}}
+#' \code{\link{readV6BlockData}}
+#' \code{\link{seasonder_v6_skip_transformation}}
+#'
 #'
 #' @export
 seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "big", prev_data = NULL) {
@@ -1503,6 +1525,13 @@ seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "bi
 #'        or "little". Use the appropriate value depending on the system architecture and the
 #'        file's source.
 #'
+#' @seealso
+#' \code{\link{seasonder_readSeaSondeCSFileHeaderV2}}
+#' \code{\link{seasonder_readSeaSondeCSFileHeaderV3}}
+#' \code{\link{seasonder_readSeaSondeCSFileHeaderV4}}
+#' \code{\link{seasonder_readSeaSondeCSFileHeaderV5}}
+#' \code{\link{seasonder_readSeaSondeCSFileHeaderV6}}
+#'
 #' @return List. A combination of the initial `pool` and the processed header for the given `version`.
 #'         Fields in the current header will overwrite or append to the pool as described above.
 #'
@@ -1537,6 +1566,10 @@ process_version_header <- function(pool, version, specs, connection, endian = "b
 #' @param specs List of header specifications for each version.
 #' @param connection The file connection.
 #' @param endian Character string indicating the byte order, either "big" (default) or "little".
+#'
+#' @seealso
+#' \code{\link{seasonder_readSeaSondeCSFileHeaderV1}}
+#' \code{\link{process_version_header}}
 #'
 #' @return A combined list of all processed headers up to the file version.
 #'
@@ -1619,13 +1652,7 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
 #'
 #' @return A list containing the matrices for `SSA*`, `CSxy`, and `QC` (when applicable).
 #'
-#' @examples
-#' \dontrun{
-#'   con <- file("path_to_CS_file", "rb")
-#'   header <- seasonder_readSeaSondeCSFileHeader(specs, con)
-#'   data <- seasonder_readSeaSondeCSFileData(con, header)
-#'   close(con)
-#' }
+#'
 #' @export
 seasonder_readSeaSondeCSFileData <- function(connection, header, endian="big") {
   conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFileData",class = "seasonder_cs_data_reading_error")

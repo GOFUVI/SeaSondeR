@@ -1,0 +1,12 @@
+\name{seasonder_getSeaSondeRAPM_FileName}
+\alias{seasonder_getSeaSondeRAPM_FileName}
+\title{Getter for FileName}
+\usage{
+seasonder_getSeaSondeRAPM_FileName(seasonde_apm_obj)
+}
+\arguments{
+\item{seasonde_apm_obj}{SeaSonderAPM object}
+}
+\description{
+Getter for FileName
+}

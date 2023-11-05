@@ -1,0 +1,20 @@
+\name{seasonder_setSeaSondeRAPM_ProcessingSteps}
+\alias{seasonder_setSeaSondeRAPM_ProcessingSteps}
+\title{Setter for ProcessingSteps}
+\usage{
+seasonder_setSeaSondeRAPM_ProcessingSteps(
+  seasonde_apm_obj,
+  new_value,
+  append = TRUE
+)
+}
+\arguments{
+\item{seasonde_apm_obj}{SeaSonderAPM object}
+
+\item{new_value}{new value}
+
+\item{append}{append the new step or replace previous steps? Default: TRUE}
+}
+\description{
+Setter for ProcessingSteps
+}

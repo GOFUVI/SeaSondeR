@@ -92,5 +92,6 @@ seasonder_readCSField(con, "UInt8")
 }
 }
 \seealso{
-seasonder_raw_to_int For converting raw to 64-bit integers.
+\code{\link{seasonder_skip_cs_field}},
+\code{\link{seasonder_raw_to_int}}
 }

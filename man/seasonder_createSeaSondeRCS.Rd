@@ -40,5 +40,8 @@ This function does not provide specific restart options. However, it relies on t
 }
 
 \seealso{
-\code{\link{new_SeaSondeRCS}}, \code{\link{seasonder_validateCSDataStructure}}, \code{\link{seasonder_logAndAbort}}
+\code{\link{new_SeaSondeRCS}}
+\code{\link{seasonder_validateCSDataStructure}}
+\code{\link{seasonder_readSeaSondeCSFile}}
+\code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}}
 }

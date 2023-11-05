@@ -1,0 +1,59 @@
+\name{process_version_header}
+\alias{process_version_header}
+\title{Process a Specific Version of the SeaSonde File Header}
+\usage{
+process_version_header(
+  pool,
+  version,
+  specs,
+  connection,
+  endian = "big",
+  prev_data = NULL
+)
+}
+\arguments{
+\item{pool}{List. An accumulating list of processed headers from prior versions.}
+
+\item{version}{Integer. The specific version of the header to be processed. E.g., for version 3,
+the function \code{seasonder_readSeaSondeCSFileHeaderV3} should be present.}
+
+\item{specs}{List. Header specifications for each version. Each entry should correspond to
+a version number and contain the required information to process that version's header.}
+
+\item{connection}{Connection object. The file connection pointing to the SeaSonde file.}
+
+\item{endian}{Character string. Specifies the byte order for reading data. Can be "big" (default)}
+
+\item{prev_data}{previous header data
+or "little". Use the appropriate value depending on the system architecture and the
+file's source.}
+}
+\value{
+List. A combination of the initial \code{pool} and the processed header for the given \code{version}.
+Fields in the current header will overwrite or append to the pool as described above.
+}
+\description{
+This function processes a specified version of the SeaSonde file header. It identifies the
+appropriate header function for the given version, processes the header, and then updates
+the accumulating pool of header data. Specifically:
+}
+\details{
+\enumerate{
+\item For fields in the current header that overlap with the accumulated pool, the
+current header's values overwrite those in the pool.
+\item Fields that are unique to the current header are appended to the pool.
+}
+}
+\section{Assumptions}{
+
+This function assumes that the desired version-specific \verb{seasonder_readSeaSondeCSFileHeaderV*}
+functions are available in the global environment.
+}
+
+\seealso{
+\code{\link{seasonder_readSeaSondeCSFileHeaderV2}}
+\code{\link{seasonder_readSeaSondeCSFileHeaderV3}}
+\code{\link{seasonder_readSeaSondeCSFileHeaderV4}}
+\code{\link{seasonder_readSeaSondeCSFileHeaderV5}}
+\code{\link{seasonder_readSeaSondeCSFileHeaderV6}}
+}
