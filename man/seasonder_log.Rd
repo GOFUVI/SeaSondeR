@@ -4,7 +4,7 @@
 \alias{seasonder_log}
 \title{seasonder_log function}
 \usage{
-seasonder_log(message, level = c("info", "error", "fatal"))
+seasonder_log(message, level = "info")
 }
 \arguments{
 \item{message}{A character string indicating the message to be logged.}

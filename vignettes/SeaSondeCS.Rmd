@@ -1,0 +1,292 @@
+---
+title: "Cross-Spectra Files"
+output: rmarkdown::html_vignette
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{Cross-Spectra}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SeaSondeR)
+```
+
+## Introduction
+
+Cross-spectra (CS) files contain a snapshot of the state of the ocean in cross-spectral format, calculated from the measurements of the three antennas. These data represent the reflected energy (self spectrum) for each detectable distance and Doppler velocity and also the cross product of the spectra (cross spectra) of the antennas relative to each other. These files are used to calculate radial velocity vectors and ocean state. The following information about the CS files is an extract from @SeaSonde-CSFileFormatV6, please see that document for more details on reading these types of files.
+
+The files in this format are the raw cross spectra (CSQ) and the short time cross spectra (CSS). SeaSondeAcquisition creates the CSQs in the Spectra Series folder. SpectraAverager then reads the CSQs and produces CSS/CSAs in the SpectraToProcess folder. In a standard SeaSonde a CSS covers 15 minutes, with a file every 10 minutes. The CSA files are files produced by the SpectraSlider app and are an average of the corresponding CSS. The CSAs are used to process the second-order energy for obtaining wave height estimates. Both CSS and CSA are passed to the AnalyzeSpectra app to obtain radials and swell respectively.
+
+They are binary files with the data in Big-Endian (Most Significant Byte first) which implies that in Intel we have to invert the order of the bytes to read the data. IEEE decimal values are used with single (4 bytes) and double (8 bytes) precision. Integer values are two's complement.
+
+The file structure is:
+
+-   Header section of variable size, which has been increasing with each version.
+
+-   Data section, which can have two types of contents
+
+    ## Header Section
+
+Depending on the version of the file, it contains the following. Each higher version includes the info of the previous ones.
+
+### Version 1
+
+TimeStamp: seconds since January 1, 1904 of the local time of the station computer. For CSQs it is the start of data acquisition. For CSS it is the time of the center of the averaged data.
+
+### Version 2
+
+Data type: CSQ or CSS/CSA
+
+### Version 3
+
+Site name
+
+### Version 4
+
+Coverage in minutes of data. CSQ is usually about 5 minutes, CSS averages 15 minutes, CSA averages 60 minutes. Information about the initial frequency of each scan, Sweep rate, Sweep bandwidth, Sweep Freq direction. Number of Dopple cells (usually 512). Number of range cells (nominally 32 in CSQ and 31 in CSS/CSA). Index of the first range cell. Nominally 0 in CSQ, CSS usually uses 1 because SpectraAverager cuts the first range cell as useless. May take other values if the spectrum has been reduced to a certain range of interest. Cell distance in kilometers. The distance of a cell is the index of cell -1 + the index of the first cell \* the distance between cells.
+
+### Version 5
+
+Output interval in minutes. Number of active antennas. Number of antennas used in the spectra. Indicator of which antennas are in use.
+
+### Version 6 (this section is variable in size and contains optional metadata).
+
+TIME timestamp but with higher resolution. ZONE time use TOOL Name and version of the application(s) that processed the data in the file. ANTG Receive Antenna Gain corrections. It is an indicator of the power balance between the receiving antennas, which is used in SpectraPlotterMap to display the spectra. When applying antenna pattern or amplitude corrections they do not use this because they already take into account any kind of difference between the antennas. FOLS Radial/Elliptical First Order Lines to delineate the first order region. WOLS Wave Processing First Order Lones to delineate the first order region. RCVI a description of the receiver, including, among others, the receiver gain in dB. The conversion of the autospectrum to dBm is done as 10\*lob10(abs(autospectrum)) + receiver gain (if in the RCVI block, otherwise use -34.2 dB).
+
+## Data section
+
+This is a multidimensional array of auto-spectrum and cross-spectrum data. In the CSS and CSA, it also includes information on data quality.
+
+# SeaSondeRCS Class
+
+## Description
+
+The SeaSondeRCS class is an R representation of the SeaSonde CS (Cross-spectra) files. This class facilitates the reading, manipulation and analysis of the data contained in these files, providing a consistent and easy-to-use structure for users working with SeaSonde data in R.
+
+## Purpose
+
+The main purpose of the SeaSondeRCS class is to provide a unified interface for working with CS files in R. This includes the ability to read CS files, access their metadata and data, and perform specific analyses related to SeaSonde data. By encapsulating this data in a specific class, the process of working with these files is simplified and greater consistency and reliability of analysis is ensured.
+
+## Example of creation
+
+To create an instance of the SeaSondeRCS class, you can use the following code in R:
+
+```{r,eval=FALSE}
+
+library(SeaSondeR)
+# Create a SeaSondeRCS object form a CS file
+CS_file <- "path/to/CSQ_o_CSS_o_CSA/file"
+
+SeaSondeRCS_object <- seasonder_createSeaSondeRCS(x = CS_file)
+
+```
+
+In this example a SeaSondeRCS object is created from a CS file path.
+
+## **Error Management in SeaSondeRCS Class**
+
+The **`SeaSondeRCS`** class incorporates error handling using the **`rlang`** package. This ensures that errors are structured, informative, and manageable. Below is an organized overview of condition classes, associated cases, and the functions that generate them.
+
+### **Condition Classes**
+
+Here is a list of specific condition classes along with the functions that invoke these errors:
+
+#### File Handling Errors
+
+-   **`seasonder_CS_file_not_found_error`**:
+
+    -   Generated by **`seasonder_createSeaSondeRCS`** when the file path is nonexistent.
+
+-   **`seasonder_read_cs_file_error`**:
+
+    -   Generated by **`seasonder_readSeaSondeCSFile`** for general file reading issues.
+
+-   **`seasonder_cs_file_skipped`**:
+
+    -   Generated by **`seasonder_readSeaSondeCSFile`** when a file is skipped due to errors.
+
+-   **`seasonder_validate_cs_file_error`**:
+
+    -   Generated by **`seasonder_validateCSFileData`** upon CS file validation failure.
+
+-   **`seasonder_cs_missing_header_info_error`**:
+
+    -   Generated by **`seasonder_readSeaSondeCSFileData`** when header info is missing.
+
+-   **`seasonder_SeaSonderCS_field_not_found_in_header`**:
+
+    -   Generated by **`seasonder_getCSHeaderByPath`** if a CS field is absent in the header.
+
+#### Data Structure Errors
+
+-   **`seasonder_CS_missing_nRange_nDoppler_error`**:
+
+    -   Generated by **`seasonder_validateCSHeaderStructure`** if **`nRangeCells`** or **`nDopplerCells`** are missing.
+    
+-   **`seasonder_CS_header_is_not_a_list`**:
+
+    - Generated by **`seasonder_validateCSHeaderStructure`** if **`header`** is not a list.
+
+-   **`seasonder_CS_data_structure_validation_error`**:
+
+    -   Generated by **`seasonder_validateCSDataStructure`** for data structure issues.
+
+-   **`seasonder_cs_data_reading_error`**:
+
+    -   Generated by **`seasonder_readSeaSondeCSFileData`** for problems during data reading.
+
+#### Field-Specific Errors
+
+-   **`seasonder_cs_field_skipped`**:
+
+    -   Generated by **`seasonder_readCSField`** when a CSField read is skipped.
+
+-   **`seasonder_cs_field_qc_fun_rerun`**:
+
+    -   Generated by **`read_and_qc_field`** on a QC function rerun trigger.
+
+-   **`seasonder_cs_field_qc_fun_not_defined_error`**:
+
+    -   Generated when a QC function is missing in the **`seasonder_the`** environment.
+
+-   **`seasonder_cs_field_qc_fun_error`**:
+
+    -   Generated by **`read_and_qc_field`** due to issues in QC function application.
+
+-   **`seasonder_cs_field_reading_error`**:
+
+    -   Generated by **`seasonder_readCSField`** for reading issues of a CSField.
+
+#### Version-Specific Errors
+
+-   **`seasonder_v6_block_transformacion_skipped`**:
+
+    -   Generated by **`seasonder_readSeaSondeCSFileHeaderV6`** when a v6 block transformation is skipped.
+
+-   **`seasonder_v6_transform_function_error`**:
+
+    -   Generated by **`seasonder_readSeaSondeCSFileHeaderV6`** due to v6 function issues.
+
+-   **`seasonder_v6_skip_block_error`**:
+
+    -   Generated by **`seasonder_readSeaSondeCSFileHeaderV6`** when skipping a v6 block.
+
+#### Specification Errors
+
+-   **`spsr_field_specification_missing_error`**:
+
+    -   Generated by **`seasonder_check_specs`** if field specifications are absent.
+
+### **Condition Cases**
+
+These are common scenarios that trigger the errors managed by the **`SeaSondeRCS`** class:
+
+-   File does not exist.
+
+-   Missing **`nRangeCells`** or **`nDopplerCells`** in header.
+
+-   Issues validating the data structure integrity.
+
+-   Failure in opening a file connection.
+
+-   Encountering an unsupported version in specifications.
+
+-   Dependency function errors during data reading and processing.
+
+-   Missing fields within the data.
+
+-   Incorrect data dimensions or types.
+
+-   Skipped CSFields during data acquisition.
+
+-   Reruns of alternative QC functions.
+
+-   Missing or incorrect QC functions.
+
+-   Errors applying QC functions.
+
+-   Reading issues due to corrupted data or unsupported formats.
+
+-   Skipped v6 block transformations.
+
+-   Problems arising from v6 transformation functions.
+
+-   Skipped v6 blocks due to various errors.
+
+-   Incomplete data processing because of missing header fields.
+
+### Restarts
+
+In the SeaSondeR package, restarts play a crucial role in error handling, particularly when working with the SeaSondeRCS class. Restarts provide a mechanism to recover from errors without exiting the function or the need for complex error trapping logic. They allow for a more graceful handling of exceptions that may occur during the execution of functions. Below is a detailed overview of the restarts available for functions related to the SeaSondeRCS class, including their descriptions, the types of errors they manage, and examples of their usage with `withCallingHandlers`.
+
+### Restarts Overview
+
+1.  **seasonder_skip_cs_file**
+    -   **Description**: This restart allows the user to skip reading a CS file when an error occurs, preventing the entire process from halting.
+
+    -   **Error Managed**: It is used when there is an error in reading the CS file, such as file corruption or inaccessibility.
+
+    -   **Example**:
+
+        ``` r
+        withCallingHandlers(
+          seasonder_cs_file_reading_error = function(cond) seasonder_skip_cs_file(cond),
+          seasonder_readCSFile(con)
+        )
+        ```
+2.  **seasonder_skip_cs_field**
+    -   **Description**: This restart enables skipping over a problematic field within a CS file, allowing the rest of the file to be processed.
+
+    -   **Error Managed**: It handles errors that occur during the reading of a specific field in the CS file.
+
+    -   **Example**:
+
+        ``` r
+        withCallingHandlers(
+          seasonder_cs_field_reading_error = function(cond) seasonder_skip_cs_field(cond, NA),
+          seasonder_readCSField(con, "UInt8")
+        )
+        ```
+3.  **seasonder_rerun_qc_with_fun**
+    -   **Description**: Offers a way to rerun a quality control (QC) function with an alternative function if the initial QC check fails.
+
+    -   **Error Managed**: This restart is invoked when a QC function encounters an error, allowing for an immediate retry with a different approach.
+
+    -   **Example**:
+
+        ``` r
+        withCallingHandlers(
+          seasonder_cs_field_qc_fun_error = function(cond) seasonder_rerun_qc_with_fun(cond, alternate_qc),
+          read_and_qc_field(field_spec, connection = con)
+        )
+        ```
+4.  **seasonder_v6_skip_transformation**
+    -   **Description**: This restart is used to skip a transformation step for V6 data if an error is detected during the process.
+
+    -   **Error Managed**: It is specifically designed to manage errors in the transformation function of V6 data blocks.
+
+    -   **Example**:
+
+        ``` r
+        withCallingHandlers(
+          seasonder_v6_transform_function_error = function(cond) {
+            val <- cond$seasonder_block_data
+            seasonder_v6_skip_transformation(cond, list(other_var = "alternative value"))
+          },
+          seasonder_transformV6DataBlock(spec, connection = con)
+        )
+        ```
+
+Each of these restarts has an associated helper function that carries the same name, please see their help for further information.
+
+Restarts in the SeaSondeR package are designed to be intuitive and to provide a seamless error recovery process, ensuring that data analysis is not unduly interrupted by recoverable errors. The use of `withCallingHandlers` in the examples above demonstrates how to implement these restarts in practice, providing a template for handling common error scenarios encountered when working with SeaSondeRCS class functions.
+
+# References
