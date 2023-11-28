@@ -17,3 +17,7 @@ A SeaSondeRCS object with the specified header, data, and version.
 \description{
 This function constructs a new SeaSondeRCS object with the provided header, data, and version information.
 }
+\seealso{
+\code{\link{seasonder_setSeaSondeRCS_header}}
+\code{\link{seasonder_setSeaSondeRCS_data}}
+}

@@ -17,31 +17,8 @@ A SeaSondeRCS object.
 \description{
 This function creates a SeaSondeRCS object either from a file path or directly from a list containing header and data.
 }
-\section{Error Management}{
-
-This function utilizes the \code{rlang} package to manage errors and provide detailed and structured error messages:
-
-\strong{Condition Classes}:
-\itemize{
-\item \code{seasonder_CS_file_not_found_error}: Error raised when the specified file path does not exist.
-\item \code{seasonder_CS_missing_nRange_nDoppler_error}: Error raised when the \code{nRangeCells} or \code{nDopplerCells} are not present in the header data.
-\item \code{seasonder_CS_data_structure_validation_error}: An error class indicating a problem with the data structure of the CrossSpectra (CS) data (defined in the \code{seasonder_validateCSDataStructure} function).
-}
-
-\strong{Condition Cases}:
-\itemize{
-\item File specified does not exist.
-\item \code{nRangeCells} or \code{nDopplerCells} not present in header data.
-\item Issues related to data structure validation (detailed in the \code{seasonder_validateCSDataStructure} function).
-}
-
-\strong{Restart Options}:
-This function does not provide specific restart options. However, it relies on the error and condition handling mechanisms provided by the \code{rlang} package and the \code{seasonder_logAndAbort} function.
-}
-
 \seealso{
 \code{\link{new_SeaSondeRCS}}
-\code{\link{seasonder_validateCSDataStructure}}
-\code{\link{seasonder_readSeaSondeCSFile}}
+\code{\link{seasonder_readSeaSondeCSFile}} (for character inputs)
 \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}}
 }
