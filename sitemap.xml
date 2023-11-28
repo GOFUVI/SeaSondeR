@@ -10,6 +10,9 @@
     <loc>https://gofuvi.github.io/SeaSondeR/articles/SeaSondeAPM.html</loc>
   </url>
   <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/articles/SeaSondeCS.html</loc>
+  </url>
+  <url>
     <loc>https://gofuvi.github.io/SeaSondeR/articles/index.html</loc>
   </url>
   <url>
@@ -22,10 +25,19 @@
     <loc>https://gofuvi.github.io/SeaSondeR/index.html</loc>
   </url>
   <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/SeaSondeRAPM_creation_step_text.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/SeaSondeRCS_creation_step_text.html</loc>
+  </url>
+  <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/compound.html</loc>
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/new_SeaSondeRCS.html</loc>
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/parse_metadata_line.html</loc>
@@ -34,10 +46,22 @@
     <loc>https://gofuvi.github.io/SeaSondeR/reference/pipe.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/read_matrix_row.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/process_version_header.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_archive_expression_log.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/qc_check_range.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/qc_check_type.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/readV6BlockData.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/read_and_qc_field.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/read_matrix_row.html</loc>
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_areLogsEnabled.html</loc>
@@ -46,7 +70,19 @@
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_areMessagesEnabled.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_createSeaSondeAPM.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_asJSONSeaSondeRCSData.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_asJSONSeaSondeRCSHeader.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_check_specs.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_createSeaSondeRAPM.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_createSeaSondeRCS.html</loc>
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_disableLogs.html</loc>
@@ -61,72 +97,291 @@
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_enableMessages.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_initializeAttributesSeaSondeAPM.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getCSHeaderByPath.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getLog.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_AmplitudeFactors.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_AntennaBearing.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_BEAR.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_BearingResolution.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_CommentLine.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_CreateTimeStamp.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_Creator.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_FileID.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_FileName.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_PhaseCorrections.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_ProcessingSteps.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_SiteName.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_SiteOrigin.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_Smoothing.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_StationCode.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_Type.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_quality_matrix.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_ProcessingSteps.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_data.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_header.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getVersion.SeaSondeRAPM.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getVersion.SeaSondeRCS.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getVersion.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getnDopplerCells.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getnRangeCells.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_initializeAttributesSeaSondeRAPM.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_int_to_raw.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_lastLog.html</loc>
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_log.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_log_archiver.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_logAndAbort.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeAPMFile.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_logAndMessage.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_validateAttributesSeaSondeAPM.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_logArchiver.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_validateCalibrationMatrixSeaSondeAPM.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_raw_to_int.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_AmplitudeFactors.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readCSField.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_AntennaBearing.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFile.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_BEAR.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFileBlock.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_BearingResolution.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFileData.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_CommentLine.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFileHeader.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_CreateTimeStamp.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFileHeaderV1.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_Creator.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFileHeaderV2.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_FileID.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFileHeaderV3.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_FileName.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFileHeaderV4.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_PhaseCorrections.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFileHeaderV5.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_ProcessingSteps.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFileHeaderV6.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_SiteName.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeRAPMFile.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_SiteOrigin.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readYAMLSpecs.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_Smoothing.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_rerun_qc_with_fun.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_StationCode.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_AmplitudeFactors.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_Type.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_AntennaBearing.html</loc>
   </url>
   <url>
-    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeAPM_quality_matrix.html</loc>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_BEAR.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_BearingResolution.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_CommentLine.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_CreateTimeStamp.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_Creator.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_FileID.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_FileName.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_PhaseCorrections.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_ProcessingSteps.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_SiteName.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_SiteOrigin.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_Smoothing.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_StationCode.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_Type.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRAPM_quality_matrix.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRCS_ProcessingSteps.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRCS_data.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_setSeaSondeRCS_header.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_skip_cs_field.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_skip_cs_file.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_splitLog.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_v6_skip_transformation.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_validateAttributesSeaSondeRAPM.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_validateCSDataStructure.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_validateCSFileData.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_validateCSHeaderStructure.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_validateCalibrationMatrixSeaSondeRAPM.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_AmplitudeFactors.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_AntennaBearing.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_BEAR.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_BearingResolution.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_CommentLine.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_CreateTimeStamp.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_Creator.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_FileID.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_FileName.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_PhaseCorrections.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_ProcessingSteps.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_SiteName.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_SiteOrigin.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_Smoothing.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_StationCode.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_Type.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_quality_matrix.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRCS_ProcessingSteps.html</loc>
   </url>
 </urlset>

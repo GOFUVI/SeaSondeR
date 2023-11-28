@@ -8,8 +8,8 @@
 <meta name="description" content="SeaSondeR">
 <title>APM • SeaSondeR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="APM">
 <meta property="og:description" content="SeaSondeR">
@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/SeaSondeAPM.html">APM</a>
+    <a class="dropdown-item" href="../articles/SeaSondeCS.html">Cross-Spectra Files</a>
     <a class="dropdown-item" href="../articles/intro.html">SeaSondeR</a>
   </div>
 </li>
@@ -198,9 +199,9 @@ data.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="introduction-to-the-seasondeapm-class">Introduction to the <code>SeaSondeAPM</code> Class<a class="anchor" aria-label="anchor" href="#introduction-to-the-seasondeapm-class"></a>
+<h2 id="introduction-to-the-seasonderapm-class">Introduction to the <code>SeaSondeRAPM</code> Class<a class="anchor" aria-label="anchor" href="#introduction-to-the-seasonderapm-class"></a>
 </h2>
-<p>The <code>SeaSondeAPM</code> class in the <code>SeaSondeR</code>
+<p>The <code>SeaSondeRAPM</code> class in the <code>SeaSondeR</code>
 package is designed to handle antenna pattern calibration data,
 primarily for SeaSonde radar systems. This class aims to provide a
 comprehensive and standardized framework to store, manipulate, and
@@ -212,62 +213,62 @@ these functions:</p>
 <h3 id="core-functions">Core Functions<a class="anchor" aria-label="anchor" href="#core-functions"></a>
 </h3>
 <div class="section level4">
-<h4 id="seasonder_createseasondeapm">
-<code>seasonder_createSeaSondeAPM</code><a class="anchor" aria-label="anchor" href="#seasonder_createseasondeapm"></a>
+<h4 id="seasonder_createseasonderapm">
+<code>seasonder_createSeaSondeRAPM</code><a class="anchor" aria-label="anchor" href="#seasonder_createseasonderapm"></a>
 </h4>
 <p>This function is the constructor for creating a
-<code>SeaSondeAPM</code> object. It takes a complex matrix
+<code>SeaSondeRAPM</code> object. It takes a complex matrix
 (<code>calibration_matrix</code>) as its primary argument, which stores
 the calibration data for various bearings. The function performs
 validations, initializes additional attributes, and returns a
-<code>SeaSondeAPM</code> object.</p>
+<code>SeaSondeRAPM</code> object.</p>
 <p><strong>Usage:</strong></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">apm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/seasonder_createSeaSondeAPM.html">seasonder_createSeaSondeAPM</a></span><span class="op">(</span><span class="va">calibration_matrix</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">apm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/seasonder_createSeaSondeRAPM.html">seasonder_createSeaSondeRAPM</a></span><span class="op">(</span><span class="va">calibration_matrix</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="seasonder_initializeattributesseasondeapm">
-<code>seasonder_initializeAttributesSeaSondeAPM</code><a class="anchor" aria-label="anchor" href="#seasonder_initializeattributesseasondeapm"></a>
+<h4 id="seasonder_initializeattributesseasonderapm">
+<code>seasonder_initializeAttributesSeaSondeRAPM</code><a class="anchor" aria-label="anchor" href="#seasonder_initializeattributesseasonderapm"></a>
 </h4>
-<p>Called internally by <code>seasonder_createSeaSondeAPM</code>, this
+<p>Called internally by <code>seasonder_createSeaSondeRAPM</code>, this
 function initializes the various attributes for a
-<code>SeaSondeAPM</code> object. Attributes include metadata and
+<code>SeaSondeRAPM</code> object. Attributes include metadata and
 properties like <code>quality_matrix</code>, <code>BEAR</code>,
 <code>Creator</code>, <code>SiteName</code>, etc. It returns a list of
 initialized attributes.</p>
 </div>
 <div class="section level4">
-<h4 id="seasonder_validatecalibrationmatrixseasondeapm">
-<code>seasonder_validateCalibrationMatrixSeaSondeAPM</code><a class="anchor" aria-label="anchor" href="#seasonder_validatecalibrationmatrixseasondeapm"></a>
+<h4 id="seasonder_validatecalibrationmatrixseasonderapm">
+<code>seasonder_validateCalibrationMatrixSeaSondeRAPM</code><a class="anchor" aria-label="anchor" href="#seasonder_validatecalibrationmatrixseasonderapm"></a>
 </h4>
 <p>This function ensures that the given calibration matrix meets the
 required specifications. For instance, it checks if the matrix has
 exactly two rows and contains only complex numbers.</p>
 </div>
 <div class="section level4">
-<h4 id="seasonder_validateattributesseasondeapm">
-<code>seasonder_validateAttributesSeaSondeAPM</code><a class="anchor" aria-label="anchor" href="#seasonder_validateattributesseasondeapm"></a>
+<h4 id="seasonder_validateattributesseasonderapm">
+<code>seasonder_validateAttributesSeaSondeRAPM</code><a class="anchor" aria-label="anchor" href="#seasonder_validateattributesseasonderapm"></a>
 </h4>
 <p>This function validates the various attributes of a
-<code>SeaSondeAPM</code> object. It performs rigorous checks to make
+<code>SeaSondeRAPM</code> object. It performs rigorous checks to make
 sure each attribute meets predefined conditions. It’s called internally
 to validate attributes during object creation or modification.</p>
 </div>
 <div class="section level4">
-<h4 id="validate_seasondeapm_">
-<code>validate_SeaSondeAPM_*</code><a class="anchor" aria-label="anchor" href="#validate_seasondeapm_"></a>
+<h4 id="validate_seasonderapm_">
+<code>validate_SeaSondeRAPM_*</code><a class="anchor" aria-label="anchor" href="#validate_seasonderapm_"></a>
 </h4>
 <p>A suite of functions that validate individual attributes of a
-<code>SeaSondeAPM</code> object, like
-<code>validate_SeaSondeAPM_quality_matrix</code>,
-<code>validate_SeaSondeAPM_BEAR</code>,
-<code>validate_SeaSondeAPM_SiteOrigin</code>, etc.</p>
+<code>SeaSondeRAPM</code> object, like
+<code>validate_SeaSondeRAPM_quality_matrix</code>,
+<code>validate_SeaSondeRAPM_BEAR</code>,
+<code>validate_SeaSondeRAPM_SiteOrigin</code>, etc.</p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="getters-and-setters">Getters and Setters<a class="anchor" aria-label="anchor" href="#getters-and-setters"></a>
 </h3>
-<p>In the SeaSondeAPM system, each attribute is accompanied by a
+<p>In the SeaSondeRAPM system, each attribute is accompanied by a
 corresponding getter and setter function. These functions follow a
 specific naming pattern to make it easy to identify which attribute they
 manipulate.</p>
@@ -276,9 +277,9 @@ manipulate.</p>
 </h4>
 <p>The naming convention for these getter and setter functions is:</p>
 <ul>
-<li><p><code>seasonder_set_SeaSondeAPM_&lt;AttributeName&gt;(seasonde_apm_obj, new_value)</code>:
+<li><p><code>seasonder_setSeaSondeRAPM_&lt;AttributeName&gt;(seasonde_apm_obj, new_value)</code>:
 for setting the value of an attribute.</p></li>
-<li><p><code>seasonder_get_SeaSondeAPM_&lt;AttributeName&gt;(seasonde_apm_obj)</code>:
+<li><p><code>seasonder_getSeaSondeRAPM_&lt;AttributeName&gt;(seasonde_apm_obj)</code>:
 for retrieving the value of an attribute.</p></li>
 </ul>
 <p>Here, <code>&lt;AttributeName&gt;</code> is the name of the attribute
@@ -291,10 +292,10 @@ you are interested in manipulating.</p>
 <h5 id="setting-an-attribute">Setting an Attribute<a class="anchor" aria-label="anchor" href="#setting-an-attribute"></a>
 </h5>
 <p>To set the value of the ‘Type’ attribute in a
-<code>SeaSondeAPM</code> object, you would use:</p>
+<code>SeaSondeRAPM</code> object, you would use:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">seasonder_set_SeaSondeAPM_Type</span><span class="op">(</span><span class="va">seasonde_apm_obj</span>, <span class="va">new_value</span><span class="op">)</span></span></code></pre></div>
-<p>Here, <code>seasonde_apm_obj</code> is the <code>SeaSondeAPM</code>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/seasonder_setSeaSondeRAPM_Type.html">seasonder_setSeaSondeRAPM_Type</a></span><span class="op">(</span><span class="va">seasonde_apm_obj</span>, <span class="va">new_value</span><span class="op">)</span></span></code></pre></div>
+<p>Here, <code>seasonde_apm_obj</code> is the <code>SeaSondeRAPM</code>
 object whose ‘Type’ attribute you want to set, and
 <code>new_value</code> is the value you want to assign to it.</p>
 </div>
@@ -302,33 +303,33 @@ object whose ‘Type’ attribute you want to set, and
 <h5 id="getting-an-attribute">Getting an Attribute<a class="anchor" aria-label="anchor" href="#getting-an-attribute"></a>
 </h5>
 <p>To get the value of the ‘Type’ attribute from a
-<code>SeaSondeAPM</code> object, you would use:</p>
+<code>SeaSondeRAPM</code> object, you would use:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">value</span> <span class="op">=</span> <span class="fu">seasonder_get_SeaSondeAPM_Type</span><span class="op">(</span><span class="va">seasonde_apm_obj</span><span class="op">)</span></span></code></pre></div>
-<p>Here, <code>seasonde_apm_obj</code> is the <code>SeaSondeAPM</code>
+<code class="sourceCode R"><span><span class="va">value</span> <span class="op">=</span> <span class="fu"><a href="../reference/seasonder_getSeaSondeRAPM_Type.html">seasonder_getSeaSondeRAPM_Type</a></span><span class="op">(</span><span class="va">seasonde_apm_obj</span><span class="op">)</span></span></code></pre></div>
+<p>Here, <code>seasonde_apm_obj</code> is the <code>SeaSondeRAPM</code>
 object whose ‘Type’ attribute you want to retrieve.</p>
 <p>By following these naming conventions and examples, you can easily
-set or get any attribute for a <code>SeaSondeAPM</code> object.</p>
+set or get any attribute for a <code>SeaSondeRAPM</code> object.</p>
 </div>
 </div>
 <div class="section level4">
-<h4 id="seasonder_readseasondeapmfile">
-<code>seasonder_readSeaSondeAPMFile</code><a class="anchor" aria-label="anchor" href="#seasonder_readseasondeapmfile"></a>
+<h4 id="seasonder_readseasonderapmfile">
+<code>seasonder_readSeaSondeRAPMFile</code><a class="anchor" aria-label="anchor" href="#seasonder_readseasonderapmfile"></a>
 </h4>
 <p>This function allows users to read a SeaSonde APM file from a given
-path and parse it into a <code>SeaSondeAPM</code> object.</p>
+path and parse it into a <code>SeaSondeRAPM</code> object.</p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="example-use-cases">Example Use Cases<a class="anchor" aria-label="anchor" href="#example-use-cases"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create a SeaSondeAPM object</span></span>
+<code class="sourceCode R"><span><span class="co"># Create a SeaSondeRAPM object</span></span>
 <span><span class="va">cal_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">complex</a></span><span class="op">(</span>real <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, imaginary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">apm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/seasonder_createSeaSondeAPM.html">seasonder_createSeaSondeAPM</a></span><span class="op">(</span><span class="va">cal_matrix</span><span class="op">)</span></span>
+<span><span class="va">apm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/seasonder_createSeaSondeRAPM.html">seasonder_createSeaSondeRAPM</a></span><span class="op">(</span><span class="va">cal_matrix</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Read from an APM file</span></span>
-<span><span class="va">apm_from_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/seasonder_readSeaSondeAPMFile.html">seasonder_readSeaSondeAPMFile</a></span><span class="op">(</span><span class="st">"path/to/file.apm"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">apm_from_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="st">"path/to/file.apm"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
@@ -344,24 +345,24 @@ SeaSonde antenna pattern calibration data.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="detailed-attributes-for-seasondeapm-objects">Detailed Attributes for SeaSondeAPM Objects<a class="anchor" aria-label="anchor" href="#detailed-attributes-for-seasondeapm-objects"></a>
+<h2 id="detailed-attributes-for-seasonderapm-objects">Detailed Attributes for SeaSondeRAPM Objects<a class="anchor" aria-label="anchor" href="#detailed-attributes-for-seasonderapm-objects"></a>
 </h2>
-<p>The SeaSondeAPM object has various attributes to capture the
+<p>The SeaSondeRAPM object has various attributes to capture the
 specifics of the Antenna Pattern Measurement (APM) data. These
 attributes can be initialized using the
-<code><a href="../reference/seasonder_initializeAttributesSeaSondeAPM.html">seasonder_initializeAttributesSeaSondeAPM()</a></code> function.</p>
+<code><a href="../reference/seasonder_initializeAttributesSeaSondeRAPM.html">seasonder_initializeAttributesSeaSondeRAPM()</a></code> function.</p>
 <div class="section level3">
 <h3 id="initialization-function">Initialization Function<a class="anchor" aria-label="anchor" href="#initialization-function"></a>
 </h3>
-<p>The <code>seasonder_initializeAttributesSeaSondeAPM</code> function
-initializes various attributes for a SeaSondeAPM object, taking a
+<p>The <code>seasonder_initializeAttributesSeaSondeRAPM</code> function
+initializes various attributes for a SeaSondeRAPM object, taking a
 calibration matrix as a mandatory argument and any number of additional
 named attributes to override the default settings.</p>
 <div class="section level4">
 <h4 id="syntax">Syntax<a class="anchor" aria-label="anchor" href="#syntax"></a>
 </h4>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/seasonder_initializeAttributesSeaSondeAPM.html">seasonder_initializeAttributesSeaSondeAPM</a></span><span class="op">(</span><span class="va">calibration_matrix</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/seasonder_initializeAttributesSeaSondeRAPM.html">seasonder_initializeAttributesSeaSondeRAPM</a></span><span class="op">(</span><span class="va">calibration_matrix</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Arguments:</strong></p>
 <ul>
 <li>
@@ -376,7 +377,7 @@ default values.</li>
 <h4 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a>
 </h4>
 <p>The function returns a list containing initialized attributes for a
-SeaSondeAPM object.</p>
+SeaSondeRAPM object.</p>
 </div>
 </div>
 <div class="section level3">
@@ -399,7 +400,7 @@ which the APM data was read.</li>
 file.</li>
 <li>
 <code>Creator</code>: The name of the entity that created the
-SeaSondeAPM object. Defaults to an empty character vector.</li>
+SeaSondeRAPM object. Defaults to an empty character vector.</li>
 <li>
 <code>SiteName</code>: The name of the site (different from
 <code>SiteCode</code>). Defaults to an empty character vector.</li>
@@ -449,7 +450,7 @@ corrections. Defaults to <code>c(0,0)</code>.</li>
 <span><span class="va">cal_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">complex</a></span><span class="op">(</span>real <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, imaginary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Initialize attributes</span></span>
-<span><span class="va">attr_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/seasonder_initializeAttributesSeaSondeAPM.html">seasonder_initializeAttributesSeaSondeAPM</a></span><span class="op">(</span>calibration_matrix <span class="op">=</span> <span class="va">cal_matrix</span><span class="op">)</span></span>
+<span><span class="va">attr_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/seasonder_initializeAttributesSeaSondeRAPM.html">seasonder_initializeAttributesSeaSondeRAPM</a></span><span class="op">(</span>calibration_matrix <span class="op">=</span> <span class="va">cal_matrix</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">attr_list</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -457,15 +458,17 @@ corrections. Defaults to <code>c(0,0)</code>.</li>
 </h4>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Initialize attributes with a custom 'Type'</span></span>
-<span><span class="va">attr_list_custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/seasonder_initializeAttributesSeaSondeAPM.html">seasonder_initializeAttributesSeaSondeAPM</a></span><span class="op">(</span>calibration_matrix <span class="op">=</span> <span class="va">cal_matrix</span>, Type <span class="op">=</span> <span class="st">"Custom Pattern"</span><span class="op">)</span></span>
+<span><span class="va">attr_list_custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/seasonder_initializeAttributesSeaSondeRAPM.html">seasonder_initializeAttributesSeaSondeRAPM</a></span><span class="op">(</span>calibration_matrix <span class="op">=</span> <span class="va">cal_matrix</span>, Type <span class="op">=</span> <span class="st">"Custom Pattern"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">attr_list_custom</span><span class="op">)</span></span></code></pre></div>
 <p>By understanding these attributes and their corresponding getter and
-setter methods, you can more effectively interact with SeaSondeAPM
+setter methods, you can more effectively interact with SeaSondeRAPM
 objects.</p>
 </div>
-<div class="section level4">
-<h4 class="unnumbered" id="referencias">Referencias<a class="anchor" aria-label="anchor" href="#referencias"></a>
-</h4>
+</div>
+</div>
+<div class="section level2">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-SeaSonde-Operating_Theory" class="csl-entry">
 Codar Ocean Sensors. 2003. <em>User’s Guide for:SeaSonde® Radial Site:
@@ -497,8 +500,6 @@ Stoica, P., and A. Nehorai. 1988. <span>“<span class="nocase">MUSIC,
 maximum likelihood and Cramer-Rao bound</span>.”</span> <em>ICASSP-88.,
 International Conference on Acoustics, Speech, and Signal
 Processing</em>, 2296–2299 vol.4. <a href="https://doi.org/10.1109/icassp.1988.197097" class="external-link">https://doi.org/10.1109/icassp.1988.197097</a>.
-</div>
-</div>
 </div>
 </div>
 </div>
