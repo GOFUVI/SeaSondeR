@@ -2296,7 +2296,7 @@ describe("SeaSondeRCS",{
 describe("seasonder_createSeaSondeRCS.character",{
   it("creates a SeaSondeRCS object from a character input (file path)", {
     mocked_validate_function <- mockthat::mock(NULL)
-    mocked_read_function <- mockthat::mock(list(header = list(nRangeCells = 10, nDopplerCells = 20), data = list()))
+    mocked_read_function <- mockthat::mock(list(header = list(nRangeCells = 10, nDopplerCells = 20), data = seasonder_initCSDataStructure(10,20)))
     tmp_file <- tempfile()
     writeLines(" ", tmp_file)
     mockthat::with_mock(seasonder_readSeaSondeCSFile = mocked_read_function, seasonder_validateCSDataStructure = mocked_validate_function, {
@@ -2312,7 +2312,7 @@ describe("seasonder_createSeaSondeRCS.character",{
 
   it("should use the package CS specs definitions file as default for the specs path",{
     mocked_validate_function <- mockthat::mock(NULL)
-    mocked_read_function <- mockthat::mock(list(header = list(nRangeCells = 10, nDopplerCells = 20), data = list()))
+    mocked_read_function <- mockthat::mock(list(header = list(nRangeCells = 10, nDopplerCells = 20), data = seasonder_initCSDataStructure(10,20)))
     tmp_file <- tempfile()
     writeLines(" ", tmp_file)
     mockthat::with_mock(seasonder_readSeaSondeCSFile = mocked_read_function, seasonder_validateCSDataStructure = mocked_validate_function, {
@@ -2334,7 +2334,7 @@ describe("seasonder_createSeaSondeRCS.character",{
     it("creates a SeaSondeRCS object from a list input", {
       mocked_validate_function <- mockthat::mock(NULL)
       mockthat::with_mock(seasonder_validateCSDataStructure = mocked_validate_function, {
-        result <- seasonder_createSeaSondeRCS(list(header = list(nRangeCells = 15, nDopplerCells = 30), data = list()))
+        result <- seasonder_createSeaSondeRCS(list(header = list(nRangeCells = 15, nDopplerCells = 30), data = seasonder_initCSDataStructure(10,20)))
         expect_equal(class(result), "SeaSondeRCS")
         expect_equal(result$header$nRangeCells, 15)
         expect_equal(result$header$nDopplerCells, 30)
@@ -2492,5 +2492,68 @@ describe("seasonder_createSeaSondeRCS.character",{
 
   })
 
+####   seasonder_asJSONSeaSondeRCSHeader ####
+describe("seasonder_asJSONSeaSondeRCSHeader",{
+
+  it("returns the header data as a JSON list",{
+
+
+    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+    test <- seasonder_asJSONSeaSondeRCSHeader(seasonder_cs_obj)
+
+    expect_snapshot_value(test)
+  })
+
+describe("when we provide a path",{
+
+  temp_file <- tempfile(fileext = ".json")
+
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+  target <- seasonder_asJSONSeaSondeRCSHeader(seasonder_cs_obj, path = temp_file)
+
+  test <- readLines(temp_file)
+
+  expect_snapshot_value(test)
+
+
+
+  })
 
 })
+
+  ####   seasonder_asJSONSeaSondeRCSData ####
+  describe("seasonder_asJSONSeaSondeRCSData",{
+
+    it("returns the Data data as a JSON list",{
+
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+      test <- seasonder_asJSONSeaSondeRCSData(seasonder_cs_obj)
+
+      expect_snapshot_value(test)
+    })
+
+    describe("when we provide a path",{
+
+      temp_file <- tempfile(fileext = ".json")
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+      target <- seasonder_asJSONSeaSondeRCSData(seasonder_cs_obj, path = temp_file)
+# rstudioapi::documentOpen(temp_file)
+      test <- readLines(temp_file)
+
+      expect_snapshot_value(test)
+
+
+
+    })
+
+  })
+
+})
+
+

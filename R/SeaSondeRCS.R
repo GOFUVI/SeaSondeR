@@ -9,6 +9,10 @@
 #' @param header A list containing header information for the SeaSondeRCS object.
 #' @param data A list containing the data fields for the SeaSondeRCS object.
 #'
+#' @seealso
+#' \code{\link{seasonder_setSeaSondeRCS_header}}
+#' \code{\link{seasonder_setSeaSondeRCS_data}}
+#'
 #' @return A SeaSondeRCS object with the specified header, data, and version.
 #'
 #'
@@ -16,11 +20,17 @@ new_SeaSondeRCS <- function(header, data){
 
 
 
-  structure(list(header = header,
-                 data = data),
+  out <- structure(list(header = list(),
+                 data = list()),
             version = 1, # An integer indicating the version of the SeaSondeRCS object. Current is 1.
             ProcessingSteps = character(0),
             class = "SeaSondeRCS")
+
+  out %<>% seasonder_setSeaSondeRCS_header(header)
+  out %<>% seasonder_setSeaSondeRCS_data(data)
+
+
+  return(out)
 }
 
 #' Create a SeaSondeRCS object
@@ -33,29 +43,9 @@ new_SeaSondeRCS <- function(header, data){
 #' @return A SeaSondeRCS object.
 #' @seealso
 #' \code{\link{new_SeaSondeRCS}}
-#' \code{\link{seasonder_validateCSDataStructure}}
-#' \code{\link{seasonder_readSeaSondeCSFile}}
+#' \code{\link{seasonder_readSeaSondeCSFile}} (for character inputs)
 #' \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}}
 #'
-#' @section Error Management:
-#' This function utilizes the `rlang` package to manage errors and provide detailed and structured error messages:
-#'
-#' \strong{Condition Classes}:
-#' \itemize{
-#'   \item \code{seasonder_CS_file_not_found_error}: Error raised when the specified file path does not exist.
-#'   \item \code{seasonder_CS_missing_nRange_nDoppler_error}: Error raised when the `nRangeCells` or `nDopplerCells` are not present in the header data.
-#'   \item \code{seasonder_CS_data_structure_validation_error}: An error class indicating a problem with the data structure of the CrossSpectra (CS) data (defined in the `seasonder_validateCSDataStructure` function).
-#' }
-#'
-#' \strong{Condition Cases}:
-#' \itemize{
-#'   \item File specified does not exist.
-#'   \item `nRangeCells` or `nDopplerCells` not present in header data.
-#'   \item Issues related to data structure validation (detailed in the `seasonder_validateCSDataStructure` function).
-#' }
-#'
-#' \strong{Restart Options}:
-#' This function does not provide specific restart options. However, it relies on the error and condition handling mechanisms provided by the `rlang` package and the `seasonder_logAndAbort` function.
 #'
 #' @export
 seasonder_createSeaSondeRCS <- function(x, specs_path = NULL) {
@@ -64,20 +54,13 @@ seasonder_createSeaSondeRCS <- function(x, specs_path = NULL) {
 
 #' @export
 seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL) {
-  # Extracting nRanges and nDoppler from header
-  nRanges <- x$header$nRangeCells
-  nDoppler <- x$header$nDopplerCells
-
-  # Checking if nRanges and nDoppler are present in the header
-  if (is.null(nRanges) || is.null(nDoppler)) {
-    seasonder_logAndAbort(glue::glue("nRangeCells or nDopplerCells not present in header data."), calling_function = "seasonder_createSeaSondeRCS.list", class = "seasonder_CS_missing_nRange_nDoppler_error", seasonder_nRange = nRanges, seasonder_nDoppler = nDoppler)
-  }
-
-  # Validating the structure of the data
-  seasonder_validateCSDataStructure(x$data, nRanges, nDoppler)
 
   # Creating the SeaSondeRCS object
-  new_SeaSondeRCS(x$header, x$data)
+  out <- new_SeaSondeRCS(x$header, x$data)
+
+  out %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_creation_step_text("list"))
+
+  return(out)
 }
 
 #' @export
@@ -90,24 +73,27 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path=system.file("spe
   # Reading the SeaSonde CS file
   result <- seasonder_readSeaSondeCSFile(x, specs_path)
 
-  # Extracting nRanges and nDoppler from header
-  nRanges <- result$header$nRangeCells
-  nDoppler <- result$header$nDopplerCells
-
-  # Checking if nRanges and nDoppler are present in the header
-  if (is.null(nRanges) || is.null(nDoppler)) {
-    seasonder_logAndAbort(glue::glue("nRangeCells or nDopplerCells not present in header data."), calling_function = "seasonder_createSeaSondeRCS.character", class = "seasonder_CS_missing_nRange_nDoppler_error", seasonder_nRange = nRanges, seasonder_nDoppler = nDoppler)
-  }
-
-  # Validating the structure of the data
-  seasonder_validateCSDataStructure(result$data, nRanges, nDoppler)
-
   # Creating the SeaSondeRCS object
   out <- new_SeaSondeRCS(result$header, result$data)
 
-out %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_creation_step_text(x))
+  out %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_creation_step_text(x))
 
   return(out)
+}
+
+
+seasonder_initCSDataStructure <- function(nRanges, nDoppler){
+
+  list(
+    SSA1 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
+    SSA2 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
+    SSA3 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
+    CS12 = matrix(rep( complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
+    CS13 = matrix(rep( complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
+    CS23 = matrix(rep( complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
+    QC = matrix(rep( NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE)
+  )
+
 }
 
 ##### Validation #####
@@ -124,6 +110,62 @@ validate_SeaSondeRCS_ProcessingSteps <- function(steps) {
 
   }
   return(TRUE)
+}
+
+#' Validate the Header of CrossSpectra Data
+#'
+#' This function validates the structure of a header list that is expected to
+#' represent the metadata for a cross spectra file. It checks if the header is
+#' indeed a list and whether mandatory elements, such as the number of range cells
+#' and the number of Doppler cells, are present.
+#'
+#' @param header A list representing the header metadata of a cross spectra file.
+#'
+#' @section Details:
+#' The function primarily checks for two conditions:
+#' - Whether the provided header argument is a list.
+#' - Whether the nRangeCells and nDopplerCells are present in the header.
+#'
+#' @section Condition Management:
+#' This function utilizes the `rlang` package to manage conditions and provide
+#' detailed and structured condition messages:
+#'
+#' \strong{Condition Classes}:
+#' \itemize{
+#'   \item \code{seasonder_CS_header_is_not_a_list}: Triggered when the header parameter is not a list.
+#'   \item \code{seasonder_CS_missing_nRange_nDoppler_error}: Triggered when either nRangeCells or nDopplerCells is missing from the header.
+#' }
+#'
+#' \strong{Condition Cases}:
+#' \itemize{
+#'   \item When the header is not a list, the function throws an error with the class `seasonder_CS_header_is_not_a_list`.
+#'   \item If either nRangeCells or nDopplerCells is missing, an error with the class `seasonder_CS_missing_nRange_nDoppler_error` is thrown.
+#' }
+#'
+#' @return Invisible NULL if the header structure is valid. Otherwise, an error is thrown.
+#'
+#' @examples
+#' # Example of a valid header list
+#' valid_header <- list(nRangeCells = 1024, nDopplerCells = 256)
+#' seasonder_validateCSHeaderStructure(valid_header)
+#'
+#' # Example of an invalid header (not a list)
+#' invalid_header <- c(nRangeCells = 1024, nDopplerCells = 256)
+#' seasonder_validateCSHeaderStructure(invalid_header)
+#'
+#' @export
+seasonder_validateCSHeaderStructure <- function(header){
+  # TODO: test, document, vignette
+  if (!rlang::is_list(header)) {
+    seasonder_logAndAbort(glue::glue("The 'header' parameter must be a list"), calling_function = "seasonder_setSeaSondeRCS_Header", class = "seasonder_CS_header_is_not_a_list", seasonder_header = header)
+  }
+
+  # Checking if nRanges and nDoppler are present in the header
+  if (is.null(header$nRangeCells) || is.null(header$nDopplerCells)) {
+    seasonder_logAndAbort(glue::glue("The 'nRangeCells' or 'nDopplerCells' are not present in the header data."), calling_function = "seasonder_setSeaSondeRCS_Header", class = "seasonder_CS_missing_nRange_nDoppler_error", seasonder_nRange = header$nRangeCells, seasonder_nDoppler = header$nDopplerCells)
+  }
+
+  invisible(NULL)
 }
 
 
@@ -216,43 +258,193 @@ seasonder_validateCSDataStructure <- function(data, nRanges, nDoppler) {
 
 ##### Setters #####
 
+#' Setter for header
+#'
+#' @param seasonder_cs_obj SeaSondeRCS object
+#' @param header new value
+#'
+#' @seealso
+#' \code{\link{seasonder_validateCSHeaderStructure}}
+#'
+#' @export
+seasonder_setSeaSondeRCS_header <- function(seasonder_cs_obj, header) {
+  # TODO: test, document, vignette
+  seasonder_validateCSHeaderStructure(header)
 
+  out <- seasonder_cs_obj
+
+  out[["header"]] <- header
+
+  return(out)
+}
+
+#' Setter for data
+#'
+#' @param seasonder_cs_obj SeaSondeRCS object
+#' @param data new value
+#'
+#' @seealso
+#' \code{\link{seasonder_validateCSDataStructure}}
+#'
+#' @export
+seasonder_setSeaSondeRCS_data <- function(seasonder_cs_obj, data) {
+  # TODO: test, document, vignette
+  nRangeCells <- seasonder_getnRangeCells(seasonder_cs_obj)
+  nDopplerCells <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  seasonder_validateCSDataStructure(data,nRanges = nRangeCells, nDoppler = nDopplerCells)
+
+  out <- seasonder_cs_obj
+
+  out[["data"]] <- data
+
+  return(out)
+}
 
 
 #' Setter for ProcessingSteps
 #'
-#' @param seasonde_apm_obj SeaSonderCS object
-#' @param new_value new value
+#' @param seasonder_cs_obj SeaSondeRCS object
+#' @param processing_steps new value
 #' @param append append the new step or replace previous steps? Default: TRUE
 #'
 #' @export
-seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonde_apm_obj, new_value,append=TRUE) {
+seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_obj, processing_steps,append=TRUE) {
 
 
 
   if (append) {
-    steps <-  seasonder_getSeaSondeRCS_ProcessingSteps(seasonde_apm_obj)
-    new_value <- c(steps,new_value)
+    steps <-  seasonder_getSeaSondeRCS_ProcessingSteps(seasonder_cs_obj)
+    processing_steps <- c(steps,processing_steps)
   }
-  validate_SeaSondeRCS_ProcessingSteps(new_value)
-  modified_obj <- seasonde_apm_obj
+  validate_SeaSondeRCS_ProcessingSteps(processing_steps)
+  out <- seasonder_cs_obj
 
-  attributes(modified_obj)$ProcessingSteps <- new_value
+  attr(out,"ProcessingSteps") <- processing_steps
 
 
-  return(modified_obj)
+  return(out)
 }
 
 ##### Getters #####
 
+#' Getter for header
+#'
+#' @param seasonder_cs_obj SeaSondeRCS object
+#'
+#' @importFrom rlang %||%
+#'
+#' @export
+seasonder_getSeaSondeRCS_header <- function(seasonder_cs_obj) {
+  # TODO: test, document, vignette
+  out <- seasonder_cs_obj[["header"]] %||% list()
+
+  return(out)
+}
+
+
+
+#' Convert SeaSondeRCS Object to JSON
+#'
+#' This function extracts the header data from a `seasonder_cs_obj`, representing a SeaSondeRCS object, and converts it into a JSON format. Optionally, it can write this JSON data to a specified file path.
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object from which the header data will be extracted.
+#' @param path Optional path to a file where the JSON output should be saved. If provided, the function will write the JSON data to this file. If NULL, the function will only return the JSON data as a string without writing it to a file.
+#'
+#' @return A character string in JSON format representing the header data of the provided SeaSondeRCS object. If a path is provided, the function also writes this data to the specified file.
+#'
+#' @export
+#'
+#' @seealso
+#' \code{\link{seasonder_createSeaSondeRCS}}, \code{\link{seasonder_getSeaSondeRCS_header}}
+#'
+#' @note
+#' If a path is provided and there is an issue writing to the file, the function logs an error message using `seasonder_logAndMessage` and returns the JSON data as a string.
+seasonder_asJSONSeaSondeRCSHeader <- function(seasonder_cs_obj, path=NULL) {
+
+header <- seasonder_getSeaSondeRCS_header(seasonder_cs_obj)
+
+out <- jsonlite::toJSON(header, pretty = TRUE)
+
+if(!is.null(path)){
+  rlang::try_fetch(jsonlite::write_json(header, path, pretty = TRUE, auto_unbox = TRUE),
+                   error = function(e) {
+                     seasonder_logAndMessage(glue::glue("Error while trying to write JSON to path {path}"), "error", calling_function = "seasonder_asJSONSeaSondeRCSHeader", class = "seasonder_write_JSON_error", seasonder_path = path, seasonder_JSON = out, seasonder_cs_obj = seasonder_cs_obj)
+                   })
+}
+
+return(out)
+}
+
+#' Convert SeaSondeRCS Object to JSON
+#'
+#' This function extracts the data from a `seasonder_cs_obj`, representing a SeaSondeRCS object, and converts it into a JSON format. Optionally, it can write this JSON data to a specified file path.
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object from which the data will be extracted.
+#' @param path Optional path to a file where the JSON output should be saved. If provided, the function will write the JSON data to this file. If NULL, the function will only return the JSON data as a string without writing it to a file.
+#'
+#' @return A character string in JSON format representing the data of the provided SeaSondeRCS object. If a path is provided, the function also writes this data to the specified file.
+#'
+#' @export
+#'
+#' @seealso
+#' \code{\link{seasonder_createSeaSondeRCS}}, \code{\link{seasonder_getSeaSondeRCS_data}}
+#'
+#' @note
+#' If a path is provided and there is an issue writing to the file, the function logs an error message using `seasonder_logAndMessage` and returns the JSON data as a string.
+seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_obj, path=NULL) {
+
+  data <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj)
+
+  out <- jsonlite::toJSON(data, pretty = TRUE)
+
+  if(!is.null(path)){
+    rlang::try_fetch(jsonlite::write_json(data, path, pretty = TRUE, auto_unbox = TRUE),
+                     error = function(e) {
+                       seasonder_logAndMessage(glue::glue("Error while trying to write JSON to path {path}"), "error", calling_function = "seasonder_asJSONSeaSondeRCSHeader", class = "seasonder_write_JSON_error", seasonder_path = path, seasonder_JSON = out, seasonder_cs_obj = seasonder_cs_obj)
+                     })
+  }
+
+  return(out)
+}
+
+
+#' Getter for data
+#'
+#' @param seasonder_cs_obj SeaSondeRCS object
+#'
+#' @seealso
+#' \code{\link{seasonder_getnRangeCells}}
+#' \code{\link{seasonder_getnDopplerCells}}
+#' \code{\link{seasonder_initCSDataStructure}}
+#'
+#' @importFrom rlang %||%
+#'
+#' @export
+seasonder_getSeaSondeRCS_data <- function(seasonder_cs_obj) {
+  # TODO: test, document, vignette
+  out <- seasonder_cs_obj[["data"]]
+
+  if (is.null(out)) {
+
+    nRangeCells <- seasonder_getnRangeCells(seasonder_cs_obj)
+    nDopplerCells <- seasonder_getnDopplerCells(seasonder_cs_obj)
+    if(!is.null(nRangeCells) && nRangeCells > 0 && !is.null(nDopplerCells) && nDopplerCells > 0){
+      out <- seasonder_initCSDataStructure(nRanges = nRangeCells, nDoppler = nDopplerCells)
+    }
+
+  }
+
+  return(out)
+}
 
 #' Getter for ProcessingSteps
 #'
-#' @param seasonde_apm_obj SeaSonderCS object
+#' @param seasonder_cs_obj SeaSonderCS object
 #'
 #' @export
-seasonder_getSeaSondeRCS_ProcessingSteps <- function(seasonde_apm_obj) {
-  return(attributes(seasonde_apm_obj)$ProcessingSteps)
+seasonder_getSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_obj) {
+  return(attributes(seasonder_cs_obj)$ProcessingSteps)
 }
 
 #' Get the version value from a SeaSondeRCS object
@@ -265,7 +457,7 @@ seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj){
   attr(seasonder_obj,"version",exact = TRUE)
 }
 
-###### Header ######
+###### Header Fields ######
 #' Retrieve a value from the SeaSondeRCS header by a specific path
 #'
 #' This function retrieves a specific value from the SeaSondeRCS object's header based on the provided path.
@@ -291,8 +483,11 @@ seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj){
 #'
 #' @export
 seasonder_getCSHeaderByPath <- function(seasonder_obj, path) {
+
+  header <- seasonder_getSeaSondeRCS_header(seasonder_obj)
+
   # Use purrr::pluck to extract the value from the header
-  result <- rlang::inject(purrr::pluck(seasonder_obj$header, !!!path))
+  result <- rlang::inject(purrr::pluck(header, !!!path))
 
   # If the result is NULL, log a warning
   if (is.null(result)) {
@@ -407,10 +602,12 @@ seasonder_validateCSFileData <- function(filepath, header) {
 
   if (header$nRangeCells <= 0 || header$nRangeCells > 8192 || header$nDopplerCells <= 0 || header$nDopplerCells > 32768) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid nRangeCells or nDopplerCells in file {filepath}. nRangeCells: {header$nRangeCells}, nDopplerCells: {header$nDopplerCells}."),!!!conditions_params))
 
+# CODAR documentation is not correct, they are double counting the number of spectra channels when they multiply by nSpectraChannels and by 36 or 40
+  if (header$nCsKind == 1 && file_size < (header_size + header$nRangeCells *  header$nDopplerCells * 36)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file size for nCsKind 1 in file {filepath}. Expected >= {(header_size + header$nRangeCells  * header$nDopplerCells * 36)}, actual: {file_size}."),!!!conditions_params))
 
-  if (header$nCsKind == 1 && file_size < (header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 36)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file size for nCsKind 1 in file {filepath}. Expected >= {(header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 36)}, actual: {file_size}."),!!!conditions_params))
 
-  if (header$nCsKind == 2 && file_size < (header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 40)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file size for nCsKind 2 in file {filepath}. Expected >= {(header_size + header$nRangeCells * header$nSpectraChannels * header$nDopplerCells * 40)}, actual: {file_size}."),!!!conditions_params))
+
+  if (header$nCsKind == 2 && file_size < (header_size + header$nRangeCells *  header$nDopplerCells * 40)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file size for nCsKind 2 in file {filepath}. Expected >= {(header_size + header$nRangeCells* header$nDopplerCells * 40)}, actual: {file_size}."),!!!conditions_params))
 
   return(NULL)
 
@@ -1300,6 +1497,8 @@ readV6BlockData <- function(specs, connection, endian="big", prev_data=NULL, rem
 
   # If there are remaining loops to process, handle the repeated block recursively
   if (length(remaining_loops) > 0) {
+
+
     # Get the current loop variable and its repetition count from prev_data
     loop_var <- remaining_loops[1]
     num_repeats <- prev_data[[loop_var]]
@@ -1339,6 +1538,9 @@ readV6BlockData <- function(specs, connection, endian="big", prev_data=NULL, rem
 
   # If the specs contain a "repeat" key, handle the repeated block
   if ("repeat" %in% names(specs)) {
+
+
+
     repeat_specs <- specs[["repeat"]]
     remaining_loops <- repeat_specs$how_many
 
@@ -1450,7 +1652,7 @@ seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "bi
 
   # Step 2: Field Reading
   nCS6ByteSize <- seasonder_readSeaSondeCSFileBlock(specs["nCS6ByteSize"], connection, endian)$nCS6ByteSize
-  results <- list()
+  results <- list(nCS6ByteSize = nCS6ByteSize)
 
   # Continue reading as long as there are bytes left in the CS6 Byte Size
   while (nCS6ByteSize > 0) {
@@ -1663,15 +1865,7 @@ seasonder_readSeaSondeCSFileData <- function(connection, header, endian="big") {
   nCSKind <- header$nCsKind
 
   # Initialize matrices for the spectra
-  out <- list(
-    SSA1 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    SSA2 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    SSA3 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    CS12 = matrix(rep( complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    CS13 = matrix(rep( complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    CS23 = matrix(rep( complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    QC = matrix(rep( NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE)
-  )
+  out <- seasonder_initCSDataStructure(nRanges, nDoppler)
 
   # Helper function to read complex vectors
   read_complex_vector <- function(connection, n, endian) {

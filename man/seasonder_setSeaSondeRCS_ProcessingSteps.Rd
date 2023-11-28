@@ -5,15 +5,15 @@
 \title{Setter for ProcessingSteps}
 \usage{
 seasonder_setSeaSondeRCS_ProcessingSteps(
-  seasonde_apm_obj,
-  new_value,
+  seasonder_cs_obj,
+  processing_steps,
   append = TRUE
 )
 }
 \arguments{
-\item{seasonde_apm_obj}{SeaSonderCS object}
+\item{seasonder_cs_obj}{SeaSondeRCS object}
 
-\item{new_value}{new value}
+\item{processing_steps}{new value}
 
 \item{append}{append the new step or replace previous steps? Default: TRUE}
 }
