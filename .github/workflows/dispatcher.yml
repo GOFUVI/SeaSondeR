@@ -8,7 +8,7 @@ jobs:
     name: Dispatch    
     runs-on: ubuntu-latest
     steps:
-      - name: Dispatch to ReadCS-Docker
+      - name: Auto-build ReadCS-Docker
         run: |
             curl -L \
             -X POST \
