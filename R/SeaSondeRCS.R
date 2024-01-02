@@ -81,7 +81,27 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path=system.file("spe
   return(out)
 }
 
-
+#' Initialize Cross-Spectra Data Structure for SeaSondeR
+#'
+#' This function initializes a data structure for storing cross-spectra data
+#' related to SeaSonde radar measurements. It creates a list of matrices,
+#' each corresponding to different components of the SeaSonde data.
+#'
+#' @param nRanges Integer, number of range cells in the radar measurement.
+#'        Specifies the number of rows in each matrix.
+#' @param nDoppler Integer, number of Doppler bins in the radar measurement.
+#'        Specifies the number of columns in each matrix.
+#'
+#' @return A list containing matrices for different cross-spectra components:
+#'         \itemize{
+#'           \item \code{SSA1}: Matrix for SSA1 component, filled with \code{NA_real_}.
+#'           \item \code{SSA2}: Matrix for SSA2 component, filled with \code{NA_real_}.
+#'           \item \code{SSA3}: Matrix for SSA3 component, filled with \code{NA_real_}.
+#'           \item \code{CS12}: Matrix for CS12 component, complex numbers with \code{NA_real_} real and imaginary parts.
+#'           \item \code{CS13}: Matrix for CS13 component, complex numbers with \code{NA_real_} real and imaginary parts.
+#'           \item \code{CS23}: Matrix for CS23 component, complex numbers with \code{NA_real_} real and imaginary parts.
+#'           \item \code{QC}: Quality control matrix, filled with \code{NA_real_}.
+#'         }
 seasonder_initCSDataStructure <- function(nRanges, nDoppler){
 
   list(
@@ -143,15 +163,6 @@ validate_SeaSondeRCS_ProcessingSteps <- function(steps) {
 #' }
 #'
 #' @return Invisible NULL if the header structure is valid. Otherwise, an error is thrown.
-#'
-#' @examples
-#' # Example of a valid header list
-#' valid_header <- list(nRangeCells = 1024, nDopplerCells = 256)
-#' seasonder_validateCSHeaderStructure(valid_header)
-#'
-#' # Example of an invalid header (not a list)
-#' invalid_header <- c(nRangeCells = 1024, nDopplerCells = 256)
-#' seasonder_validateCSHeaderStructure(invalid_header)
 #'
 #' @export
 seasonder_validateCSHeaderStructure <- function(header){
@@ -952,9 +963,9 @@ seasonder_readCSField <- function(con, type, endian="big") {
     }
 
     # Helper function to safely read from the connection.
-    read_values <- function(bytes, format, n=1) {
+    read_values <- function(bytes, format, n=1, signed = T) {
       res <- rlang::try_fetch({
-        out <- readBin(con, what=format, n=n, size=bytes, endian=endian)
+        out <- readBin(con, what=format, n=n, size=bytes, endian=endian, signed = signed)
         # If nothing is read, it could be the end of the file.
         if(length(out) == 0) {
           rlang::abort("Read value of length 0. Possibly reached end of file.")
@@ -979,16 +990,16 @@ seasonder_readCSField <- function(con, type, endian="big") {
 
     # Determine and read the specific data type from the connection.
     switch(type,
-           "UInt8" = as.integer(read_values(1, "raw")),
+           "UInt8" = as.integer(read_values(1, "raw", signed = F)),
            "SInt8" = as.integer(read_values(1, "integer")),
-           "UInt16" = as.integer(read_values(2, "int")),
+           "UInt16" = as.integer(read_values(2, "int", signed = F)),
            "SInt16" = as.integer(read_values(2, "int")),
-           "UInt32" = as.integer(read_values(4, "int")),
+           "UInt32" = bitops::bitAnd(read_values(4, "integer"),0xFFFFFFFF),
            "SInt32" = as.integer(read_values(4, "int")),
            "Float" = as.numeric(read_values(4, "numeric")),
            "Double" = as.numeric(read_values(8, "double")),
            "UInt64" = {
-             v <- read_values(1, "raw", n=8)
+             v <- read_values(1, "raw", n=8, signed = F)
              seasonder_raw_to_int(v, signed=FALSE)
            },
            "SInt64" = {
@@ -1313,6 +1324,7 @@ seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "bi
   # The date-time field "nDateTime" is read as an integer. This step converts it
   # to a POSIXct object, using "1904-01-01" as the origin, and sets the time zone to UTC.
   # The reason for the origin "1904-01-01" is specific to SeaSonde data formats.
+
   results$nDateTime <- as.POSIXct(results$nDateTime, origin="1904-01-01", tz="UTC")
 
   # Return the final results, including the transformed date-time field.
@@ -2024,11 +2036,41 @@ qc_check_range <- function(field_value, min, max, expected_type = NULL) {
   return(field_value)
 }
 
+#' Quality Control Check for Unsigned Values
+#'
+#' This function performs a quality control check to ensure that a given field value
+#' is an unsigned number (i.e., a non-negative number). Optionally, it can also
+#' check if the field value matches a specified data type before performing the
+#' unsigned check.
+#'
+#' @param field_value The value to be checked. The function verifies if this value
+#'        is non-negative. It can be of any type but is typically expected to be a
+#'        numeric value.
+#' @param expected_type An optional parameter specifying the expected data type of
+#'        `field_value`. If provided, the function first checks if `field_value`
+#'        matches the expected type before verifying if it is unsigned. Default is NULL,
+#'        which means no type check is performed.
+#'
+#' @return Returns the `field_value` if it passes the checks: it is of the expected
+#'         type (if `expected_type` is not NULL) and is non-negative. If any of the
+#'         checks fail, the function logs an error message and aborts execution.
+qc_check_unsigned <- function(field_value,  expected_type = NULL) {
+
+  if (!is.null(expected_type)) {
+    field_value <- qc_check_type(field_value, expected_type)
+  }
+
+  if (field_value < 0) {
+    seasonder_logAndAbort(glue::glue("QC Error: Value is negative. Expected unsigned value"))
+  }
+  return(field_value)
+}
+
 seasonder_load_qc_functions <- function(){
 
   seasonder_the$qc_functions[["qc_check_type"]] <- qc_check_type
   seasonder_the$qc_functions[["qc_check_range"]] <- qc_check_range
-
+  seasonder_the$qc_functions[["qc_check_unsigned"]] <- qc_check_unsigned
 }
 seasonder_load_qc_functions()
 

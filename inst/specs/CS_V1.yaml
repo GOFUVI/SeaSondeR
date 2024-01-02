@@ -14,9 +14,9 @@ header:
 
     nDateTime:
       type: UInt32
-      qc_fun: qc_check_type
+      qc_fun: qc_check_unsigned
       qc_params:
-        expected_type: "integer"
+        expected_type: "numeric"
 
     nV1Extent:
       type: SInt32
@@ -166,9 +166,9 @@ header:
 
     nActiveChanBits:
       type: UInt32
-      qc_fun: qc_check_type
+      qc_fun: qc_check_unsigned
       qc_params:
-        expected_type: "integer"
+        expected_type: "numeric"
 
     nV5Extent:
       type: SInt32
@@ -180,9 +180,9 @@ header:
   V6:
     nCS6ByteSize:
       type: UInt32
-      qc_fun: qc_check_type
+      qc_fun: qc_check_unsigned
       qc_params:
-        expected_type: "integer"
+        expected_type: "numeric"
 
     block_spec:
       nBlockKey:
@@ -192,21 +192,21 @@ header:
           expected_type: "character"
       nBlockDataSize:
         type: UInt32
-        qc_fun: qc_check_type
+        qc_fun: qc_check_unsigned
         qc_params:
-          expected_type: "integer"
+          expected_type: "numeric"
 
 
     blocks:
       TIME:
         nTimeMark:
           type: UInt8
-          qc_fun: qc_check_type
+          qc_fun: qc_check_unsigned
           qc_params:
             expected_type: "integer"
         nYear:
           type: UInt16
-          qc_fun: qc_check_type
+          qc_fun: qc_check_unsigned
           qc_params:
             expected_type: "integer"
         nMonth:
@@ -302,7 +302,7 @@ header:
           qc_params:
             min: 0
             max: 5
-            expected_type: "integer"
+            expected_type: "numeric"
 
         nRxAntennaModel:
           type: UInt32
@@ -310,7 +310,7 @@ header:
           qc_params:
             min: 0
             max: 5
-            expected_type: "integer"
+            expected_type: "numeric"
 
         fReferenceGainDB:
           type: Double
@@ -338,26 +338,26 @@ header:
             expected_type: "integer"
         nVersion:
           type: UInt8
-          qc_fun: qc_check_type
+          qc_fun: qc_check_unsigned
           qc_params:
             expected_type: "integer"
         nPointsRemoved:
           type: UInt32
-          qc_fun: qc_check_type
+          qc_fun: qc_check_unsigned
           qc_params:
-            expected_type: "integer"
+            expected_type: "numeric"
 
         nTimesRemoved:
           type: UInt32
-          qc_fun: qc_check_type
+          qc_fun: qc_check_unsigned
           qc_params:
-            expected_type: "integer"
+            expected_type: "numeric"
 
         nSegmentsRemoved:
           type: UInt32
-          qc_fun: qc_check_type
+          qc_fun: qc_check_unsigned
           qc_params:
-            expected_type: "integer"
+            expected_type: "numeric"
 
         fPointPowerThreshold:
           type: Double
@@ -379,7 +379,7 @@ header:
 
         bRemoveDC:
           type: UInt8
-          qc_fun: qc_check_type
+          qc_fun: qc_check_unsigned
           qc_params:
             expected_type: "integer"
 
@@ -393,7 +393,7 @@ header:
             expected_type: "integer"
         nVersion:
           type: UInt8
-          qc_fun: qc_check_type
+          qc_fun: qc_check_unsigned
           qc_params:
             expected_type: "integer"
 
@@ -415,9 +415,9 @@ header:
 
         nDopplerSuppressed:
           type: UInt32
-          qc_fun: qc_check_type
+          qc_fun: qc_check_unsigned
           qc_params:
-            expected_type: "integer"
+            expected_type: "numeric"
 
         fPowerThreshold:
           type: Double
@@ -513,7 +513,7 @@ header:
 
         nVersion:
           type: UInt8
-          qc_fun: qc_check_type
+          qc_fun: qc_check_unsigned
           qc_params:
             expected_type: "integer"
 
@@ -540,7 +540,7 @@ header:
             expected_type: "integer"
         nRangeMult:
           type: UInt8
-          qc_fun: qc_check_type
+          qc_fun: qc_check_unsigned
           qc_params:
             expected_type: "integer"
 
@@ -553,7 +553,7 @@ header:
             expected_type: "integer"
         nDopplerMult:
           type: UInt8
-          qc_fun: qc_check_type
+          qc_fun: qc_check_unsigned
           qc_params:
             expected_type: "integer"
 
