@@ -55,6 +55,9 @@
     <loc>https://gofuvi.github.io/SeaSondeR/reference/qc_check_type.html</loc>
   </url>
   <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/qc_check_unsigned.html</loc>
+  </url>
+  <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/readV6BlockData.html</loc>
   </url>
   <url>
@@ -176,6 +179,9 @@
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getnRangeCells.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_initCSDataStructure.html</loc>
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_initializeAttributesSeaSondeRAPM.html</loc>

@@ -16,7 +16,7 @@ and the number of Doppler cells, are present."><!-- mathjax --><script src="http
     
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,19 +99,6 @@ detailed and structured condition messages:</p>
 <li><p>If either nRangeCells or nDopplerCells is missing, an error with the class <code>seasonder_CS_missing_nRange_nDoppler_error</code> is thrown.</p></li>
 </ul></div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example of a valid header list</span></span></span>
-<span class="r-in"><span><span class="va">valid_header</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>nRangeCells <span class="op">=</span> <span class="fl">1024</span>, nDopplerCells <span class="op">=</span> <span class="fl">256</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">seasonder_validateCSHeaderStructure</span><span class="op">(</span><span class="va">valid_header</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Example of an invalid header (not a list)</span></span></span>
-<span class="r-in"><span><span class="va">invalid_header</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>nRangeCells <span class="op">=</span> <span class="fl">1024</span>, nDopplerCells <span class="op">=</span> <span class="fl">256</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">seasonder_validateCSHeaderStructure</span><span class="op">(</span><span class="va">invalid_header</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in seasonder_logAndAbort(glue::glue("The 'header' parameter must be a list"),     calling_function = "seasonder_setSeaSondeRCS_Header", class = "seasonder_CS_header_is_not_a_list",     seasonder_header = header):</span> seasonder_setSeaSondeRCS_Header: The 'header' parameter must be a list</span>
-<span class="r-in"><span></span></span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
