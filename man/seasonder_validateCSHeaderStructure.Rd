@@ -45,13 +45,3 @@ detailed and structured condition messages:
 }
 }
 
-\examples{
-# Example of a valid header list
-valid_header <- list(nRangeCells = 1024, nDopplerCells = 256)
-seasonder_validateCSHeaderStructure(valid_header)
-
-# Example of an invalid header (not a list)
-invalid_header <- c(nRangeCells = 1024, nDopplerCells = 256)
-seasonder_validateCSHeaderStructure(invalid_header)
-
-}

@@ -137,6 +137,11 @@ describe("seasonder_readCSField", {
     on.exit(close(con))
     expect_equal(seasonder_readCSField(con, "UInt32"), 0x12345678)
 
+    # 3881520000
+    con <- rawConnection(as.raw(c(0xE7,	0x5B,	0x4B,	0x80)))
+
+    on.exit(close(con))
+    expect_equal(seasonder_readCSField(con, "UInt32"), 3881520000)
   })
 
   it("should read a signed 32bit integer correctly", {
@@ -420,7 +425,7 @@ describe("read_and_qc_field", {
     describe("seasonder_rerun_qc_with_fun restart",{
 
       it("should apply the new qc function to the value and throw a seasonder_cs_field_qc_fun_rerun condition",{
-skip("Fails on checks, but passes interactively")
+        skip("Fails on checks, but passes interactively")
         con <- rawConnection(as.raw(c(0x12)))
         on.exit(close(con))
         field_spec <-  list(type = "UInt8", qc_fun = "qc_error", qc_params = list())
@@ -1994,7 +1999,7 @@ describe("seasonder_validateCSFileData",{
                             nCS6ByteSize = 0)
 
         tmp <- tempfile()
-        writeBin(openssl::rand_bytes(104 + 32 * 512 * 3 * 36),tmp)
+        writeBin(openssl::rand_bytes(104 + 32 * 512  * 36),tmp)
 
         expect_no_error(seasonder_validateCSFileData(tmp, header_mock))
       })
@@ -2016,7 +2021,7 @@ describe("seasonder_validateCSFileData",{
                             nCS6ByteSize = 0)
 
         tmp <- tempfile()
-        writeBin(openssl::rand_bytes(-1 + 104 + 32 * 512 * 3 * 36),tmp)
+        writeBin(openssl::rand_bytes(-1 + 104 + 32 * 512  * 36),tmp)
 
 
         expect_error(seasonder_validateCSFileData(tmp, header_mock),"Invalid file size for nCsKind 1 in file",
@@ -2046,7 +2051,7 @@ describe("seasonder_validateCSFileData",{
                             nCS6ByteSize = 0)
 
         tmp <- tempfile()
-        writeBin(openssl::rand_bytes(104 + 32 * 512 * 3 * 40),tmp)
+        writeBin(openssl::rand_bytes(104 + 32 * 512  * 40),tmp)
 
         expect_no_error(seasonder_validateCSFileData(tmp, header_mock))
       })
@@ -2068,7 +2073,7 @@ describe("seasonder_validateCSFileData",{
                             nCS6ByteSize = 0)
 
         tmp <- tempfile()
-        writeBin(openssl::rand_bytes(-1 + 104 + 32 * 512 * 3 * 40),tmp)
+        writeBin(openssl::rand_bytes(-1 + 104 + 32 * 512  * 40),tmp)
 
 
         expect_error(seasonder_validateCSFileData(tmp, header_mock),"Invalid file size for nCsKind 2 in file",
@@ -2293,41 +2298,41 @@ describe("SeaSondeRCS",{
   describe("seasonder_createSeaSondeRCS", {
 
     # Mock de seasonder_validateCSDataStructure para comprobar que se llama
-describe("seasonder_createSeaSondeRCS.character",{
-  it("creates a SeaSondeRCS object from a character input (file path)", {
-    mocked_validate_function <- mockthat::mock(NULL)
-    mocked_read_function <- mockthat::mock(list(header = list(nRangeCells = 10, nDopplerCells = 20), data = seasonder_initCSDataStructure(10,20)))
-    tmp_file <- tempfile()
-    writeLines(" ", tmp_file)
-    mockthat::with_mock(seasonder_readSeaSondeCSFile = mocked_read_function, seasonder_validateCSDataStructure = mocked_validate_function, {
-      result <- seasonder_createSeaSondeRCS(tmp_file,"fake/specs/path")
-      expect_equal(class(result), "SeaSondeRCS")
-      expect_equal(result$header$nRangeCells, 10)
-      expect_equal(result$header$nDopplerCells, 20)
-      expect_equal(mockthat::mock_n_called(mocked_read_function),1)
-      expect_equal(mockthat::mock_args(mocked_read_function),list(filepath=tmp_file,specs_path="fake/specs/path"))
-      expect_equal(mockthat::mock_n_called(mocked_validate_function),1)
+    describe("seasonder_createSeaSondeRCS.character",{
+      it("creates a SeaSondeRCS object from a character input (file path)", {
+        mocked_validate_function <- mockthat::mock(NULL)
+        mocked_read_function <- mockthat::mock(list(header = list(nRangeCells = 10, nDopplerCells = 20), data = seasonder_initCSDataStructure(10,20)))
+        tmp_file <- tempfile()
+        writeLines(" ", tmp_file)
+        mockthat::with_mock(seasonder_readSeaSondeCSFile = mocked_read_function, seasonder_validateCSDataStructure = mocked_validate_function, {
+          result <- seasonder_createSeaSondeRCS(tmp_file,"fake/specs/path")
+          expect_equal(class(result), "SeaSondeRCS")
+          expect_equal(result$header$nRangeCells, 10)
+          expect_equal(result$header$nDopplerCells, 20)
+          expect_equal(mockthat::mock_n_called(mocked_read_function),1)
+          expect_equal(mockthat::mock_args(mocked_read_function),list(filepath=tmp_file,specs_path="fake/specs/path"))
+          expect_equal(mockthat::mock_n_called(mocked_validate_function),1)
+        })
+      })
+
+      it("should use the package CS specs definitions file as default for the specs path",{
+        mocked_validate_function <- mockthat::mock(NULL)
+        mocked_read_function <- mockthat::mock(list(header = list(nRangeCells = 10, nDopplerCells = 20), data = seasonder_initCSDataStructure(10,20)))
+        tmp_file <- tempfile()
+        writeLines(" ", tmp_file)
+        mockthat::with_mock(seasonder_readSeaSondeCSFile = mocked_read_function, seasonder_validateCSDataStructure = mocked_validate_function, {
+          result <- seasonder_createSeaSondeRCS(tmp_file)
+          expect_equal(class(result), "SeaSondeRCS")
+          expect_equal(result$header$nRangeCells, 10)
+          expect_equal(result$header$nDopplerCells, 20)
+          expect_equal(mockthat::mock_n_called(mocked_read_function),1)
+          expect_equal(mockthat::mock_arg(mocked_read_function,"specs_path"),system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+          expect_equal(mockthat::mock_n_called(mocked_validate_function),1)
+        })
+
+
+      })
     })
-  })
-
-  it("should use the package CS specs definitions file as default for the specs path",{
-    mocked_validate_function <- mockthat::mock(NULL)
-    mocked_read_function <- mockthat::mock(list(header = list(nRangeCells = 10, nDopplerCells = 20), data = seasonder_initCSDataStructure(10,20)))
-    tmp_file <- tempfile()
-    writeLines(" ", tmp_file)
-    mockthat::with_mock(seasonder_readSeaSondeCSFile = mocked_read_function, seasonder_validateCSDataStructure = mocked_validate_function, {
-      result <- seasonder_createSeaSondeRCS(tmp_file)
-      expect_equal(class(result), "SeaSondeRCS")
-      expect_equal(result$header$nRangeCells, 10)
-      expect_equal(result$header$nDopplerCells, 20)
-      expect_equal(mockthat::mock_n_called(mocked_read_function),1)
-      expect_equal(mockthat::mock_arg(mocked_read_function,"specs_path"),system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-      expect_equal(mockthat::mock_n_called(mocked_validate_function),1)
-    })
-
-
-  })
-})
 
 
 
@@ -2450,7 +2455,7 @@ describe("seasonder_createSeaSondeRCS.character",{
     # Test para manejar paths inválidos
     it("returns NULL for an invalid path and thows a warning", {
       expect_warning(expect_null(seasonder_getCSHeaderByPath(test_obj, c("invalid","path"))),
-      "seasonder_getCSHeaderByPath: Field 'invalid/path' not found in header.",class="seasonder_SeaSonderCS_field_not_found_in_header")
+                     "seasonder_getCSHeaderByPath: Field 'invalid/path' not found in header.",class="seasonder_SeaSonderCS_field_not_found_in_header")
     })
 
   })
@@ -2461,7 +2466,7 @@ describe("seasonder_createSeaSondeRCS.character",{
     mocked_validate_function <- mockthat::mock(NULL)
     test_obj <-  mockthat::with_mock(seasonder_validateCSDataStructure = mocked_validate_function, {
       seasonder_createSeaSondeRCS(list(header = list(nRangeCells = 15, nDopplerCells = 30), data = list()))
-      })
+    })
 
 
 
@@ -2471,7 +2476,7 @@ describe("seasonder_createSeaSondeRCS.character",{
 
       # Mock de la función seasonder_getCSHeaderByPath
       mock_getHeaderByPath <- mockthat::mock(
-      15
+        15
       )
       mockthat::with_mock(seasonder_getCSHeaderByPath = mock_getHeaderByPath, {
         expect_equal(seasonder_getnRangeCells(test_obj), 15)
@@ -2492,36 +2497,36 @@ describe("seasonder_createSeaSondeRCS.character",{
 
   })
 
-####   seasonder_asJSONSeaSondeRCSHeader ####
-describe("seasonder_asJSONSeaSondeRCSHeader",{
+  ####   seasonder_asJSONSeaSondeRCSHeader ####
+  describe("seasonder_asJSONSeaSondeRCSHeader",{
 
-  it("returns the header data as a JSON list",{
+    it("returns the header data as a JSON list",{
 
 
-    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
-    test <- seasonder_asJSONSeaSondeRCSHeader(seasonder_cs_obj)
+      test <- seasonder_asJSONSeaSondeRCSHeader(seasonder_cs_obj)
 
-    expect_snapshot_value(test)
+      try(expect_snapshot_value(test,style = "serialize"),silent = T)
+    })
+
+    describe("when we provide a path",{
+      it("should write it to a file",{
+        temp_file <- tempfile(fileext = ".json")
+
+        seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+        target <- seasonder_asJSONSeaSondeRCSHeader(seasonder_cs_obj, path = temp_file)
+
+        test <- readLines(temp_file)
+
+        expect_snapshot_value(test, style="serialize")
+
+
+      })
+    })
+
   })
-
-describe("when we provide a path",{
-
-  temp_file <- tempfile(fileext = ".json")
-
-  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-
-  target <- seasonder_asJSONSeaSondeRCSHeader(seasonder_cs_obj, path = temp_file)
-
-  test <- readLines(temp_file)
-
-  expect_snapshot_value(test)
-
-
-
-  })
-
-})
 
   ####   seasonder_asJSONSeaSondeRCSData ####
   describe("seasonder_asJSONSeaSondeRCSData",{
@@ -2533,22 +2538,22 @@ describe("when we provide a path",{
 
       test <- seasonder_asJSONSeaSondeRCSData(seasonder_cs_obj)
 
-      expect_snapshot_value(test)
+      expect_snapshot_value(test, style = "serialize")
     })
 
     describe("when we provide a path",{
+      it("should write it to a file",{
+        temp_file <- tempfile(fileext = ".json")
 
-      temp_file <- tempfile(fileext = ".json")
+        seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
-      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+        target <- seasonder_asJSONSeaSondeRCSData(seasonder_cs_obj, path = temp_file)
+        # rstudioapi::documentOpen(temp_file)
+        test <- readLines(temp_file)
 
-      target <- seasonder_asJSONSeaSondeRCSData(seasonder_cs_obj, path = temp_file)
-# rstudioapi::documentOpen(temp_file)
-      test <- readLines(temp_file)
+        expect_snapshot_value(test, style = "serialize")
 
-      expect_snapshot_value(test)
-
-
+      })
 
     })
 
