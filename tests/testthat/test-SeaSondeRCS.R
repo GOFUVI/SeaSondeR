@@ -114,7 +114,14 @@ describe("seasonder_readCSField", {
       expect_equal(seasonder_readCSField(con, "Float"), 42.500001, tolerance = 0.0001)
 
     })
+    it("case 3",{
 
+      # Float for -42.41 in IEEE single precision is 0xc229a3d7
+      con <- rawConnection(as.raw(c(0xc2, 0x29, 0xa3, 0xd7)))
+      on.exit(close(con))
+      expect_equal(seasonder_readCSField(con, "Float"), -42.41, tolerance = 0.0001)
+
+    })
 
   })
 
@@ -856,7 +863,7 @@ describe("seasonder_readSeaSondeCSFileHeaderV4 works as expected", {
       describe("Function seasonder_readSeaSondeCSFileHeaderV4", {
         it("returns CenterFreq correctly", {
           results <- seasonder_readSeaSondeCSFileHeaderV4(specs, NULL)
-          expect_equal(results$CenterFreq, 75) # This is based on mocked values.
+          expect_equal(results$CenterFreq, 100.4745) # This is based on mocked values.
         })
 
         it("returns expected mocked values for nCoverMinutes and nDopplerCells", {

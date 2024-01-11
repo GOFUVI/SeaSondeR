@@ -1434,7 +1434,7 @@ seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "bi
   # Step 3: Data Transformation
   # Calculate CenterFreq using the provided formula.
 
-  results$CenterFreq <- results$fStartFreqMHz + results$fBandwidthKHz/2 * -2^(results$bSweepUp == 0)
+  results$CenterFreq <- results$fStartFreqMHz + (results$fBandwidthKHz/1000)/2 * -2^(results$bSweepUp == 0)
 
   # Return the final results, including the CenterFreq.
   return(results)
