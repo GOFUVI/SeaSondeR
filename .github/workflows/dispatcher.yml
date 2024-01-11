@@ -13,3 +13,8 @@ jobs:
             curl -L \
             -X POST \
             ${{ secrets.READCS_DOCKER_AUTOBUILD_TRIGGER }}
+      - name: Auto-build ReadCSHeader-Docker
+        run: |
+            curl -L \
+            -X POST \
+            ${{ secrets.READCSHEADER_DOCKER_AUTOBUILD_TRIGGER }}
