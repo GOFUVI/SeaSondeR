@@ -2298,6 +2298,7 @@ describe("SeaSondeRCS",{
     expect_true(is.function(seasonder_getnDopplerCells))
     expect_true(is.function(seasonder_getnRangeCells))
     expect_true(is.function(seasonder_validateCSDataStructure))
+    expect_true(is.function(seasonder_getSeaSondeRCS_headerField))
 
   })
 
@@ -2566,6 +2567,52 @@ describe("SeaSondeRCS",{
 
   })
 
+
+
+  describe("seasonder_getSeaSondeRCS_headerField",{
+
+    it("should return the field value",{
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+      {
+        value <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,field = "CellsDistKm")
+
+        expect_true(!is.null(value))
+        }
+
+      {
+        value <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,field = "fReferenceGainDB")
+
+        expect_true(!is.null(value))
+        }
+    })
+
+  })
+
+describe("seasonder_rangeCellsDists2RangeNumber",{
+
+  it("should return the corresponding range numbers",{
+
+    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+    {
+      test <- seasonder_rangeCellsDists2RangeNumber(seasonder_cs_obj = seasonder_cs_obj,cells_dists = c(2,3.5))
+
+      ranges <- (seasonder_getCellsDistKm(seasonder_cs_obj) >= 2 & seasonder_getCellsDistKm(seasonder_cs_obj) <= 3.5) %>% which()
+
+      expect_true(any(c(min(ranges),min(ranges) - 1) == floor(test[1])))
+
+      expect_true(any(c(max(ranges),max(ranges) + 1) == ceiling(test[2])))
+
+      expect_snapshot_value(test,style = "deparse")
+    }
+
+
+  })
+
 })
+
+  })
 
 
