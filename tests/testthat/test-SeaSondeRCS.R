@@ -2613,6 +2613,38 @@ describe("seasonder_rangeCellsDists2RangeNumber",{
 
 })
 
+describe("seasonder_getSeaSondeRCS_powersSpectra",{
+
+  it("Should slice the SSA* matrices",{
+
+    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+    {
+      test <- seasonder_getSeaSondeRCS_powersSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(A1=1,A3=3), dist_ranges = list(r1=c(1,4),r2=c(10,15)), doppler_ranges = list(d1=c(100,500),d2=c(700,725)))
+
+      expect_snapshot_value(test,style = "deparse")
+
+    }
+
+
+    {
+      test <- seasonder_getSeaSondeRCS_powersSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(1,3), dist_ranges = list(c(1,4),c(10,15)), doppler_ranges = list(c(100,500),c(700,725)))
+
+      expect_snapshot_value(test,style = "deparse")
+
+    }
+
+    {
+      test <- seasonder_getSeaSondeRCS_powersSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(1,3), dist_ranges = list(c(1,4),c(10,15)), doppler_ranges = list(c(100,500),c(700,725)), collapse = TRUE)
+
+      expect_snapshot_value(test,style = "deparse")
+
+    }
+
+  })
+
+})
+
   })
 
 
