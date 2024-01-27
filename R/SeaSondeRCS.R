@@ -30,6 +30,7 @@ new_SeaSondeRCS <- function(header, data){
   out %<>% seasonder_setSeaSondeRCS_data(data)
 
 
+
   return(out)
 }
 
@@ -355,6 +356,7 @@ seasonder_getSeaSondeRCS_header <- function(seasonder_cs_obj) {
 
 
 
+
 #' Convert SeaSondeRCS Object to JSON
 #'
 #' This function extracts the header data from a `seasonder_cs_obj`, representing a SeaSondeRCS object, and converts it into a JSON format. Optionally, it can write this JSON data to a specified file path.
@@ -553,7 +555,15 @@ seasonder_getCSHeaderByPath <- function(seasonder_obj, path) {
   return(result)
 }
 
+seasonder_getSeaSondeRCS_headerField <- function(seasonder_cs_obj,field){
 
+  header <- seasonder_getSeaSondeRCS_header(seasonder_cs_obj)
+
+  value <- purrr:::list_flatten(header,name_spec = "{inner}") %>% purrr::pluck(field)
+
+  return(value)
+
+}
 
 #' Get the nRangeCells value from a SeaSondeRCS object
 #'
@@ -561,7 +571,7 @@ seasonder_getCSHeaderByPath <- function(seasonder_obj, path) {
 #' @return The nRangeCells value.
 #' @export
 seasonder_getnRangeCells <- function(seasonder_obj) {
-  return(seasonder_getCSHeaderByPath(seasonder_obj, "nRangeCells"))
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_obj, "nRangeCells"))
 }
 
 #' Get the nDopplerCells value from a SeaSondeRCS object
@@ -570,9 +580,28 @@ seasonder_getnRangeCells <- function(seasonder_obj) {
 #' @return The nDopplerCells value.
 #' @export
 seasonder_getnDopplerCells <- function(seasonder_obj) {
-  return(seasonder_getCSHeaderByPath(seasonder_obj, "nDopplerCells"))
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_obj, "nDopplerCells"))
 }
 
+seasonder_getCellsDistKm <- function(seasonder_cs_obj) {
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "CellsDistKm"))
+}
+
+
+seasonder_rangeCellsDists2RangeNumber <- function(seasonder_cs_obj,cells_dists){
+
+  # TODO: check that the cs file version is at least V4
+
+  fRangeCellDistKm <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRangeCellDistKm")
+
+  nFirstRangeCell <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nFirstRangeCell")
+
+  # NOTE: based on File_Cross_Spectra_V6 page 4
+
+  range_numbers <- cells_dists/fRangeCellDistKm - nFirstRangeCell + 1
+
+  return(range_numbers)
+}
 
 #### Processing_steps ####
 
@@ -1478,6 +1507,8 @@ seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "bi
   # Calculate CenterFreq using the provided formula.
 
   results$CenterFreq <- results$fStartFreqMHz + (results$fBandwidthKHz/1000)/2 * -2^(results$bSweepUp == 0)
+
+  results$CellsDistKm <- (seq(1:results$nRangeCells) -1 + results$nFirstRangeCell) * results$fRangeCellDistKm
 
   # Return the final results, including the CenterFreq.
   return(results)
