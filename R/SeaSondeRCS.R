@@ -21,13 +21,14 @@ new_SeaSondeRCS <- function(header, data){
 
 
   out <- structure(list(header = list(),
-                 data = list()),
-            version = 1, # An integer indicating the version of the SeaSondeRCS object. Current is 1.
-            ProcessingSteps = character(0),
-            class = "SeaSondeRCS")
+                        data = list()),
+                   version = 1, # An integer indicating the version of the SeaSondeRCS object. Current is 1.
+                   ProcessingSteps = character(0),
+                   class = "SeaSondeRCS")
 
   out %<>% seasonder_setSeaSondeRCS_header(header)
   out %<>% seasonder_setSeaSondeRCS_data(data)
+
 
 
   return(out)
@@ -81,6 +82,64 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path=system.file("spe
   return(out)
 }
 
+seasonder_SeaSondeRCS_dataMatrix_dimensionNames <- function(nRanges, nDoppler){
+
+  dimension_names <- list(sprintf("range_%03d",1:nRanges),sprintf("doppler_%03d",1:nDoppler))
+
+  return(dimension_names)
+
+}
+
+new_SeaSondeRCS_SSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL){
+
+  dimension_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges, nDoppler)
+
+  data <- data %||% rep(NA_real_, nRanges * nDoppler)
+
+
+  matrix <- matrix(data, ncol = nDoppler, byrow = TRUE, dimnames = dimension_names)
+
+  out <- structure(matrix,
+                   name = name,
+                   class = "SeaSondeRCS_SSMatrix")
+
+return(out)
+}
+
+
+new_SeaSondeRCS_QCMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL){
+
+  dimension_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges, nDoppler)
+
+  data <- data %||% rep(NA_real_, nRanges * nDoppler)
+
+
+  matrix <- matrix(data, ncol = nDoppler, byrow = TRUE, dimnames = dimension_names)
+
+  out <- structure(matrix,
+                   name = name,
+                   class = "SeaSondeRCS_QCMatrix")
+
+  return(out)
+}
+
+
+new_SeaSondeRCS_CSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL){
+
+  dimension_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges, nDoppler)
+
+  data <- data %||% rep(complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler)
+
+
+  matrix <- matrix(data, ncol = nDoppler, byrow = TRUE, dimnames = dimension_names)
+
+  out <- structure(matrix,
+                   name = name,
+                   class = "SeaSondeRCS_CSMatrix")
+
+  return(out)
+}
+
 #' Initialize Cross-Spectra Data Structure for SeaSondeR
 #'
 #' This function initializes a data structure for storing cross-spectra data
@@ -104,14 +163,15 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path=system.file("spe
 #'         }
 seasonder_initCSDataStructure <- function(nRanges, nDoppler){
 
+
   list(
-    SSA1 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    SSA2 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    SSA3 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    CS12 = matrix(rep( complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    CS13 = matrix(rep( complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    CS23 = matrix(rep( complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    QC = matrix(rep( NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE)
+    SSA1 = new_SeaSondeRCS_SSMatrix(nRanges, nDoppler, name = "SSA1"),
+    SSA2 = new_SeaSondeRCS_SSMatrix(nRanges, nDoppler, name = "SSA2"),
+    SSA3 = new_SeaSondeRCS_SSMatrix(nRanges, nDoppler, name = "SSA3"),
+    CS12 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS12"),
+    CS13 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS13"),
+    CS23 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS23"),
+    QC = new_SeaSondeRCS_QCMatrix(nRanges, nDoppler, name = "QC")
   )
 
 }
@@ -355,6 +415,7 @@ seasonder_getSeaSondeRCS_header <- function(seasonder_cs_obj) {
 
 
 
+
 #' Convert SeaSondeRCS Object to JSON
 #'
 #' This function extracts the header data from a `seasonder_cs_obj`, representing a SeaSondeRCS object, and converts it into a JSON format. Optionally, it can write this JSON data to a specified file path.
@@ -373,18 +434,18 @@ seasonder_getSeaSondeRCS_header <- function(seasonder_cs_obj) {
 #' If a path is provided and there is an issue writing to the file, the function logs an error message using `seasonder_logAndMessage` and returns the JSON data as a string.
 seasonder_asJSONSeaSondeRCSHeader <- function(seasonder_cs_obj, path=NULL) {
 
-header <- seasonder_getSeaSondeRCS_header(seasonder_cs_obj)
+  header <- seasonder_getSeaSondeRCS_header(seasonder_cs_obj)
 
-out <- jsonlite::toJSON(header, pretty = TRUE)
+  out <- jsonlite::toJSON(header, pretty = TRUE)
 
-if(!is.null(path)){
-  rlang::try_fetch(jsonlite::write_json(header, path, pretty = TRUE, auto_unbox = TRUE),
-                   error = function(e) {
-                     seasonder_logAndMessage(glue::glue("Error while trying to write JSON to path {path}"), "error", calling_function = "seasonder_asJSONSeaSondeRCSHeader", class = "seasonder_write_JSON_error", seasonder_path = path, seasonder_JSON = out, seasonder_cs_obj = seasonder_cs_obj)
-                   })
-}
+  if(!is.null(path)){
+    rlang::try_fetch(jsonlite::write_json(header, path, pretty = TRUE, auto_unbox = TRUE),
+                     error = function(e) {
+                       seasonder_logAndMessage(glue::glue("Error while trying to write JSON to path {path}"), "error", calling_function = "seasonder_asJSONSeaSondeRCSHeader", class = "seasonder_write_JSON_error", seasonder_path = path, seasonder_JSON = out, seasonder_cs_obj = seasonder_cs_obj)
+                     })
+  }
 
-return(out)
+  return(out)
 }
 
 #' Convert SeaSondeRCS Object to JSON
@@ -419,7 +480,7 @@ seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_obj, path=NULL) {
   return(out)
 }
 
-
+###### Data ######
 #' Getter for data
 #'
 #' @param seasonder_cs_obj SeaSondeRCS object
@@ -449,6 +510,140 @@ seasonder_getSeaSondeRCS_data <- function(seasonder_cs_obj) {
   return(out)
 }
 
+
+seasonder_getSeaSondeRCS_dataMatrix <- function(seasonder_cs_obj, matrix_name){
+
+  matrix_name %in% c("SSA1","SSA2","SSA3","CS12","CS13","CS23","QC") || seasonder_logAndAbort(glue::glue("Unknown data matrix name '{matrix_name}'"),calling_function = "matrix_name", class = "seasonder_unknown_data_matrix_name", seasonder_matrix_name=matrix_name)
+
+  matrix <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj = seasonder_cs_obj)[[matrix_name]]
+
+  return(matrix)
+
+}
+
+#' returns the power spectrum of an antenna
+seasonder_getSeaSondeRCS_antenna_SSdata <- function(seasonder_cs_obj, antenna){
+
+  matrix_name <- paste0("SSA",antenna)
+
+  matrix <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_obj = seasonder_cs_obj, matrix_name = matrix_name)
+
+  return(matrix)
+
+}
+
+seasonder_extractSeaSondeRCS_distRanges_from_SSdata <- function(SSmatrix, dist_ranges){
+
+  # TODO: check that dist_ranges is in the matrix range
+
+  sliced_SSmatrix <- SSmatrix[dist_ranges,, drop=FALSE]
+
+  return(sliced_SSmatrix)
+
+}
+
+seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, doppler_cells){
+
+  # TODO: check that doppler_cells is in the matrix range
+
+  sliced_SSmatrix <- SSmatrix[,doppler_cells, drop=FALSE]
+
+  return(sliced_SSmatrix)
+
+}
+
+
+#'  returns a list of power spectra for each combination of antenna, dist_range and doppler_range
+seasonder_getSeaSondeRCS_powersSpectra <- function(seasonder_cs_obj, antennae, dist_ranges, doppler_ranges, dist_in_km = FALSE, collapse = FALSE){
+
+
+  out <- list()
+
+  if(!rlang::is_list(dist_ranges)){
+    dist_ranges <- list(dist_ranges)
+  }
+
+
+  if(!rlang::is_list(doppler_ranges)){
+    doppler_ranges <- list(doppler_ranges)
+  }
+
+
+  if(!rlang::is_named(antennae)){
+    antennae %<>% magrittr::set_names(sprintf("A%d",as.integer(antennae)))
+  }
+
+  if(!rlang::is_named(dist_ranges)){
+    dist_ranges %<>% magrittr::set_names(sprintf("dist_range_%d",1:length(dist_ranges)))
+  }
+
+  if(!rlang::is_named(doppler_ranges)){
+    doppler_ranges %<>% magrittr::set_names(sprintf("doppler_range_%d",1:length(doppler_ranges)))
+  }
+
+  # TODO: option for all antennae, all dist_ranges and all doppler_ranges
+  # TODO: wrappers for antenna + dist_ranges, antenna + doppler ranges, disr_ranges + doppler ranges, dist_ranges, antenna and doppler ranges.
+
+
+  SSMatrices <- antennae %>% purrr::map(\(antenna) seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_obj,antenna))
+
+  # Slice dist_ranges
+
+  if(dist_in_km){
+    dist_ranges %<>% purrr::map(\(dists){
+
+      dists <- seasonder_rangeCellsDists2RangeNumber(seasonder_cs_obj, dists)
+
+      dists[1] <- floor(dists[1])
+
+      dists[2] <- ceiling(dists[2])
+
+      return(dists)
+
+    })
+
+  }
+
+
+
+
+  out <- SSMatrices %>% purrr::map(\(SSmatrix) {
+
+    sliced_matrix <- dist_ranges %>% purrr::map(\(dists){
+
+      dist_slice <- seasonder_extractSeaSondeRCS_distRanges_from_SSdata(SSmatrix = SSmatrix, dist_ranges = seq(dists[1],dists[2]))
+
+
+      dist_doppler_slice <- doppler_ranges  %>% purrr::map(\(doppler_cells) {
+
+        doppler_slice <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(SSmatrix = dist_slice, doppler_cells = seq(doppler_cells[1], doppler_cells[2]))
+
+
+
+
+        return(doppler_slice)
+
+      })
+      return(dist_doppler_slice)
+    })
+
+    return(sliced_matrix)
+  })
+
+
+
+if(collapse){
+  out %<>% purrr::list_flatten(name_spec = "{outer}:{inner}") %>% purrr::list_flatten(name_spec = "{outer}:{inner}")
+}
+
+
+
+  return(out)
+}
+
+
+###### Metadata ######
+
 #' Getter for ProcessingSteps
 #'
 #' @param seasonder_cs_obj SeaSonderCS object
@@ -467,6 +662,9 @@ seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj){
 
   attr(seasonder_obj,"version",exact = TRUE)
 }
+
+
+
 
 ###### Header Fields ######
 #' Retrieve a value from the SeaSondeRCS header by a specific path
@@ -510,7 +708,15 @@ seasonder_getCSHeaderByPath <- function(seasonder_obj, path) {
   return(result)
 }
 
+seasonder_getSeaSondeRCS_headerField <- function(seasonder_cs_obj,field){
 
+  header <- seasonder_getSeaSondeRCS_header(seasonder_cs_obj)
+
+  value <- purrr:::list_flatten(header,name_spec = "{inner}") %>% purrr::pluck(field)
+
+  return(value)
+
+}
 
 #' Get the nRangeCells value from a SeaSondeRCS object
 #'
@@ -518,7 +724,7 @@ seasonder_getCSHeaderByPath <- function(seasonder_obj, path) {
 #' @return The nRangeCells value.
 #' @export
 seasonder_getnRangeCells <- function(seasonder_obj) {
-  return(seasonder_getCSHeaderByPath(seasonder_obj, "nRangeCells"))
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_obj, "nRangeCells"))
 }
 
 #' Get the nDopplerCells value from a SeaSondeRCS object
@@ -527,9 +733,32 @@ seasonder_getnRangeCells <- function(seasonder_obj) {
 #' @return The nDopplerCells value.
 #' @export
 seasonder_getnDopplerCells <- function(seasonder_obj) {
-  return(seasonder_getCSHeaderByPath(seasonder_obj, "nDopplerCells"))
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_obj, "nDopplerCells"))
 }
 
+seasonder_getCellsDistKm <- function(seasonder_cs_obj) {
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "CellsDistKm"))
+}
+
+
+
+
+##### Utils #####
+
+seasonder_rangeCellsDists2RangeNumber <- function(seasonder_cs_obj,cells_dists){
+
+  # TODO: check that the cs file version is at least V4
+
+  fRangeCellDistKm <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRangeCellDistKm")
+
+  nFirstRangeCell <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nFirstRangeCell")
+
+  # NOTE: based on File_Cross_Spectra_V6 page 4
+
+  range_numbers <- cells_dists/fRangeCellDistKm - nFirstRangeCell + 1
+
+  return(range_numbers)
+}
 
 #### Processing_steps ####
 
@@ -613,7 +842,7 @@ seasonder_validateCSFileData <- function(filepath, header) {
 
   if (header$nRangeCells <= 0 || header$nRangeCells > 8192 || header$nDopplerCells <= 0 || header$nDopplerCells > 32768) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid nRangeCells or nDopplerCells in file {filepath}. nRangeCells: {header$nRangeCells}, nDopplerCells: {header$nDopplerCells}."),!!!conditions_params))
 
-# CODAR documentation is not correct, they are double counting the number of spectra channels when they multiply by nSpectraChannels and by 36 or 40
+  # CODAR documentation is not correct, they are double counting the number of spectra channels when they multiply by nSpectraChannels and by 36 or 40
   if (header$nCsKind == 1 && file_size < (header_size + header$nRangeCells *  header$nDopplerCells * 36)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file size for nCsKind 1 in file {filepath}. Expected >= {(header_size + header$nRangeCells  * header$nDopplerCells * 36)}, actual: {file_size}."),!!!conditions_params))
 
 
@@ -1435,6 +1664,8 @@ seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "bi
   # Calculate CenterFreq using the provided formula.
 
   results$CenterFreq <- results$fStartFreqMHz + (results$fBandwidthKHz/1000)/2 * -2^(results$bSweepUp == 0)
+
+  results$CellsDistKm <- (seq(1:results$nRangeCells) -1 + results$nFirstRangeCell) * results$fRangeCellDistKm
 
   # Return the final results, including the CenterFreq.
   return(results)

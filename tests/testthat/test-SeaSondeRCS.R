@@ -2298,6 +2298,7 @@ describe("SeaSondeRCS",{
     expect_true(is.function(seasonder_getnDopplerCells))
     expect_true(is.function(seasonder_getnRangeCells))
     expect_true(is.function(seasonder_validateCSDataStructure))
+    expect_true(is.function(seasonder_getSeaSondeRCS_headerField))
 
   })
 
@@ -2566,6 +2567,84 @@ describe("SeaSondeRCS",{
 
   })
 
+
+
+  describe("seasonder_getSeaSondeRCS_headerField",{
+
+    it("should return the field value",{
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+      {
+        value <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,field = "CellsDistKm")
+
+        expect_true(!is.null(value))
+        }
+
+      {
+        value <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,field = "fReferenceGainDB")
+
+        expect_true(!is.null(value))
+        }
+    })
+
+  })
+
+describe("seasonder_rangeCellsDists2RangeNumber",{
+
+  it("should return the corresponding range numbers",{
+
+    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+    {
+      test <- seasonder_rangeCellsDists2RangeNumber(seasonder_cs_obj = seasonder_cs_obj,cells_dists = c(2,3.5))
+
+      ranges <- (seasonder_getCellsDistKm(seasonder_cs_obj) >= 2 & seasonder_getCellsDistKm(seasonder_cs_obj) <= 3.5) %>% which()
+
+      expect_true(any(c(min(ranges),min(ranges) - 1) == floor(test[1])))
+
+      expect_true(any(c(max(ranges),max(ranges) + 1) == ceiling(test[2])))
+
+      expect_snapshot_value(test,style = "deparse")
+    }
+
+
+  })
+
 })
+
+describe("seasonder_getSeaSondeRCS_powersSpectra",{
+
+  it("Should slice the SSA* matrices",{
+
+    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+    {
+      test <- seasonder_getSeaSondeRCS_powersSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(A1=1,A3=3), dist_ranges = list(r1=c(1,4),r2=c(10,15)), doppler_ranges = list(d1=c(100,500),d2=c(700,725)))
+
+      expect_snapshot_value(test,style = "deparse")
+
+    }
+
+
+    {
+      test <- seasonder_getSeaSondeRCS_powersSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(1,3), dist_ranges = list(c(1,4),c(10,15)), doppler_ranges = list(c(100,500),c(700,725)))
+
+      expect_snapshot_value(test,style = "deparse")
+
+    }
+
+    {
+      test <- seasonder_getSeaSondeRCS_powersSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(1,3), dist_ranges = list(c(1,4),c(10,15)), doppler_ranges = list(c(100,500),c(700,725)), collapse = TRUE)
+
+      expect_snapshot_value(test,style = "deparse")
+
+    }
+
+  })
+
+})
+
+  })
 
 
