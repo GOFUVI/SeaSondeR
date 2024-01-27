@@ -419,7 +419,7 @@ seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_obj, path=NULL) {
   return(out)
 }
 
-
+###### Data ######
 #' Getter for data
 #'
 #' @param seasonder_cs_obj SeaSondeRCS object
@@ -449,6 +449,46 @@ seasonder_getSeaSondeRCS_data <- function(seasonder_cs_obj) {
   return(out)
 }
 
+
+seasonder_getSeaSondeRCS_dataMatrix <- function(seasonder_cs_obj, matrix_name){
+
+matrix_name %in% c("SSA1","SSA2","SSA3","CS12","CS13","CS23","QC") || seasonder_logAndAbort(glue::glue("Unknown data matrix name '{matrix_name}'"),calling_function = "matrix_name", class = "seasonder_unknown_data_matrix_name", seasonder_matrix_name=matrix_name)
+
+matrix <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj = seasonder_cs_obj)[[matrix_name]]
+
+return(matrix)
+
+}
+
+#' returns the power spectrum of an antenna
+seasonder_getSeaSondeRCS_antenna_SSdata <- function(seasonder_cs_obj, antenna){
+
+  matrix_name <- paste0("SS",antenna)
+
+  matrix <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_obj = seasonder_cs_obj, matrix_name = matrix_name)
+
+  return(matrix)
+
+}
+
+seasonder_extractSeaSondeRCS_distRanges_from_SSdata <- function(SSmatrix, dist_ranges){
+
+
+
+}
+
+#'  returns a list of power spectra for each combination of antenna, dist_range and doppler_range
+seasonder_getSeaSondeRCS_spectra <- function(seasonder_obj, antenna, dist_ranges, doppler_ranges){
+
+
+  out <- list()
+
+  return(out)
+}
+
+
+###### Metadata ######
+
 #' Getter for ProcessingSteps
 #'
 #' @param seasonder_cs_obj SeaSonderCS object
@@ -467,6 +507,9 @@ seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj){
 
   attr(seasonder_obj,"version",exact = TRUE)
 }
+
+
+
 
 ###### Header Fields ######
 #' Retrieve a value from the SeaSondeRCS header by a specific path
