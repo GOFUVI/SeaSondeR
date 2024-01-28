@@ -2613,14 +2613,14 @@ describe("seasonder_rangeCellsDists2RangeNumber",{
 
 })
 
-describe("seasonder_getSeaSondeRCS_powersSpectra",{
+describe("seasonder_getSeaSondeRCS_SelfSpectra",{
 
   it("Should slice the SSA* matrices",{
 
     seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
     {
-      test <- seasonder_getSeaSondeRCS_powersSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(A1=1,A3=3), dist_ranges = list(r1=c(1,4),r2=c(10,15)), doppler_ranges = list(d1=c(100,500),d2=c(700,725)))
+      test <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(A1=1,A3=3), dist_ranges = list(r1=c(1,4),r2=c(10,15)), doppler_ranges = list(d1=c(100,500),d2=c(700,725)))
 
       expect_snapshot_value(test,style = "deparse")
 
@@ -2628,14 +2628,21 @@ describe("seasonder_getSeaSondeRCS_powersSpectra",{
 
 
     {
-      test <- seasonder_getSeaSondeRCS_powersSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(1,3), dist_ranges = list(c(1,4),c(10,15)), doppler_ranges = list(c(100,500),c(700,725)))
+      test <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(1,3), dist_ranges = list(c(1,4),c(10,15)), doppler_ranges = list(c(100,500),c(700,725)))
 
       expect_snapshot_value(test,style = "deparse")
 
     }
 
     {
-      test <- seasonder_getSeaSondeRCS_powersSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(1,3), dist_ranges = list(c(1,4),c(10,15)), doppler_ranges = list(c(100,500),c(700,725)), collapse = TRUE)
+      test <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(1,3), dist_ranges = list(c(1,4),c(10,15)), doppler_ranges = list(c(100,500),c(700,725)), collapse = TRUE)
+
+      expect_snapshot_value(test,style = "deparse")
+
+    }
+
+    {
+      test <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = 1, dist_ranges = c(1,1), collapse = TRUE)
 
       expect_snapshot_value(test,style = "deparse")
 
@@ -2643,6 +2650,24 @@ describe("seasonder_getSeaSondeRCS_powersSpectra",{
 
   })
 
+})
+
+##### Plots #####
+describe("plots",{
+  describe("seasonder_SeaSondeRCS_plotSelfSpectrum",{
+
+    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+    it("should plot the spectrum",{
+
+{
+  skip("Test not fully implemented")
+      seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 5)
+
+}
+    })
+
+  })
 })
 
   })
