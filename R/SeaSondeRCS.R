@@ -84,7 +84,7 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path=system.file("spe
 
 seasonder_SeaSondeRCS_dataMatrix_dimensionNames <- function(nRanges, nDoppler){
 
-  dimension_names <- list(sprintf("range_%03d",1:nRanges),sprintf("doppler_%03d",1:nDoppler))
+  dimension_names <- list(sprintf("range_%03d",1:nRanges),sprintf("doppler_%03d",0:(nDoppler-1)))
 
   return(dimension_names)
 
@@ -744,6 +744,28 @@ seasonder_getCellsDistKm <- function(seasonder_cs_obj) {
   return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "CellsDistKm"))
 }
 
+seasonder_getReceiverGain_dB <- function(seasonder_cs_obj){
+
+
+
+  receiver_gain <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fReferenceGainDB") %||% -34.2 # dB
+
+
+return(receiver_gain)
+
+}
+
+
+seasonder_getCenterDopplerBin <- function(seansonder_cs_obj){
+
+  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  center_bin <- nDoppler / 2
+
+  return(center_bin)
+
+
+}
 
 
 
@@ -764,6 +786,16 @@ seasonder_rangeCellsDists2RangeNumber <- function(seasonder_cs_obj,cells_dists){
   return(range_numbers)
 }
 
+seasonder_SelfSpectra2dB <- function(seasonder_cs_obj, spectrum_values){
+
+  receiver_gain <- seasonder_getReceiverGain_dB(seasonder_cs_obj)
+
+  spectrum_dB <- 10 * log10(abs(spectrum_values)) + receiver_gain
+
+  return(spectrum_dB)
+
+}
+
 ##### Plot #####
 
 
@@ -771,7 +803,9 @@ seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, ra
 
   spectrum <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj, antennae = antenna,dist_ranges = c(range_dist[1],range_dist[1]), collapse = TRUE)[[1]] %>% t() %>% as.data.frame() %>% magrittr::set_colnames("SS")
 
-  spectrum %<>% dplyr::mutate(doppler=1:nrow(spectrum))
+  spectrum %<>% dplyr::mutate(doppler=1:nrow(spectrum), SS = seasonder_SelfSpectra2dB(seasonder_cs_obj, SS))
+
+
 
   ggplot2::ggplot(spectrum) + ggplot2::geom_line(ggplot2::aes(y = SS, x = doppler))
 
