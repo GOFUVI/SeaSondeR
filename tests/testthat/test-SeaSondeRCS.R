@@ -2664,10 +2664,95 @@ describe("plots",{
   skip("Test not fully implemented")
       seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 5)
 
+
+
 }
     })
 
   })
+})
+
+
+##### Derived values #####
+
+describe("seasonder_getRadarWaveLength",{
+
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+test <- seasonder_getRadarWaveLength(seasonder_cs_obj = seasonder_cs_obj)
+
+f <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,"CenterFreq")*1000000
+
+target <- constants::syms$c0/(f)
+
+
+
+expect_equal(test,target)
+
+
+  })
+
+
+describe("seasonder_getBraggWaveLength",{
+
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+  test <- seasonder_getBraggWaveLength(seasonder_cs_obj = seasonder_cs_obj)
+
+  f <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,"CenterFreq")*1000000
+
+
+
+  l <- constants::syms$c0/(f)
+
+  target <- l/2
+
+  expect_equal(test,target)
+
+
+})
+
+describe("seasonder_getRadarWaveNumber",{
+
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+  test <- seasonder_getRadarWaveNumber(seasonder_cs_obj = seasonder_cs_obj)
+
+  f <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,"CenterFreq")*1000000
+
+  l <- constants::syms$c0/(f)
+
+  target <- 2*pi/l
+
+
+
+  expect_equal(test,target)
+
+
+})
+
+describe("seasonder_getBraggFrequency",{
+
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+  test <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj = seasonder_cs_obj)
+
+  f <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,"CenterFreq")*1000000
+
+  l <- constants::syms$c0/(f)
+
+  k <- 2*pi/l
+
+
+
+
+  target <- sqrt(2*constants::syms$gn*k) /(2*pi) * c(-1,1)
+
+
+
+  expect_equal(test,target)
+
+
 })
 
   })

@@ -744,6 +744,12 @@ seasonder_getCellsDistKm <- function(seasonder_cs_obj) {
   return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "CellsDistKm"))
 }
 
+seasonder_getCenterFreqMHz <- function(seasonder_cs_obj) {
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "CenterFreq"))
+}
+
+###### + Derived parameters ######
+
 seasonder_getReceiverGain_dB <- function(seasonder_cs_obj){
 
 
@@ -767,7 +773,98 @@ seasonder_getCenterDopplerBin <- function(seansonder_cs_obj){
 
 }
 
+seasonder_getRadarWaveLength <- function(seasonder_cs_obj){
 
+  CenterFreq <- seasonder_getCenterFreqMHz(seasonder_cs_obj)*1000000
+
+  c <- constants::syms$c0
+
+  l <- c/(CenterFreq) # (m/s)/(Hz) = m
+
+  return(l)
+
+
+}
+
+seasonder_getRadarWaveNumber <- function(seasonder_cs_obj){
+
+
+l <- seasonder_getRadarWaveLength(seasonder_cs_obj)
+
+k <- 2*pi/l
+
+return(k)
+}
+
+
+
+
+seasonder_getBraggWaveLength <- function(seasonder_cs_obj){
+
+  l <- seasonder_getRadarWaveLength(seasonder_cs_obj)
+
+  lB <- l/2
+
+  return(lB)
+
+
+}
+
+seasonder_getBraggDopplerAngularFrequency <- function(seasonder_cs_obj){
+
+  k <- seasonder_getRadarWaveNumber(seasonder_cs_obj = seasonder_cs_obj)
+
+wb <- sqrt(2*constants::syms$gn*k) /(2*pi) * c(-1,1)
+
+return(wb)
+
+}
+
+seasonder_getDopplerSpectrumResolution <- function(seasonder_cs_obj){
+
+  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  SweepRate <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")
+
+  spectral_resolution <- SweepRate/nDoppler
+
+  return(spectral_resolution)
+
+}
+
+seasonder_getBraggLineBins <- function(seasonder_cs_obj){
+
+  bins <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj) / seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
+
+  return(bins)
+
+}
+
+seasonder_getDopplerBinsFrequency <- function(seasonder_cs_obj, normalized = FALSE){
+
+center_bin <- seasonder_getCenterDopplerBin(seasonder_cs_obj) # Freq 0
+
+nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+spectra_res <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
+
+frequencies <- (seq(1,nDoppler) - center_bin) * spectra_res
+
+
+if(normalized){
+
+bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)[2]
+
+
+frequencies <- frequencies / bragg_freq
+
+
+}
+
+return(frequencies)
+
+
+}
 
 ##### Utils #####
 
@@ -796,23 +893,33 @@ seasonder_SelfSpectra2dB <- function(seasonder_cs_obj, spectrum_values){
 
 }
 
+
+
 ##### Plot #####
 
 
-seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist){
+seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist, normalized= FALSE){
 
   spectrum <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj, antennae = antenna,dist_ranges = c(range_dist[1],range_dist[1]), collapse = TRUE)[[1]] %>% t() %>% as.data.frame() %>% magrittr::set_colnames("SS")
 
-  spectrum %<>% dplyr::mutate(doppler=1:nrow(spectrum), SS = seasonder_SelfSpectra2dB(seasonder_cs_obj, SS))
+  spectrum %<>% dplyr::mutate(doppler=seasonder_getDopplerBinsFrequency(seasonder_cs_obj,normalized), SS = seasonder_SelfSpectra2dB(seasonder_cs_obj, SS))
 
 
+Bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
 
-  ggplot2::ggplot(spectrum) + ggplot2::geom_line(ggplot2::aes(y = SS, x = doppler))
+if(normalized){
+  Bragg_freq <- c(-1,1)
+}
+
+  ggplot2::ggplot(spectrum) + ggplot2::geom_line(ggplot2::aes(y = SS, x = doppler)) + ggplot2::geom_vline(xintercept=Bragg_freq, color="red")
 
 
 
 
 }
+
+
+
 
 #### Processing_steps ####
 
