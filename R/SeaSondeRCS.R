@@ -873,23 +873,6 @@ return(frequencies)
 }
 
 
-seasonder_getNoiseLeveldB <- function(seasonder_cs_obj, normalized_doppler_range){
-
-  positive_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, normalized_doppler_range, in_units = "normalized doppler frequency", out_units = "bins")
-
-  negative_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, -1 * normalized_doppler_range, in_units = "normalized doppler frequency", out_units = "bins")
-
-  SS3 <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj, antennae = 3, doppler_ranges = list(negative= negative_doppler_range, positive=positive_doppler_range), collapse = TRUE)
-
-  avg_noise <- cbind(SS3[[1]],SS3[[2]]) %>% rowMeans()
-
-  avg_noise_db <- seasonder_SelfSpectra2dB(seasonder_cs_obj = seasonder_cs_obj, avg_noise)
-
-
-return(avg_noise_db)
-
-
-}
 
 #' m/s this is the velocity given by the high boundary of each Doppler bin interval (as in SpectraPlotterMap)
 seasonder_getBinsRadialVelocity <- function(seasonder_cs_obj){
@@ -1070,10 +1053,50 @@ if (in_units == out_units) {
 
 }
 
+##### FOL #####
+
+seasonder_getNoiseLeveldB <- function(seasonder_cs_obj, normalized_doppler_range){
+
+  positive_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, normalized_doppler_range, in_units = "normalized doppler frequency", out_units = "bins")
+
+  negative_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, -1 * normalized_doppler_range, in_units = "normalized doppler frequency", out_units = "bins")
+
+  SS3 <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj, antennae = 3, doppler_ranges = list(negative= negative_doppler_range, positive=positive_doppler_range), collapse = TRUE)
+
+  avg_noise <- cbind(SS3[[1]],SS3[[2]]) %>% rowMeans()
+
+  avg_noise_db <- seasonder_SelfSpectra2dB(seasonder_cs_obj = seasonder_cs_obj, avg_noise)
+
+
+  return(avg_noise_db)
+
+
+}
+
+seasonder_SmoothSS <- function(seasonder_cs_obj, antenna, nsm){
+
+SS <- seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_obj, antenna = antenna)
+
+
+
+
+
+out <- purrr::map(1:nrow(SS),\(i){
+
+  slider::slide_mean(abs(SS[i,,drop=TRUE]),after = (nsm-1)/2,before = (nsm-1)/2) %>% matrix(nrow=1,byrow = T) %>% magrittr::set_rownames(rownames(SS)[i])
+
+}) %>% purrr::reduce(\(x,y) rbind(x,y)) %>% magrittr::set_colnames(colnames(SS))
+
+
+return(out)
+
+}
+
+
 ##### Plot #####
 
 
-seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist, doppler_units = "normalized doppler frequency", noise_normalized_doppler_range = NULL){
+seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist, doppler_units = "normalized doppler frequency", noise_normalized_doppler_range = NULL, nsm = NULL){
 
   spectrum <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj, antennae = antenna,dist_ranges = c(range_dist[1],range_dist[1]), collapse = TRUE)[[1]] %>% t() %>% as.data.frame() %>% magrittr::set_colnames("SS")
 
@@ -1103,6 +1126,18 @@ if(doppler_units == "normalized doppler frequency"){
      out <- out + ggplot2::geom_line(data=positive_noise_data, color="red", size = 2) + ggplot2::geom_line(data=negative_noise_data, color="red", size = 2)
 
   }
+
+if(!is.null(nsm)){
+
+  smoothed_spectrum <- seasonder_SmoothSS(seasonder_cs_obj, antenna, nsm)[range_dist,, drop=TRUE]
+
+  smoothed_data <- data.frame(SS=  seasonder_SelfSpectra2dB(seasonder_cs_obj,smoothed_spectrum), doppler= doppler_values)
+
+  out <- out + ggplot2::geom_line(data=smoothed_data, color="orange", size = 1)
+
+
+
+}
 
 return(out)
 
