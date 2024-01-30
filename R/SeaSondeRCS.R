@@ -542,7 +542,10 @@ seasonder_extractSeaSondeRCS_distRanges_from_SSdata <- function(SSmatrix, dist_r
 
 }
 
+
+
 seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, doppler_cells){
+
 
   # TODO: check that doppler_cells is in the matrix range
 
@@ -834,12 +837,12 @@ seasonder_getDopplerSpectrumResolution <- function(seasonder_cs_obj){
 
 seasonder_getBraggLineBins <- function(seasonder_cs_obj){
 
-  bins <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj) / seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
-
+  bins <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, c(-1,1))
   return(bins)
 
 }
 
+#' Hz these freqs are the high limit of each Doppler bin interval (as in SpectraPlotterMap)
 seasonder_getDopplerBinsFrequency <- function(seasonder_cs_obj, normalized = FALSE){
 
 center_bin <- seasonder_getCenterDopplerBin(seasonder_cs_obj) # Freq 0
@@ -881,6 +884,37 @@ return(avg_noise_db)
 
 }
 
+#' m/s this is the velocity given by the high boundary of each Doppler bin interval (as in SpectraPlotterMap)
+seasonder_getBinsRadialVelocity <- function(seasonder_cs_obj){
+
+freq <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj)
+
+bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
+
+spectra_res <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
+
+k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj)/(2*pi)
+
+v <- c((freq[freq < 0]  -bragg_freq[1])/(2*k0),(freq[freq >=0]  - bragg_freq[2])/(2*k0))
+
+
+return(v)
+
+
+}
+
+seasonder_getRadialVelocityResolution <- function(seasonder_cs_obj) {
+
+  spectra_res <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
+
+  k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj)/(2*pi)
+
+  vel_res <- spectra_res / (2*k0)
+
+
+  return(vel_res)
+}
+
 ##### Utils #####
 
 seasonder_rangeCellsDists2RangeNumber <- function(seasonder_cs_obj,cells_dists){
@@ -909,20 +943,141 @@ seasonder_SelfSpectra2dB <- function(seasonder_cs_obj, spectrum_values){
 }
 
 
+seasonder_Bins2NormalizedDopplerFreq <- function(seasonder_cs_obj, bins){
+
+  normalized_doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = TRUE)
+
+  return(normalized_doppler_freqs[bins])
+
+
+}
+
+seasonder_NormalizedDopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values){
+
+  normalized_doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = TRUE)
+
+  delta_freq <- normalized_doppler_freqs %>% diff()
+
+  boundaries <- c(normalized_doppler_freqs[1]-delta_freq[1], normalized_doppler_freqs)
+
+  bins <- findInterval(doppler_values,boundaries, rightmost.closed = T, all.inside = F, left.open = T)
+
+  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  bins[bins < 1 | bins > nDoppler] <- NA_integer_
+
+
+
+return(bins)
+
+}
+
+
+seasonder_DopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values){
+
+  doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = FALSE)
+
+  delta_freq <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
+
+  boundaries <- c(doppler_freqs[1]-delta_freq, doppler_freqs)
+
+  bins <- findInterval(doppler_values,boundaries, rightmost.closed = T, all.inside = F,left.open = T)
+
+  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  bins[bins < 1 | bins > nDoppler] <- NA_integer_
+
+
+
+  return(bins)
+
+}
+
+
+seasonder_Bins2DopplerFreq <- function(seasonder_cs_obj, bins){
+
+  doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = FALSE)
+
+  return(doppler_freqs[bins])
+
+
+
+}
+
+seasonder_DopplerFreq2NormalizedDopplerFreq <- function(seasonder_cs_obj, doppler_values){
+
+  bins <- seasonder_DopplerFreq2Bins(seasonder_cs_obj, doppler_values)
+
+  normalized_doppler_freq <- seasonder_Bins2NormalizedDopplerFreq(seasonder_cs_obj, bins)
+
+
+  return(normalized_doppler_freq)
+
+
+
+}
+
+
+seasonder_NormalizedDopplerFreq2DopplerFreq <- function(seasonder_cs_obj, doppler_values){
+
+  bins <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, doppler_values)
+
+doppler_freq <- seasonder_Bins2DopplerFreq(seasonder_cs_obj, bins)
+
+
+return(doppler_freq)
+
+
+
+}
+
+seasonder_SwapDopplerUnits <- function(seasonder_cs_obj, values, in_units, out_units){
+
+
+
+  doppler_units_options <- c("normalized doppler frequency","bins","doppler frequency")
+
+  in_units %in% doppler_units_options || seasonder_logAndAbort(glue::glue("in_units is '{in_units}', but should be one of {paste0(doppler_units_options, collapse=', ')}"),calling_function = "seasonder_SwapDopplerUnits")
+
+  out_units %in% doppler_units_options || seasonder_logAndAbort(glue::glue("out_units is '{out_units}', but should be one of {paste0(doppler_units_options, collapse=', ')}"),calling_function = "seasonder_SwapDopplerUnits")
+
+if (in_units == out_units) {
+
+  return(values)
+}
+
+  swap_functions <- list("normalized doppler frequency" = list("bins" = seasonder_NormalizedDopplerFreq2Bins,
+                                           "doppler frequency" = seasonder_NormalizedDopplerFreq2DopplerFreq),
+       "bins" = list("normalized doppler frequency" = seasonder_Bins2NormalizedDopplerFreq,
+                     "doppler frequency" = seasonder_Bins2DopplerFreq),
+  "doppler frequency" = list("bins" = seasonder_DopplerFreq2Bins,
+                             "normalized doppler frequency" = seasonder_DopplerFreq2NormalizedDopplerFreq)
+       )
+
+  swap_fun <- swap_functions[[in_units]][[out_units]]
+
+  out <- swap_fun(seasonder_cs_obj, values)
+
+  return(out)
+
+
+}
 
 ##### Plot #####
 
 
-seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist, normalized= FALSE){
+seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist, doppler_units = "normalized doppler frequency"){
 
   spectrum <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj, antennae = antenna,dist_ranges = c(range_dist[1],range_dist[1]), collapse = TRUE)[[1]] %>% t() %>% as.data.frame() %>% magrittr::set_colnames("SS")
 
-  spectrum %<>% dplyr::mutate(doppler=seasonder_getDopplerBinsFrequency(seasonder_cs_obj,normalized), SS = seasonder_SelfSpectra2dB(seasonder_cs_obj, SS))
+  doppler_values <- seasonder_SwapDopplerUnits(seasonder_cs_obj,seasonder_getDopplerBinsFrequency(seasonder_cs_obj), in_units = "doppler frequency", out_units = doppler_units)
+
+  spectrum %<>% dplyr::mutate(doppler=doppler_values, SS = seasonder_SelfSpectra2dB(seasonder_cs_obj, SS))
 
 
 Bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
 
-if(normalized){
+if(doppler_units == "normalized doppler frequency"){
   Bragg_freq <- c(-1,1)
 }
 
@@ -1839,7 +1994,7 @@ seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "bi
   # Step 3: Data Transformation
   # Calculate CenterFreq using the provided formula.
 
-  results$CenterFreq <- results$fStartFreqMHz + (results$fBandwidthKHz/1000)/2 * -2^(results$bSweepUp == 0)
+  results$CenterFreq <- results$fStartFreqMHz + (results$fBandwidthKHz/1000)/2 * -1^(results$bSweepUp == 0)
 
   results$CellsDistKm <- (seq(1:results$nRangeCells) -1 + results$nFirstRangeCell) * results$fRangeCellDistKm
 
