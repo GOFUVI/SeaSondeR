@@ -866,6 +866,21 @@ return(frequencies)
 
 }
 
+
+seasonder_getNoiseLeveldB <- function(seasonder_cs_obj, normalized_doppler_range = c(2.7,3)){
+
+  SS3 <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj, antennae = 3,doppler_ranges = list(negative=-normalized_doppler_range, positive=normalized_doppler_range), doppler_units = "normalized doppler frequency", collapse = TRUE)
+
+  avg_noise <- rowMeans(SS3)
+
+  avg_noise_db <- seasonder_SelfSpectra2dB(seasonder_cs_obj = seasonder_cs_obj, avg_noise)
+
+
+return(avg_noise_db)
+
+
+}
+
 ##### Utils #####
 
 seasonder_rangeCellsDists2RangeNumber <- function(seasonder_cs_obj,cells_dists){
