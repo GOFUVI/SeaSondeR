@@ -557,14 +557,17 @@ seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, dop
 
 
 #'  returns a list of power spectra for each combination of antenna, dist_range and doppler_range
-seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_obj, antennae, dist_ranges, doppler_ranges = NULL, dist_in_km = FALSE, collapse = FALSE){
+seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_obj, antennae, dist_ranges = NULL, doppler_ranges = NULL, dist_in_km = FALSE, collapse = FALSE){
 
 
   out <- list()
 
 
 
-  doppler_ranges <- doppler_ranges %||% list(all_doppler=range(seq_len(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nDopplerCells"))))
+  doppler_ranges <- doppler_ranges %||% list(all_doppler=range(seq_len(seasonder_getnDopplerCells(seasonder_cs_obj))))
+
+  dist_ranges <- dist_ranges %||% list(all_ranges=range(seq_len(seasonder_getnRangeCells(seasonder_cs_obj))))
+
 
   if(!rlang::is_list(dist_ranges)){
     dist_ranges <- list(dist_ranges)
@@ -870,11 +873,15 @@ return(frequencies)
 }
 
 
-seasonder_getNoiseLeveldB <- function(seasonder_cs_obj, normalized_doppler_range = c(2.7,3)){
+seasonder_getNoiseLeveldB <- function(seasonder_cs_obj, normalized_doppler_range){
 
-  SS3 <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj, antennae = 3,doppler_ranges = list(negative=-normalized_doppler_range, positive=normalized_doppler_range), doppler_units = "normalized doppler frequency", collapse = TRUE)
+  positive_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, normalized_doppler_range, in_units = "normalized doppler frequency", out_units = "bins")
 
-  avg_noise <- rowMeans(SS3)
+  negative_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, -1 * normalized_doppler_range, in_units = "normalized doppler frequency", out_units = "bins")
+
+  SS3 <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj, antennae = 3, doppler_ranges = list(negative= negative_doppler_range, positive=positive_doppler_range), collapse = TRUE)
+
+  avg_noise <- cbind(SS3[[1]],SS3[[2]]) %>% rowMeans()
 
   avg_noise_db <- seasonder_SelfSpectra2dB(seasonder_cs_obj = seasonder_cs_obj, avg_noise)
 
@@ -1066,7 +1073,7 @@ if (in_units == out_units) {
 ##### Plot #####
 
 
-seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist, doppler_units = "normalized doppler frequency"){
+seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist, doppler_units = "normalized doppler frequency", noise_normalized_doppler_range = NULL){
 
   spectrum <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj, antennae = antenna,dist_ranges = c(range_dist[1],range_dist[1]), collapse = TRUE)[[1]] %>% t() %>% as.data.frame() %>% magrittr::set_colnames("SS")
 
@@ -1081,10 +1088,23 @@ if(doppler_units == "normalized doppler frequency"){
   Bragg_freq <- c(-1,1)
 }
 
-  ggplot2::ggplot(spectrum) + ggplot2::geom_line(ggplot2::aes(y = SS, x = doppler)) + ggplot2::geom_vline(xintercept=Bragg_freq, color="red")
+  out <- ggplot2::ggplot(spectrum, ggplot2::aes(y = SS, x = doppler)) + ggplot2::geom_line() + ggplot2::geom_vline(xintercept=Bragg_freq, color="red") + ggplot2::theme_bw()
 
+  if(!is.null(noise_normalized_doppler_range)){
 
+    noise_level <- seasonder_getNoiseLeveldB(seasonder_cs_obj, noise_normalized_doppler_range)[range_dist] %>% magrittr::set_names(NULL)
 
+    positive_noise_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj,noise_normalized_doppler_range, in_units = "normalized doppler frequency", out_units = doppler_units)
+
+    negative_noise_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj,-1 * noise_normalized_doppler_range, in_units = "normalized doppler frequency", out_units = doppler_units)
+
+    positive_noise_data <- data.frame(SS = noise_level, doppler = c(positive_noise_range))
+    negative_noise_data <- data.frame(SS = noise_level, doppler = c(negative_noise_range))
+     out <- out + ggplot2::geom_line(data=positive_noise_data, color="red", size = 2) + ggplot2::geom_line(data=negative_noise_data, color="red", size = 2)
+
+  }
+
+return(out)
 
 }
 

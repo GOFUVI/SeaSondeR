@@ -2662,7 +2662,7 @@ describe("plots",{
 
 {
   skip("Test not fully implemented")
-      seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 5)
+      seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 5, noise_normalized_doppler_range = c(2,2.5))
 
 
 
@@ -2947,6 +2947,20 @@ expect_equal(test[1]-seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRe
 
       }
     })
+  })
+
+  describe("seasonder_getNoiseLeveldB",{
+
+it("should return the noise level",{
+
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+  test <- seasonder_getNoiseLeveldB(seasonder_cs_obj, c(2,2.5))
+
+expect_snapshot_value(test,style = "deparse")
+
+})
+
   })
 
 })
