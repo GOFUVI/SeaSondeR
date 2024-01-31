@@ -2662,7 +2662,7 @@ describe("plots",{
 
 {
   skip("Test not fully implemented")
-      seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 5, noise_normalized_doppler_range = c(2,2.5), FOL_control=list(nsm = 11, fdown = 7.5))
+      seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20, FOL_control=list(nsm = 11, fdown = 7.5, noisefact = 15, flim = 4, reference_noise_normalized_limits= c(2.5,2.8)))
 
 
 
@@ -2959,13 +2959,13 @@ expect_equal(test[1]-seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRe
 
 
 describe("FOL", {
-  describe("seasonder_getNoiseLeveldB",{
+  describe("seasonder_getNoiseLevel",{
 
     it("should return the noise level",{
 
       seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
-      test <- seasonder_getNoiseLeveldB(seasonder_cs_obj, c(2,2.5))
+      test <- seasonder_getNoiseLevel(seasonder_cs_obj, c(2,2.5))
 
       expect_snapshot_value(test,style = "deparse")
 
@@ -3000,4 +3000,23 @@ describe("FOL", {
     })
 
   })
+
+  describe("seasonder_filterFORAmplitudes",{
+
+it("should filter the First order region",{
+
+
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+
+  FOLs <- seasonder_findFOLNulls(seasonder_cs_obj = seasonder_cs_obj,nsm = 5, fdown = 7.5)
+
+test <- seasonder_filterFORAmplitudes(seasonder_cs_obj, FOLs, reference_noise_normalized_limits = c(2,2.5))
+
+
+})
+
+
+  })
+
 })

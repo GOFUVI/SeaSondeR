@@ -1056,7 +1056,7 @@ seasonder_SwapDopplerUnits <- function(seasonder_cs_obj, values, in_units, out_u
 
 ##### FOL #####
 
-seasonder_getNoiseLeveldB <- function(seasonder_cs_obj, normalized_doppler_range){
+seasonder_getNoiseLevel <- function(seasonder_cs_obj, normalized_doppler_range, dB = TRUE){
 
   positive_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, normalized_doppler_range, in_units = "normalized doppler frequency", out_units = "bins")
 
@@ -1066,10 +1066,14 @@ seasonder_getNoiseLeveldB <- function(seasonder_cs_obj, normalized_doppler_range
 
   avg_noise <- cbind(SS3[[1]],SS3[[2]]) %>% rowMeans()
 
-  avg_noise_db <- seasonder_SelfSpectra2dB(seasonder_cs_obj = seasonder_cs_obj, avg_noise)
+  if(dB){
+    avg_noise <- seasonder_SelfSpectra2dB(seasonder_cs_obj = seasonder_cs_obj, avg_noise)
+  }
 
 
-  return(avg_noise_db)
+
+
+  return(avg_noise)
 
 
 }
@@ -1116,7 +1120,7 @@ seasonder_findFOLNullsInFOLRegion <- function(FOL_region, start_point_P, doppler
 
 
   FOL_region %<>% abs() %>% magrittr::multiply_by(-1)
-  start_point_P <- -1 * start_point_P
+  start_point_P <- -1 * abs(start_point_P)
 
 
   FOL_index <- pracma::findpeaks(FOL_region,nups = 1, ndowns = 1, zero = "0",minpeakheight = start_point_P, npeaks = 1, sortstr = FALSE)[,2,drop=TRUE]
@@ -1130,13 +1134,13 @@ seasonder_findFOLNullsInFOLRegion <- function(FOL_region, start_point_P, doppler
 }
 
 seasonder_findFOLNullsInSpectrum <- function(spectrum, doppler_bins,fdown = 7.5, negative_Bragg_region = FALSE){
- # TODO: better center region removing
-  sp <- -1 * spectrum
+  # TODO: better center region removing
+  sp <- -1 * abs(spectrum)
   dop_b <- doppler_bins
-if(negative_Bragg_region){
-  sp %<>% rev()
-  dop_b %<>% rev()
-}
+  if(negative_Bragg_region){
+    sp %<>% rev()
+    dop_b %<>% rev()
+  }
 
 
 
@@ -1146,7 +1150,7 @@ if(negative_Bragg_region){
 
   sp <- sp[center_region_index:length(sp)]
 
-  sp <- -1 * sp
+  sp <- abs(sp)
 
   if(negative_Bragg_region){
     sp %<>% rev()
@@ -1220,21 +1224,100 @@ seasonder_findFOLNulls <- function(seasonder_cs_obj, nsm = 11, fdown = 7.5){
 }
 
 
+seasonder_extractFOR <- function(seasonder_cs_obj, spectrum, FOL){
 
-seasonder_computeFOLs <- function(seasonder_cs_obj, nsm = 11, fdown = 7.5){
 
 
+  negative_FOR <- matrix(numeric(0), byrow = T)
+
+  if(all(purrr::map_lgl(FOL$FOL_negative_Bragg_peak, \(x) !is.na(x) && length(x) == 1))){
+    negative_FOR <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(spectrum, seq(FOL$FOL_negative_Bragg_peak$left_FOL,FOL$FOL_negative_Bragg_peak$right_FOL))
+
+  }
+
+  positive_FOR <- matrix(numeric(0), byrow = T)
+
+  if(all(purrr::map_lgl(FOL$FOL_positive_Bragg_peak, \(x) !is.na(x) && length(x) == 1))){
+    positive_FOR <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(spectrum, seq(FOL$FOL_positive_Bragg_peak$left_FOL,FOL$FOL_positive_Bragg_peak$right_FOL))
+
+  }
+
+  out <- list(positive_FOR = positive_FOR, negative_FOR = negative_FOR)
+
+  return(out)
+
+}
+
+seasonder_filterFORAmplitudes <- function(seasonder_cs_obj, FOLs, reference_noise_normalized_limits, flim = 4, noisefact = 15){
+
+
+
+  noise_levels <- seasonder_getNoiseLevel(seasonder_cs_obj, normalized_doppler_range = reference_noise_normalized_limits, dB = FALSE)
+
+  noise_limit <- noise_levels * noisefact
+  SS3 <- seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_obj, 3) %>% abs()
+
+  FORs <- 1:length(FOLs) %>% purrr::map(\(i) seasonder_extractFOR(seasonder_cs_obj,SS3[i,,drop=FALSE], FOLs[[i]]) ) %>% magrittr::set_names(names(FOLs))
+
+  FOR_bins <- FOLs %>% purrr::map(\(FOL) {
+
+
+    positive_FOR <- integer(0)
+    if(all(purrr::map_lgl(FOL$FOL_positive_Bragg_peak, \(x) !is.na(x) && length(x) == 1))){
+
+      positive_FOR <- seq(FOL$FOL_positive_Bragg_peak$left_FOL, FOL$FOL_positive_Bragg_peak$right_FOL)
+    }
+
+
+    negative_FOR <- integer(0)
+    if(all(purrr::map_lgl(FOL$FOL_negative_Bragg_peak, \(x) !is.na(x) && length(x) == 1))){
+
+      negative_FOR <- seq(FOL$FOL_negative_Bragg_peak$left_FOL, FOL$FOL_negative_Bragg_peak$right_FOL)
+    }
+
+    list(positive_FOR = positive_FOR, negative_FOR = negative_FOR)
+
+  })
+
+p_limit <- FORs %>% purrr::map(\(FOR) FOR %>% purrr::map(\(x) if(all(dim(x) > 0)) mean(x,na.rm=T)/flim else NA_real_ ))
+
+
+filtered_FORs <- purrr::pmap(list(FORs, FOR_bins, p_limit, noise_limit), \(FOR, bins, p, noise){
+
+
+
+  if(length(bins$positive_FOR) > 0){
+    bins$positive_FOR <- bins$positive_FOR[FOR$positive_FOR > noise & FOR$positive_FOR > p$positive_FOR]
+  }
+
+  if(length(bins$negative_FOR) > 0){
+    bins$negative_FOR <- bins$negative_FOR[FOR$negative_FOR > noise & FOR$negative_FOR > p$negative_FOR]
+  }
+
+
+  bins
+})
+
+
+
+  return(filtered_FORs)
+}
+
+
+seasonder_computeFOLs <- function(seasonder_cs_obj, reference_noise_normalized_limits, nsm = 11, fdown = 7.5, flim = 4, noisefact = 15){
+
+# TODO: seasonder_findFOLNulls should return a vector of bins, instead of simply the limits, that would reduce the need of recomputing the vectors later in filterFORAmplitudes
   FOL_nulls <- seasonder_findFOLNulls(seasonder_cs_obj, nsm = nsm, fdown = fdown)
 
-FOLs <- FOL_nulls
+  FOLs <- seasonder_filterFORAmplitudes(seasonder_cs_obj, FOLs = FOL_nulls, reference_noise_normalized_limits = reference_noise_normalized_limits, flim = flim, noisefact = noisefact)
 
 
-return(FOLs)
+  return(FOLs)
 }
 ##### Plot #####
 
 
-seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist, doppler_units = "normalized doppler frequency", noise_normalized_doppler_range = NULL, FOL_control = NULL){
+seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist, doppler_units = "normalized doppler frequency",  FOL_control = NULL){
 
   spectrum <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj, antennae = antenna,dist_ranges = c(range_dist[1],range_dist[1]), collapse = TRUE)[[1]] %>% t() %>% as.data.frame() %>% magrittr::set_colnames("SS")
 
@@ -1251,17 +1334,19 @@ seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, ra
 
   out <- ggplot2::ggplot(spectrum, ggplot2::aes(y = SS, x = doppler)) + ggplot2::geom_line() + ggplot2::geom_vline(xintercept=Bragg_freq, color="red") + ggplot2::theme_bw()
 
-  if(!is.null(noise_normalized_doppler_range)){
+  if(!is.null(FOL_control$reference_noise_normalized_limits)){
 
-    noise_level <- seasonder_getNoiseLeveldB(seasonder_cs_obj, noise_normalized_doppler_range)[range_dist] %>% magrittr::set_names(NULL)
+    noise_level <- seasonder_getNoiseLevel(seasonder_cs_obj, FOL_control$reference_noise_normalized_limits)[range_dist] %>% magrittr::set_names(NULL)
 
-    positive_noise_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj,noise_normalized_doppler_range, in_units = "normalized doppler frequency", out_units = doppler_units)
+    positive_noise_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj,FOL_control$reference_noise_normalized_limits, in_units = "normalized doppler frequency", out_units = doppler_units)
 
-    negative_noise_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj,-1 * noise_normalized_doppler_range, in_units = "normalized doppler frequency", out_units = doppler_units)
+    negative_noise_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj,-1 * FOL_control$reference_noise_normalized_limits, in_units = "normalized doppler frequency", out_units = doppler_units)
 
     positive_noise_data <- data.frame(SS = noise_level, doppler = c(positive_noise_range))
     negative_noise_data <- data.frame(SS = noise_level, doppler = c(negative_noise_range))
     out <- out + ggplot2::geom_line(data=positive_noise_data, color="red", size = 2) + ggplot2::geom_line(data=negative_noise_data, color="red", size = 2)
+
+
 
   }
 
@@ -1274,12 +1359,14 @@ seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, ra
     out <- out + ggplot2::geom_line(data=smoothed_data, color="orange", size = 1)
 
 
-    FOL <- seasonder_computeFOLs(seasonder_cs_obj, nsm = FOL_control$nsm, fdown = FOL_control$fdown)[[range_dist]]
-FOL %<>% unlist()
-FOL <- seasonder_SwapDopplerUnits(seasonder_cs_obj, FOL, "bins", doppler_units)
-FOL_data <- data.frame(xintercept = FOL)
+    FOL <- seasonder_computeFOLs(seasonder_cs_obj, reference_noise_normalized_limits = FOL_control$reference_noise_normalized_limits, nsm = FOL_control$nsm, fdown = FOL_control$fdown, flim = FOL_control$flim, noisefact = FOL_control$noisefact )[[range_dist]]
 
-out <- out + ggplot2::geom_vline(data=FOL_data, ggplot2::aes(xintercept = xintercept), color = "blue")
+
+    FOL %<>% unlist()
+    FOL <- seasonder_SwapDopplerUnits(seasonder_cs_obj, FOL, "bins", doppler_units)
+    FOL_data <- data.frame(xintercept = FOL)
+
+    out <- out + ggplot2::geom_vline(data=FOL_data, ggplot2::aes(xintercept = xintercept), color = "blue", alpha = 0.1)
 
   }
 
