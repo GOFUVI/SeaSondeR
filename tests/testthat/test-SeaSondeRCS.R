@@ -2662,7 +2662,7 @@ describe("plots",{
 
 {
   skip("Test not fully implemented")
-      seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 5, noise_normalized_doppler_range = c(2,2.5), nsm = 5)
+      seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 5, noise_normalized_doppler_range = c(2,2.5), FOL_control=list(nsm = 11, fdown = 7.5))
 
 
 
@@ -2978,6 +2978,26 @@ describe("FOL", {
     seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
     test <- seasonder_SmoothSS(seasonder_cs_obj,antenna = 3, nsm = 5)
+
+    expect_snapshot_value(test, style = "deparse")
+
+  })
+
+
+  describe("seasonder_findFOLNulls",{
+
+    it("should return the NULLs for each Bragg region",{
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+
+      test <- seasonder_findFOLNulls(seasonder_cs_obj = seasonder_cs_obj,nsm = 5, fdown = 7.5)
+
+      expect_snapshot_value(test, style = "json2")
+
+
+
+    })
 
   })
 })
