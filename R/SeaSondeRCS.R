@@ -24,10 +24,15 @@ new_SeaSondeRCS <- function(header, data){
                         data = list()),
                    version = 1, # An integer indicating the version of the SeaSondeRCS object. Current is 1.
                    ProcessingSteps = character(0),
+                   FOR_data = list(),
+                   NoiseLevel = numeric(0),
                    class = "SeaSondeRCS")
 
   out %<>% seasonder_setSeaSondeRCS_header(header)
   out %<>% seasonder_setSeaSondeRCS_data(data)
+
+  out %<>% seasonder_setSeaSondeRCS_FOR_parameters(list())
+  out %<>% seasonder_setSeaSondeRCS_FOR(seasonder_initSeaSondeRCS_FOR(out))
 
 
 
@@ -173,6 +178,76 @@ seasonder_initCSDataStructure <- function(nRanges, nDoppler){
     CS23 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS23"),
     QC = new_SeaSondeRCS_QCMatrix(nRanges, nDoppler, name = "QC")
   )
+
+}
+
+seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_obj, FOR){
+
+  out <- FOR
+
+  nRanges <- seasonder_getnRangeCells(seasonder_cs_obj)
+
+  nNegBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nNegBraggLeftIndex")$data %||% rep(0,nRanges)
+
+  if(any(nNegBraggLeftIndex >0)){
+    nNegBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nNegBraggRightIndex")$data %||% rep(0,nRanges)
+
+    if(any(nNegBraggRightIndex >0 & nNegBraggLeftIndex >0)){
+      out <-  1:nRanges %>% purrr::reduce(\(result,i) {
+        left_index <- nNegBraggLeftIndex[i]
+        right_index <- nNegBraggRightIndex[i]
+
+        if(left_index > 0 && right_index > 0 && left_index <= right_index){
+          result[[i]]$negative_FOR <- seq(left_index, right_index)
+        }
+        return(result)
+      },.init = out)
+    }
+
+  }
+
+  nPosBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nPosBraggLeftIndex")$data %||% rep(0,nRanges)
+
+  if(any(nPosBraggLeftIndex >0)){
+    nPosBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nPosBraggRightIndex")$data %||% rep(0,nRanges)
+
+    if(any(nPosBraggRightIndex >0 & nPosBraggLeftIndex >0)){
+      out <-  1:nRanges %>% purrr::reduce(\(result,i) {
+        left_index <- nPosBraggLeftIndex[i]
+        right_index <- nPosBraggRightIndex[i]
+
+        if(left_index > 0 && right_index > 0 && left_index <= right_index){
+          result[[i]]$positive_FOR <- seq(left_index, right_index)
+        }
+        return(result)
+      },.init = out)
+    }
+
+  }
+
+  return(out)
+
+}
+
+seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_obj){
+
+  nRanges <- seasonder_getnRangeCells(seasonder_cs_obj)
+
+  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  dim_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges = nRanges, nDoppler = nDoppler)
+
+  out <- rep(list(list(negative_FOR = integer(0), positive_FOR = integer(0))),  nRanges)
+
+  names(out) <- dim_names[[1]]
+
+  out <- seasonder_initSeaSondeRCS_FORFromHeader(seasonder_cs_obj, out)
+
+
+
+
+  return(out)
+
 
 }
 
@@ -326,6 +401,50 @@ seasonder_validateCSDataStructure <- function(data, nRanges, nDoppler) {
   }
 }
 
+seasonder_validateFORMethod <- function(method){
+
+  method %in% c("SeaSonde") || seasonder_logAndAbort(glue::glue("Method '{method}' not implemented."), calling_function = "seasonder_validateFORMethod")
+
+  invisible(method)
+
+}
+
+seasonder_defaultFOR_parameters <- function(){
+
+  out <- list(nsm = 11,
+              fdown = 7.5,
+              flim = 4,
+              noisefact = 15,
+              currmax = 2
+  )
+
+
+  return(out)
+}
+
+seasonder_validateFOR_parameters <- function(seasonder_cs_obj, FOR_parameters, method = "SeaSonde"){
+
+  seasonder_validateFORMethod(method)
+
+  if(method == "SeaSonde"){
+
+    FOR_parameters$nsm <- FOR_parameters$nsm %||% seasonder_defaultFOR_parameters()$nsm
+    FOR_parameters$reference_noise_normalized_limits <- FOR_parameters$reference_noise_normalized_limits %||% seasonder_estimateReferenceNoiseNormalizedLimits(seasonder_cs_obj)
+    FOR_parameters$fdown <- FOR_parameters$fdown %||% seasonder_defaultFOR_parameters()$fdown
+    FOR_parameters$flim <- FOR_parameters$flim %||% seasonder_defaultFOR_parameters()$flim
+    FOR_parameters$noisefact <- FOR_parameters$noisefact %||% seasonder_defaultFOR_parameters()$noisefact
+    FOR_parameters$currmax <- FOR_parameters$currmax %||% seasonder_defaultFOR_parameters()$currmax
+
+
+
+  }
+
+  invisible(FOR_parameters)
+
+
+
+
+}
 
 ##### Setters #####
 
@@ -395,6 +514,96 @@ seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_obj, processin
 
 
   return(out)
+}
+
+
+seasonder_setSeaSondeRCS_FOR_parameters <- function(seasonder_cs_obj, FOR_parameters){
+
+  FOR_parameters <- seasonder_validateFOR_parameters(seasonder_cs_obj, FOR_parameters)
+  attr(seasonder_cs_obj, "FOR_data")$FOR_parameters  <- FOR_parameters
+
+  return(seasonder_cs_obj)
+
+}
+
+seasonder_setSeaSondeRCS_FOR <- function(seasonder_cs_obj, FOR){
+
+  # TODO: validate FOR
+
+
+
+  attr(seasonder_cs_obj, "FOR_data")$FOR <- FOR
+
+
+  return(seasonder_cs_obj)
+
+
+}
+
+seasonder_setSeaSondeRCS_FOR_SS_Smoothed <- function(seasonder_cs_obj, FOR_SS_Smoothed){
+
+  # TODO: validate
+
+
+
+  attr(seasonder_cs_obj, "FOR_data")$FOR_SS_Smoothed <- FOR_SS_Smoothed
+
+
+  return(seasonder_cs_obj)
+
+
+}
+
+seasonder_setSeaSondeRCS_FOR_method <- function(seasonder_cs_obj, FOR_method){
+
+  FOR_method <- seasonder_validateFORMethod(FOR_method)
+
+
+
+  attr(seasonder_cs_obj, "FOR_data")$FOR_method <- FOR_method
+
+
+  return(seasonder_cs_obj)
+
+
+}
+
+seasonder_setSeaSondeRCS_FOR_MAXP <- function(seasonder_cs_obj, FOR_MAXP){
+
+  # TODO: Validate
+
+
+
+  attr(seasonder_cs_obj, "FOR_data")$FOR_MAXP <- FOR_MAXP
+
+
+  return(seasonder_cs_obj)
+
+
+}
+
+seasonder_setSeaSondeRCS_FOR_MAXP.bin <- function(seasonder_cs_obj, FOR_MAXP.bin){
+
+  # TODO: Validate
+
+
+
+  attr(seasonder_cs_obj, "FOR_data")$FOR_MAXP.bin <- FOR_MAXP.bin
+
+
+  return(seasonder_cs_obj)
+
+
+}
+
+
+seasonder_setSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, NoiseLevel){
+
+  # TODO: validate
+  attr(seasonder_cs_obj, "NoiseLevel") <- NoiseLevel
+
+
+  return(seasonder_cs_obj)
 }
 
 ##### Getters #####
@@ -479,6 +688,72 @@ seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_obj, path=NULL) {
 
   return(out)
 }
+
+
+seasonder_getSeaSondeRCS_FOR_parameters <- function(seasonder_cs_obj){
+
+
+  out <- attr(seasonder_cs_obj, "FOR_data", exact = TRUE)$FOR_parameters %||% seasonder_validateFOR_parameters(seasonder_cs_obj, list())
+
+
+  return(out)
+
+
+}
+
+seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits <- function(seasonder_cs_obj){
+
+  out <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$reference_noise_normalized_limits
+  return(out)
+}
+
+seasonder_getSeaSondeRCS_FOR <- function(seasonder_cs_obj){
+
+
+  out <- attr(seasonder_cs_obj, "FOR_data", exact = TRUE)$FOR %||% seasonder_initSeaSondeRCS_FOR(seasonder_cs_obj)
+
+
+  return(out)
+
+
+}
+
+
+seasonder_getSeaSondeRCS_FOR_SS_Smoothed  <- function(seasonder_cs_obj){
+
+
+  out <- attr(seasonder_cs_obj, "FOR_data", exact = TRUE)$FOR_SS_Smoothed
+
+
+  return(out)
+
+
+}
+
+
+seasonder_getSeaSondeRCS_FOR_method  <- function(seasonder_cs_obj){
+
+
+  out <- attr(seasonder_cs_obj, "FOR_data", exact = TRUE)$FOR_method %||% "SeaSonde"
+
+
+  return(out)
+
+
+}
+
+seasonder_getSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, NoiseLevel, dB = TRUE){
+
+
+  out <- attr(seasonder_cs_obj, "NoiseLevel", exact = TRUE) %||% numeric(0)
+  if(length(out) >0 && dB){
+
+    out <- seasonder_SelfSpectra2dB(seasonder_cs_obj = seasonder_cs_obj, out)
+  }
+
+  return(out)
+}
+
 
 ###### Data ######
 #' Getter for data
@@ -926,7 +1201,7 @@ seasonder_SelfSpectra2dB <- function(seasonder_cs_obj, spectrum_values){
 
   receiver_gain <- seasonder_getReceiverGain_dB(seasonder_cs_obj)
 
-  spectrum_dB <- 10 * log10(abs(spectrum_values)) + receiver_gain
+  spectrum_dB <- 10 * log10(abs(spectrum_values)) - receiver_gain
 
   return(spectrum_dB)
 
@@ -1054,9 +1329,27 @@ seasonder_SwapDopplerUnits <- function(seasonder_cs_obj, values, in_units, out_u
 }
 
 
-##### FOL #####
+##### FOR #####
 
-seasonder_getNoiseLevel <- function(seasonder_cs_obj, normalized_doppler_range, dB = TRUE){
+
+
+seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_obj){
+
+
+  freq <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = T)
+
+  out <- max(freq)*c(0.9,1)
+
+  return(out)
+
+}
+
+
+
+
+seasonder_computeNoiseLevel <- function(seasonder_cs_obj){
+
+  normalized_doppler_range <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$reference_noise_normalized_limits
 
   positive_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, normalized_doppler_range, in_units = "normalized doppler frequency", out_units = "bins")
 
@@ -1066,37 +1359,47 @@ seasonder_getNoiseLevel <- function(seasonder_cs_obj, normalized_doppler_range, 
 
   avg_noise <- cbind(SS3[[1]],SS3[[2]]) %>% rowMeans()
 
-  if(dB){
-    avg_noise <- seasonder_SelfSpectra2dB(seasonder_cs_obj = seasonder_cs_obj, avg_noise)
-  }
 
 
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_NoiseLevel(avg_noise)
 
 
-  return(avg_noise)
+  return(seasonder_cs_obj)
 
 
 }
 
-seasonder_SmoothFOLSS <- function(seasonder_cs_obj, nsm = 11){
+seasonder_SmoothFORSS <- function(seasonder_cs_obj){
 
-  out <- seasonder_SmoothSS(seasonder_cs_obj, antenna = 3, nsm = nsm)
+  nsm <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$nsm
 
-  return(out)
+  SmoothSS <- seasonder_SmoothSS(seasonder_cs_obj, antenna = 3, smoothing = nsm)
+
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR_SS_Smoothed(SmoothSS)
+
+  return(seasonder_cs_obj)
 
 }
 
-seasonder_SmoothSS <- function(seasonder_cs_obj, antenna, nsm = 11){
+seasonder_SmoothSS <- function(seasonder_cs_obj, antenna, smoothing = NULL){
+
+  nsm <- smoothing %||% seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$nsm
 
   SS <- seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_obj, antenna = antenna)
 
   # TODO: check that nsm is an odd number
 
+  if(nsm %% 2 != 0){ #odd
+    after_bins <- before_bins <- (nsm-1)/2
+  }else{ # even
 
+    after_bins  <- nsm/2
+    before_bins <- nsm/2 - 1
+  }
 
   out <- purrr::map(1:nrow(SS),\(i){
 
-    slider::slide_mean(abs(SS[i,,drop=TRUE]),after = (nsm-1)/2,before = (nsm-1)/2) %>% matrix(nrow=1,byrow = T) %>% magrittr::set_rownames(rownames(SS)[i])
+    slider::slide_mean(abs(SS[i,,drop=TRUE]),after = after_bins,before = before_bins) %>% matrix(nrow=1,byrow = T) %>% magrittr::set_rownames(rownames(SS)[i])
 
   }) %>% purrr::reduce(\(x,y) rbind(x,y)) %>% magrittr::set_colnames(colnames(SS))
 
@@ -1107,33 +1410,36 @@ seasonder_SmoothSS <- function(seasonder_cs_obj, antenna, nsm = 11){
 
 
 
-seasonder_findFOLNullsInFOLRegion <- function(FOL_region, start_point_P, doppler_bins, left_region = FALSE){
+seasonder_findFORNullsInFOR <- function(FOR, start_point_P, doppler_bins, left_region = FALSE){
 
 
 
   if(left_region){
-    FOL_region %<>% rev()
+    FOR %<>% rev()
     doppler_bins %<>% rev()
   }
 
-  FOL <- doppler_bins[1]
 
 
-  FOL_region %<>% abs() %>% magrittr::multiply_by(-1)
+
+  FOR %<>% abs() %>% magrittr::multiply_by(-1)
   start_point_P <- -1 * abs(start_point_P)
 
 
-  FOL_index <- pracma::findpeaks(FOL_region,nups = 1, ndowns = 1, zero = "0",minpeakheight = start_point_P, npeaks = 1, sortstr = FALSE)[,2,drop=TRUE]
+  FOR_index <- pracma::findpeaks(FOR,nups = 1, ndowns = 1, zero = "0",minpeakheight = start_point_P, npeaks = 1, sortstr = FALSE)[,2,drop=TRUE]
 
-  FOL <- doppler_bins[FOL_index]
+  FOR_bins <- doppler_bins[FOR_index]
 
-  return(FOL)
+  return(FOR_bins)
 
 
 
 }
 
-seasonder_findFOLNullsInSpectrum <- function(spectrum, doppler_bins,fdown = 7.5, negative_Bragg_region = FALSE){
+seasonder_findFORNullsInSpectrum <- function(spectrum, doppler_bins, negative_Bragg_region = FALSE){
+
+  fdown <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$fdown
+
   # TODO: better center region removing
   sp <- -1 * abs(spectrum)
   dop_b <- doppler_bins
@@ -1162,32 +1468,39 @@ seasonder_findFOLNullsInSpectrum <- function(spectrum, doppler_bins,fdown = 7.5,
   MAXP.bin <- which.max(sp)
   start_point_P <- MAXP / fdown
 
-  right_FOL_region_index <- (MAXP.bin + 1):length(sp)
-  right_FOL_region <- sp[right_FOL_region_index]
-  right_FOL_region_bins <- dop_b[right_FOL_region_index]
+  right_FOR_index <- (MAXP.bin + 1):length(sp)
+  right_FOR_sp <- sp[right_FOR_index]
+  right_FOR_bins <- dop_b[right_FOR_index]
 
-  left_FOL_region_index <- 1:(MAXP.bin - 1)
-  left_FOL_region <- sp[left_FOL_region_index]
-  left_FOL_region_bins <- dop_b[left_FOL_region_index]
+  left_FOR_index <- 1:(MAXP.bin - 1)
+  left_FOR_sp <- sp[left_FOR_index]
+  left_FOR_bins <- dop_b[left_FOR_index]
 
-  right_FOL <- seasonder_findFOLNullsInFOLRegion(right_FOL_region, start_point_P, doppler_bins = right_FOL_region_bins, left_region = FALSE)
+  right_FOL <- seasonder_findFORNullsInFOR(right_FOR_sp, start_point_P, doppler_bins = right_FOR_bins, left_region = FALSE)
 
-  left_FOL <- seasonder_findFOLNullsInFOLRegion(left_FOL_region, start_point_P, doppler_bins = left_FOL_region_bins, left_region = TRUE)
+  left_FOL <- seasonder_findFORNullsInFOR(left_FOR_sp, start_point_P, doppler_bins = left_FOR_bins, left_region = TRUE)
 
-  out <- list(left_FOL = left_FOL, right_FOL = right_FOL)
+  has_left_FOL <- length(left_FOL) == 1 && !is.na(left_FOL)
+  has_right_FOL <- length(right_FOL) == 1 && !is.na(right_FOL)
 
+  out <- list(FOR=integer(0),MAXP = MAXP, MAXP.bin = MAXP.bin)
+
+  if(has_left_FOL && has_right_FOL){
+
+    out$FOR <- seq(left_FOL, right_FOL)
+  }
   return(out)
 
 }
 
-seasonder_findFOLNullsInSSMatrix <- function(SS, doppler_bins, fdown = 7.5, negative_Bragg_region = FALSE){
+seasonder_findFORNullsInSSMatrix <- function(SS, doppler_bins,  negative_Bragg_region = FALSE){
 
 
 
   out <- purrr::map(seq_len(nrow(SS)), \(i){
     spectrum <- SS[i,,drop = TRUE]
 
-    result <- seasonder_findFOLNullsInSpectrum(spectrum, doppler_bins, fdown = fdown, negative_Bragg_region = negative_Bragg_region)
+    result <- seasonder_findFORNullsInSpectrum(spectrum, doppler_bins, negative_Bragg_region = negative_Bragg_region)
 
     return(result)
 
@@ -1197,9 +1510,11 @@ seasonder_findFOLNullsInSSMatrix <- function(SS, doppler_bins, fdown = 7.5, nega
   return(out)
 }
 
-seasonder_findFOLNulls <- function(seasonder_cs_obj, nsm = 11, fdown = 7.5){
+seasonder_findFORNulls <- function(seasonder_cs_obj){
 
-  SS3_smoothed <- seasonder_SmoothFOLSS(seasonder_cs_obj, nsm = nsm)
+  seasonder_cs_obj %<>% seasonder_SmoothFORSS()
+
+  SS3_smoothed <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_obj)
 
   Center_Bin <- seasonder_getCenterDopplerBin(seasonder_cs_obj)
 
@@ -1209,115 +1524,172 @@ seasonder_findFOLNulls <- function(seasonder_cs_obj, nsm = 11, fdown = 7.5){
 
   SS3_smoothed_negative <- SS3_smoothed[,1:(Center_Bin - 1)]
 
-  FOL_negative <- seasonder_findFOLNullsInSSMatrix(SS3_smoothed_negative, doppler_bins = 1:(Center_Bin - 1), fdown = fdown, negative_Bragg_region = TRUE)
+  FOR_negative <- seasonder_findFORNullsInSSMatrix(SS3_smoothed_negative, doppler_bins = 1:(Center_Bin - 1),  negative_Bragg_region = TRUE)
 
-  FOL_positive <- seasonder_findFOLNullsInSSMatrix(SS3_smoothed_positive, doppler_bins = (Center_Bin + 1):nDoppler, fdown = fdown, negative_Bragg_region = FALSE)
-
-
+  FOR_positive <- seasonder_findFORNullsInSSMatrix(SS3_smoothed_positive, doppler_bins = (Center_Bin + 1):nDoppler,  negative_Bragg_region = FALSE)
 
 
-  out <- list(FOL_positive_Bragg_peak = FOL_positive, FOL_negative_Bragg_peak = FOL_negative)
-  out <- purrr::transpose(out)
 
-  return(out)
+
+  FOR <- list(negative_FOR = FOR_negative, positive_FOR = FOR_positive)
+  FOR <- purrr::transpose(FOR)
+
+
+  MAXP <- FOR %>% purrr::map(\(x) x %>% purrr::map( \(peak) purrr::pluck(peak,"MAXP")) )
+
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR_MAXP(MAXP)
+
+
+
+  MAXP.bin <- FOR %>% purrr::map(\(x) x %>% purrr::map( \(peak) purrr::pluck(peak,"MAXP.bin")) )
+
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR_MAXP.bin(MAXP.bin)
+
+  FOR %<>% purrr::map(\(x) x %>% purrr::map( \(peak) purrr::pluck(peak,"FOR")) )
+
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR(FOR)
+
+  return(seasonder_cs_obj)
 
 }
 
 
-seasonder_extractFOR <- function(seasonder_cs_obj, spectrum, FOL){
+seasonder_extractFOR <- function(seasonder_cs_obj, spectrum, FOR){
 
 
 
   negative_FOR <- matrix(numeric(0), byrow = T)
 
-  if(all(purrr::map_lgl(FOL$FOL_negative_Bragg_peak, \(x) !is.na(x) && length(x) == 1))){
-    negative_FOR <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(spectrum, seq(FOL$FOL_negative_Bragg_peak$left_FOL,FOL$FOL_negative_Bragg_peak$right_FOL))
+  if(length(FOR$negative_FOR) > 0){
+    negative_FOR <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(spectrum, FOR$negative_FOR)
 
   }
 
   positive_FOR <- matrix(numeric(0), byrow = T)
 
-  if(all(purrr::map_lgl(FOL$FOL_positive_Bragg_peak, \(x) !is.na(x) && length(x) == 1))){
-    positive_FOR <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(spectrum, seq(FOL$FOL_positive_Bragg_peak$left_FOL,FOL$FOL_positive_Bragg_peak$right_FOL))
+  if(length(FOR$positive_FOR) > 0){
+    positive_FOR <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(spectrum, FOR$positive_FOR)
 
   }
 
-  out <- list(positive_FOR = positive_FOR, negative_FOR = negative_FOR)
+
+  out <- list(negative_FOR = negative_FOR, positive_FOR = positive_FOR)
 
   return(out)
 
 }
 
-seasonder_filterFORAmplitudes <- function(seasonder_cs_obj, FOLs, reference_noise_normalized_limits, flim = 4, noisefact = 15){
+seasonder_filterFORAmplitudes <- function(seasonder_cs_obj){
 
+  FORs <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_FOR()
 
+  flim <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$flim
+  noisefact <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$noisefact
 
-  noise_levels <- seasonder_getNoiseLevel(seasonder_cs_obj, normalized_doppler_range = reference_noise_normalized_limits, dB = FALSE)
+  seasonder_cs_obj %<>%  seasonder_computeNoiseLevel()
+
+  noise_levels <- seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_obj, dB = FALSE)
 
   noise_limit <- noise_levels * noisefact
-  SS3 <- seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_obj, 3) %>% abs()
+  SS3 <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_obj) %>% abs()
 
-  FORs <- 1:length(FOLs) %>% purrr::map(\(i) seasonder_extractFOR(seasonder_cs_obj,SS3[i,,drop=FALSE], FOLs[[i]]) ) %>% magrittr::set_names(names(FOLs))
+  FORs_sp <- 1:length(FORs) %>% purrr::map(\(i) seasonder_extractFOR(seasonder_cs_obj,SS3[i,,drop=FALSE], FORs[[i]]) ) %>% magrittr::set_names(names(FORs))
 
-  FOR_bins <- FOLs %>% purrr::map(\(FOL) {
-
-
-    positive_FOR <- integer(0)
-    if(all(purrr::map_lgl(FOL$FOL_positive_Bragg_peak, \(x) !is.na(x) && length(x) == 1))){
-
-      positive_FOR <- seq(FOL$FOL_positive_Bragg_peak$left_FOL, FOL$FOL_positive_Bragg_peak$right_FOL)
-    }
+  FOR_bins <- FORs %>% purrr::map(\(FOR) {
 
 
-    negative_FOR <- integer(0)
-    if(all(purrr::map_lgl(FOL$FOL_negative_Bragg_peak, \(x) !is.na(x) && length(x) == 1))){
 
-      negative_FOR <- seq(FOL$FOL_negative_Bragg_peak$left_FOL, FOL$FOL_negative_Bragg_peak$right_FOL)
-    }
 
-    list(positive_FOR = positive_FOR, negative_FOR = negative_FOR)
+
+    positive_FOR <- FOR$positive_FOR
+
+
+
+    negative_FOR <- FOR$negative_FOR
+
+
+    list(negative_FOR = negative_FOR, positive_FOR = positive_FOR)
 
   })
 
-p_limit <- FORs %>% purrr::map(\(FOR) FOR %>% purrr::map(\(x) if(all(dim(x) > 0)) mean(x,na.rm=T)/flim else NA_real_ ))
+  p_limit <- FORs_sp %>% purrr::map(\(FOR) FOR %>% purrr::map(\(x) if(all(dim(x) > 0)) max(x,na.rm=T)/flim else NA_real_ ))
 
 
-filtered_FORs <- purrr::pmap(list(FORs, FOR_bins, p_limit, noise_limit), \(FOR, bins, p, noise){
-
-
-
-  if(length(bins$positive_FOR) > 0){
-    bins$positive_FOR <- bins$positive_FOR[FOR$positive_FOR > noise & FOR$positive_FOR > p$positive_FOR]
-  }
-
-  if(length(bins$negative_FOR) > 0){
-    bins$negative_FOR <- bins$negative_FOR[FOR$negative_FOR > noise & FOR$negative_FOR > p$negative_FOR]
-  }
-
-
-  bins
-})
+  filtered_FORs <- purrr::pmap(list(FORs_sp, FOR_bins, p_limit, noise_limit), \(FOR, bins, p, noise){
 
 
 
-  return(filtered_FORs)
+    if(length(bins$positive_FOR) > 0){
+      bins$positive_FOR <- bins$positive_FOR[FOR$positive_FOR > noise & FOR$positive_FOR > p$positive_FOR]
+    }
+
+    if(length(bins$negative_FOR) > 0){
+      bins$negative_FOR <- bins$negative_FOR[FOR$negative_FOR > noise & FOR$negative_FOR > p$negative_FOR]
+    }
+
+
+    bins
+  })
+
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR(filtered_FORs)
+
+  return(seasonder_cs_obj)
 }
 
 
-seasonder_computeFOLs <- function(seasonder_cs_obj, reference_noise_normalized_limits, nsm = 11, fdown = 7.5, flim = 4, noisefact = 15){
+seasonder_limitFORCurrentRange <- function(seasonder_cs_obj){
 
-# TODO: seasonder_findFOLNulls should return a vector of bins, instead of simply the limits, that would reduce the need of recomputing the vectors later in filterFORAmplitudes
-  FOL_nulls <- seasonder_findFOLNulls(seasonder_cs_obj, nsm = nsm, fdown = fdown)
+  currmax <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$currmax
 
-  FOLs <- seasonder_filterFORAmplitudes(seasonder_cs_obj, FOLs = FOL_nulls, reference_noise_normalized_limits = reference_noise_normalized_limits, flim = flim, noisefact = noisefact)
+  FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_obj)
+
+  rad_vel <- seasonder_getBinsRadialVelocity(seasonder_cs_obj)
+
+  drop_rad_vel <- which(abs(rad_vel) >= currmax)
+
+  FOR %<>% purrr::map(\(x) x %>% purrr::map(\(Bragg_peak) dplyr::setdiff(Bragg_peak,drop_rad_vel)))
+
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR(FOR)
+
+  return(seasonder_cs_obj)
+
+}
+
+seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_obj){
 
 
-  return(FOLs)
+  seasonder_cs_obj %<>% seasonder_findFORNulls()
+
+  seasonder_cs_obj %<>% seasonder_filterFORAmplitudes()
+
+  seasonder_cs_obj %<>% seasonder_limitFORCurrentRange()
+
+  return(seasonder_cs_obj)
+
+}
+
+seasonder_computeFORs <- function(seasonder_cs_obj, method = NULL, FOR_control = NULL){
+
+  if(!is.null(method)){
+    seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR_method(method)
+  }
+
+  method <- seasonder_getSeaSondeRCS_FOR_method(seasonder_cs_obj)
+
+  if(!is.null(FOR_control)){
+    seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR_parameters(FOR_control)
+  }
+
+  if(method == "SeaSonde"){
+    seasonder_cs_obj %<>%  seasonder_computeFORsSeaSondeMethod()
+  }
+
+  return(seasonder_cs_obj)
 }
 ##### Plot #####
 
 
-seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist, doppler_units = "normalized doppler frequency",  FOL_control = NULL){
+seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist, doppler_units = "normalized doppler frequency", plot_FORs = FALSE){
 
   spectrum <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj, antennae = antenna,dist_ranges = c(range_dist[1],range_dist[1]), collapse = TRUE)[[1]] %>% t() %>% as.data.frame() %>% magrittr::set_colnames("SS")
 
@@ -1334,39 +1706,54 @@ seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, ra
 
   out <- ggplot2::ggplot(spectrum, ggplot2::aes(y = SS, x = doppler)) + ggplot2::geom_line() + ggplot2::geom_vline(xintercept=Bragg_freq, color="red") + ggplot2::theme_bw()
 
-  if(!is.null(FOL_control$reference_noise_normalized_limits)){
-
-    noise_level <- seasonder_getNoiseLevel(seasonder_cs_obj, FOL_control$reference_noise_normalized_limits)[range_dist] %>% magrittr::set_names(NULL)
-
-    positive_noise_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj,FOL_control$reference_noise_normalized_limits, in_units = "normalized doppler frequency", out_units = doppler_units)
-
-    negative_noise_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj,-1 * FOL_control$reference_noise_normalized_limits, in_units = "normalized doppler frequency", out_units = doppler_units)
-
-    positive_noise_data <- data.frame(SS = noise_level, doppler = c(positive_noise_range))
-    negative_noise_data <- data.frame(SS = noise_level, doppler = c(negative_noise_range))
-    out <- out + ggplot2::geom_line(data=positive_noise_data, color="red", size = 2) + ggplot2::geom_line(data=negative_noise_data, color="red", size = 2)
 
 
-
-  }
-
-  if(!is.null(FOL_control)){
-
-    smoothed_spectrum <- seasonder_SmoothSS(seasonder_cs_obj, antenna, FOL_control$nsm)[range_dist,, drop=TRUE]
-
-    smoothed_data <- data.frame(SS=  seasonder_SelfSpectra2dB(seasonder_cs_obj,smoothed_spectrum), doppler= doppler_values)
-
-    out <- out + ggplot2::geom_line(data=smoothed_data, color="orange", size = 1)
+  if(plot_FORs){
 
 
-    FOL <- seasonder_computeFOLs(seasonder_cs_obj, reference_noise_normalized_limits = FOL_control$reference_noise_normalized_limits, nsm = FOL_control$nsm, fdown = FOL_control$fdown, flim = FOL_control$flim, noisefact = FOL_control$noisefact )[[range_dist]]
+    smoothed_spectrum <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_obj)[range_dist,, drop=TRUE]
 
 
-    FOL %<>% unlist()
-    FOL <- seasonder_SwapDopplerUnits(seasonder_cs_obj, FOL, "bins", doppler_units)
-    FOL_data <- data.frame(xintercept = FOL)
+    if(!is.null(smoothed_spectrum)){
 
-    out <- out + ggplot2::geom_vline(data=FOL_data, ggplot2::aes(xintercept = xintercept), color = "blue", alpha = 0.1)
+      smoothed_data <- data.frame(SS=  seasonder_SelfSpectra2dB(seasonder_cs_obj,smoothed_spectrum), doppler= doppler_values)
+
+      out <- out + ggplot2::geom_line(data=smoothed_data, color="orange", size = 1)
+    }
+
+
+
+    FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_obj)[[range_dist]]
+
+    if(!is.null(FOR)){
+
+      FOR %<>% unlist()
+      FOR <- seasonder_SwapDopplerUnits(seasonder_cs_obj, FOR, "bins", doppler_units)
+      FOR_data <- data.frame(xintercept = FOR)
+
+      out <- out + ggplot2::geom_vline(data=FOR_data, ggplot2::aes(xintercept = xintercept), color = "blue", alpha = 0.1)
+
+
+    }
+
+
+
+
+    noise_level <- seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_obj, dB = T)[range_dist] %>% magrittr::set_names(NULL)
+
+    reference_noise_normalized_limits <- seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits(seasonder_cs_obj)
+
+    if(!is.null(noise_level) && !is.null(reference_noise_normalized_limits)){
+
+      positive_noise_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, reference_noise_normalized_limits, in_units = "normalized doppler frequency", out_units = doppler_units)
+
+      negative_noise_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj,-1 * reference_noise_normalized_limits, in_units = "normalized doppler frequency", out_units = doppler_units)
+
+      positive_noise_data <- data.frame(SS = noise_level, doppler = c(positive_noise_range))
+      negative_noise_data <- data.frame(SS = noise_level, doppler = c(negative_noise_range))
+      out <- out + ggplot2::geom_line(data=positive_noise_data, color="red", size = 2) + ggplot2::geom_line(data=negative_noise_data, color="red", size = 2)
+
+    }
 
   }
 
