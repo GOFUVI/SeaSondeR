@@ -2662,11 +2662,27 @@ describe("plots",{
 
 {
   skip("Test not fully implemented")
-      seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20, FOL_control=list(nsm = 11, fdown = 7.5, noisefact = 15, flim = 4, reference_noise_normalized_limits= c(2.5,2.8)))
+      seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20)
 
 
 
 }
+
+      describe("plot FOR",{
+        it("should plot the FORs too",{
+          skip("Test not fully implemented")
+
+          seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
+
+          seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10))
+
+          seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
+
+        })
+
+
+      })
+
     })
 
   })
@@ -2955,17 +2971,17 @@ expect_equal(test[1]-seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRe
 
 
 
-#### FOL ####
+#### FOR ####
 
 
-describe("FOL", {
-  describe("seasonder_getNoiseLevel",{
+describe("FOR", {
+  describe("seasonder_getSeaSondeRCS_NoiseLevel",{
 
     it("should return the noise level",{
 
       seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
-      test <- seasonder_getNoiseLevel(seasonder_cs_obj, c(2,2.5))
+      test <- seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_obj, c(2,2.5))
 
       expect_snapshot_value(test,style = "deparse")
 
@@ -2984,14 +3000,14 @@ describe("FOL", {
   })
 
 
-  describe("seasonder_findFOLNulls",{
+  describe("seasonder_findFORNulls",{
 
     it("should return the NULLs for each Bragg region",{
 
       seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
 
-      test <- seasonder_findFOLNulls(seasonder_cs_obj = seasonder_cs_obj,nsm = 5, fdown = 7.5)
+      test <- seasonder_findFORNulls(seasonder_cs_obj = seasonder_cs_obj,nsm = 11, fdown = 7.5)
 
       expect_snapshot_value(test, style = "json2")
 
@@ -3009,14 +3025,39 @@ it("should filter the First order region",{
   seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
 
-  FOLs <- seasonder_findFOLNulls(seasonder_cs_obj = seasonder_cs_obj,nsm = 5, fdown = 7.5)
+  FORs <- seasonder_findFORNulls(seasonder_cs_obj = seasonder_cs_obj,nsm = 11, fdown = 7.5)
 
-test <- seasonder_filterFORAmplitudes(seasonder_cs_obj, FOLs, reference_noise_normalized_limits = c(2,2.5))
+test <- seasonder_filterFORAmplitudes(seasonder_cs_obj, FORs, reference_noise_normalized_limits = c(2.5,2.8))
+
+expect_snapshot_value(test, style = "json2")
 
 
 })
 
 
   })
+
+  describe("seasonder_computeFORs",{
+
+
+
+
+        it("should compute the FORs",{
+          seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+          target <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_obj)
+
+          test <- seasonder_cs_obj %>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10)) %>% seasonder_getSeaSondeRCS_FOR()
+
+          expect_equal(test[[20]],target[[20]])
+
+expect_snapshot_value(test, style = "json2")
+
+        })
+
+
+      })
+
+    })
 
 })
