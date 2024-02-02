@@ -1,12 +1,12 @@
-mock_output_factory <- function(...){
+mock_output_factory <- function(...) {
 
   .output <- rlang::list2(...)
   .out_len <-length(.output)
   .i <- 1
 
-  function(...){
+  function(...) {
 
-    if(.i<=.out_len){
+    if (.i<=.out_len) {
 
       .out <- .output[[.i]]
       .i <<- .i +1

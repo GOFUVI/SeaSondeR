@@ -44,7 +44,7 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
 
   colnames(calibration_matrix) <- attributes_list$BEAR
 
-  calibration_matrix <- attributes_list %>% purrr::reduce2(names(attributes_list),\(cal_matrix_so_far,attribute,attribute_name){
+  calibration_matrix <- attributes_list %>% purrr::reduce2(names(attributes_list),\(cal_matrix_so_far,attribute,attribute_name) {
     setter_fun <- get(glue::glue("seasonder_setSeaSondeRAPM_{attribute_name}"))
     cal_matrix_so_far %<>% setter_fun(new_value=attribute)
 
@@ -352,7 +352,7 @@ validate_SeaSondeRAPM_BEAR <- function(vector,seasonde_apm_obj) {
     rlang::abort(msg)
   }
 
-  if(any(!dplyr::between(vector,-180,180))){
+  if (any(!dplyr::between(vector,-180,180))) {
     msg <- glue::glue("validate_SeaSondeRAPM_BEAR: BEAR must be a numeric vector of values between -180 and 180.")
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
@@ -505,9 +505,9 @@ validate_SeaSondeRAPM_StationCode <- function(code) {
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
-  if(length(code)>0){
-    if(length(code)==1){
-      if(nchar(code) !=4){
+  if (length(code)>0) {
+    if (length(code)==1) {
+      if (nchar(code) !=4) {
         msg <- glue::glue("validate_SeaSondeRAPM_StationCode: StationCode must have 4 characters. Provided value is {code}.")
         seasonder_logAndMessage(msg, "fatal")
         rlang::abort(msg)
@@ -605,7 +605,7 @@ validate_SeaSondeRAPM_PhaseCorrections <- function(corrections) {
 #' @param seasonder_obj A SeaSondeRAPM object.
 #' @return The version value.
 #' @export
-seasonder_getVersion.SeaSondeRAPM <- function(seasonder_obj){
+seasonder_getVersion.SeaSondeRAPM <- function(seasonder_obj) {
 
   attr(seasonder_obj,"version",exact = TRUE)
 }
@@ -1038,7 +1038,7 @@ seasonder_getSeaSondeRAPM_FileID <- function(seasonde_apm_obj) {
 #' @param start The start index of the lines to read from.
 #' @param number_of_lines_to_read The number of lines to read to form the row.
 #' @return Returns a numeric vector containing the row values.
-read_matrix_row <- function(lines, start,number_of_lines_to_read){
+read_matrix_row <- function(lines, start,number_of_lines_to_read) {
   row_str <- paste(lines[start:(start + number_of_lines_to_read -1)], collapse = " ")
   row_str <- as.numeric(unlist(stringr::str_split(stringr::str_squish(row_str), " ")))
 }
