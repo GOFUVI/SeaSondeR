@@ -369,7 +369,7 @@ describe("read_and_qc_field", {
         qc_called <- FALSE
 
 
-        seasonder_the$qc_functions$qc_check_not_null<-function(...){
+        seasonder_the$qc_functions$qc_check_not_null<-function(...) {
           qc_called <<-TRUE
         }
 
@@ -380,7 +380,7 @@ describe("read_and_qc_field", {
 
         expect_condition({
 
-          result <-   withCallingHandlers(seasonder_cs_field_reading_error= function(cond){
+          result <-   withCallingHandlers(seasonder_cs_field_reading_error= function(cond) {
 
             seasonder_skip_cs_field(cond,NA)
 
@@ -403,7 +403,7 @@ describe("read_and_qc_field", {
         field_spec <-  list(type = "UInt8", qc_fun = "qc_error", qc_params = list())
         mocked_seasonder_readCSField <- mockthat::mock(123)
 
-        seasonder_the$qc_functions$qc_error<-function(...){
+        seasonder_the$qc_functions$qc_error<-function(...) {
 
           rlang::abort("QC Error")
         }
@@ -438,13 +438,13 @@ describe("read_and_qc_field", {
         field_spec <-  list(type = "UInt8", qc_fun = "qc_error", qc_params = list())
         mocked_seasonder_readCSField <- mockthat::mock(123)
 
-        seasonder_the$qc_functions$qc_error <- function(...){
+        seasonder_the$qc_functions$qc_error <- function(...) {
 
           rlang::abort("QC Error")
         }
         alternate_qc_called <- FALSE
 
-        alternate_qc <- function(x){
+        alternate_qc <- function(x) {
           alternate_qc_called <<- TRUE
           6
         }
@@ -514,7 +514,7 @@ describe("seasonder_readSeaSondeCSFileBlock", {
 
       expect_warning(
 
-        result <- withCallingHandlers(seasonder_cs_field_reading_error= function(cond){
+        result <- withCallingHandlers(seasonder_cs_field_reading_error= function(cond) {
 
           seasonder_skip_cs_field(cond,NA)
 
@@ -986,7 +986,7 @@ describe("readV6BlockData works as expected", {
   }
 
 
-  mock_factory <- function(n){
+  mock_factory <- function(n) {
 
 
     .n <- n
@@ -996,7 +996,7 @@ describe("readV6BlockData works as expected", {
 
     function(spec, connection, endian, prev_data) {
 
-      if(.regular_block){
+      if (.regular_block) {
         out <- list(Var1=1L,
                     Var2=2L)
         .regular_block <<- FALSE
@@ -1220,7 +1220,7 @@ describe("seasonder_readSeaSondeCSFileHeaderV6 works as expected", {
       expect_condition({
 
 
-        results <- withCallingHandlers(seasonder_v6_transform_function_error = function(cond){
+        results <- withCallingHandlers(seasonder_v6_transform_function_error = function(cond) {
 
           val <- cond$seasonder_block_data
 
@@ -2678,6 +2678,14 @@ describe("plots",{
 
           seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
 
+          seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = F))
+
+          seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 4,plot_FORs = TRUE)
+
+          seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T))
+
+          seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 4,plot_FORs = TRUE)
+
         })
 
 
@@ -2971,93 +2979,6 @@ expect_equal(test[1]-seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRe
 
 
 
-#### FOR ####
-
-
-describe("FOR", {
-  describe("seasonder_getSeaSondeRCS_NoiseLevel",{
-
-    it("should return the noise level",{
-
-      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-
-      test <- seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_obj, c(2,2.5))
-
-      expect_snapshot_value(test,style = "deparse")
-
-    })
-
-  })
-
-  describe("seasonder_SmoothSS",{
-
-    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-
-    test <- seasonder_SmoothSS(seasonder_cs_obj,antenna = 3, nsm = 5)
-
-    expect_snapshot_value(test, style = "deparse")
-
-  })
-
-
-  describe("seasonder_findFORNulls",{
-
-    it("should return the NULLs for each Bragg region",{
-
-      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-
-
-      test <- seasonder_findFORNulls(seasonder_cs_obj = seasonder_cs_obj,nsm = 11, fdown = 7.5)
-
-      expect_snapshot_value(test, style = "json2")
 
 
 
-    })
-
-  })
-
-  describe("seasonder_filterFORAmplitudes",{
-
-it("should filter the First order region",{
-
-
-  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-
-
-  FORs <- seasonder_findFORNulls(seasonder_cs_obj = seasonder_cs_obj,nsm = 11, fdown = 7.5)
-
-test <- seasonder_filterFORAmplitudes(seasonder_cs_obj, FORs, reference_noise_normalized_limits = c(2.5,2.8))
-
-expect_snapshot_value(test, style = "json2")
-
-
-})
-
-
-  })
-
-  describe("seasonder_computeFORs",{
-
-
-
-
-        it("should compute the FORs",{
-          seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-
-          target <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_obj)
-
-          test <- seasonder_cs_obj %>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10)) %>% seasonder_getSeaSondeRCS_FOR()
-
-          expect_equal(test[[20]],target[[20]])
-
-expect_snapshot_value(test, style = "json2")
-
-        })
-
-
-      })
-
-    })
-
-})

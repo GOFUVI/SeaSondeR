@@ -44,14 +44,14 @@ py_run_string(glue::glue("import jiggybase;
 ))
 
 
-source_files %>% purrr::walk2(names(.),\(sf,sf_name){
+source_files %>% purrr::walk2(names(.),\(sf,sf_name) {
 
 
-  sf %>% purrr::walk2(names(.),\(fun_group,fun_group_name){
+  sf %>% purrr::walk2(names(.),\(fun_group,fun_group_name) {
     f_names <- readLines(here::here(glue::glue("R/{sf_name}.R"))) %>% purrr::keep(\(x) stringr::str_detect(x,"^.*?\\s*?<-\\s*?function")) %>%
       purrr::map_chr(\(x) stringr::str_extract(x,"^(.*?)\\s*?<-\\s*?function",group=1)) %>% purrr::keep(\(f_name) f_name %in% fun_group)
 
-    f_names %>% purrr::walk(\(f_name){
+    f_names %>% purrr::walk(\(f_name) {
 
       doc_path <- here::here(glue::glue("tools/doc_compilation/{f_name}_docs.txt"))
       out <- docs[[f_name]]
