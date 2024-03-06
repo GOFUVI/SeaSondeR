@@ -17,7 +17,10 @@ seasonder_defaultFOR_parameters <- function() {
               flim = 4,
               noisefact = 15,
               currmax = 2,
-              reject_distant_bragg = TRUE
+              reject_distant_bragg = TRUE, #  Default is to apply this test
+              reject_noise_ionospheric = TRUE, #  Default is to apply this test (except for 42 MHz)
+              # TODO: implement default reject_noise_ionospheric = FALSE for 42 MHz
+              reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
   )
 
 
@@ -37,7 +40,8 @@ seasonder_validateFOR_parameters <- function(seasonder_cs_obj, FOR_parameters, m
     FOR_parameters$noisefact <- FOR_parameters$noisefact %||% seasonder_defaultFOR_parameters()$noisefact
     FOR_parameters$currmax <- FOR_parameters$currmax %||% seasonder_defaultFOR_parameters()$currmax
     FOR_parameters$reject_distant_bragg <- FOR_parameters$reject_distant_bragg %||% seasonder_defaultFOR_parameters()$reject_distant_bragg
-
+    FOR_parameters$reject_noise_ionospheric <- FOR_parameters$reject_noise_ionospheric %||% seasonder_defaultFOR_parameters()$reject_noise_ionospheric
+    FOR_parameters$reject_noise_ionospheric_threshold <- FOR_parameters$reject_noise_ionospheric_threshold %||% seasonder_defaultFOR_parameters()$reject_noise_ionospheric_threshold
 
   }
 
@@ -145,6 +149,8 @@ seasonder_setSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, NoiseLevel) {
 
 ##### Getters #####
 
+# TODO: implement access to individual parameters:
+# seasonder_getSeaSondeRCS_FOR_parameter <- function(seasonder_cs_object, FOR_parameter)
 
 seasonder_getSeaSondeRCS_FOR_parameters <- function(seasonder_cs_obj) {
 
@@ -216,6 +222,24 @@ seasonder_getSeaSondeRCS_FOR_reject_distant_bragg <- function(seasonder_cs_obj) 
 
   return(out)
 }
+
+
+seasonder_getSeaSondeRCS_FOR_reject_noise_ionospheric <- function(seasonder_cs_obj) {
+
+  out <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$reject_noise_ionospheric %||% seasonder_defaultFOR_parameters()$reject_noise_ionospheric
+
+  return(out)
+}
+
+
+seasonder_getSeaSondeRCS_FOR_reject_noise_ionospheric_threshold <- function(seasonder_cs_obj) {
+
+  out <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$reject_noise_ionospheric_threshold %||% seasonder_defaultFOR_parameters()$reject_noise_ionospheric_threshold
+
+  return(out)
+}
+
+
 
 ##### FOR #####
 
@@ -573,7 +597,7 @@ seasonder_rejectDistantBraggPeakTest <- function(seasonder_cs_obj, peak, range =
     # Are all boundary distances to bragg peaks greater than the width?
     if (all(left_limit_distances > peak_width) && all(right_limit_distances > peak_width)) { # Yes: we reject the peak
 
-      seasonder_logAndMessage(glue::glue("First Order Rejected at range {range}, peak {peak_name}"), log_level = "info", calling_function = "seasonder_rejectDistantBraggPeakTest")
+      seasonder_logAndMessage(glue::glue("First Order Rejected at range {range}, peak {peak_name}. Distance Bragg test failed."), log_level = "info", calling_function = "seasonder_rejectDistantBraggPeakTest")
 
       # TODO: include speed range rejected in message
       # TODO: Include rejected index in FOR_data
@@ -604,6 +628,91 @@ seasonder_rejectDistantBragg <- function(seasonder_cs_obj){
 
 }
 
+
+seasonder_rejectNoiseIonosphericTest <- function(seasonder_cs_obj, peak, range = NA, peak_name = ""){
+
+  # Si hay pico
+
+  if (length(peak) > 0) {
+
+
+
+    reject_noise_ionospheric_threshold <- seasonder_getSeaSondeRCS_FOR_reject_noise_ionospheric_threshold(seasonder_cs_obj)
+
+    # Obtener el bin central
+    center_bin <- seasonder_getCenterDopplerBin(seasonder_cs_obj)
+
+    # Obtener los límites izquierdo y derecho del FOR
+    peak_limits <- range(peak)
+
+    # comprobamos si peak está por encima o por debajo del centro. Y extraemos el espectro suavizado del lado correspondiente.
+
+
+
+    ss_smoothed <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_obj)[range,,drop = TRUE]
+
+    half_spectrum <- seq(1,center_bin - 1)
+
+    if (all(peak_limits > center_bin)) {
+      half_spectrum <- seq(center_bin + 1, length(ss_smoothed))
+    }
+
+    # Obtener la región NonBragg eliminando de la región positive/negativa los bins fuera del FOR
+
+    non_bragg <- dplyr::setdiff(half_spectrum, peak)
+
+    # calcular potencia total NonBragg
+
+    ## sumando los valores de potencia
+
+    non_bragg_total <- sum(ss_smoothed[non_bragg], na.rm = T)
+
+    ## pasamos a dB.
+
+    non_bragg_power <- seasonder_SelfSpectra2dB(seasonder_cs_obj,non_bragg_total)
+
+
+    # calcular potencia total Bragg sumando los valores del espectro dentro de la FOR y pasando a dB
+
+    bragg_total <- sum(ss_smoothed[seq(peak_limits[1],peak_limits[2])], na.rm = T)
+
+    bragg_power <- seasonder_SelfSpectra2dB(seasonder_cs_obj,bragg_total)
+
+    # ¿Es la potencia Bragg más el threshold menor que la potencia NonBragg?
+    if ((bragg_power + reject_noise_ionospheric_threshold) < non_bragg_power) {# Si: rechazamos el peak
+
+      seasonder_logAndMessage(glue::glue("First Order Rejected at range {range}, peak {peak_name}. Noise/Ionospheric test failed."), log_level = "info", calling_function = "seasonder_rejectNoiseIonosphericTest")
+
+
+      # TODO: Include rejected index in FOR_data
+      peak <- integer(0)
+
+    }
+
+  }
+
+
+  return(peak)
+
+}
+
+
+#' @details
+#' When applied, reject the Negative and/or Positive Bragg when the total external (Non Bragg) is greater then the Bragg power by the dB amount entered.
+#'
+seasonder_rejectNoiseIonospheric <- function(seasonder_cs_obj){
+
+  FORs <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_obj)
+
+  # This test is applied for each range and each negative and positive Bragg.
+  FORs %<>% purrr::map2(1:length(FORs), \(FOR, FOR_range) FOR %>% purrr::map2(names(.), \(peak, peak_name) seasonder_rejectNoiseIonosphericTest(seasonder_cs_obj, peak, FOR_range, peak_name)))
+
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR(FORs)
+
+  return(seasonder_cs_obj)
+
+}
+
 seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_obj) {
 
 
@@ -613,12 +722,17 @@ seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_obj) {
 
   seasonder_cs_obj %<>% seasonder_limitFORCurrentRange()
 
-  # Reject distant Bragg peaks. Default is to apply this test.
+  # Reject distant Bragg peaks.
   if (seasonder_getSeaSondeRCS_FOR_reject_distant_bragg(seasonder_cs_obj)) {
     seasonder_cs_obj %<>% seasonder_rejectDistantBragg()
   }
 
+  # Reject Noise/Ionospheric Test.
 
+  if (seasonder_getSeaSondeRCS_FOR_reject_noise_ionospheric(seasonder_cs_obj)) {
+
+    seasonder_cs_obj %<>% seasonder_rejectNoiseIonospheric()
+  }
 
   return(seasonder_cs_obj)
 

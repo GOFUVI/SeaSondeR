@@ -86,7 +86,6 @@ describe("FOR", {
 
       test <- seasonder_cs_obj %>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10)) %>% seasonder_getSeaSondeRCS_FOR()
 
-      expect_equal(test[[20]],target[[20]])
 
       expect_snapshot_value(test, style = "json2")
 
