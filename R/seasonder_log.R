@@ -49,7 +49,7 @@ seasonder_appendLog <- function(log_str) {
   invisible(seasonder_the$log)
 }
 
-seasonder_verifyLog <- function(message,level){
+seasonder_verifyLog <- function(message,level) {
   # match level to one of the allowed inputs
   level <- match.arg(level,c("info","error","fatal"))
 
@@ -76,7 +76,7 @@ seasonder_logStr <- function(message,level) {
 #'
 #' @return Returns the `n` most recent log entries from the global log.
 #' @export
-seasonder_getLog <- function(n=100){
+seasonder_getLog <- function(n=100) {
 
   utils::tail(seasonder_the$log,n = n)
 
@@ -94,7 +94,7 @@ seasonder_getLog <- function(n=100){
 #' seasonder_log("This is an info message")
 #' seasonder_log("This is an error message", "error")
 #' seasonder_log("This is a fatal message", "fatal")
-seasonder_log <- function(message, level="info"){
+seasonder_log <- function(message, level="info") {
 
   if (seasonder_areLogsEnabled()) {
     seasonder_verifyLog(message,level)
@@ -119,7 +119,7 @@ seasonder_log <- function(message, level="info"){
 #'
 #' @return If temporary files are used, the path to the main temporary log file is returned. Otherwise, NULL.
 #' @export
-seasonder_logArchiver <- function(log_path=NULL, log_info_path=log_path, log_error_path=log_info_path, log_fatal_path=log_error_path){
+seasonder_logArchiver <- function(log_path=NULL, log_info_path=log_path, log_error_path=log_info_path, log_fatal_path=log_error_path) {
 
   temp_file <- FALSE
 
@@ -129,7 +129,7 @@ seasonder_logArchiver <- function(log_path=NULL, log_info_path=log_path, log_err
   }
 
 
-  seasonder_the$log %>% purrr::walk(\(log_entry){
+  seasonder_the$log %>% purrr::walk(\(log_entry) {
     level <- stringr::str_extract(log_entry,"^\\[(INFO|ERROR|FATAL)\\]",group = 1)
 
     # switch function to decide which function to call based on the log level
@@ -275,7 +275,7 @@ seasonder_logAndAbort <- function(msg, calling_function=NULL, ...) {
 #' @return A list of log blocks, each block being a vector of log entries.
 #' @importFrom lubridate ymd_hms
 #' @export
-seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_quantile=0.9, min_threshold_secs=10){
+seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_quantile=0.9, min_threshold_secs=10) {
 
   time_block <- NULL
 
@@ -318,6 +318,6 @@ seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_qua
 #'
 #' @return Returns the last log entry after splitting the log.
 #' @export
-seasonder_lastLog <- function(...){
+seasonder_lastLog <- function(...) {
   seasonder_splitLog(...) %>% dplyr::last()
 }

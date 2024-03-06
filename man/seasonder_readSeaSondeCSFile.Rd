@@ -52,7 +52,7 @@ This function utilizes the \code{rlang} package to manage conditions and provide
 This function provides a structured mechanism to recover from errors during its execution using the \code{rlang::withRestarts} function. The following restart option is available:
 
 \describe{
-\item{\code{seasonder_skip_cs_file(cond)}}{This allows for the graceful handling of file reading errors. If this restart is invoked, the function will log an error message indicating that the processing of a specific CS file was skipped and will return a list with \code{header=NULL} and \code{data=NULL}. The restart takes one argument: \code{cond} (the condition or error that occurred).
+\item{\code{seasonder_skip_cs_file(cond)}}{This allows for the graceful handling of file reading errors. If this restart is invoked, the function will log an error message indicating that the processing of a specific CS file was skipped and will return a list with \code{header = NULL} and \code{data = NULL}. The restart takes one argument: \code{cond} (the condition or error that occurred).
 \itemize{
 \item \strong{Usage}: In a custom condition handler, you can call \code{seasonder_skip_cs_file(cond)} to trigger this restart and skip the processing of the current CS file.
 \item \strong{Effect}: If invoked, the function logs an error message detailing the reason for skipping the file and then returns a list with both the header and data set to NULL.
