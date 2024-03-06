@@ -2658,6 +2658,8 @@ describe("plots",{
 
     seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
+    seasonder_cs_obj_v4 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSA_V4.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
     it("should plot the spectrum",{
 
 {
@@ -2674,17 +2676,21 @@ describe("plots",{
 
           seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
 
-          seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10))
+          seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_noise_ionospheric = F))
 
           seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
 
-          seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = F))
+          seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = F, reject_noise_ionospheric = F))
 
           seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 4,plot_FORs = TRUE)
 
-          seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T))
+          seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T, reject_noise_ionospheric = F))
 
           seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 4,plot_FORs = TRUE)
+
+          seasonder_cs_obj_v4 %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T, reject_noise_ionospheric = T))
+
+          seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj_v4, 3 , 20,plot_FORs = TRUE)
 
         })
 
