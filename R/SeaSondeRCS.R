@@ -924,7 +924,18 @@ seasonder_getBraggLineBins <- function(seasonder_cs_obj) {
 
 }
 
-#' Hz these freqs are the high limit of each Doppler bin interval (as in SpectraPlotterMap)
+#' Get Doppler Bins Frequency
+#'
+#' This function calculates the frequency limits for each Doppler bin within a SeaSonde Cross Spectrum (CS) object. It can return frequencies either in their original Hz values or normalized by the second Bragg frequency. The frequencies are calculated as the high limit of each Doppler bin interval, similar to what is displayed in SpectraPlotterMap.
+#'
+#' @param seasonder_cs_obj A SeaSonde Cross Spectrum (CS) object created by `seasonder_createSeaSondeRCS()`. This object contains the necessary metadata and spectral data to compute Doppler bin frequencies.
+#' @param normalized A logical value indicating if the returned frequencies should be normalized by the second Bragg frequency. When `TRUE`, frequencies are divided by the second Bragg frequency, returning dimensionless values relative to it. Default is `FALSE`, returning frequencies in Hz.
+#'
+#' @return A numeric vector of frequencies representing the high limit of each Doppler bin interval. If `normalized` is TRUE, these frequencies are dimensionless values relative to the second Bragg frequency; otherwise, they are in Hz.
+#'
+#' @details The function internally utilizes several helper functions such as `seasonder_getCenterDopplerBin()`, `seasonder_getnDopplerCells()`, and `seasonder_getDopplerSpectrumResolution()` to calculate the Doppler bin frequencies. Furthermore, when normalization is requested, it uses `seasonder_getBraggDopplerAngularFrequency()` to obtain the second Bragg frequency for normalization purposes.
+#'
+#' @importFrom dplyr last
 seasonder_getDopplerBinsFrequency <- function(seasonder_cs_obj, normalized = FALSE) {
 
   center_bin <- seasonder_getCenterDopplerBin(seasonder_cs_obj) # Freq 0
@@ -953,7 +964,35 @@ seasonder_getDopplerBinsFrequency <- function(seasonder_cs_obj, normalized = FAL
 
 
 
-#' m/s this is the velocity given by the high boundary of each Doppler bin interval (as in SpectraPlotterMap)
+#' Calculate Radial Velocities for Each Doppler Bin
+#'
+#' Computes the radial velocities for each Doppler bin interval's high boundary
+#' for a SeaSonde radar cross-section (CS) object, as typically visualized in
+#' SpectraPlotterMap. This function utilizes the Doppler shift frequency alongside
+#' the radar's wave number and Bragg frequency to transform frequency measurements
+#' into radial velocities. The calculation is grounded on the relationship
+#' between the Doppler shift frequency and the velocity of the surface currents
+#' within the radar's field of view.
+#'
+#' Specifically, the radial velocity \(v\) for each Doppler bin is calculated using the formula:
+#' \[
+#' v = \frac{\text{Freq} - \text{BraggFreq}}{2 \cdot k_0}
+#' \]
+#' where \(v\) is the radial velocity, \(\text{Freq}\) is the Doppler shift frequency for the bin, \(\text{BraggFreq}\) is the Bragg
+#' frequency (negative for frequencies below 0 and positive for frequencies equal or above 0), and \(k_0\) is the radar wave number
+#' divided by \(2\pi\).
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object created using `seasonder_createSeaSondeRCS`. This object
+#'        contains the necessary data for calculating the Doppler bins frequencies and, subsequently, radial velocities.
+#'
+#' @return A numeric vector containing the radial velocities (in m/s) for each
+#' Doppler bin, calculated for the high boundary of each Doppler bin interval.
+#' The velocities provide insight into the scatterers' radial movement within the
+#' radar's observation area.
+#'
+#' @seealso \code{\link{seasonder_getDopplerBinsFrequency}},
+#'          \code{\link{seasonder_getBraggDopplerAngularFrequency}},
+#'          \code{\link{seasonder_getRadarWaveNumber}}
 seasonder_getBinsRadialVelocity <- function(seasonder_cs_obj) {
 
   freq <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj)
@@ -971,6 +1010,35 @@ seasonder_getBinsRadialVelocity <- function(seasonder_cs_obj) {
 
 }
 
+#' Calculate Radial Velocity Resolution
+#'
+#' Computes the radial velocity resolution for a SeaSonde radar cross-section (CS) object.
+#' This measurement indicates the smallest change in velocity that the radar can
+#' discern between different targets or scatterers within its observation area.
+#' The calculation is based on the Doppler spectrum resolution and the radar wave
+#' number, providing a crucial parameter for analyzing the radar's capability to
+#' distinguish between velocities.
+#'
+#' The radial velocity resolution (\(v_{res}\)) is determined using the formula:
+#' \[
+#' v_{res} = \frac{\text{SpectraRes}}{2 \cdot k_0}
+#' \]
+#' where \(v_{res}\) is the radial velocity resolution, \(\text{SpectraRes}\) is
+#' the Doppler spectrum resolution, and \(k_0\) is the radar wave number divided
+#' by \(2\pi\). This formula reflects the relationship between the
+#' frequency resolution of the radar's Doppler spectrum and the corresponding
+#' velocity resolution, taking into account the wave number which is a fundamental
+#' characteristic of the radar system.
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object created using `seasonder_createSeaSondeRCS`. This object
+#'        contains the necessary data to calculate the Doppler spectrum resolution and, subsequently, the
+#'        radial velocity resolution.
+#'
+#' @return A single numeric value representing the radial velocity resolution in meters per second (m/s),
+#'         indicating the radar's ability to differentiate between closely spaced velocities.
+#'
+#' @seealso \code{\link{seasonder_getDopplerSpectrumResolution}},
+#'          \code{\link{seasonder_getRadarWaveNumber}}
 seasonder_getRadialVelocityResolution <- function(seasonder_cs_obj) {
 
   spectra_res <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
