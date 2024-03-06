@@ -21,3 +21,27 @@ return(out)
 
 
 }
+
+
+seasonder_MUSICCovDecomposition <- function(C){
+
+out <- list(values = rep(NA_complex_,3), vectors =matrix(rep(NA_complex_,9),nrow = 3))
+
+  # Get eigen-decomposition
+  eigen_decomp <- eigen(C, symmetric = TRUE)
+
+  # eigenvalues and eigenvectors
+  values <- eigen_decomp$values
+  vectors <- eigen_decomp$vectors
+
+  # sort eigenvalues from smallest to largest and reorder eigenvectors accordingly
+
+  sorted_values <- rev(values)
+  sorted_vectors <- vectors[, 3:1]
+
+out$values <- sorted_values
+out$vectors <- sorted_vectors
+
+return(out)
+
+}
