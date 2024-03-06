@@ -37,7 +37,7 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
   # Validate calibration matrix
   seasonder_validateCalibrationMatrixSeaSondeRAPM(calibration_matrix)
 
-  rownames(calibration_matrix) <- c("A13", "A23")
+  rownames(calibration_matrix) <- c("A13", "A23", "A33")
 
   # Initialize attributes
   attributes_list <- seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix,...)
@@ -210,9 +210,9 @@ seasonder_validateCalibrationMatrixSeaSondeRAPM <- function(matrix) {
     rlang::abort("seasonder_validateCalibrationMatrixSeaSondeRAPM: Input calibration_matrix must be a matrix.")
   }
 
-  if (nrow(matrix) != 2) {
-    seasonder_logAndMessage("seasonder_validateCalibrationMatrixSeaSondeRAPM: Calibration matrix must have two rows.", "fatal")
-    rlang::abort("seasonder_validateCalibrationMatrixSeaSondeRAPM: Calibration matrix must have two rows.")
+  if (nrow(matrix) != 3) {
+    seasonder_logAndMessage("seasonder_validateCalibrationMatrixSeaSondeRAPM: Calibration matrix must have three rows.", "fatal")
+    rlang::abort("seasonder_validateCalibrationMatrixSeaSondeRAPM: Calibration matrix must have three rows.")
   }
 
   if (!is.complex(matrix)) {
@@ -315,7 +315,7 @@ seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {
 #' @param seasonde_apm_obj The SeaSondeRAPM object for compatibility check.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_quality_matrix <- function(matrix,seasonde_apm_obj) {
-  if (!is.matrix(matrix) || nrow(matrix) != 2 || !is.complex(matrix)) {
+  if (!is.matrix(matrix) || nrow(matrix) != 3 || !is.complex(matrix)) {
     msg <- "validate_SeaSondeRAPM_quality_matrix: The quality_matrix must be a 2-row complex matrix."
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
@@ -1133,9 +1133,11 @@ seasonder_readSeaSondeRAPMFile <- function(file_path,...) {
   A23 <- complex(real=A23R,imaginary = A23I)
   A13Q <- complex(real=A13RQ,imaginary = A13IQ)
   A23Q <- complex(real=A23RQ,imaginary = A23IQ)
+  A33 <- complex(real=rep(1,length(A13R)), imaginary=rep(0,length(A13I)))
+  A33Q <- complex(real=rep(0,length(A13R)), imaginary=rep(0,length(A13I)))
 
-  calibration_matrix <- matrix(c(A13,A23),nrow=2,byrow = TRUE)
-  quality_matrix <- matrix(c(A13Q,A23Q),nrow=2,byrow = TRUE)
+  calibration_matrix <- matrix(c(A13,A23,A33),nrow=3,byrow = TRUE)
+  quality_matrix <- matrix(c(A13Q,A23Q,A33Q),nrow=3,byrow = TRUE)
 
   out <- seasonder_createSeaSondeRAPM(calibration_matrix = calibration_matrix,quality_matrix=quality_matrix,BEAR=BEAR,...)
 
