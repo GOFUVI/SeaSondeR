@@ -16,18 +16,24 @@
 #' @return A SeaSondeRCS object with the specified header, data, and version.
 #'
 #'
-new_SeaSondeRCS <- function(header, data){
+new_SeaSondeRCS <- function(header, data) {
 
 
 
   out <- structure(list(header = list(),
-                 data = list()),
-            version = 1, # An integer indicating the version of the SeaSondeRCS object. Current is 1.
-            ProcessingSteps = character(0),
-            class = "SeaSondeRCS")
+                        data = list()),
+                   version = 1, # An integer indicating the version of the SeaSondeRCS object. Current is 1.
+                   ProcessingSteps = character(0),
+                   FOR_data = list(),
+                   NoiseLevel = numeric(0),
+                   class = "SeaSondeRCS")
 
   out %<>% seasonder_setSeaSondeRCS_header(header)
   out %<>% seasonder_setSeaSondeRCS_data(data)
+
+  out %<>% seasonder_setSeaSondeRCS_FOR_parameters(list())
+  out %<>% seasonder_setSeaSondeRCS_FOR(seasonder_initSeaSondeRCS_FOR(out))
+
 
 
   return(out)
@@ -64,7 +70,7 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL) {
 }
 
 #' @export
-seasonder_createSeaSondeRCS.character <- function(x, specs_path=system.file("specs","CS_V1.yaml",package = "SeaSondeR")) {
+seasonder_createSeaSondeRCS.character <- function(x, specs_path = system.file("specs","CS_V1.yaml",package = "SeaSondeR")) {
   # Checking if the file exists
   if (!file.exists(x)) {
     seasonder_logAndAbort(glue::glue("File '{x}' does not exist."), calling_function = "seasonder_createSeaSondeRCS.character", class = "seasonder_CS_file_not_found_error")
@@ -77,6 +83,64 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path=system.file("spe
   out <- new_SeaSondeRCS(result$header, result$data)
 
   out %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_creation_step_text(x))
+
+  return(out)
+}
+
+seasonder_SeaSondeRCS_dataMatrix_dimensionNames <- function(nRanges, nDoppler) {
+
+  dimension_names <- list(sprintf("range_%03d",1:nRanges),sprintf("doppler_%03d",0:(nDoppler - 1)))
+
+  return(dimension_names)
+
+}
+
+new_SeaSondeRCS_SSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL) {
+
+  dimension_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges, nDoppler)
+
+  data <- data %||% rep(NA_real_, nRanges * nDoppler)
+
+
+  matrix <- matrix(data, ncol = nDoppler, byrow = TRUE, dimnames = dimension_names)
+
+  out <- structure(matrix,
+                   name = name,
+                   class = "SeaSondeRCS_SSMatrix")
+
+  return(out)
+}
+
+
+new_SeaSondeRCS_QCMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL) {
+
+  dimension_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges, nDoppler)
+
+  data <- data %||% rep(NA_real_, nRanges * nDoppler)
+
+
+  matrix <- matrix(data, ncol = nDoppler, byrow = TRUE, dimnames = dimension_names)
+
+  out <- structure(matrix,
+                   name = name,
+                   class = "SeaSondeRCS_QCMatrix")
+
+  return(out)
+}
+
+
+new_SeaSondeRCS_CSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL) {
+
+  dimension_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges, nDoppler)
+
+  data <- data %||% rep(complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler)
+
+
+  matrix <- matrix(data, ncol = nDoppler, byrow = TRUE, dimnames = dimension_names)
+
+  out <- structure(matrix,
+                   name = name,
+                   class = "SeaSondeRCS_CSMatrix")
 
   return(out)
 }
@@ -102,17 +166,88 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path=system.file("spe
 #'           \item \code{CS23}: Matrix for CS23 component, complex numbers with \code{NA_real_} real and imaginary parts.
 #'           \item \code{QC}: Quality control matrix, filled with \code{NA_real_}.
 #'         }
-seasonder_initCSDataStructure <- function(nRanges, nDoppler){
+seasonder_initCSDataStructure <- function(nRanges, nDoppler) {
+
 
   list(
-    SSA1 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    SSA2 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    SSA3 = matrix(rep(NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    CS12 = matrix(rep( complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    CS13 = matrix(rep( complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    CS23 = matrix(rep( complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler), ncol = nDoppler, byrow = TRUE),
-    QC = matrix(rep( NA_real_, nRanges * nDoppler), ncol = nDoppler, byrow = TRUE)
+    SSA1 = new_SeaSondeRCS_SSMatrix(nRanges, nDoppler, name = "SSA1"),
+    SSA2 = new_SeaSondeRCS_SSMatrix(nRanges, nDoppler, name = "SSA2"),
+    SSA3 = new_SeaSondeRCS_SSMatrix(nRanges, nDoppler, name = "SSA3"),
+    CS12 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS12"),
+    CS13 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS13"),
+    CS23 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS23"),
+    QC = new_SeaSondeRCS_QCMatrix(nRanges, nDoppler, name = "QC")
   )
+
+}
+
+seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_obj, FOR) {
+
+  out <- FOR
+
+  nRanges <- seasonder_getnRangeCells(seasonder_cs_obj)
+
+  nNegBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nNegBraggLeftIndex")$data %||% rep(0,nRanges)
+
+  if (any(nNegBraggLeftIndex > 0)) {
+    nNegBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nNegBraggRightIndex")$data %||% rep(0,nRanges)
+
+    if (any(nNegBraggRightIndex > 0 & nNegBraggLeftIndex > 0)) {
+      out <-  1:nRanges %>% purrr::reduce(\(result,i) {
+        left_index <- nNegBraggLeftIndex[i]
+        right_index <- nNegBraggRightIndex[i]
+
+        if (left_index > 0 && right_index > 0 && left_index <= right_index) {
+          result[[i]]$negative_FOR <- seq(left_index, right_index)
+        }
+        return(result)
+      },.init = out)
+    }
+
+  }
+
+  nPosBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nPosBraggLeftIndex")$data %||% rep(0,nRanges)
+
+  if (any(nPosBraggLeftIndex > 0)) {
+    nPosBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nPosBraggRightIndex")$data %||% rep(0,nRanges)
+
+    if (any(nPosBraggRightIndex > 0 & nPosBraggLeftIndex > 0)) {
+      out <-  1:nRanges %>% purrr::reduce(\(result,i) {
+        left_index <- nPosBraggLeftIndex[i]
+        right_index <- nPosBraggRightIndex[i]
+
+        if (left_index > 0 && right_index > 0 && left_index <= right_index) {
+          result[[i]]$positive_FOR <- seq(left_index, right_index)
+        }
+        return(result)
+      },.init = out)
+    }
+
+  }
+
+  return(out)
+
+}
+
+seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_obj) {
+
+  nRanges <- seasonder_getnRangeCells(seasonder_cs_obj)
+
+  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  dim_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges = nRanges, nDoppler = nDoppler)
+
+  out <- rep(list(list(negative_FOR = integer(0), positive_FOR = integer(0))),  nRanges)
+
+  names(out) <- dim_names[[1]]
+
+  out <- seasonder_initSeaSondeRCS_FORFromHeader(seasonder_cs_obj, out)
+
+
+
+
+  return(out)
+
 
 }
 
@@ -165,7 +300,7 @@ validate_SeaSondeRCS_ProcessingSteps <- function(steps) {
 #' @return Invisible NULL if the header structure is valid. Otherwise, an error is thrown.
 #'
 #' @export
-seasonder_validateCSHeaderStructure <- function(header){
+seasonder_validateCSHeaderStructure <- function(header) {
   # TODO: test, document, vignette
   if (!rlang::is_list(header)) {
     seasonder_logAndAbort(glue::glue("The 'header' parameter must be a list"), calling_function = "seasonder_setSeaSondeRCS_Header", class = "seasonder_CS_header_is_not_a_list", seasonder_header = header)
@@ -320,7 +455,7 @@ seasonder_setSeaSondeRCS_data <- function(seasonder_cs_obj, data) {
 #' @param append append the new step or replace previous steps? Default: TRUE
 #'
 #' @export
-seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_obj, processing_steps,append=TRUE) {
+seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_obj, processing_steps,append = TRUE) {
 
 
 
@@ -336,6 +471,7 @@ seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_obj, processin
 
   return(out)
 }
+
 
 ##### Getters #####
 
@@ -355,6 +491,7 @@ seasonder_getSeaSondeRCS_header <- function(seasonder_cs_obj) {
 
 
 
+
 #' Convert SeaSondeRCS Object to JSON
 #'
 #' This function extracts the header data from a `seasonder_cs_obj`, representing a SeaSondeRCS object, and converts it into a JSON format. Optionally, it can write this JSON data to a specified file path.
@@ -371,20 +508,20 @@ seasonder_getSeaSondeRCS_header <- function(seasonder_cs_obj) {
 #'
 #' @note
 #' If a path is provided and there is an issue writing to the file, the function logs an error message using `seasonder_logAndMessage` and returns the JSON data as a string.
-seasonder_asJSONSeaSondeRCSHeader <- function(seasonder_cs_obj, path=NULL) {
+seasonder_asJSONSeaSondeRCSHeader <- function(seasonder_cs_obj, path = NULL) {
 
-header <- seasonder_getSeaSondeRCS_header(seasonder_cs_obj)
+  header <- seasonder_getSeaSondeRCS_header(seasonder_cs_obj)
 
-out <- jsonlite::toJSON(header, pretty = TRUE)
+  out <- jsonlite::toJSON(header, pretty = TRUE)
 
-if(!is.null(path)){
-  rlang::try_fetch(jsonlite::write_json(header, path, pretty = TRUE, auto_unbox = TRUE),
-                   error = function(e) {
-                     seasonder_logAndMessage(glue::glue("Error while trying to write JSON to path {path}"), "error", calling_function = "seasonder_asJSONSeaSondeRCSHeader", class = "seasonder_write_JSON_error", seasonder_path = path, seasonder_JSON = out, seasonder_cs_obj = seasonder_cs_obj)
-                   })
-}
+  if (!is.null(path)) {
+    rlang::try_fetch(jsonlite::write_json(header, path, pretty = TRUE, auto_unbox = TRUE),
+                     error = function(e) {
+                       seasonder_logAndMessage(glue::glue("Error while trying to write JSON to path {path}"), "error", calling_function = "seasonder_asJSONSeaSondeRCSHeader", class = "seasonder_write_JSON_error", seasonder_path = path, seasonder_JSON = out, seasonder_cs_obj = seasonder_cs_obj)
+                     })
+  }
 
-return(out)
+  return(out)
 }
 
 #' Convert SeaSondeRCS Object to JSON
@@ -403,13 +540,13 @@ return(out)
 #'
 #' @note
 #' If a path is provided and there is an issue writing to the file, the function logs an error message using `seasonder_logAndMessage` and returns the JSON data as a string.
-seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_obj, path=NULL) {
+seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_obj, path = NULL) {
 
   data <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj)
 
   out <- jsonlite::toJSON(data, pretty = TRUE)
 
-  if(!is.null(path)){
+  if (!is.null(path)) {
     rlang::try_fetch(jsonlite::write_json(data, path, pretty = TRUE, auto_unbox = TRUE),
                      error = function(e) {
                        seasonder_logAndMessage(glue::glue("Error while trying to write JSON to path {path}"), "error", calling_function = "seasonder_asJSONSeaSondeRCSHeader", class = "seasonder_write_JSON_error", seasonder_path = path, seasonder_JSON = out, seasonder_cs_obj = seasonder_cs_obj)
@@ -420,6 +557,9 @@ seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_obj, path=NULL) {
 }
 
 
+
+
+###### Data ######
 #' Getter for data
 #'
 #' @param seasonder_cs_obj SeaSondeRCS object
@@ -440,7 +580,7 @@ seasonder_getSeaSondeRCS_data <- function(seasonder_cs_obj) {
 
     nRangeCells <- seasonder_getnRangeCells(seasonder_cs_obj)
     nDopplerCells <- seasonder_getnDopplerCells(seasonder_cs_obj)
-    if(!is.null(nRangeCells) && nRangeCells > 0 && !is.null(nDopplerCells) && nDopplerCells > 0){
+    if (!is.null(nRangeCells) && nRangeCells > 0 && !is.null(nDopplerCells) && nDopplerCells > 0) {
       out <- seasonder_initCSDataStructure(nRanges = nRangeCells, nDoppler = nDopplerCells)
     }
 
@@ -448,6 +588,150 @@ seasonder_getSeaSondeRCS_data <- function(seasonder_cs_obj) {
 
   return(out)
 }
+
+
+seasonder_getSeaSondeRCS_dataMatrix <- function(seasonder_cs_obj, matrix_name) {
+
+  matrix_name %in% c("SSA1","SSA2","SSA3","CS12","CS13","CS23","QC") || seasonder_logAndAbort(glue::glue("Unknown data matrix name '{matrix_name}'"),calling_function = "matrix_name", class = "seasonder_unknown_data_matrix_name", seasonder_matrix_name = matrix_name)
+
+  matrix <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj = seasonder_cs_obj)[[matrix_name]]
+
+  return(matrix)
+
+}
+
+#' returns the power spectrum of an antenna
+seasonder_getSeaSondeRCS_antenna_SSdata <- function(seasonder_cs_obj, antenna) {
+
+  matrix_name <- paste0("SSA",antenna)
+
+  matrix <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_obj = seasonder_cs_obj, matrix_name = matrix_name)
+
+  return(matrix)
+
+}
+
+seasonder_extractSeaSondeRCS_distRanges_from_SSdata <- function(SSmatrix, dist_ranges) {
+
+  # TODO: check that dist_ranges is in the matrix range
+
+  sliced_SSmatrix <- SSmatrix[dist_ranges,, drop = FALSE]
+
+  return(sliced_SSmatrix)
+
+}
+
+
+
+seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, doppler_cells) {
+
+
+  # TODO: check that doppler_cells is in the matrix range
+
+  sliced_SSmatrix <- SSmatrix[,doppler_cells, drop = FALSE]
+
+  return(sliced_SSmatrix)
+
+}
+
+
+#'  returns a list of power spectra for each combination of antenna, dist_range and doppler_range
+seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_obj, antennae, dist_ranges = NULL, doppler_ranges = NULL, dist_in_km = FALSE, collapse = FALSE) {
+
+
+  out <- list()
+
+
+
+  doppler_ranges <- doppler_ranges %||% list(all_doppler = range(seq_len(seasonder_getnDopplerCells(seasonder_cs_obj))))
+
+  dist_ranges <- dist_ranges %||% list(all_ranges = range(seq_len(seasonder_getnRangeCells(seasonder_cs_obj))))
+
+
+  if (!rlang::is_list(dist_ranges)) {
+    dist_ranges <- list(dist_ranges)
+  }
+
+
+  if (!rlang::is_list(doppler_ranges)) {
+    doppler_ranges <- list(doppler_ranges)
+  }
+
+
+  if (!rlang::is_named(antennae)) {
+    antennae %<>% magrittr::set_names(sprintf("A%d",as.integer(antennae)))
+  }
+
+  if (!rlang::is_named(dist_ranges)) {
+    dist_ranges %<>% magrittr::set_names(sprintf("dist_range_%d",1:length(dist_ranges)))
+  }
+
+  if (!rlang::is_named(doppler_ranges)) {
+    doppler_ranges %<>% magrittr::set_names(sprintf("doppler_range_%d",1:length(doppler_ranges)))
+  }
+
+  # TODO: option for all antennae, all dist_ranges and all doppler_ranges
+  # TODO: wrappers for antenna + dist_ranges, antenna + doppler ranges, disr_ranges + doppler ranges, dist_ranges, antenna and doppler ranges.
+
+
+  SSMatrices <- antennae %>% purrr::map(\(antenna) seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_obj,antenna))
+
+  # Slice dist_ranges
+
+  if (dist_in_km) {
+    dist_ranges %<>% purrr::map(\(dists) {
+
+      dists <- seasonder_rangeCellsDists2RangeNumber(seasonder_cs_obj, dists)
+
+      dists[1] <- floor(dists[1])
+
+      dists[2] <- ceiling(dists[2])
+
+      return(dists)
+
+    })
+
+  }
+
+
+
+
+  out <- SSMatrices %>% purrr::map(\(SSmatrix) {
+
+    sliced_matrix <- dist_ranges %>% purrr::map(\(dists) {
+
+      dist_slice <- seasonder_extractSeaSondeRCS_distRanges_from_SSdata(SSmatrix = SSmatrix, dist_ranges = seq(dists[1],dists[2]))
+
+
+      dist_doppler_slice <- doppler_ranges  %>% purrr::map(\(doppler_cells) {
+
+        doppler_slice <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(SSmatrix = dist_slice, doppler_cells = seq(doppler_cells[1], doppler_cells[2]))
+
+
+
+
+        return(doppler_slice)
+
+      })
+      return(dist_doppler_slice)
+    })
+
+    return(sliced_matrix)
+  })
+
+
+
+  if (collapse) {
+    out %<>% purrr::list_flatten(name_spec = "{outer}:{inner}") %>% purrr::list_flatten(name_spec = "{outer}:{inner}")
+  }
+
+
+
+  return(out)
+}
+
+
+###### Metadata ######
 
 #' Getter for ProcessingSteps
 #'
@@ -463,10 +747,13 @@ seasonder_getSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_obj) {
 #' @param seasonder_obj A SeaSondeRCS object.
 #' @return The version value.
 #' @export
-seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj){
+seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj) {
 
   attr(seasonder_obj,"version",exact = TRUE)
 }
+
+
+
 
 ###### Header Fields ######
 #' Retrieve a value from the SeaSondeRCS header by a specific path
@@ -503,14 +790,22 @@ seasonder_getCSHeaderByPath <- function(seasonder_obj, path) {
   # If the result is NULL, log a warning
   if (is.null(result)) {
     path_str <- paste0(path, collapse = "/")
-    warning_msg <- glue::glue("Field '{path_str}' not found in header.")
+    warning_msg <- glue::glue("Field '{path_str}' not found in header.", path_str = path_str)
     seasonder_logAndMessage(warning_msg, "error", calling_function = "seasonder_getCSHeaderByPath", class = "seasonder_SeaSonderCS_field_not_found_in_header")
   }
 
   return(result)
 }
 
+seasonder_getSeaSondeRCS_headerField <- function(seasonder_cs_obj,field) {
 
+  header <- seasonder_getSeaSondeRCS_header(seasonder_cs_obj)
+
+  value <- purrr:::list_flatten(header,name_spec = "{inner}") %>% purrr::pluck(field)
+
+  return(value)
+
+}
 
 #' Get the nRangeCells value from a SeaSondeRCS object
 #'
@@ -518,7 +813,7 @@ seasonder_getCSHeaderByPath <- function(seasonder_obj, path) {
 #' @return The nRangeCells value.
 #' @export
 seasonder_getnRangeCells <- function(seasonder_obj) {
-  return(seasonder_getCSHeaderByPath(seasonder_obj, "nRangeCells"))
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_obj, "nRangeCells"))
 }
 
 #' Get the nDopplerCells value from a SeaSondeRCS object
@@ -527,8 +822,463 @@ seasonder_getnRangeCells <- function(seasonder_obj) {
 #' @return The nDopplerCells value.
 #' @export
 seasonder_getnDopplerCells <- function(seasonder_obj) {
-  return(seasonder_getCSHeaderByPath(seasonder_obj, "nDopplerCells"))
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_obj, "nDopplerCells"))
 }
+
+seasonder_getCellsDistKm <- function(seasonder_cs_obj) {
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "CellsDistKm"))
+}
+
+seasonder_getCenterFreqMHz <- function(seasonder_cs_obj) {
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "CenterFreq"))
+}
+
+###### + Derived parameters ######
+
+seasonder_getReceiverGain_dB <- function(seasonder_cs_obj) {
+
+
+
+  receiver_gain <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fReferenceGainDB") %||% -34.2 # dB
+
+
+  return(receiver_gain)
+
+}
+
+
+seasonder_getCenterDopplerBin <- function(seasonder_cs_obj) {
+
+  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  center_bin <- nDoppler / 2
+
+  return(center_bin)
+
+
+}
+
+seasonder_getRadarWaveLength <- function(seasonder_cs_obj) {
+
+  CenterFreq <- seasonder_getCenterFreqMHz(seasonder_cs_obj)*1000000
+
+  c <- constants::syms$c0
+
+  l <- c/(CenterFreq) # (m/s)/(Hz) = m
+
+  return(l)
+
+
+}
+
+seasonder_getRadarWaveNumber <- function(seasonder_cs_obj) {
+
+
+  l <- seasonder_getRadarWaveLength(seasonder_cs_obj)
+
+  k <- 2*pi/l
+
+  return(k)
+}
+
+
+
+
+seasonder_getBraggWaveLength <- function(seasonder_cs_obj) {
+
+  l <- seasonder_getRadarWaveLength(seasonder_cs_obj)
+
+  lB <- l/2
+
+  return(lB)
+
+
+}
+
+seasonder_getBraggDopplerAngularFrequency <- function(seasonder_cs_obj) {
+
+  k <- seasonder_getRadarWaveNumber(seasonder_cs_obj = seasonder_cs_obj)
+
+  wb <- sqrt(2*constants::syms$gn*k) / (2*pi) * c(-1,1)
+
+  return(wb)
+
+}
+
+seasonder_getDopplerSpectrumResolution <- function(seasonder_cs_obj) {
+
+  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  SweepRate <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")
+
+  spectral_resolution <- SweepRate/nDoppler
+
+  return(spectral_resolution)
+
+}
+
+seasonder_getBraggLineBins <- function(seasonder_cs_obj) {
+
+  bins <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, c(-1,1))
+  return(bins)
+
+}
+
+#' Get Doppler Bins Frequency
+#'
+#' This function calculates the frequency limits for each Doppler bin within a SeaSonde Cross Spectrum (CS) object. It can return frequencies either in their original Hz values or normalized by the second Bragg frequency. The frequencies are calculated as the high limit of each Doppler bin interval, similar to what is displayed in SpectraPlotterMap.
+#'
+#' @param seasonder_cs_obj A SeaSonde Cross Spectrum (CS) object created by `seasonder_createSeaSondeRCS()`. This object contains the necessary metadata and spectral data to compute Doppler bin frequencies.
+#' @param normalized A logical value indicating if the returned frequencies should be normalized by the second Bragg frequency. When `TRUE`, frequencies are divided by the second Bragg frequency, returning dimensionless values relative to it. Default is `FALSE`, returning frequencies in Hz.
+#'
+#' @return A numeric vector of frequencies representing the high limit of each Doppler bin interval. If `normalized` is TRUE, these frequencies are dimensionless values relative to the second Bragg frequency; otherwise, they are in Hz.
+#'
+#' @details The function internally utilizes several helper functions such as `seasonder_getCenterDopplerBin()`, `seasonder_getnDopplerCells()`, and `seasonder_getDopplerSpectrumResolution()` to calculate the Doppler bin frequencies. Furthermore, when normalization is requested, it uses `seasonder_getBraggDopplerAngularFrequency()` to obtain the second Bragg frequency for normalization purposes.
+#'
+#' @importFrom dplyr last
+seasonder_getDopplerBinsFrequency <- function(seasonder_cs_obj, normalized = FALSE) {
+
+  center_bin <- seasonder_getCenterDopplerBin(seasonder_cs_obj) # Freq 0
+
+  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  spectra_res <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
+
+  frequencies <- (seq(1,nDoppler) - center_bin) * spectra_res
+
+
+  if (normalized) {
+
+    bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)[2]
+
+
+    frequencies <- frequencies / bragg_freq
+
+
+  }
+
+  return(frequencies)
+
+
+}
+
+
+
+#' Calculate Radial Velocities for Each Doppler Bin
+#'
+#' Computes the radial velocities for each Doppler bin interval's high boundary
+#' for a SeaSonde radar cross-section (CS) object, as typically visualized in
+#' SpectraPlotterMap. This function utilizes the Doppler shift frequency alongside
+#' the radar's wave number and Bragg frequency to transform frequency measurements
+#' into radial velocities. The calculation is grounded on the relationship
+#' between the Doppler shift frequency and the velocity of the surface currents
+#' within the radar's field of view.
+#'
+#' Specifically, the radial velocity \(v\) for each Doppler bin is calculated using the formula:
+#' \[
+#' v = \frac{\text{Freq} - \text{BraggFreq}}{2 \cdot k_0}
+#' \]
+#' where \(v\) is the radial velocity, \(\text{Freq}\) is the Doppler shift frequency for the bin, \(\text{BraggFreq}\) is the Bragg
+#' frequency (negative for frequencies below 0 and positive for frequencies equal or above 0), and \(k_0\) is the radar wave number
+#' divided by \(2\pi\).
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object created using `seasonder_createSeaSondeRCS`. This object
+#'        contains the necessary data for calculating the Doppler bins frequencies and, subsequently, radial velocities.
+#'
+#' @return A numeric vector containing the radial velocities (in m/s) for each
+#' Doppler bin, calculated for the high boundary of each Doppler bin interval.
+#' The velocities provide insight into the scatterers' radial movement within the
+#' radar's observation area.
+#'
+#' @seealso \code{\link{seasonder_getDopplerBinsFrequency}},
+#'          \code{\link{seasonder_getBraggDopplerAngularFrequency}},
+#'          \code{\link{seasonder_getRadarWaveNumber}}
+seasonder_getBinsRadialVelocity <- function(seasonder_cs_obj) {
+
+  freq <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj)
+
+  bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
+
+
+  k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj)/(2*pi)
+
+  v <- c((freq[freq < 0]  - bragg_freq[1])/(2*k0),(freq[freq >= 0]  - bragg_freq[2])/(2*k0))
+
+
+  return(v)
+
+
+}
+
+#' Calculate Radial Velocity Resolution
+#'
+#' Computes the radial velocity resolution for a SeaSonde radar cross-section (CS) object.
+#' This measurement indicates the smallest change in velocity that the radar can
+#' discern between different targets or scatterers within its observation area.
+#' The calculation is based on the Doppler spectrum resolution and the radar wave
+#' number, providing a crucial parameter for analyzing the radar's capability to
+#' distinguish between velocities.
+#'
+#' The radial velocity resolution (\(v_{res}\)) is determined using the formula:
+#' \[
+#' v_{res} = \frac{\text{SpectraRes}}{2 \cdot k_0}
+#' \]
+#' where \(v_{res}\) is the radial velocity resolution, \(\text{SpectraRes}\) is
+#' the Doppler spectrum resolution, and \(k_0\) is the radar wave number divided
+#' by \(2\pi\). This formula reflects the relationship between the
+#' frequency resolution of the radar's Doppler spectrum and the corresponding
+#' velocity resolution, taking into account the wave number which is a fundamental
+#' characteristic of the radar system.
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object created using `seasonder_createSeaSondeRCS`. This object
+#'        contains the necessary data to calculate the Doppler spectrum resolution and, subsequently, the
+#'        radial velocity resolution.
+#'
+#' @return A single numeric value representing the radial velocity resolution in meters per second (m/s),
+#'         indicating the radar's ability to differentiate between closely spaced velocities.
+#'
+#' @seealso \code{\link{seasonder_getDopplerSpectrumResolution}},
+#'          \code{\link{seasonder_getRadarWaveNumber}}
+seasonder_getRadialVelocityResolution <- function(seasonder_cs_obj) {
+
+  spectra_res <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
+
+  k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj)/(2*pi)
+
+  vel_res <- spectra_res / (2*k0)
+
+
+  return(vel_res)
+}
+
+##### Utils #####
+
+seasonder_rangeCellsDists2RangeNumber <- function(seasonder_cs_obj,cells_dists) {
+
+  # TODO: check that the cs file version is at least V4
+
+  fRangeCellDistKm <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRangeCellDistKm")
+
+  nFirstRangeCell <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nFirstRangeCell")
+
+  # NOTE: based on File_Cross_Spectra_V6 page 4
+
+  range_numbers <- cells_dists/fRangeCellDistKm - nFirstRangeCell + 1
+
+  return(range_numbers)
+}
+
+seasonder_SelfSpectra2dB <- function(seasonder_cs_obj, spectrum_values) {
+
+  receiver_gain <- seasonder_getReceiverGain_dB(seasonder_cs_obj)
+
+  spectrum_dB <- 10 * log10(abs(spectrum_values)) - receiver_gain
+
+  return(spectrum_dB)
+
+}
+
+
+seasonder_Bins2NormalizedDopplerFreq <- function(seasonder_cs_obj, bins) {
+
+  normalized_doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = TRUE)
+
+  return(normalized_doppler_freqs[bins])
+
+
+}
+
+seasonder_NormalizedDopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values) {
+
+  normalized_doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = TRUE)
+
+  delta_freq <- normalized_doppler_freqs %>% diff()
+
+  boundaries <- c(normalized_doppler_freqs[1] - delta_freq[1], normalized_doppler_freqs)
+
+  bins <- findInterval(doppler_values,boundaries, rightmost.closed = T, all.inside = F, left.open = T)
+
+  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  bins[bins < 1 | bins > nDoppler] <- NA_integer_
+
+
+
+  return(bins)
+
+}
+
+
+seasonder_DopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values) {
+
+  doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = FALSE)
+
+  delta_freq <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
+
+  boundaries <- c(doppler_freqs[1] - delta_freq, doppler_freqs)
+
+  bins <- findInterval(doppler_values,boundaries, rightmost.closed = T, all.inside = F,left.open = T)
+
+  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  bins[bins < 1 | bins > nDoppler] <- NA_integer_
+
+
+
+  return(bins)
+
+}
+
+
+seasonder_Bins2DopplerFreq <- function(seasonder_cs_obj, bins) {
+
+  doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = FALSE)
+
+  return(doppler_freqs[bins])
+
+
+
+}
+
+seasonder_DopplerFreq2NormalizedDopplerFreq <- function(seasonder_cs_obj, doppler_values) {
+
+  bins <- seasonder_DopplerFreq2Bins(seasonder_cs_obj, doppler_values)
+
+  normalized_doppler_freq <- seasonder_Bins2NormalizedDopplerFreq(seasonder_cs_obj, bins)
+
+
+  return(normalized_doppler_freq)
+
+
+
+}
+
+
+seasonder_NormalizedDopplerFreq2DopplerFreq <- function(seasonder_cs_obj, doppler_values) {
+
+  bins <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, doppler_values)
+
+  doppler_freq <- seasonder_Bins2DopplerFreq(seasonder_cs_obj, bins)
+
+
+  return(doppler_freq)
+
+
+
+}
+
+seasonder_SwapDopplerUnits <- function(seasonder_cs_obj, values, in_units, out_units) {
+
+
+
+  doppler_units_options <- c("normalized doppler frequency","bins","doppler frequency")
+
+  in_units %in% doppler_units_options || seasonder_logAndAbort(glue::glue("in_units is '{in_units}', but should be one of {paste0(doppler_units_options, collapse=', ')}"),calling_function = "seasonder_SwapDopplerUnits")
+
+  out_units %in% doppler_units_options || seasonder_logAndAbort(glue::glue("out_units is '{out_units}', but should be one of {paste0(doppler_units_options, collapse=', ')}"),calling_function = "seasonder_SwapDopplerUnits")
+
+  if (in_units == out_units) {
+
+    return(values)
+  }
+
+  swap_functions <- list("normalized doppler frequency" = list("bins" = seasonder_NormalizedDopplerFreq2Bins,
+                                                               "doppler frequency" = seasonder_NormalizedDopplerFreq2DopplerFreq),
+                         "bins" = list("normalized doppler frequency" = seasonder_Bins2NormalizedDopplerFreq,
+                                       "doppler frequency" = seasonder_Bins2DopplerFreq),
+                         "doppler frequency" = list("bins" = seasonder_DopplerFreq2Bins,
+                                                    "normalized doppler frequency" = seasonder_DopplerFreq2NormalizedDopplerFreq)
+  )
+
+  swap_fun <- swap_functions[[in_units]][[out_units]]
+
+  out <- swap_fun(seasonder_cs_obj, values)
+
+  return(out)
+
+
+}
+
+
+
+##### Plot #####
+
+
+seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_obj, antenna, range_dist, doppler_units = "normalized doppler frequency", plot_FORs = FALSE) {
+
+  SS <- NULL
+
+  spectrum <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj, antennae = antenna,dist_ranges = c(range_dist[1],range_dist[1]), collapse = TRUE)[[1]] %>% t() %>% as.data.frame() %>% magrittr::set_colnames("SS")
+
+  doppler_values <- seasonder_SwapDopplerUnits(seasonder_cs_obj,seasonder_getDopplerBinsFrequency(seasonder_cs_obj), in_units = "doppler frequency", out_units = doppler_units)
+
+  spectrum %<>% dplyr::mutate(doppler = doppler_values, SS = seasonder_SelfSpectra2dB(seasonder_cs_obj, SS))
+
+
+  Bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
+
+  if (doppler_units == "normalized doppler frequency") {
+    Bragg_freq <- c(-1,1)
+  }
+
+  out <- ggplot2::ggplot(spectrum, ggplot2::aes(y = SS, x = doppler)) + ggplot2::geom_line() + ggplot2::geom_vline(xintercept = Bragg_freq, color = "red") + ggplot2::theme_bw()
+
+
+
+  if (plot_FORs) {
+
+
+    smoothed_spectrum <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_obj)[range_dist,, drop = TRUE]
+
+
+    if (!is.null(smoothed_spectrum)) {
+
+      smoothed_data <- data.frame(SS =  seasonder_SelfSpectra2dB(seasonder_cs_obj,smoothed_spectrum), doppler = doppler_values)
+
+      out <- out + ggplot2::geom_line(data = smoothed_data, color = "orange", size = 1)
+    }
+
+
+
+    FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_obj)[[range_dist]]
+
+    if (!is.null(FOR)) {
+
+      FOR %<>% unlist()
+      FOR <- seasonder_SwapDopplerUnits(seasonder_cs_obj, FOR, "bins", doppler_units)
+      FOR_data <- data.frame(xintercept = FOR)
+
+      out <- out + ggplot2::geom_vline(data = FOR_data, ggplot2::aes(xintercept = xintercept), color = "blue", alpha = 0.1)
+
+
+    }
+
+
+
+
+    noise_level <- seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_obj, dB = T)[range_dist] %>% magrittr::set_names(NULL)
+
+    reference_noise_normalized_limits <- seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits(seasonder_cs_obj)
+
+    if (!is.null(noise_level) && !is.null(reference_noise_normalized_limits)) {
+
+      positive_noise_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, reference_noise_normalized_limits, in_units = "normalized doppler frequency", out_units = doppler_units)
+
+      negative_noise_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj,-1 * reference_noise_normalized_limits, in_units = "normalized doppler frequency", out_units = doppler_units)
+
+      positive_noise_data <- data.frame(SS = noise_level, doppler = c(positive_noise_range))
+      negative_noise_data <- data.frame(SS = noise_level, doppler = c(negative_noise_range))
+      out <- out + ggplot2::geom_line(data = positive_noise_data, color = "red", size = 2) + ggplot2::geom_line(data = negative_noise_data, color = "red", size = 2)
+
+    }
+
+  }
+
+  return(out)
+
+}
+
+
 
 
 #### Processing_steps ####
@@ -613,7 +1363,7 @@ seasonder_validateCSFileData <- function(filepath, header) {
 
   if (header$nRangeCells <= 0 || header$nRangeCells > 8192 || header$nDopplerCells <= 0 || header$nDopplerCells > 32768) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid nRangeCells or nDopplerCells in file {filepath}. nRangeCells: {header$nRangeCells}, nDopplerCells: {header$nDopplerCells}."),!!!conditions_params))
 
-# CODAR documentation is not correct, they are double counting the number of spectra channels when they multiply by nSpectraChannels and by 36 or 40
+  # CODAR documentation is not correct, they are double counting the number of spectra channels when they multiply by nSpectraChannels and by 36 or 40
   if (header$nCsKind == 1 && file_size < (header_size + header$nRangeCells *  header$nDopplerCells * 36)) rlang::inject(seasonder_logAndAbort(glue::glue("Invalid file size for nCsKind 1 in file {filepath}. Expected >= {(header_size + header$nRangeCells  * header$nDopplerCells * 36)}, actual: {file_size}."),!!!conditions_params))
 
 
@@ -639,7 +1389,7 @@ seasonder_validateCSFileData <- function(filepath, header) {
 #'
 #' The effect of invoking this restart is twofold:
 #' 1. An error message detailing the reason for skipping the file is logged.
-#' 2. The calling function (`seasonder_readSeaSondeCSFile`) will immediately return a list with `header=NULL` and `data=NULL`.
+#' 2. The calling function (`seasonder_readSeaSondeCSFile`) will immediately return a list with `header = NULL` and `data = NULL`.
 #'
 #'
 #' @return If invoked, the function returns a list with both `header` and `data` set to NULL.
@@ -683,7 +1433,7 @@ seasonder_skip_cs_file <- function(cond) {
 #' This function provides a structured mechanism to recover from errors during its execution using the `rlang::withRestarts` function. The following restart option is available:
 #'
 #' \describe{
-#'   \item{\code{seasonder_skip_cs_file(cond)}}{This allows for the graceful handling of file reading errors. If this restart is invoked, the function will log an error message indicating that the processing of a specific CS file was skipped and will return a list with `header=NULL` and `data=NULL`. The restart takes one argument: \code{cond} (the condition or error that occurred).
+#'   \item{\code{seasonder_skip_cs_file(cond)}}{This allows for the graceful handling of file reading errors. If this restart is invoked, the function will log an error message indicating that the processing of a specific CS file was skipped and will return a list with `header = NULL` and `data = NULL`. The restart takes one argument: \code{cond} (the condition or error that occurred).
 #'   \itemize{
 #'     \item \strong{Usage}: In a custom condition handler, you can call \code{seasonder_skip_cs_file(cond)} to trigger this restart and skip the processing of the current CS file.
 #'     \item \strong{Effect}: If invoked, the function logs an error message detailing the reason for skipping the file and then returns a list with both the header and data set to NULL.
@@ -709,12 +1459,12 @@ seasonder_skip_cs_file <- function(cond) {
 #'
 seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
 
-  conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFile",class="seasonder_read_cs_file_error",seasonder_cs_filepath=filepath,seasonder_cs_specs_path=specs_path)
+  conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFile",class = "seasonder_read_cs_file_error",seasonder_cs_filepath = filepath,seasonder_cs_specs_path = specs_path)
 
   withRestarts(
-    seasonder_skip_cs_file=function(cond){
-      seasonder_logAndMessage(glue::glue("An issue happened while processing the file {cond$seasonder_cs_filepath %||% ''}, skipping. Issue: {conditionMessage(cond)}"),"error",calling_function = "seasonder_readSeaSondeCSFile",class="seasonder_cs_file_skipped",parent=cond)
-      return(list(header=NULL,data=NULL))
+    seasonder_skip_cs_file = function(cond) {
+      seasonder_logAndMessage(glue::glue("An issue happened while processing the file {cond$seasonder_cs_filepath %||% ''}, skipping. Issue: {conditionMessage(cond)}"),"error",calling_function = "seasonder_readSeaSondeCSFile",class = "seasonder_cs_file_skipped",parent = cond)
+      return(list(header = NULL,data = NULL))
     },
     {
 
@@ -722,7 +1472,7 @@ seasonder_readSeaSondeCSFile <- function(filepath, specs_path) {
       connection <- rlang::try_fetch(
         suppressWarnings(file(filepath, "rb")),
         error = function(e) {
-          rlang::inject(seasonder_logAndAbort(glue::glue("Could no open connection to file {filepath %||% ''}. Reason: {conditionMessage(e)}."),!!!conditions_params,parent=e))
+          rlang::inject(seasonder_logAndAbort(glue::glue("Could no open connection to file {filepath %||% ''}. Reason: {conditionMessage(e)}."),!!!conditions_params,parent = e))
         }
       )
       on.exit(close(connection), add = TRUE)
@@ -828,12 +1578,12 @@ seasonder_int_to_raw <- function(x) {
 #' @examples
 #' \dontrun{
 #' r <- as.raw(c(0x12,0x34,0x56,0x78,0x90,0xAB,0xCD,0xEF))
-#' seasonder_raw_to_int(r, signed=TRUE)
+#' seasonder_raw_to_int(r, signed = TRUE)
 #' }
-seasonder_raw_to_int <- function(r,signed=F){
+seasonder_raw_to_int <- function(r,signed = F) {
   # Convert raw values to bits and collapse into a single bit string.
-  bit_str <- sapply(r,FUN = function(x) rev(rawToBits(x))) %>% as.integer() %>% paste0(collapse="")
-  class(bit_str) <-"bitstring"
+  bit_str <- sapply(r,FUN = function(x) rev(rawToBits(x))) %>% as.integer() %>% paste0(collapse = "")
+  class(bit_str) <- "bitstring"
 
   # Convert the bit string into a 64-bit integer.
   int_val <-   bit64::as.integer64(bit_str)
@@ -858,7 +1608,7 @@ seasonder_raw_to_int <- function(r,signed=F){
 #'
 #'
 #' @export
-seasonder_skip_cs_field <- function(cond,value){
+seasonder_skip_cs_field <- function(cond,value) {
   invokeRestart("seasonder_skip_cs_field",cond,value)
 }
 
@@ -941,39 +1691,39 @@ seasonder_skip_cs_field <- function(cond,value){
 #'     \item \strong{Effect}: If invoked, the function logs an error message detailing the reason for skipping, and then returns the value specified in the restart function call.
 #'   }}
 #'}
-seasonder_readCSField <- function(con, type, endian="big") {
+seasonder_readCSField <- function(con, type, endian = "big") {
 
   # Parameters used for error messages and logging.
-  conditions_params <- list(calling_function = "seasonder_readCSField",class="seasonder_cs_field_reading_error",seasonder_cs_field_type=type,seasonder_cs_endian=endian)
+  conditions_params <- list(calling_function = "seasonder_readCSField",class = "seasonder_cs_field_reading_error",seasonder_cs_field_type = type,seasonder_cs_endian = endian)
 
-  out <- withRestarts(seasonder_skip_cs_field=function(cond,value){
+  out <- withRestarts(seasonder_skip_cs_field = function(cond,value) {
     # Log the error message and skip the CS field.
-    seasonder_logAndMessage(glue::glue("Skipping CS field, returning {value}: {conditionMessage(cond)}"), "error", calling_function = "seasonder_readCSField", class="seasonder_cs_field_skipped", parent=cond, seasonder_cs_field_value=value)
+    seasonder_logAndMessage(glue::glue("Skipping CS field, returning {value}: {conditionMessage(cond)}"), "error", calling_function = "seasonder_readCSField", class = "seasonder_cs_field_skipped", parent = cond, seasonder_cs_field_value = value)
     return(value)
   },
   {
     # Ensure the connection is open before proceeding.
     open_con <- try(isOpen(con), silent = T)
     if (!inherits(open_con, "try-error")) {
-      if(!open_con) {
+      if (!open_con) {
         rlang::inject(seasonder_logAndAbort("Connection is not open.", !!!conditions_params))
       }
     } else {
-      rlang::inject(seasonder_logAndAbort("Connection is not open.", !!!conditions_params,parent=attr(open_con,"condition")))
+      rlang::inject(seasonder_logAndAbort("Connection is not open.", !!!conditions_params,parent = attr(open_con,"condition")))
     }
 
     # Helper function to safely read from the connection.
-    read_values <- function(bytes, format, n=1, signed = T) {
+    read_values <- function(bytes, format, n = 1, signed = T) {
       res <- rlang::try_fetch({
-        out <- readBin(con, what=format, n=n, size=bytes, endian=endian, signed = signed)
+        out <- readBin(con, what = format, n = n, size = bytes, endian = endian, signed = signed)
         # If nothing is read, it could be the end of the file.
-        if(length(out) == 0) {
+        if (length(out) == 0) {
           rlang::abort("Read value of length 0. Possibly reached end of file.")
         }
         out
       },
       error = function(e) {
-        rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading value: {conditionMessage(e)}"), !!!conditions_params, parent=e))
+        rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading value: {conditionMessage(e)}"), !!!conditions_params, parent = e))
       })
 
       return(res)
@@ -999,12 +1749,12 @@ seasonder_readCSField <- function(con, type, endian="big") {
            "Float" = as.numeric(read_values(4, "numeric")),
            "Double" = as.numeric(read_values(8, "double")),
            "UInt64" = {
-             v <- read_values(1, "raw", n=8, signed = F)
-             seasonder_raw_to_int(v, signed=FALSE)
+             v <- read_values(1, "raw", n = 8, signed = F)
+             seasonder_raw_to_int(v, signed = FALSE)
            },
            "SInt64" = {
-             v <- read_values(1, "raw", n=8)
-             seasonder_raw_to_int(v, signed=TRUE)
+             v <- read_values(1, "raw", n = 8)
+             seasonder_raw_to_int(v, signed = TRUE)
            },
            "Complex" = {
              # Read both the real and imaginary components.
@@ -1048,7 +1798,7 @@ seasonder_readCSField <- function(con, type, endian="big") {
 #'
 #' @return The value returned by the alternate QC function `qc_fun`.
 #' @export
-seasonder_rerun_qc_with_fun <- function(cond,qc_fun){
+seasonder_rerun_qc_with_fun <- function(cond,qc_fun) {
   invokeRestart("seasonder_rerun_qc_with_fun",cond,qc_fun)
 }
 
@@ -1112,7 +1862,7 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun){
 #' It's also important to note that within `read_and_qc_field`, the function `seasonder_readCSField` is used. This function has its own error management and restart options, which are detailed in its documentation.
 #'
 
-read_and_qc_field <- function(field_spec, connection, endian="big") {
+read_and_qc_field <- function(field_spec, connection, endian = "big") {
 
   # Parameters used for error messages and logging.
   conditions_params <- list(calling_function = "read_and_qc_field")
@@ -1129,20 +1879,20 @@ read_and_qc_field <- function(field_spec, connection, endian="big") {
   # Read the field using the helper function
   field_skipped <- FALSE
 
-  field_value <- rlang::try_fetch(seasonder_readCSField(connection, field_type, endian=endian),
-                                  seasonder_cs_field_skipped=function(cond){
-                                    field_skipped <<-TRUE
+  field_value <- rlang::try_fetch(seasonder_readCSField(connection, field_type, endian = endian),
+                                  seasonder_cs_field_skipped = function(cond) {
+                                    field_skipped <<- TRUE
                                     rlang::cnd_signal(cond)
                                     return(cond$seasonder_cs_field_value)
 
                                   }
   )
-  if(!field_skipped){
+  if (!field_skipped) {
 
     field_value_after_qc <-  withRestarts(
-      seasonder_rerun_qc_with_fun=function(cond,qc_fun){
+      seasonder_rerun_qc_with_fun = function(cond,qc_fun) {
         value <- cond$seasonder_value
-        rlang::inject(seasonder_logAndMessage(glue::glue("Rerunning QC on value {value}."),"info",class="seasonder_cs_field_qc_fun_rerun",!!!conditions_params,parent=cond))
+        rlang::inject(seasonder_logAndMessage(glue::glue("Rerunning QC on value {value}."),"info",class = "seasonder_cs_field_qc_fun_rerun",!!!conditions_params,parent = cond))
         return(qc_fun(value))
 
       },
@@ -1150,8 +1900,8 @@ read_and_qc_field <- function(field_spec, connection, endian="big") {
 
         # Apply quality control
 
-        if(!qc_fun_name %in% names(seasonder_the$qc_functions)){
-          rlang::inject(seasonder_logAndAbort(glue::glue("QC function '{qc_fun_name}' not defined."),!!!conditions_params,class="seasonder_cs_field_qc_fun_not_defined_error",seasonder_value=field_value))
+        if (!qc_fun_name %in% names(seasonder_the$qc_functions)) {
+          rlang::inject(seasonder_logAndAbort(glue::glue("QC function '{qc_fun_name}' not defined."),!!!conditions_params,class = "seasonder_cs_field_qc_fun_not_defined_error",seasonder_value = field_value))
         }
 
         # Get the quality control function from the shared environment
@@ -1160,7 +1910,7 @@ read_and_qc_field <- function(field_spec, connection, endian="big") {
         # Call the quality control function with the field value and the specified parameters
         field_value_after_qc <- rlang::try_fetch(
           rlang::inject(qc_fun(field_value,!!!qc_params)),
-          error=function(e) rlang::inject(seasonder_logAndAbort(glue::glue("An issue happened while applying QC function '{qc_fun_name}'."),!!!conditions_params,class="seasonder_cs_field_qc_fun_error",seasonder_value=field_value,parent=e))
+          error = function(e) rlang::inject(seasonder_logAndAbort(glue::glue("An issue happened while applying QC function '{qc_fun_name}'."),!!!conditions_params,class = "seasonder_cs_field_qc_fun_error",seasonder_value = field_value,parent = e))
         )
         field_value_after_qc
       })
@@ -1224,12 +1974,12 @@ read_and_qc_field <- function(field_spec, connection, endian="big") {
 #' @return A named list where each entry corresponds to a field that has been read. Each key is
 #'   the field name, and its associated value is the data for that field after quality control.
 
-seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian="big") {
+seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian = "big") {
   # Use purrr::map to apply the read_and_qc_field function to each field specification
   results <- withCallingHandlers(
     purrr::map(spec, \(field_spec)
-               read_and_qc_field(field_spec=field_spec,connection=connection, endian=endian)),
-    purrr_error_indexed=function(err){
+               read_and_qc_field(field_spec = field_spec,connection = connection, endian = endian)),
+    purrr_error_indexed = function(err) {
       parent_err <- err$parent
 
       parent_err$message <- glue::glue("Field {names(spec)[err$location]}: {err$parent$message}")
@@ -1325,7 +2075,7 @@ seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "bi
   # to a POSIXct object, using "1904-01-01" as the origin, and sets the time zone to UTC.
   # The reason for the origin "1904-01-01" is specific to SeaSonde data formats.
 
-  results$nDateTime <- as.POSIXct(results$nDateTime, origin="1904-01-01", tz="UTC")
+  results$nDateTime <- as.POSIXct(results$nDateTime, origin = "1904-01-01", tz = "UTC")
 
   # Return the final results, including the transformed date-time field.
   return(results)
@@ -1434,7 +2184,9 @@ seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "bi
   # Step 3: Data Transformation
   # Calculate CenterFreq using the provided formula.
 
-  results$CenterFreq <- results$fStartFreqMHz + (results$fBandwidthKHz/1000)/2 * -2^(results$bSweepUp == 0)
+  results$CenterFreq <- results$fStartFreqMHz + (results$fBandwidthKHz/1000)/2 * -1^(results$bSweepUp == 0)
+
+  results$CellsDistKm <- (seq(1:results$nRangeCells) - 1 + results$nFirstRangeCell) * results$fRangeCellDistKm
 
   # Return the final results, including the CenterFreq.
   return(results)
@@ -1503,9 +2255,9 @@ seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "bi
 #'
 #'
 #' @export
-readV6BlockData <- function(specs, connection, endian="big", prev_data=NULL, remaining_loops=NULL) {
+readV6BlockData <- function(specs, connection, endian = "big", prev_data = NULL, remaining_loops = NULL) {
 
-  # browser(expr= "nReceiverModel" %in% names(specs))
+  # browser(expr = "nReceiverModel" %in% names(specs))
 
   # If there are remaining loops to process, handle the repeated block recursively
   if (length(remaining_loops) > 0) {
@@ -1679,14 +2431,14 @@ seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "bi
       # Apply transformations if they exist
       if (!is.null(seasonder_the$transform_functions[[block$nBlockKey]])) {
         block_data <- withRestarts(
-          seasonder_v6_skip_transformation = function(cond, value){
+          seasonder_v6_skip_transformation = function(cond, value) {
             # Log the error message and skip the CS field.
-            rlang::inject(seasonder_logAndMessage(glue::glue("Skipping transformation for block '{block$nBlockKey}', returning provided value: {conditionMessage(cond)}"), "error",!!!conditions_params, class = "seasonder_v6_block_transformacion_skipped", parent = cond, new_seasonder_block_data = value))
+            rlang::inject(seasonder_logAndMessage(glue::glue("Skipping transformation for block '{block$nBlockKey}', returning provided value: {conditionMessage(cond)}"), "error", !!!conditions_params, class = "seasonder_v6_block_transformacion_skipped", parent = cond, new_seasonder_block_data = value))
             return(value)
           },
           rlang::try_fetch(
             seasonder_the$transform_functions[[block$nBlockKey]](block_data),
-            error = function(err){
+            error = function(err) {
               rlang::inject(seasonder_logAndAbort(glue::glue("Error while applying transform function for V6 header block '{block$nBlockKey}': {conditionMessage(err)}"),!!!conditions_params, class = "seasonder_v6_transform_function_error",parent = err, seasonder_block_data = block_data))
             })
         )
@@ -1698,7 +2450,7 @@ seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "bi
       # If the block key is not recognized, skip bytes as per the block data size
       rlang::try_fetch(
         seek(connection, where = block$nBlockDataSize, origin = "current", rw = "read"),
-        error = function(err){
+        error = function(err) {
           rlang::inject(seasonder_logAndAbort(glue::glue("Error while skipping block '{block$nBlockKey}': {conditionMessage(err)}"),!!!conditions_params, parent = err, class = "seasonder_v6_skip_block_error"))
         })
     }
@@ -1789,9 +2541,10 @@ process_version_header <- function(pool, version, specs, connection, endian = "b
 #'
 seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big") {
   # Read the general header (Version 1)
-  withCallingHandlers(
-    header_v1 <- seasonder_readSeaSondeCSFileHeaderV1(specs$V1, connection, endian),
-    error=function(err){
+  withCallingHandlers({
+    header_v1 <- seasonder_readSeaSondeCSFileHeaderV1(specs$V1, connection, endian)
+    },
+    error = function(err) {
       err$message <- glue::glue("Header version 1: {conditionMessage(err)}")
 
       rlang::cnd_signal(err)
@@ -1808,13 +2561,13 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
 
   # Reduce the list of versions to process them sequentially
   header_pool <- withCallingHandlers(
-    purrr::reduce(versions_to_process, \(pool, version){
+    purrr::reduce(versions_to_process, \(pool, version) {
 
       out <- process_version_header(pool = pool, version = version, specs = specs, connection = connection, endian = endian, prev_data = pool)
 
       out
     }, .init = header_v1),
-    purrr_error_indexed=function(err){
+    purrr_error_indexed = function(err) {
 
       parent_err <- err$parent
 
@@ -1868,7 +2621,7 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
 #'
 #'
 #' @export
-seasonder_readSeaSondeCSFileData <- function(connection, header, endian="big") {
+seasonder_readSeaSondeCSFileData <- function(connection, header, endian = "big") {
   conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFileData",class = "seasonder_cs_data_reading_error")
 
   # Extracting information from the header
@@ -1889,36 +2642,36 @@ seasonder_readSeaSondeCSFileData <- function(connection, header, endian="big") {
   # Read data for each range
   for (i in seq_len(nRanges)) {
 
-    out$SSA1[i,] <- rlang::try_fetch(error = function(cond){
+    out$SSA1[i,] <- rlang::try_fetch(error = function(cond) {
       rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading SSA1 data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "SSA1"))
     },
     readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian))
 
-    out$SSA2[i,] <- rlang::try_fetch(error = function(cond){
+    out$SSA2[i,] <- rlang::try_fetch(error = function(cond) {
       rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading SSA2 data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "SSA2"))
     },
     readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian))
 
-    out$SSA3[i,] <- rlang::try_fetch(error = function(cond){
+    out$SSA3[i,] <- rlang::try_fetch(error = function(cond) {
       rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading SSA3 data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "SSA3"))
     },
     readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian))
 
-    out$CS12[i,] <- rlang::try_fetch(error = function(cond){
+    out$CS12[i,] <- rlang::try_fetch(error = function(cond) {
       rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading CS12 data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "CS12"))
     },
     read_complex_vector(connection, nDoppler, endian))
-    out$CS13[i,] <-  rlang::try_fetch(error = function(cond){
+    out$CS13[i,] <-  rlang::try_fetch(error = function(cond) {
       rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading CS13 data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "CS13"))
     },
     read_complex_vector(connection, nDoppler, endian))
 
-    out$CS23[i,] <-  rlang::try_fetch(error = function(cond){
+    out$CS23[i,] <-  rlang::try_fetch(error = function(cond) {
       rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading CS23 data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "CS23"))
     },
     read_complex_vector(connection, nDoppler, endian))
     if (nCSKind >= 2) {
-      out$QC[i,] <- rlang::try_fetch(error = function(cond){
+      out$QC[i,] <- rlang::try_fetch(error = function(cond) {
         rlang::inject(seasonder_logAndAbort(glue::glue("Error while reading QC data for range cell {i}: {conditionMessage(cond)}"),!!!conditions_params, parent = cond, seasonder_range_cell = i,seasonder_data_component = "QC"))
       },
       readBin(connection, what = "numeric", n = nDoppler, size = 4, endian = endian))
@@ -1932,28 +2685,28 @@ seasonder_readSeaSondeCSFileData <- function(connection, header, endian="big") {
 seasonder_the$transform_functions <- list()
 
 seasonder_the$transform_functions[["TIME"]] <- function(x) {
-  x$nTimeMark %<>% factor(levels=c(0L,1L,2L),labels=c("start","center time","end time"))
+  x$nTimeMark %<>% factor(levels = c(0L,1L,2L),labels = c("start","center time","end time"))
   x
 }
 
 seasonder_the$transform_functions[["RCVI"]] <- function(x) {
-  x$nReceiverModel %<>% factor(levels=c(0L,1L,2L,3L,4L,5L),labels=c("Unknown", "Awg3/Rcvr2 Chassis AC", "Awg3/Rcvr2 Chassis DC", "AllInOne", "Awg4 Chassis AC","Awg4 Chassis DC"))
-  x$nRxAntennaModel %<>% factor(levels=c(0L,1L,2L,3L,4L,5L),labels=c("Unknown", "Box Loops","2","3", "Dome Loops","TR Dome Loops"))
+  x$nReceiverModel %<>% factor(levels = c(0L,1L,2L,3L,4L,5L),labels = c("Unknown", "Awg3/Rcvr2 Chassis AC", "Awg3/Rcvr2 Chassis DC", "AllInOne", "Awg4 Chassis AC","Awg4 Chassis DC"))
+  x$nRxAntennaModel %<>% factor(levels = c(0L,1L,2L,3L,4L,5L),labels = c("Unknown", "Box Loops","2","3", "Dome Loops","TR Dome Loops"))
 
   x
 }
 
 
 seasonder_the$transform_functions[["GLRM"]] <- function(x) {
-  x$nReceiverModel %<>% factor(levels=c(0L,1L,2L,3L,4L),labels=c("Off","Point","Range","Range&Point", "SubDCOnly"))
+  x$nReceiverModel %<>% factor(levels = c(0L,1L,2L,3L,4L),labels = c("Off","Point","Range","Range&Point", "SubDCOnly"))
   x
 }
 
 
 seasonder_the$transform_functions[["SUPI"]] <- function(x) {
-  x$nMethod %<>% factor(levels=c(0L,1L),labels=c("Off","Normal"))
-  x$nMode %<>% factor(levels=c(0L,1L,2L,3L),labels=c("Light","Heavy","MaxLight","MaxHeavy"))
-  x$nDebugMode %<>% factor(levels=c(0L,1L),labels=c("Off","On"))
+  x$nMethod %<>% factor(levels = c(0L,1L),labels = c("Off","Normal"))
+  x$nMode %<>% factor(levels = c(0L,1L,2L,3L),labels = c("Light","Heavy","MaxLight","MaxHeavy"))
+  x$nDebugMode %<>% factor(levels = c(0L,1L),labels = c("Off","On"))
   x
 }
 
@@ -1961,29 +2714,29 @@ seasonder_the$transform_functions[["SUPI"]] <- function(x) {
 
 seasonder_the$transform_functions[["FWIN"]] <- function(x) {
 
-  x$nRangeWindowType %<>% factor(levels=c(0L,1L,2L,3L),labels=c("None","Blackman", "Hamming", "Tukey"))
-  x$nDopplerWindowType %<>% factor(levels=c(0L,1L,2L,3L),labels=c("None","Blackman", "Hamming", "Tukey"))
+  x$nRangeWindowType %<>% factor(levels = c(0L,1L,2L,3L),labels = c("None","Blackman", "Hamming", "Tukey"))
+  x$nDopplerWindowType %<>% factor(levels = c(0L,1L,2L,3L),labels = c("None","Blackman", "Hamming", "Tukey"))
   x
 }
 
 seasonder_the$transform_functions[["IQAP"]] <- function(x) {
 
-  x$nRangeWindowType %<>% factor(levels=c(0L,1L,2L),labels=c("Off","Measured","Corrected"))
+  x$nRangeWindowType %<>% factor(levels = c(0L,1L,2L),labels = c("Off","Measured","Corrected"))
 
   x
 }
 
 seasonder_the$transform_functions[["FILL"]] <- function(x) {
 
-  x$nRangeMethod %<>% factor(levels=c(0L,1L,2L),labels=c("None", "Linear", "FFTPadding"))
-  x$nDopplerMethod %<>% factor(levels=c(0L,1L,2L),labels=c("None", "Linear", "FFTPadding"))
+  x$nRangeMethod %<>% factor(levels = c(0L,1L,2L),labels = c("None", "Linear", "FFTPadding"))
+  x$nDopplerMethod %<>% factor(levels = c(0L,1L,2L),labels = c("None", "Linear", "FFTPadding"))
 
   x
 }
 
 seasonder_the$transform_functions[["BRGR"]] <- function(x) {
 
-  x$nBraggReject$data %<>% factor(levels=c(0L,1L,2L,3L),labels=c("OK", "RejectNegBragg", "RejectPosBragg", "RejectBoth"))
+  x$nBraggReject$data %<>% factor(levels = c(0L,1L,2L,3L),labels = c("OK", "RejectNegBragg", "RejectPosBragg", "RejectBoth"))
 
 
   x
@@ -2066,7 +2819,7 @@ qc_check_unsigned <- function(field_value,  expected_type = NULL) {
   return(field_value)
 }
 
-seasonder_load_qc_functions <- function(){
+seasonder_load_qc_functions <- function() {
 
   seasonder_the$qc_functions[["qc_check_type"]] <- qc_check_type
   seasonder_the$qc_functions[["qc_check_range"]] <- qc_check_range

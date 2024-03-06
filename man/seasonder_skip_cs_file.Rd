@@ -25,6 +25,6 @@ trigger this restart, which allows for a graceful degradation by logging an erro
 The effect of invoking this restart is twofold:
 \enumerate{
 \item An error message detailing the reason for skipping the file is logged.
-\item The calling function (\code{seasonder_readSeaSondeCSFile}) will immediately return a list with \code{header=NULL} and \code{data=NULL}.
+\item The calling function (\code{seasonder_readSeaSondeCSFile}) will immediately return a list with \code{header = NULL} and \code{data = NULL}.
 }
 }
