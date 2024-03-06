@@ -100,7 +100,7 @@ using <code><a href="seasonder_validateCSFileData.html">seasonder_validateCSFile
 </ul><p><strong>Restart Options</strong>:
 This function provides a structured mechanism to recover from errors during its execution using the <code>rlang::withRestarts</code> function. The following restart option is available:</p>
 <dl><dt><code>seasonder_skip_cs_file(cond)</code></dt>
-<dd><p>This allows for the graceful handling of file reading errors. If this restart is invoked, the function will log an error message indicating that the processing of a specific CS file was skipped and will return a list with <code>header=NULL</code> and <code>data=NULL</code>. The restart takes one argument: <code>cond</code> (the condition or error that occurred).</p><ul><li><p><strong>Usage</strong>: In a custom condition handler, you can call <code>seasonder_skip_cs_file(cond)</code> to trigger this restart and skip the processing of the current CS file.</p></li>
+<dd><p>This allows for the graceful handling of file reading errors. If this restart is invoked, the function will log an error message indicating that the processing of a specific CS file was skipped and will return a list with <code>header = NULL</code> and <code>data = NULL</code>. The restart takes one argument: <code>cond</code> (the condition or error that occurred).</p><ul><li><p><strong>Usage</strong>: In a custom condition handler, you can call <code>seasonder_skip_cs_file(cond)</code> to trigger this restart and skip the processing of the current CS file.</p></li>
 <li><p><strong>Effect</strong>: If invoked, the function logs an error message detailing the reason for skipping the file and then returns a list with both the header and data set to NULL.</p></li>
 </ul></dd>
 

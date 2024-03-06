@@ -81,7 +81,7 @@ to log a detailed error message indicating the reason for skipping the file.</p>
 arises during the processing of a SeaSonde CS file, you can call <code>seasonder_skip_cs_file(cond)</code> to
 trigger this restart, which allows for a graceful degradation by logging an error message and skipping the file.</p>
 <p>The effect of invoking this restart is twofold:</p><ol><li><p>An error message detailing the reason for skipping the file is logged.</p></li>
-<li><p>The calling function (<code>seasonder_readSeaSondeCSFile</code>) will immediately return a list with <code>header=NULL</code> and <code>data=NULL</code>.</p></li>
+<li><p>The calling function (<code>seasonder_readSeaSondeCSFile</code>) will immediately return a list with <code>header = NULL</code> and <code>data = NULL</code>.</p></li>
 </ol></div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

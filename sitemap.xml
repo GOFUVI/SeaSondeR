@@ -100,10 +100,19 @@
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_enableMessages.html</loc>
   </url>
   <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getBinsRadialVelocity.html</loc>
+  </url>
+  <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getCSHeaderByPath.html</loc>
   </url>
   <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getDopplerBinsFrequency.html</loc>
+  </url>
+  <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getLog.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getRadialVelocityResolution.html</loc>
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRAPM_AmplitudeFactors.html</loc>
@@ -158,6 +167,12 @@
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_ProcessingSteps.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_SelfSpectra.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_antenna_SSdata.html</loc>
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_data.html</loc>
@@ -245,6 +260,9 @@
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readYAMLSpecs.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_rejectDistantBragg.html</loc>
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_rerun_qc_with_fun.html</loc>
