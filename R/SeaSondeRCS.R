@@ -16,7 +16,7 @@
 #' @return A SeaSondeRCS object with the specified header, data, and version.
 #'
 #'
-new_SeaSondeRCS <- function(header, data) {
+new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 
 
 
@@ -25,7 +25,9 @@ new_SeaSondeRCS <- function(header, data) {
                    version = 1, # An integer indicating the version of the SeaSondeRCS object. Current is 1.
                    ProcessingSteps = character(0),
                    FOR_data = list(),
+                   MUSIC_data = list(),
                    NoiseLevel = numeric(0),
+                   APM = seasonder_apm_object,
                    class = "SeaSondeRCS")
 
   out %<>% seasonder_setSeaSondeRCS_header(header)
@@ -35,9 +37,13 @@ new_SeaSondeRCS <- function(header, data) {
   out %<>% seasonder_setSeaSondeRCS_FOR(seasonder_initSeaSondeRCS_FOR(out))
 
 
+  out %<>% seasonder_setSeaSondeRCS_MUSIC_parameters(seasonder_defaultMUSIC_parameters())
+  out %<>% seasonder_setSeaSondeRCS_MUSIC(seasonder_initSeaSondeRCS_MUSIC(out))
 
   return(out)
 }
+
+# TODO: update docs
 
 #' Create a SeaSondeRCS object
 #'
@@ -54,12 +60,12 @@ new_SeaSondeRCS <- function(header, data) {
 #'
 #'
 #' @export
-seasonder_createSeaSondeRCS <- function(x, specs_path = NULL) {
+seasonder_createSeaSondeRCS <- function(x, specs_path = NULL, ...) {
   UseMethod("seasonder_createSeaSondeRCS")
 }
 
 #' @export
-seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL) {
+seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL, ...) {
 
   # Creating the SeaSondeRCS object
   out <- new_SeaSondeRCS(x$header, x$data)
@@ -70,7 +76,7 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL) {
 }
 
 #' @export
-seasonder_createSeaSondeRCS.character <- function(x, specs_path = system.file("specs","CS_V1.yaml",package = "SeaSondeR")) {
+seasonder_createSeaSondeRCS.character <- function(x, specs_path = system.file("specs","CS_V1.yaml",package = "SeaSondeR"), ...) {
   # Checking if the file exists
   if (!file.exists(x)) {
     seasonder_logAndAbort(glue::glue("File '{x}' does not exist."), calling_function = "seasonder_createSeaSondeRCS.character", class = "seasonder_CS_file_not_found_error")
@@ -80,7 +86,7 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path = system.file("s
   result <- seasonder_readSeaSondeCSFile(x, specs_path)
 
   # Creating the SeaSondeRCS object
-  out <- new_SeaSondeRCS(result$header, result$data)
+  out <- new_SeaSondeRCS(result$header, result$data, ...)
 
   out %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_creation_step_text(x))
 
@@ -229,6 +235,7 @@ seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_obj, FOR) {
 
 }
 
+
 seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_obj) {
 
   nRanges <- seasonder_getnRangeCells(seasonder_cs_obj)
@@ -250,6 +257,9 @@ seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_obj) {
 
 
 }
+
+
+
 
 ##### Validation #####
 
@@ -472,6 +482,16 @@ seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_obj, processin
   return(out)
 }
 
+seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_object){
+
+  # TODO: Valiate APM obj
+
+
+  attr(seasonder_cs_object, "APM") <- seasonder_apm_object
+
+  return(seasonder_cs_object)
+
+}
 
 ##### Getters #####
 
@@ -557,7 +577,13 @@ seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_obj, path = NULL) {
 }
 
 
+seasonder_getSeaSondeRCS_APM <- function(seasonder_cs_object){
 
+  out <- attr(seasonder_cs_object, "APM", exact = T)
+
+  return(out)
+
+}
 
 ###### Data ######
 #' Getter for data

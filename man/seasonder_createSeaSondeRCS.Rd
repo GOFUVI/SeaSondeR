@@ -4,7 +4,7 @@
 \alias{seasonder_createSeaSondeRCS}
 \title{Create a SeaSondeRCS object}
 \usage{
-seasonder_createSeaSondeRCS(x, specs_path = NULL)
+seasonder_createSeaSondeRCS(x, specs_path = NULL, ...)
 }
 \arguments{
 \item{x}{Either a character string specifying the path to the SeaSonde CS file or a list with header and data.}

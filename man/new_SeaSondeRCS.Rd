@@ -4,7 +4,7 @@
 \alias{new_SeaSondeRCS}
 \title{Create a New SeaSondeRCS Object}
 \usage{
-new_SeaSondeRCS(header, data)
+new_SeaSondeRCS(header, data, seasonder_apm_object = NULL)
 }
 \arguments{
 \item{header}{A list containing header information for the SeaSondeRCS object.}
