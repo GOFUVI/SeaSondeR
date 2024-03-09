@@ -1,3 +1,146 @@
+
+
+#### Defaults ####
+
+seasonder_defaultMUSIC_parameters <- function(){
+
+  c(40,20,2)
+
+}
+
+
+seasonder_MUSICInitCov <- function(){
+
+  out <- matrix(rep(NA_complex_,9),nrow = 3)
+
+  return(out)
+
+}
+
+
+seasonder_MUSICInitDistances <- function(bearings = 0){
+
+
+
+
+  out <- matrix(rep(NA_complex_,2*length(bearings)),nrow=2)
+
+  rownames(out) <- c("single","dual")
+  attr(out,"bearings") <- bearings
+
+
+  return(out)
+
+}
+
+seasonder_MUSICInitDOASolutions <- function(){
+
+  out <- list(single = NA_real_,dual = NA_real_)
+
+
+
+  return(out)
+
+}
+
+seasonder_MUSICInitEigenDecomp <- function(){
+
+  out <- list(values = rep(NA_complex_,3), vectors =matrix(rep(NA_complex_,9),nrow = 3))
+
+  return(out)
+
+}
+
+seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL){
+
+
+if(is.null(range_cells) || is.null(doppler_bins)){
+
+  if (is.null(range_cells)) {
+
+    range_cells <- 1:seasonder_getnRangeCells(seasonder_obj = seasonder_cs_object)
+  }
+
+
+  if (is.null(doppler_bins)) {
+
+    doppler_bins <- 1:seasonder_getnDopplerCells(seasonder_obj = seasonder_cs_object)
+  }
+
+  out <- expand.grid(range_cell = range_cells, doppler_bin = doppler_bins)
+
+}else{
+  out <- data.frame(range_cell = range_cells, doppler_bin = doppler_bins)
+}
+  out <- tibble::as_tibble(out)
+
+
+  out %<>% dplyr::mutate(cov = list(seasonder_MUSICInitCov()), eigen = list(seasonder_MUSICInitEigenDecomp()), distances = list(seasonder_MUSICInitDistances()), DOA_solutions = list(seasonder_MUSICInitDOASolutions()))
+
+
+  return(out)
+}
+
+#### Validation ####
+
+#### Setters ####
+
+seasonder_setSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_obj, MUSIC_parameters = seasonder_defaultMUSIC_parameters()) {
+
+    # TODO: validate MUSIC parameters
+
+    attr(seasonder_cs_obj, "MUSIC_data")$MUSIC_parameters <- MUSIC_parameters
+
+
+    return(seasonder_cs_obj)
+
+
+}
+
+
+seasonder_setSeaSondeRCS_MUSIC <- function(seasonder_cs_obj, MUSIC) {
+
+  # TODO: validate MUSIC
+
+  attr(seasonder_cs_obj, "MUSIC_data")$MUSIC <- MUSIC
+
+
+  return(seasonder_cs_obj)
+
+
+}
+
+
+#### Getters ####
+
+
+seasonder_getSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_obj) {
+
+
+  out <- attr(seasonder_cs_obj, "MUSIC_data", exact = TRUE)$MUSIC_parameters %||% seasonder_defaultMUSIC_parameters()
+
+
+  return(out)
+
+
+}
+
+seasonder_getSeaSondeRCS_MUSIC <- function(seasonder_cs_obj) {
+
+
+  out <- attr(seasonder_cs_obj, "MUSIC_data", exact = TRUE)$MUSIC %||% seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_obj)
+
+
+  return(out)
+
+
+}
+
+#### MUSIC algorithm ####
+
+# TODO: update docs
+
+
 #' Calculate the MUSIC Covariance Matrix for a Given Cell Range and Doppler Bin
 #'
 #' This function computes the MUltiple SIgnal Classification (MUSIC) covariance matrix
@@ -24,29 +167,40 @@
 #' representing the cross-spectrum between antennas `i` and `j`.
 #'
 #'
-seasonder_getMUSICCov <- function(seasonder_cs_obj,cell_range, doppler_bin){
+seasonder_MUSICComputeCov <- function(seasonder_cs_object){
 
-  out <- matrix(rep(NA_complex_,9),nrow = 3)
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
-  for(i in 1:3){
+  MUSIC %<>% dplyr::mutate(cov = purrr::map2(range_cell,doppler_bin,\(r,d) {
 
-    for(j in 1:3){
+    out <- seasonder_MUSICInitCov()
 
-      if(i==j){
-        value <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_obj,paste0("SSA",i))[cell_range, doppler_bin]
-      }else{
-        value <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_obj,paste0("CS",paste0(as.character(sort(c(i,j))),collapse = "")))[cell_range, doppler_bin]
+
+    for(i in 1:3){
+
+      for(j in 1:3){
+
+        if(i==j){
+          value <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_object,paste0("SSA",i))[r, d]
+        }else{
+          value <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_object,paste0("CS",paste0(as.character(sort(c(i,j))),collapse = "")))[r, d]
+        }
+
+        out[i,j] <- value
+
       }
-
-      out[i,j] <- value
-
     }
-  }
 
-  return(out)
+    return(out)
 
+  }))
 
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+return(seasonder_cs_object)
 }
+
+# TODO: update docs
 
 #' Eigen Decomposition of the MUSIC Covariance Matrix
 #'
@@ -54,7 +208,7 @@ seasonder_getMUSICCov <- function(seasonder_cs_obj,cell_range, doppler_bin){
 #' and eigenvectors. This decomposition is a critical step in the MUSIC algorithm for spectral
 #' estimation and direction finding.
 #'
-#' @param C A 3x3 complex covariance matrix obtained from the `seasonder_getMUSICCov` function.
+#' @param C A 3x3 complex covariance matrix obtained from the `seasonder_MUSICComputeCov` function.
 #'
 #' @return A list containing the eigenvalues and eigenvectors of the covariance matrix.
 #'         The eigenvalues are sorted in descending order to facilitate their use in
@@ -70,29 +224,38 @@ seasonder_getMUSICCov <- function(seasonder_cs_obj,cell_range, doppler_bin){
 #' for further analysis in MUSIC algorithm applications, such as identifying the signal and noise subspaces.
 #' The eigenvectors are reordered accordingly to maintain the correspondence with their eigenvalues.
 #'
-seasonder_MUSICCovDecomposition <- function(C){
+seasonder_MUSICCovDecomposition <- function(seasonder_cs_object){
 
-  out <- list(values = rep(NA_complex_,3), vectors =matrix(rep(NA_complex_,9),nrow = 3))
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
-  # Get eigen-decomposition
-  eigen_decomp <- eigen(C, symmetric = TRUE)
+  MUSIC %<>% dplyr::mutate(eigen = purrr::map(cov,\(C){
+    out <- seasonder_MUSICInitEigenDecomp()
 
-  # eigenvalues and eigenvectors
-  values <- eigen_decomp$values
-  vectors <- eigen_decomp$vectors
+    # Get eigen-decomposition
+    eigen_decomp <- eigen(C, symmetric = TRUE)
 
-  # sort eigenvalues from smallest to largest and reorder eigenvectors accordingly
+    # eigenvalues and eigenvectors
+    values <- eigen_decomp$values
+    vectors <- eigen_decomp$vectors
 
-  sorted_values <- rev(values)
-  sorted_vectors <- vectors[, 3:1]
+    # sort eigenvalues from smallest to largest and reorder eigenvectors accordingly
 
-  out$values <- sorted_values
-  out$vectors <- sorted_vectors
+    sorted_values <- rev(values)
+    sorted_vectors <- vectors[, 3:1]
 
-  return(out)
+    out$values <- sorted_values
+    out$vectors <- sorted_vectors
+
+    return(out)
+  }))
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+  return(seasonder_cs_object)
 
 }
 
+# TODO: update docs
 
 #' Calculate Euclidean Distances for MUSIC Algorithm
 #'
@@ -122,17 +285,24 @@ seasonder_MUSICCovDecomposition <- function(C){
 #' eigenvectors corresponding to the noise subspace, and \eqn{H} denotes the conjugate transpose. The distances are
 #' calculated for both single and dual solutions, indicating scenarios with different numbers of signal sources.
 #'
-seasonder_MUSICEuclideanDistance <- function(eigen_analysis, seasonder_apm_obj){
+seasonder_MUSICEuclideanDistance <- function(seasonder_cs_object){
 
 
+  seasonder_apm_obj <- seasonder_getSeaSondeRCS_APM(seasonder_cs_object)
+
+  # TODO: Validate APM object
 
   bearings <- seasonder_getSeaSondeRAPM_BEAR(seasonder_apm_obj)
 
-  out <- matrix(rep(NA_complex_,2*length(bearings)),nrow=2)
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
-  rownames(out) <- c("single","dual")
+  MUSIC %<>% dplyr::mutate(distances = purrr::map(eigen,\(eigen_analysis){
 
-  attr(out,"bearings") <- bearings
+
+
+  out <- seasonder_MUSICInitDistances(bearings = bearings)
+
+
   for(i in 1:2){ # Number of solutions
     En <- eigen_analysis$vectors[,1:(3-i)]
 
@@ -148,13 +318,23 @@ seasonder_MUSICEuclideanDistance <- function(eigen_analysis, seasonder_apm_obj){
   }
 
   return(out)
+  }))
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+  return(seasonder_cs_object)
 
 }
 
 
-seasonder_MUSICExtractPeaks <- function(distances){
+seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
 
-  out <- list(single = NA_real_,dual = NA_real_)
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+  MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::map(distances,\(distances){
+
+  out <- seasonder_MUSICInitDOASolutions()
 
   single_solution_dist <- Mod(distances['single',,drop = TRUE])
   dual_solution_dist <- Mod(distances['dual',,drop = TRUE])
@@ -176,7 +356,53 @@ out$single <- bearings[single_peak[1,2]]
 out$dual <- bearings[dual_peaks[,2]]
 
 return(out)
+}))
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+  return(seasonder_cs_object)
 
 }
 
 
+seasonder_runMUSIC <- function(seasonder_cs_object){
+
+  seasonder_cs_object %<>% seasonder_MUSICComputeCov()
+
+  seasonder_cs_object %<>% seasonder_MUSICCovDecomposition()
+
+  seasonder_cs_object %<>% seasonder_MUSICEuclideanDistance()
+
+  seasonder_cs_object %<>% seasonder_MUSICExtractPeaks()
+
+
+return(seasonder_cs_object)
+
+}
+
+seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object){
+
+FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_object)
+
+FOR <-  1:length(FOR) %>% purrr::map(\(range_cell) {
+
+   o <- NULL
+   doppler_bins <- c(FOR[[range_cell]]$negative_FOR,FOR[[range_cell]]$positive_FOR)
+   if(length(doppler_bins) > 0){
+     o <- data.frame(range_cell = range_cell, doppler_bin = doppler_bins)
+   }
+
+   return(o)
+
+   }) %>% purrr::compact() %>% dplyr::bind_rows()
+
+MUSIC <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object,range_cells = FOR$range_cell, doppler_bins = FOR$doppler_bin)
+
+seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+seasonder_cs_object %<>% seasonder_runMUSIC()
+
+return(seasonder_cs_object)
+
+
+}
