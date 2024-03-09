@@ -26,24 +26,24 @@
 #'
 seasonder_getMUSICCov <- function(seasonder_cs_obj,cell_range, doppler_bin){
 
-out <- matrix(rep(NA_complex_,9),nrow = 3)
+  out <- matrix(rep(NA_complex_,9),nrow = 3)
 
-for(i in 1:3){
+  for(i in 1:3){
 
-  for(j in 1:3){
+    for(j in 1:3){
 
-    if(i==j){
-      value <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_obj,paste0("SSA",i))[cell_range, doppler_bin]
-    }else{
-      value <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_obj,paste0("CS",paste0(as.character(sort(c(i,j))),collapse = "")))[cell_range, doppler_bin]
+      if(i==j){
+        value <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_obj,paste0("SSA",i))[cell_range, doppler_bin]
+      }else{
+        value <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_obj,paste0("CS",paste0(as.character(sort(c(i,j))),collapse = "")))[cell_range, doppler_bin]
+      }
+
+      out[i,j] <- value
+
     }
-
-    out[i,j] <- value
-
   }
-}
 
-return(out)
+  return(out)
 
 
 }
@@ -72,7 +72,7 @@ return(out)
 #'
 seasonder_MUSICCovDecomposition <- function(C){
 
-out <- list(values = rep(NA_complex_,3), vectors =matrix(rep(NA_complex_,9),nrow = 3))
+  out <- list(values = rep(NA_complex_,3), vectors =matrix(rep(NA_complex_,9),nrow = 3))
 
   # Get eigen-decomposition
   eigen_decomp <- eigen(C, symmetric = TRUE)
@@ -86,10 +86,10 @@ out <- list(values = rep(NA_complex_,3), vectors =matrix(rep(NA_complex_,9),nrow
   sorted_values <- rev(values)
   sorted_vectors <- vectors[, 3:1]
 
-out$values <- sorted_values
-out$vectors <- sorted_vectors
+  out$values <- sorted_values
+  out$vectors <- sorted_vectors
 
-return(out)
+  return(out)
 
 }
 
@@ -131,12 +131,14 @@ seasonder_MUSICEuclideanDistance <- function(eigen_analysis, seasonder_apm_obj){
   out <- matrix(rep(NA_complex_,2*length(bearings)),nrow=2)
 
   rownames(out) <- c("single","dual")
+
+  attr(out,"bearings") <- bearings
   for(i in 1:2){ # Number of solutions
     En <- eigen_analysis$vectors[,1:(3-i)]
 
     for(j in 1:length(bearings)){
       a <- seasonder_apm_obj[,j]
-names(a) <- NULL
+      names(a) <- NULL
       out[i,j] <- t(Conj(a)) %*% (En %*% t(Conj(En))) %*% a
 
 
@@ -148,3 +150,33 @@ names(a) <- NULL
   return(out)
 
 }
+
+
+seasonder_MUSICExtractPeaks <- function(distances){
+
+  out <- list(single = NA_real_,dual = NA_real_)
+
+  single_solution_dist <- Mod(distances['single',,drop = TRUE])
+  dual_solution_dist <- Mod(distances['dual',,drop = TRUE])
+
+  bearings <- attr(distances,"bearings",exact = TRUE)
+
+  rev_single_solution_dist = 1/single_solution_dist
+
+  rev_dual_solution_dist = 1/dual_solution_dist
+
+
+
+
+single_peak <- pracma::findpeaks(rev_single_solution_dist,npeaks = 1, sortstr = TRUE)
+
+dual_peaks <- pracma::findpeaks(rev_dual_solution_dist,npeaks = 2, sortstr = TRUE)
+
+out$single <- bearings[single_peak[1,2]]
+out$dual <- bearings[dual_peaks[,2]]
+
+return(out)
+
+}
+
+
