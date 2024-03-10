@@ -75,7 +75,17 @@ if(is.null(range_cells) || is.null(doppler_bins)){
   out <- tibble::as_tibble(out)
 
 
-  out %<>% dplyr::mutate(cov = list(seasonder_MUSICInitCov()), eigen = list(seasonder_MUSICInitEigenDecomp()), distances = list(seasonder_MUSICInitDistances()), DOA_solutions = list(seasonder_MUSICInitDOASolutions()))
+  out %<>% dplyr::mutate(radial_v = seasonder_getBinsRadialVelocity(seasonder_cs_object)[doppler_bin],
+                         cov = list(seasonder_MUSICInitCov()),
+                         eigen = list(seasonder_MUSICInitEigenDecomp()),
+                         distances = list(seasonder_MUSICInitDistances()),
+                         DOA_solutions = list(seasonder_MUSICInitDOASolutions()),
+                         eigen_values_ratio=NA_real_,
+                         P1_check = TRUE,
+                         retained_solution = "dual",
+                         DOA = list(c(NA_real_, NA_real_))
+                         )
+
 
 
   return(out)
@@ -298,8 +308,6 @@ seasonder_MUSICEuclideanDistance <- function(seasonder_cs_object){
 
   MUSIC %<>% dplyr::mutate(distances = purrr::map(eigen,\(eigen_analysis){
 
-
-
   out <- seasonder_MUSICInitDistances(bearings = bearings)
 
 
@@ -365,16 +373,102 @@ return(out)
 }
 
 
+seasonder_MUSICCheckEigenValueRatio <- function(seasonder_cs_object){
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+
+  MUSIC_eigen_values <- MUSIC %>% dplyr::pull("eigen") %>% purrr::map(\(eig) eig$values %>% rev() %>% magrittr::extract(1:2))
+
+
+  eigen_values_ratio <- MUSIC_eigen_values %>% purrr::map(\(values) values[1]/values[2]) %>% purrr::list_c()
+
+  MUSIC$eigen_values_ratio <- eigen_values_ratio
+
+  MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(1)
+
+  P1_check <- eigen_values_ratio < MUSIC_parameter
+
+  MUSIC$P1_check <- P1_check
+
+  MUSIC$retained_solution[!P1_check] <- "single"
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+  return(seasonder_cs_object)
+}
+
+seasonder_MUSICComputeSignalPowerMatrix <- function(seasonder_cs_object){
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+
+
+  return(seasonder_cs_object)
+}
+
+seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+
+
+  return(seasonder_cs_object)
+}
+
+
+seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+
+
+  return(seasonder_cs_object)
+}
+
+
+seasonder_MUSICSelectDOA <- function(seasonder_cs_object){
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+
+  MUSIC %<>% dplyr::mutate(DOA = purrr::map2(DOA_solutions, retained_solution, \(DOA_sol, retained_sol) {
+    DOA_sol[[retained_sol]]
+  }))
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+
+
+  return(seasonder_cs_object)
+}
+
+
 seasonder_runMUSIC <- function(seasonder_cs_object){
 
   seasonder_cs_object %<>% seasonder_MUSICComputeCov()
 
   seasonder_cs_object %<>% seasonder_MUSICCovDecomposition()
 
+  seasonder_cs_object %<>% seasonder_MUSICCheckEigenValueRatio()
+
   seasonder_cs_object %<>% seasonder_MUSICEuclideanDistance()
 
   seasonder_cs_object %<>% seasonder_MUSICExtractPeaks()
 
+  seasonder_cs_object %<>% seasonder_MUSICComputeSignalPowerMatrix()
+
+  seasonder_cs_object %<>% seasonder_MUSICCheckSignalPowers()
+
+  seasonder_cs_object %<>% seasonder_MUSICCheckSignalMatrix()
+
+  seasonder_cs_object %<>% seasonder_MUSICSelectDOA()
 
 return(seasonder_cs_object)
 
