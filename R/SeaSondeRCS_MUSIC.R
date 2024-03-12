@@ -35,7 +35,8 @@ seasonder_MUSICInitDistances <- function(bearings = 0){
 
 seasonder_MUSICInitDOASolutions <- function(){
 
-  out <- list(single = list(bearing = NA_real_, a= NA_complex_),dual = list(bearing = NA_real_, a= NA_complex_))
+  out <- list(single = list(bearing = NA_real_, a= NA_complex_, P = NA_complex_),
+              dual = list(bearing = NA_real_, a= NA_complex_, P = matrix(rep(NA_complex_,4),nrow = 2)))
 
 
 
@@ -82,8 +83,6 @@ seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = N
                          eigen = list(seasonder_MUSICInitEigenDecomp()),
                          distances = list(seasonder_MUSICInitDistances()),
                          DOA_solutions = list(seasonder_MUSICInitDOASolutions()),
-                         single_signal_power_matrix = list(NA_complex_),
-                         dual_signal_power_matrix = list(matrix(rep(NA_complex_,4),nrow = 2)),
                          eigen_values_ratio=NA_real_,
                          P1_check = TRUE,
                          retained_solution = "dual",
@@ -446,14 +445,35 @@ seasonder_MUSICComputeSignalPowerMatrix <- function(seasonder_cs_object){
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
 
-  MUSIC %<>% dplyr::mutate(dual_signal_power_matrix = purrr::pmap(list(cov, eigen, DOA_solutions), \(C,eig,DOA_sol){
+  MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::pmap(list(cov, eigen, DOA_solutions), \(C,eig,DOA_sol){
 
-    seasonder_computePowerMatrix(C,eig,DOA_sol$dual$a)
+    out <- DOA_sol
 
-  }),
-  single_signal_power_matrix = purrr::pmap(list(cov, eigen, DOA_solutions), \(C,eig,DOA_sol){
+    P_dual <- seasonder_computePowerMatrix(C,eig,DOA_sol$dual$a)
 
-    seasonder_computePowerMatrix(C,eig,DOA_sol$single$a)
+    if(!is.null(P_dual) && all(dim(P_dual) == c(2,2))){
+
+      out$dual$P <- P_dual
+
+      signal_order <- order(Mod(diag(out$dual$P)), decreasing = TRUE)
+
+      if(any(signal_order != c(1,2))){
+
+        out$dual$P <- out$dual$P[,signal_order]
+        out$dual$bearing <- out$dual$bearing[signal_order]
+        out$dual$a <- out$dual$a[,signal_order]
+
+      }
+    }
+
+    P_single <- seasonder_computePowerMatrix(C,eig,DOA_sol$single$a)
+
+    if(!is.null(P_single)){
+
+      out$single$P <- P_single
+    }
+
+    return(out)
 
   }))
 
@@ -469,9 +489,23 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
 
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
+  MUSIC %<>% dplyr::mutate(signal_power_ratio = purrr::map_dbl(DOA_solutions,\(DOA_sol){
+
+    P_diag <- Mod(diag(DOA_sol$dual$P))
+    out <- P_diag[1]/P_diag[2]
+
+    return(out)
+  }), .after = "P1_check")
+
+
+  MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(2)
+
+  MUSIC %<>% dplyr::mutate(P2_check = !is.na(signal_power_ratio) & signal_power_ratio < MUSIC_parameter, .after = "signal_power_ratio")
+
+
+  MUSIC$retained_solution[!MUSIC$P2_check] <- "single"
+
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
-
-
 
   return(seasonder_cs_object)
 }
