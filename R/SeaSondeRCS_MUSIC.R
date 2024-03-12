@@ -365,8 +365,10 @@ seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
 
     dual_peaks <- pracma::findpeaks(rev_dual_solution_dist,npeaks = 2, sortstr = TRUE)
 
-    out$single <- list(bearing = bearings[single_peak[1,2]], a = seasonder_apm_obj[,single_peak[1,2], drop = FALSE])
-    out$dual <- list(bearing = bearings[dual_peaks[,2]], a = seasonder_apm_obj[,dual_peaks[,2], drop = FALSE])
+    out$single$bearing <-  bearings[single_peak[1,2]]
+    out$single$a <- seasonder_apm_obj[,single_peak[1,2], drop = FALSE]
+    out$dual$bearing <- bearings[dual_peaks[,2]]
+    out$dual$a <- seasonder_apm_obj[,dual_peaks[,2], drop = FALSE]
 
     return(out)
   }))
@@ -514,6 +516,28 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
 seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
 
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+
+  MUSIC %<>% dplyr::mutate(diag_off_diag_power_ratio = purrr::map_dbl(DOA_solutions,\(DOA_sol){
+
+    P_diag <- Mod(diag(DOA_sol$dual$P)) %>% prod()
+    P_off_diag <- DOA_sol$dual$P
+    diag(P_off_diag) <- 1
+
+    P_off_diag <- Mod(P_off_diag) %>% prod()
+
+    out <- P_diag/P_off_diag
+
+    return(out)
+  }), .after = "P2_check")
+
+
+  MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(3)
+
+  MUSIC %<>% dplyr::mutate(P3_check = !is.na(diag_off_diag_power_ratio) & diag_off_diag_power_ratio > MUSIC_parameter, .after = "diag_off_diag_power_ratio")
+
+
+  MUSIC$retained_solution[!MUSIC$P3_check] <- "single"
 
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
