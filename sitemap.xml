@@ -67,6 +67,15 @@
     <loc>https://gofuvi.github.io/SeaSondeR/reference/read_matrix_row.html</loc>
   </url>
   <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_MUSICComputeCov.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_MUSICCovDecomposition.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_MUSICEuclideanDistance.html</loc>
+  </url>
+  <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_areLogsEnabled.html</loc>
   </url>
   <url>

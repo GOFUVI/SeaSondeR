@@ -119,12 +119,13 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a mock SeaSondeRAPM object with valid attributes</span></span></span>
 <span class="r-in"><span><span class="va">mock_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">complex</a></span><span class="op">(</span>real <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, imaginary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mock_apm</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRAPM.html">seasonder_createSeaSondeRAPM</a></span><span class="op">(</span><span class="va">mock_matrix</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in seasonder_validateCalibrationMatrixSeaSondeRAPM(calibration_matrix):</span> seasonder_validateCalibrationMatrixSeaSondeRAPM: Calibration matrix must have three rows.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Validate attributes</span></span></span>
 <span class="r-in"><span><span class="va">valid</span> <span class="op">&lt;-</span> <span class="fu">seasonder_validateAttributesSeaSondeRAPM</span><span class="op">(</span><span class="va">mock_apm</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'mock_apm' not found</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">valid</span><span class="op">)</span>  <span class="co"># Should print TRUE if all attributes are valid</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'valid' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
