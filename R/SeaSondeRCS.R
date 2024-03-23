@@ -28,6 +28,7 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL, doppler_i
                    MUSIC_data = list(),
                    NoiseLevel = numeric(0),
                    APM = seasonder_apm_object,
+                   interpolated_doppler_cells_index = integer(0),
                    class = "SeaSondeRCS")
 
   out %<>% seasonder_setSeaSondeRCS_doppler_interpolation(doppler_interpolation)
@@ -506,6 +507,20 @@ seasonder_setSeaSondeRCS_doppler_interpolation <- function(seasonder_cs_object, 
 
 }
 
+
+seasonder_setSeaSondeRCS_interpolated_doppler_cells_index <- function(seasonder_cs_object, interpolated_doppler_cells_index){
+
+  # TODO: Valiate interpolated_doppler_cells_index (should be integer in the range of 1: (nDopplerCells))
+
+
+  attr(seasonder_cs_object, "interpolated_doppler_cells_index") <- interpolated_doppler_cells_index
+
+  return(seasonder_cs_object)
+
+}
+
+
+
 ##### Getters #####
 
 #' Getter for header
@@ -602,6 +617,14 @@ seasonder_getSeaSondeRCS_APM <- function(seasonder_cs_object){
 seasonder_getSeaSondeRCS_doppler_interpolation <- function(seasonder_cs_object){
 
   out <- attr(seasonder_cs_object, "doppler_interpolation", exact = T)
+
+  return(out)
+
+}
+
+seasonder_getSeaSondeRCS_interpolated_doppler_cells_index <- function(seasonder_cs_object){
+
+  out <- attr(seasonder_cs_object, "interpolated_doppler_cells_index", exact = T)
 
   return(out)
 
