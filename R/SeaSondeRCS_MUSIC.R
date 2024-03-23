@@ -35,7 +35,8 @@ seasonder_MUSICInitDistances <- function(bearings = 0){
 
 seasonder_MUSICInitDOASolutions <- function(){
 
-  out <- list(single = NA_real_,dual = NA_real_)
+  out <- list(single = list(bearing = NA_real_, a= NA_complex_, P = NA_complex_),
+              dual = list(bearing = NA_real_, a= NA_complex_, P = matrix(rep(NA_complex_,4),nrow = 2)))
 
 
 
@@ -51,33 +52,56 @@ seasonder_MUSICInitEigenDecomp <- function(){
 
 }
 
+
+
 seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL){
 
 
-if(is.null(range_cells) || is.null(doppler_bins)){
+  if(is.null(range_cells) || is.null(doppler_bins)){
 
-  if (is.null(range_cells)) {
+    if (is.null(range_cells)) {
 
-    range_cells <- 1:seasonder_getnRangeCells(seasonder_obj = seasonder_cs_object)
+      range_cells <- 1:seasonder_getnRangeCells(seasonder_obj = seasonder_cs_object)
+    }
+
+
+    if (is.null(doppler_bins)) {
+
+      doppler_bins <- 1:seasonder_getnDopplerCells(seasonder_obj = seasonder_cs_object)
+    }
+
+    out <- expand.grid(range_cell = range_cells, doppler_bin = doppler_bins)
+
+  }else{
+    out <- data.frame(range_cell = range_cells, doppler_bin = doppler_bins)
   }
-
-
-  if (is.null(doppler_bins)) {
-
-    doppler_bins <- 1:seasonder_getnDopplerCells(seasonder_obj = seasonder_cs_object)
-  }
-
-  out <- expand.grid(range_cell = range_cells, doppler_bin = doppler_bins)
-
-}else{
-  out <- data.frame(range_cell = range_cells, doppler_bin = doppler_bins)
-}
   out <- tibble::as_tibble(out)
 
 
-  out %<>% dplyr::mutate(cov = list(seasonder_MUSICInitCov()), eigen = list(seasonder_MUSICInitEigenDecomp()), distances = list(seasonder_MUSICInitDistances()), DOA_solutions = list(seasonder_MUSICInitDOASolutions()))
+  out %<>% dplyr::mutate(range= seasonder_getCellsDistKm(seasonder_cs_object)[range_cell],
+                         radial_v = seasonder_getBinsRadialVelocity(seasonder_cs_object)[doppler_bin],
+                         cov = list(seasonder_MUSICInitCov()),
+                         eigen = list(seasonder_MUSICInitEigenDecomp()),
+                         distances = list(seasonder_MUSICInitDistances()),
+                         DOA_solutions = list(seasonder_MUSICInitDOASolutions()),
+                         eigen_values_ratio=NA_real_,
+                         P1_check = TRUE,
+                         retained_solution = "dual",
+                         DOA = list(c(NA_real_, NA_real_))
+  )
 
 
+
+  return(out)
+}
+
+seasonder_initMUSICData <- function(seasonder_cs_object){
+
+  out <- seasonder_cs_object
+
+  out %<>% seasonder_setSeaSondeRCS_MUSIC_parameters(seasonder_defaultMUSIC_parameters())
+  out %<>% seasonder_setSeaSondeRCS_MUSIC(seasonder_initSeaSondeRCS_MUSIC(out))
+  out %<>% seasonder_MUSICComputePropDualSols()
   return(out)
 }
 
@@ -87,12 +111,12 @@ if(is.null(range_cells) || is.null(doppler_bins)){
 
 seasonder_setSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_obj, MUSIC_parameters = seasonder_defaultMUSIC_parameters()) {
 
-    # TODO: validate MUSIC parameters
+  # TODO: validate MUSIC parameters
 
-    attr(seasonder_cs_obj, "MUSIC_data")$MUSIC_parameters <- MUSIC_parameters
+  attr(seasonder_cs_obj, "MUSIC_data")$MUSIC_parameters <- MUSIC_parameters
 
 
-    return(seasonder_cs_obj)
+  return(seasonder_cs_obj)
 
 
 }
@@ -110,6 +134,17 @@ seasonder_setSeaSondeRCS_MUSIC <- function(seasonder_cs_obj, MUSIC) {
 
 }
 
+seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_cs_obj, dual_solutions_proportion) {
+
+  # TODO: validate dual_solutions_proportion
+
+  attr(seasonder_cs_obj, "MUSIC_data")$dual_solutions_proportion <- dual_solutions_proportion
+
+
+  return(seasonder_cs_obj)
+
+
+}
 
 #### Getters ####
 
@@ -133,6 +168,220 @@ seasonder_getSeaSondeRCS_MUSIC <- function(seasonder_cs_obj) {
 
   return(out)
 
+
+}
+
+
+seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_cs_obj) {
+
+
+  out <- attr(seasonder_cs_obj, "MUSIC_data", exact = TRUE)$dual_solutions_proportion %||% NA_real_
+
+
+  return(out)
+
+
+}
+
+#### Derived quantities ####
+
+seasonder_MUSICComputePropDualSols <- function(seasonder_cs_object){
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+  proportion <- sum(as.integer(MUSIC$retained_solution == "dual")) / nrow(MUSIC)
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion(proportion)
+
+  return(seasonder_cs_object)
+
+}
+
+
+seasonder_computePowerMatrix <- function(C,eig,a){
+
+  P <- NULL
+
+  if(ncol(a) > 0 ){
+
+    a_star <- Conj(t(a))
+
+    if(ncol(a) == 2){
+
+      eigVector <- eig$vectors[,c(1,2)]
+      eigValues <- eig$values[c(1,2)]
+
+      G <- a_star %*% eigVector
+      G_t <- Conj(t(eigVector)) %*% a
+
+      G_inv <- solve(G)
+      G_t_inv <- solve(G_t)
+      P <- G_t_inv %*% diag(eigValues) %*% G_inv
+    }else if(ncol(a) == 1) {
+
+      eigVector <- eig$vectors[,c(1)]
+      eigValues <- eig$values[c(1)]
+
+      G <- a_star %*% eigVector
+      G_t <- Conj(t(eigVector)) %*% a
+
+      G_inv <- solve(G)
+      G_t_inv <- solve(G_t)
+      P <- G_t_inv %*% eigValues %*% G_inv
+    }
+  }
+
+
+
+
+
+  return(P)
+
+}
+
+seasonder_MUSICComputeSignalPowerMatrix <- function(seasonder_cs_object){
+
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+
+  MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::pmap(list(cov, eigen, DOA_solutions), \(C,eig,DOA_sol){
+
+    out <- DOA_sol
+
+    if(ncol(DOA_sol$dual$a) == 2){
+
+      P_dual <- seasonder_computePowerMatrix(C,eig,DOA_sol$dual$a)
+
+      if(!is.null(P_dual) && all(dim(P_dual) == c(2,2))){
+
+        out$dual$P <- P_dual
+
+      }
+    }
+    P_single <- seasonder_computePowerMatrix(C,eig,DOA_sol$single$a)
+
+    if(!is.null(P_single)){
+
+      out$single$P <- P_single
+    }
+
+    return(out)
+
+  }))
+
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+
+
+  return(seasonder_cs_object)
+}
+
+
+
+#### Dual solution tests ####
+
+
+seasonder_MUSICCheckEigenValueRatio <- function(seasonder_cs_object){
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+
+  MUSIC_eigen_values <- MUSIC %>% dplyr::pull("eigen") %>% purrr::map(\(eig) eig$values[1:2])
+
+
+  eigen_values_ratio <- MUSIC_eigen_values %>% purrr::map(\(values) values[1]/values[2]) %>% purrr::list_c()
+
+  MUSIC$eigen_values_ratio <- eigen_values_ratio
+
+  MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(1)
+
+  P1_check <- eigen_values_ratio < MUSIC_parameter
+
+  MUSIC$P1_check <- P1_check
+
+  MUSIC$retained_solution[!P1_check] <- "single"
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+  return(seasonder_cs_object)
+}
+
+
+seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+  MUSIC %<>% dplyr::mutate(signal_power_ratio = purrr::map_dbl(DOA_solutions,\(DOA_sol){
+
+    P_diag <- pracma::Real(diag(DOA_sol$dual$P))
+    out <- max(P_diag)/min(P_diag)
+
+    return(out)
+  }), .after = "P1_check")
+
+
+  MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(2)
+
+  MUSIC %<>% dplyr::mutate(P2_check = !is.na(signal_power_ratio) & signal_power_ratio < MUSIC_parameter, .after = "signal_power_ratio")
+
+
+  MUSIC$retained_solution[!MUSIC$P2_check] <- "single"
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+  return(seasonder_cs_object)
+}
+
+
+seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+
+  MUSIC %<>% dplyr::mutate(diag_off_diag_power_ratio = purrr::map_dbl(DOA_solutions,\(DOA_sol){
+
+    P_diag <- pracma::Real(diag(DOA_sol$dual$P)) %>% prod()
+    P_off_diag <- DOA_sol$dual$P
+    diag(P_off_diag) <- 1
+
+    P_off_diag <- pracma::Real(P_off_diag) %>% prod()
+
+    out <- P_diag/P_off_diag
+
+    return(out)
+  }), .after = "P2_check")
+
+
+  MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(3)
+
+  MUSIC %<>% dplyr::mutate(P3_check = !is.na(diag_off_diag_power_ratio) & diag_off_diag_power_ratio > MUSIC_parameter, .after = "diag_off_diag_power_ratio")
+
+
+  MUSIC$retained_solution[!MUSIC$P3_check] <- "single"
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+
+
+  return(seasonder_cs_object)
+}
+
+
+seasonder_MUSICTestDualSolutions <- function(seasonder_cs_object){
+
+  # P1
+  seasonder_cs_object %<>% seasonder_MUSICCheckEigenValueRatio()
+
+  # P2
+  seasonder_cs_object %<>% seasonder_MUSICCheckSignalPowers()
+
+  # P3
+  seasonder_cs_object %<>% seasonder_MUSICCheckSignalMatrix()
+
+
+  return(seasonder_cs_object)
 
 }
 
@@ -182,8 +431,14 @@ seasonder_MUSICComputeCov <- function(seasonder_cs_object){
 
         if(i==j){
           value <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_object,paste0("SSA",i))[r, d]
+          if(i == 3){
+            value <- abs(value)
+          }
         }else{
           value <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_object,paste0("CS",paste0(as.character(sort(c(i,j))),collapse = "")))[r, d]
+          if(j > i){
+            value <- Conj(value)
+          }
         }
 
         out[i,j] <- value
@@ -197,7 +452,7 @@ seasonder_MUSICComputeCov <- function(seasonder_cs_object){
 
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
-return(seasonder_cs_object)
+  return(seasonder_cs_object)
 }
 
 # TODO: update docs
@@ -234,17 +489,8 @@ seasonder_MUSICCovDecomposition <- function(seasonder_cs_object){
     # Get eigen-decomposition
     eigen_decomp <- eigen(C, symmetric = TRUE)
 
-    # eigenvalues and eigenvectors
-    values <- eigen_decomp$values
-    vectors <- eigen_decomp$vectors
-
-    # sort eigenvalues from smallest to largest and reorder eigenvectors accordingly
-
-    sorted_values <- rev(values)
-    sorted_vectors <- vectors[, 3:1]
-
-    out$values <- sorted_values
-    out$vectors <- sorted_vectors
+    out$values <- eigen_decomp$values
+    out$vectors <- eigen_decomp$vectors
 
     return(out)
   }))
@@ -298,26 +544,24 @@ seasonder_MUSICEuclideanDistance <- function(seasonder_cs_object){
 
   MUSIC %<>% dplyr::mutate(distances = purrr::map(eigen,\(eigen_analysis){
 
+    out <- seasonder_MUSICInitDistances(bearings = bearings)
 
 
-  out <- seasonder_MUSICInitDistances(bearings = bearings)
+    for(i in 1:2){ # Number of solutions
+      En <- eigen_analysis$vectors[,(i+1):3, drop = F]
+
+      for(j in 1:length(bearings)){
+        a <- seasonder_apm_obj[,j, drop= F]
+        names(a) <- NULL
+        out[i,j] <- Conj(t(a)) %*% (En %*% Conj(t(En))) %*% a
 
 
-  for(i in 1:2){ # Number of solutions
-    En <- eigen_analysis$vectors[,1:(3-i)]
-
-    for(j in 1:length(bearings)){
-      a <- seasonder_apm_obj[,j]
-      names(a) <- NULL
-      out[i,j] <- t(Conj(a)) %*% (En %*% t(Conj(En))) %*% a
+      }
 
 
     }
 
-
-  }
-
-  return(out)
+    return(out)
   }))
 
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
@@ -330,38 +574,84 @@ seasonder_MUSICEuclideanDistance <- function(seasonder_cs_object){
 seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
 
 
+  seasonder_apm_obj <- seasonder_getSeaSondeRCS_APM(seasonder_cs_object)
+
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
   MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::map(distances,\(distances){
 
-  out <- seasonder_MUSICInitDOASolutions()
-
-  single_solution_dist <- Mod(distances['single',,drop = TRUE])
-  dual_solution_dist <- Mod(distances['dual',,drop = TRUE])
-
-  bearings <- attr(distances,"bearings",exact = TRUE)
-
-  rev_single_solution_dist = 1/single_solution_dist
-
-  rev_dual_solution_dist = 1/dual_solution_dist
+    out <- seasonder_MUSICInitDOASolutions()
 
 
+    bearings <- attr(distances,"bearings",exact = TRUE)
+
+    rev_single_solution_dist = pracma::Real(1/distances['single',,drop = TRUE])
+
+    rev_dual_solution_dist = pracma::Real(1/distances['dual',,drop = TRUE])
 
 
-single_peak <- pracma::findpeaks(rev_single_solution_dist,npeaks = 1, sortstr = TRUE)
+    single_peak <- which.max(rev_single_solution_dist)
 
-dual_peaks <- pracma::findpeaks(rev_dual_solution_dist,npeaks = 2, sortstr = TRUE)
+    dual_peaks_results <- pracma::findpeaks(rev_dual_solution_dist,npeaks = 2, sortstr = TRUE)
 
-out$single <- bearings[single_peak[1,2]]
-out$dual <- bearings[dual_peaks[,2]]
 
-return(out)
-}))
+
+    out$single$bearing <-  bearings[single_peak]
+    out$single$a <- seasonder_apm_obj[,single_peak, drop = FALSE]
+
+
+    dual_peaks <- dual_peaks_results[,2,drop = T]
+
+    out$dual$bearing <- bearings[dual_peaks]
+    out$dual$a <- seasonder_apm_obj[,dual_peaks, drop = FALSE]
+
+
+
+    return(out)
+  }))
+
+
+  MUSIC %<>% dplyr::mutate(retained_solution = purrr::map2_chr(retained_solution, DOA_solutions, \(ret_sol, DOA_sol){
+
+    out <- ret_sol
+
+    if(ret_sol == "dual"){
+
+      if(length(DOA_sol$dual$bearing) != 2){
+        ret_sol <- "single"
+      }
+
+    }
+
+    return(out)
+
+  }))
 
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
   return(seasonder_cs_object)
 
+}
+
+
+
+
+
+
+seasonder_MUSICSelectDOA <- function(seasonder_cs_object){
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+
+  MUSIC %<>% dplyr::mutate(DOA = purrr::map2(DOA_solutions, retained_solution, \(DOA_sol, retained_sol) {
+    DOA_sol[[retained_sol]]
+  }))
+
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+
+
+  return(seasonder_cs_object)
 }
 
 
@@ -375,34 +665,41 @@ seasonder_runMUSIC <- function(seasonder_cs_object){
 
   seasonder_cs_object %<>% seasonder_MUSICExtractPeaks()
 
+  seasonder_cs_object %<>% seasonder_MUSICComputeSignalPowerMatrix()
 
-return(seasonder_cs_object)
+  seasonder_cs_object %<>% seasonder_MUSICTestDualSolutions()
+
+  seasonder_cs_object %<>% seasonder_MUSICComputePropDualSols()
+
+  seasonder_cs_object %<>% seasonder_MUSICSelectDOA()
+
+  return(seasonder_cs_object)
 
 }
 
 seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object){
 
-FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_object)
+  FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_object)
 
-FOR <-  1:length(FOR) %>% purrr::map(\(range_cell) {
+  FOR <-  1:length(FOR) %>% purrr::map(\(range_cell) {
 
-   o <- NULL
-   doppler_bins <- c(FOR[[range_cell]]$negative_FOR,FOR[[range_cell]]$positive_FOR)
-   if(length(doppler_bins) > 0){
-     o <- data.frame(range_cell = range_cell, doppler_bin = doppler_bins)
-   }
+    o <- NULL
+    doppler_bins <- c(FOR[[range_cell]]$negative_FOR,FOR[[range_cell]]$positive_FOR)
+    if(length(doppler_bins) > 0){
+      o <- data.frame(range_cell = range_cell, doppler_bin = doppler_bins)
+    }
 
-   return(o)
+    return(o)
 
-   }) %>% purrr::compact() %>% dplyr::bind_rows()
+  }) %>% purrr::compact() %>% dplyr::bind_rows()
 
-MUSIC <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object,range_cells = FOR$range_cell, doppler_bins = FOR$doppler_bin)
+  MUSIC <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object,range_cells = FOR$range_cell, doppler_bins = FOR$doppler_bin)
 
-seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
-seasonder_cs_object %<>% seasonder_runMUSIC()
+  seasonder_cs_object %<>% seasonder_runMUSIC()
 
-return(seasonder_cs_object)
+  return(seasonder_cs_object)
 
 
 }
