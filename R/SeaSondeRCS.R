@@ -16,7 +16,7 @@
 #' @return A SeaSondeRCS object with the specified header, data, and version.
 #'
 #'
-new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
+new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL, doppler_interpolation = 1L) {
 
 
 
@@ -29,6 +29,8 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
                    NoiseLevel = numeric(0),
                    APM = seasonder_apm_object,
                    class = "SeaSondeRCS")
+
+  out %<>% seasonder_setSeaSondeRCS_doppler_interpolation(doppler_interpolation)
 
   out %<>% seasonder_setSeaSondeRCS_header(header)
   out %<>% seasonder_setSeaSondeRCS_data(data)
@@ -493,6 +495,17 @@ seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_obje
 
 }
 
+seasonder_setSeaSondeRCS_doppler_interpolation <- function(seasonder_cs_object, doppler_interpolation){
+
+  # TODO: Valiate doppler_interpolation (must be 1L, 2L, 3L or 4L, also check the number of final doppler bins SEAS-72). The default is 1 (no interpolation)
+
+
+  attr(seasonder_cs_object, "doppler_interpolation") <- doppler_interpolation
+
+  return(seasonder_cs_object)
+
+}
+
 ##### Getters #####
 
 #' Getter for header
@@ -580,6 +593,15 @@ seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_obj, path = NULL) {
 seasonder_getSeaSondeRCS_APM <- function(seasonder_cs_object){
 
   out <- attr(seasonder_cs_object, "APM", exact = T)
+
+  return(out)
+
+}
+
+
+seasonder_getSeaSondeRCS_doppler_interpolation <- function(seasonder_cs_object){
+
+  out <- attr(seasonder_cs_object, "doppler_interpolation", exact = T)
 
   return(out)
 
