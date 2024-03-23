@@ -36,9 +36,9 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
   out %<>% seasonder_setSeaSondeRCS_FOR_parameters(list())
   out %<>% seasonder_setSeaSondeRCS_FOR(seasonder_initSeaSondeRCS_FOR(out))
 
+  out %<>% seasonder_initMUSICData()
 
-  out %<>% seasonder_setSeaSondeRCS_MUSIC_parameters(seasonder_defaultMUSIC_parameters())
-  out %<>% seasonder_setSeaSondeRCS_MUSIC(seasonder_initSeaSondeRCS_MUSIC(out))
+
 
   return(out)
 }
