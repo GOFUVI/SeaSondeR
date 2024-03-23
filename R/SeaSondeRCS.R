@@ -870,7 +870,14 @@ seasonder_getnRangeCells <- function(seasonder_obj) {
 #' @return The nDopplerCells value.
 #' @export
 seasonder_getnDopplerCells <- function(seasonder_obj) {
-  return(seasonder_getSeaSondeRCS_headerField(seasonder_obj, "nDopplerCells"))
+
+  out <- seasonder_getSeaSondeRCS_headerField(seasonder_obj, "nDopplerCells")
+
+  doppler_interpolation <- seasonder_getSeaSondeRCS_doppler_interpolation(seasonder_obj) %||% 1L
+
+  out <- out * doppler_interpolation
+
+  return(out)
 }
 
 seasonder_getCellsDistKm <- function(seasonder_cs_obj) {
