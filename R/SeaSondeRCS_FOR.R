@@ -263,9 +263,17 @@ seasonder_computeNoiseLevel <- function(seasonder_cs_obj) {
 
   normalized_doppler_range <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$reference_noise_normalized_limits
 
-  positive_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, normalized_doppler_range, in_units = "normalized doppler frequency", out_units = "bins")
+  positive_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, sort(normalized_doppler_range), in_units = "normalized doppler frequency", out_units = "bins")
 
-  negative_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, -1 * normalized_doppler_range, in_units = "normalized doppler frequency", out_units = "bins")
+if(is.na(positive_doppler_range[2])){
+  positive_doppler_range[2] <- seasonder_getnDopplerCells(seasonder_cs_obj)
+}
+
+  negative_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, sort(-1 * normalized_doppler_range), in_units = "normalized doppler frequency", out_units = "bins")
+
+  if(is.na(negative_doppler_range[1])){
+    negative_doppler_range[1] <- 1
+  }
 
   SS3 <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj, antennae = 3, doppler_ranges = list(negative = negative_doppler_range, positive = positive_doppler_range), collapse = TRUE)
 
