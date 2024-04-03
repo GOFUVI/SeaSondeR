@@ -415,6 +415,93 @@ seasonder_validateCSDataStructure <- function(data, nRanges, nDoppler) {
 }
 
 
+##### Doppler interpolation #####
+
+seasonder_SeaSondeRCSInterpolateDoppler <- function(seasonder_cs_obj){
+
+  out <- seasonder_cs_obj
+
+data <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj)
+
+data_matrices_names <- c("SSA1", "SSA2", "SSA3", "CS12", "CS13", "CS23")
+
+doppler_interpolation <- seasonder_getSeaSondeRCS_doppler_interpolation(seasonder_cs_obj)
+
+
+nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+nRanges <- seasonder_getnRangeCells(seasonder_cs_obj)
+
+interpolated_data <- seasonder_initCSDataStructure(nRanges = nRanges, nDoppler = nDoppler)
+
+
+# 1, int,2,int,3 n*2-1
+# 1-> 1 (i-1)*2 +1 = i*2 -2 +1 = i * 2 -1
+# 2 -> 3 i * 2 -1
+# 3 -> 5 i * 2 -1
+# 1, int, int ,2,int, int ,3 n*3-2
+# 1 -> 1 (i-1)*3 +1 = i *3 -3 +1 = i*3 -2
+# 2 -> 4 i*3 -2
+# 3 -> 7 i* 3-2
+# 1, int, int, int ,2,int, int, int ,3 n*4-3
+
+
+index_mapping <- data.frame(original=1:ncol(data[[1]]), mapped=(0:(ncol(data[[1]])-1))*doppler_interpolation  +1)
+
+interpolated_cells <- dplyr::setdiff(1:nDoppler, index_mapping$mapped
+)
+
+interpolated_data %<>% purrr::map2(names(.), \(matrix, name){
+
+  if(!name %in% names(data)){
+    seasonder_logAndAbort(glue::glue("{name} is not a data matrix name."), calling_function = "seasonder_SeaSondeRCSInterpolateDoppler")
+  }
+
+
+
+  original_matrix <- data[[name]]
+
+  matrix[,index_mapping$mapped] <- original_matrix[,index_mapping$original]
+
+  if(name == "QC"){
+    matrix[,interpolated_cells] <- -1L
+  }else{
+   matrix <-  1:nrow(matrix) %>% purrr::reduce(\(matrix_so_far,i){
+
+      data <- matrix_so_far[i,,drop = TRUE]
+
+      if(!rlang::is_complex(data)){
+        data <- zoo::na.approx(data)
+      }else{
+
+
+        data <- complex(real= zoo::na.approx(pracma::Real(data)),
+                imaginary= zoo::na.approx(pracma::Imag(data)))
+
+      }
+
+      matrix_so_far[i,] <- data
+
+      matrix_so_far
+
+    }, .init=matrix)
+
+  }
+
+
+matrix
+
+})
+
+
+out %<>% seasonder_setSeaSondeRCS_interpolated_doppler_cells_index(interpolated_cells)
+
+out %<>% seasonder_setSeaSondeRCS_data(interpolated_data)
+
+
+
+return(out)
+}
+
 ##### Setters #####
 
 #' Setter for header
@@ -898,7 +985,11 @@ seasonder_getnDopplerCells <- function(seasonder_obj) {
 
   doppler_interpolation <- seasonder_getSeaSondeRCS_doppler_interpolation(seasonder_obj) %||% 1L
 
-  out <- out * doppler_interpolation
+  if(doppler_interpolation > 1L){
+    out <- (out -1) * doppler_interpolation +1
+  }
+
+
 
   return(out)
 }
