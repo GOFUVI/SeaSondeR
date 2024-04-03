@@ -31,10 +31,16 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL, doppler_i
                    interpolated_doppler_cells_index = integer(0),
                    class = "SeaSondeRCS")
 
-  out %<>% seasonder_setSeaSondeRCS_doppler_interpolation(doppler_interpolation)
+
+
 
   out %<>% seasonder_setSeaSondeRCS_header(header)
   out %<>% seasonder_setSeaSondeRCS_data(data)
+
+  out %<>% seasonder_setSeaSondeRCS_doppler_interpolation(doppler_interpolation)
+
+
+
 
   out %<>% seasonder_setSeaSondeRCS_FOR_parameters(list())
   out %<>% seasonder_setSeaSondeRCS_FOR(seasonder_initSeaSondeRCS_FOR(out))
@@ -589,6 +595,13 @@ seasonder_setSeaSondeRCS_doppler_interpolation <- function(seasonder_cs_object, 
 
 
   attr(seasonder_cs_object, "doppler_interpolation") <- doppler_interpolation
+
+
+  if(doppler_interpolation > 1L){
+
+    seasonder_cs_object %<>% seasonder_SeaSondeRCSInterpolateDoppler()
+
+  }
 
   return(seasonder_cs_object)
 

@@ -3000,11 +3000,7 @@ describe("Doppler interpolation",{
 
     it("should update the object data with the interpolated data",{
 
-      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-
-      seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_doppler_interpolation(2L)
-
-    seasonder_cs_obj %<>% seasonder_SeaSondeRCSInterpolateDoppler()
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), doppler_interpolation = 2L)
 
     test <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_data()
 
@@ -3014,11 +3010,8 @@ describe("Doppler interpolation",{
 
     it("should update the interpolated cells index property ",{
 
-      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), doppler_interpolation = 2L)
 
-      seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_doppler_interpolation(2L)
-
-      seasonder_cs_obj %<>% seasonder_SeaSondeRCSInterpolateDoppler()
 
       test <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_interpolated_doppler_cells_index()
 
