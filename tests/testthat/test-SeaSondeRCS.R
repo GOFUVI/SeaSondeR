@@ -2579,283 +2579,283 @@ describe("SeaSondeRCS",{
         value <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,field = "CellsDistKm")
 
         expect_true(!is.null(value))
-        }
+      }
 
       {
         value <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,field = "fReferenceGainDB")
 
         expect_true(!is.null(value))
-        }
+      }
     })
 
   })
 
-describe("seasonder_rangeCellsDists2RangeNumber",{
+  describe("seasonder_rangeCellsDists2RangeNumber",{
 
-  it("should return the corresponding range numbers",{
+    it("should return the corresponding range numbers",{
 
-    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
-    {
-      test <- seasonder_rangeCellsDists2RangeNumber(seasonder_cs_obj = seasonder_cs_obj,cells_dists = c(2,3.5))
+      {
+        test <- seasonder_rangeCellsDists2RangeNumber(seasonder_cs_obj = seasonder_cs_obj,cells_dists = c(2,3.5))
 
-      ranges <- (seasonder_getCellsDistKm(seasonder_cs_obj) >= 2 & seasonder_getCellsDistKm(seasonder_cs_obj) <= 3.5) %>% which()
+        ranges <- (seasonder_getCellsDistKm(seasonder_cs_obj) >= 2 & seasonder_getCellsDistKm(seasonder_cs_obj) <= 3.5) %>% which()
 
-      expect_true(any(c(min(ranges),min(ranges) - 1) == floor(test[1])))
+        expect_true(any(c(min(ranges),min(ranges) - 1) == floor(test[1])))
 
-      expect_true(any(c(max(ranges),max(ranges) + 1) == ceiling(test[2])))
+        expect_true(any(c(max(ranges),max(ranges) + 1) == ceiling(test[2])))
 
-      expect_snapshot_value(test,style = "deparse")
-    }
-
-
-  })
-
-})
-
-describe("seasonder_getSeaSondeRCS_SelfSpectra",{
-
-  it("Should slice the SSA* matrices",{
-
-    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-
-    {
-      test <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(A1=1,A3=3), dist_ranges = list(r1=c(1,4),r2=c(10,15)), doppler_ranges = list(d1=c(100,500),d2=c(700,725)))
-
-      expect_snapshot_value(test,style = "deparse")
-
-    }
+        expect_snapshot_value(test,style = "deparse")
+      }
 
 
-    {
-      test <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(1,3), dist_ranges = list(c(1,4),c(10,15)), doppler_ranges = list(c(100,500),c(700,725)))
-
-      expect_snapshot_value(test,style = "deparse")
-
-    }
-
-    {
-      test <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(1,3), dist_ranges = list(c(1,4),c(10,15)), doppler_ranges = list(c(100,500),c(700,725)), collapse = TRUE)
-
-      expect_snapshot_value(test,style = "deparse")
-
-    }
-
-    {
-      test <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = 1, dist_ranges = c(1,1), collapse = TRUE)
-
-      expect_snapshot_value(test,style = "deparse")
-
-    }
+    })
 
   })
 
-})
+  describe("seasonder_getSeaSondeRCS_SelfSpectra",{
 
-##### Plots #####
-describe("plots",{
-  describe("seasonder_SeaSondeRCS_plotSelfSpectrum",{
+    it("Should slice the SSA* matrices",{
 
-    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
-    seasonder_cs_obj_v4 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSA_V4.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+      {
+        test <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(A1=1,A3=3), dist_ranges = list(r1=c(1,4),r2=c(10,15)), doppler_ranges = list(d1=c(100,500),d2=c(700,725)))
 
-    it("should plot the spectrum",{
+        expect_snapshot_value(test,style = "deparse")
 
-{
-  skip("Test not fully implemented")
-      seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20)
+      }
 
 
+      {
+        test <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(1,3), dist_ranges = list(c(1,4),c(10,15)), doppler_ranges = list(c(100,500),c(700,725)))
 
-}
+        expect_snapshot_value(test,style = "deparse")
 
-      describe("plot FOR",{
-        it("should plot the FORs too",{
+      }
+
+      {
+        test <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = c(1,3), dist_ranges = list(c(1,4),c(10,15)), doppler_ranges = list(c(100,500),c(700,725)), collapse = TRUE)
+
+        expect_snapshot_value(test,style = "deparse")
+
+      }
+
+      {
+        test <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj = seasonder_cs_obj,antennae = 1, dist_ranges = c(1,1), collapse = TRUE)
+
+        expect_snapshot_value(test,style = "deparse")
+
+      }
+
+    })
+
+  })
+
+  ##### Plots #####
+  describe("plots",{
+    describe("seasonder_SeaSondeRCS_plotSelfSpectrum",{
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+      seasonder_cs_obj_v4 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSA_V4.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+      it("should plot the spectrum",{
+
+        {
           skip("Test not fully implemented")
+          seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20)
 
-          seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
 
-          seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_noise_ionospheric = F))
 
-          seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
+        }
 
-          seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = F, reject_noise_ionospheric = F))
+        describe("plot FOR",{
+          it("should plot the FORs too",{
+            skip("Test not fully implemented")
 
-          seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 4,plot_FORs = TRUE)
+            seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
 
-          seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T, reject_noise_ionospheric = F))
+            seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_noise_ionospheric = F))
 
-          seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 4,plot_FORs = TRUE)
+            seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
 
-          seasonder_cs_obj_v4 %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T, reject_noise_ionospheric = T))
+            seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = F, reject_noise_ionospheric = F))
 
-          seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj_v4, 3 , 20,plot_FORs = TRUE)
+            seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 4,plot_FORs = TRUE)
+
+            seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T, reject_noise_ionospheric = F))
+
+            seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 4,plot_FORs = TRUE)
+
+            seasonder_cs_obj_v4 %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T, reject_noise_ionospheric = T))
+
+            seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj_v4, 3 , 20,plot_FORs = TRUE)
+
+          })
+
 
         })
-
 
       })
 
     })
-
-  })
-})
-
-
-##### Derived values #####
-
-describe("seasonder_getRadarWaveLength",{
-
-  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-
-test <- seasonder_getRadarWaveLength(seasonder_cs_obj = seasonder_cs_obj)
-
-f <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,"CenterFreq")*1000000
-
-target <- constants::syms$c0/(f)
-
-
-
-expect_equal(test,target)
-
-
   })
 
 
-describe("seasonder_getBraggWaveLength",{
+  ##### Derived values #####
 
-  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-
-  test <- seasonder_getBraggWaveLength(seasonder_cs_obj = seasonder_cs_obj)
-
-  f <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,"CenterFreq")*1000000
-
-
-
-  l <- constants::syms$c0/(f)
-
-  target <- l/2
-
-  expect_equal(test,target)
-
-
-})
-
-describe("seasonder_getRadarWaveNumber",{
-
-  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-
-  test <- seasonder_getRadarWaveNumber(seasonder_cs_obj = seasonder_cs_obj)
-
-  f <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,"CenterFreq")*1000000
-
-  l <- constants::syms$c0/(f)
-
-  target <- 2*pi/l
-
-
-
-  expect_equal(test,target)
-
-
-})
-
-describe("seasonder_getBraggDopplerAngularFrequency",{
-
-  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
-
-  test <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj = seasonder_cs_obj)
-
-  f <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,"CenterFreq")*1000000
-# f <- 25.4*1000000
-  l <- constants::syms$c0/(f)
-
-  k <- 2*pi/l
-
-
-
-
-  target <- sqrt(2*constants::syms$gn*k) /(2*pi) * c(-1,1)
-# expected 0.514 Hz for 25.4 MHz
-
-
-  expect_equal(test,target)
-
-
-})
-
-describe("seasonder_NormalizedDopplerFreq2Bins",{
-
-  it("should return the bins from the normalized doppler freqs",{
+  describe("seasonder_getRadarWaveLength",{
 
     seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
-{
-    test <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, c(2.7,3.5))
+    test <- seasonder_getRadarWaveLength(seasonder_cs_obj = seasonder_cs_obj)
 
-  expect_snapshot_value(test,style = "deparse")
+    f <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,"CenterFreq")*1000000
 
-    }
-
-    {
-      test <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, c(-3.5,-2.7))
-
-      expect_snapshot_value(test,style = "deparse")
-
-    }
-
-    {
-      test <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, -1)
-
-      expect_equal(test, 334)
-
-    }
+    target <- constants::syms$c0/(f)
 
 
-    {
-      test <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, 1)
 
-      expect_equal(test, 691)
+    expect_equal(test,target)
 
-    }
-
-    {
-      test <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, 0)
-
-      expect_equal(test, 512)
-
-    }
 
   })
 
-})
 
-describe("seasonder_DopplerFreq2Bins",{
-
-  it("should return the bins from the normalized doppler freqs",{
+  describe("seasonder_getBraggWaveLength",{
 
     seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
-    {
-      test <- seasonder_DopplerFreq2Bins(seasonder_cs_obj, 0)
+    test <- seasonder_getBraggWaveLength(seasonder_cs_obj = seasonder_cs_obj)
 
-      expect_equal(test, 512)
+    f <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,"CenterFreq")*1000000
 
-    }
 
-    {
-      test <- seasonder_DopplerFreq2Bins(seasonder_cs_obj, seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj ))
 
-      expect_equal(test, c(334,691))
+    l <- constants::syms$c0/(f)
 
-    }
+    target <- l/2
 
+    expect_equal(test,target)
 
 
   })
 
-})
+  describe("seasonder_getRadarWaveNumber",{
+
+    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+    test <- seasonder_getRadarWaveNumber(seasonder_cs_obj = seasonder_cs_obj)
+
+    f <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,"CenterFreq")*1000000
+
+    l <- constants::syms$c0/(f)
+
+    target <- 2*pi/l
+
+
+
+    expect_equal(test,target)
+
+
+  })
+
+  describe("seasonder_getBraggDopplerAngularFrequency",{
+
+    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+    test <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj = seasonder_cs_obj)
+
+    f <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj = seasonder_cs_obj,"CenterFreq")*1000000
+    # f <- 25.4*1000000
+    l <- constants::syms$c0/(f)
+
+    k <- 2*pi/l
+
+
+
+
+    target <- sqrt(2*constants::syms$gn*k) /(2*pi) * c(-1,1)
+    # expected 0.514 Hz for 25.4 MHz
+
+
+    expect_equal(test,target)
+
+
+  })
+
+  describe("seasonder_NormalizedDopplerFreq2Bins",{
+
+    it("should return the bins from the normalized doppler freqs",{
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+      {
+        test <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, c(2.7,3.5))
+
+        expect_snapshot_value(test,style = "deparse")
+
+      }
+
+      {
+        test <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, c(-3.5,-2.7))
+
+        expect_snapshot_value(test,style = "deparse")
+
+      }
+
+      {
+        test <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, -1)
+
+        expect_equal(test, 334)
+
+      }
+
+
+      {
+        test <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, 1)
+
+        expect_equal(test, 691)
+
+      }
+
+      {
+        test <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, 0)
+
+        expect_equal(test, 512)
+
+      }
+
+    })
+
+  })
+
+  describe("seasonder_DopplerFreq2Bins",{
+
+    it("should return the bins from the normalized doppler freqs",{
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+      {
+        test <- seasonder_DopplerFreq2Bins(seasonder_cs_obj, 0)
+
+        expect_equal(test, 512)
+
+      }
+
+      {
+        test <- seasonder_DopplerFreq2Bins(seasonder_cs_obj, seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj ))
+
+        expect_equal(test, c(334,691))
+
+      }
+
+
+
+    })
+
+  })
 
   describe("seasonder_getCenterDopplerBin",{
 
@@ -2880,13 +2880,13 @@ describe("seasonder_DopplerFreq2Bins",{
       {
 
 
-      test <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj)
+        test <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj)
 
-      expect_equal(test[512], 0)
+        expect_equal(test[512], 0)
 
-expect_equal(dplyr::last(test), seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")/2)
+        expect_equal(dplyr::last(test), seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")/2)
 
-expect_equal(test[1]-seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")/seasonder_getnDopplerCells(seasonder_cs_obj) , -seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")/2)
+        expect_equal(test[1]-seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")/seasonder_getnDopplerCells(seasonder_cs_obj) , -seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")/2)
 
 
 
@@ -2954,7 +2954,7 @@ expect_equal(test[1]-seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRe
     it("should return the radial velocities for each doppler bin",{
       seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
       {
-      test <- seasonder_getBinsRadialVelocity(seasonder_cs_obj)
+        test <- seasonder_getBinsRadialVelocity(seasonder_cs_obj)
 
         expect_equal(test[690]*100,-0.17, tolerance = 0.05)
         expect_equal(test[691]*100,1.1,tolerance = 0.05)
@@ -2988,3 +2988,42 @@ expect_equal(test[1]-seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRe
 
 
 
+
+
+#### Doppler Interpolation ####
+
+
+describe("Doppler interpolation",{
+
+
+  describe("seasonder_SeaSondeRCSInterpolateDoppler",{
+
+    it("should update the object data with the interpolated data",{
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+      seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_doppler_interpolation(2L)
+
+    seasonder_cs_obj %<>% seasonder_SeaSondeRCSInterpolateDoppler()
+
+    test <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_data()
+
+    expect_snapshot_value(test,style = "serialize")
+
+    })
+
+    it("should update the interpolated cells index property ",{
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+      seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_doppler_interpolation(2L)
+
+      seasonder_cs_obj %<>% seasonder_SeaSondeRCSInterpolateDoppler()
+
+      test <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_interpolated_doppler_cells_index()
+
+      expect_snapshot_value(test,style = "serialize")
+    })
+
+  })
+})
