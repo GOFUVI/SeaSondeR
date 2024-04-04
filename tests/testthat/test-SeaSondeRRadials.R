@@ -11,6 +11,8 @@ describe("short-time radials",{
 
     seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"))
 
+    attr(seasonder_apm_obj,"AntennaBearing") <- 13.0
+
     FOS <-   list(nsm = 2,
                   fdown = 10^(10/10),
                   flim = 10^(20/10),
@@ -30,6 +32,78 @@ describe("short-time radials",{
     seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR()
 
     test <- seasonder_getSeaSondeRCSShortTimeRadials(seasonder_cs_obj)
+
+    test %<>% dplyr::filter(range_cell >= 3 & range_cell <= 48)
+
+    to.plot <- test %>% dplyr::select(range_cell,bearing)
+
+
+
+
+    ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing )) +
+
+      ggplot2::geom_point(alpha = 0.5) +  ggplot2::coord_polar()
+
+
+
+    ruv <- data.table::fread("tests/testthat/data/TORA/RDLx_TORA_2024_04_04_0700.ruv",skip = 52, header = F)
+
+    header <- data.table::fread("tests/testthat/data/TORA/RDLx_TORA_2024_04_04_0700.ruv",skip = 50, header = F,nrows = 1)  %>% unlist
+
+    header[14] <- paste(header[14],header[15])
+
+    header <- header[-15]
+
+    header[15] <- paste(header[15],header[16])
+
+    header <- header[-16]
+
+    header[4] <- paste(header[4],header[5])
+
+    header <- header[-5]
+
+    header[5] <- paste(header[5],header[6])
+
+    header <- header[-6]
+
+    header <- header[-1]
+
+    header2 <- data.table::fread("tests/testthat/data/TORA/RDLx_TORA_2024_04_04_0700.ruv",skip = 51, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+
+
+    names(ruv) <- paste(header,header2)
+
+
+    to.plot_ruv <- ruv %>% dplyr::select(range_cell = `Spectra RngCell`,bearing = `Bearing (True)`)
+
+
+
+
+    ggplot2::ggplot(to.plot_ruv,ggplot2::aes(y=range_cell, x = bearing )) +
+
+      ggplot2::geom_point(alpha = 0.5) +  ggplot2::coord_polar()
+
+
+
+
+    radial_comparison <-  ruv %>% dplyr::rename(bearing = `Bearing (True)`, range_cell = `Spectra RngCell`)
+
+
+
+
+
+    radial_comparison %<>% dplyr::left_join(test, by = c("bearing","range_cell")) %>% dplyr::mutate(radial_v = radial_v * 100, MINV = MINV * 100, MAXV = MAXV* 100, ESPC = ESPC * 100)
+
+
+    radial_comparison %>% dplyr::select(range_cell, bearing, MINV, `Velocity Minimum`, MAXV, `Velocity Maximum`, radial_v, `Velocity (cm/s)`, `Velocity Count`,EDVC, `Spatial Count`,  ERSC) %>% dplyr::arrange(range_cell, bearing) %>% View()
+
+
+    lm(radial_v ~ `Velocity (cm/s)`, radial_comparison)
+
+
+
+
+    ggplot2::ggplot(radial_comparison, ggplot2::aes(x= `Velocity (cm/s)`, y = radial_v)) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "lm")
 
 
   })
