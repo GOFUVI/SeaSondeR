@@ -1233,6 +1233,17 @@ seasonder_getRadialVelocityResolution <- function(seasonder_cs_obj) {
   return(vel_res)
 }
 
+
+# @export
+seasonder_getSeaSondeRCSShortTimeRadials <- function(seasonder_cs_obj, short_time_radials_parameters = seasonder_defaultShortTimeRadials_parameters()){
+
+  out <- new_SeaSondeRCSShortTimeRadials(seasonder_cs_obj, short_time_radials_parameters = short_time_radials_parameters)
+
+  return(out)
+
+}
+
+
 ##### Utils #####
 
 seasonder_rangeCellsDists2RangeNumber <- function(seasonder_cs_obj,cells_dists) {

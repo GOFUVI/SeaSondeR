@@ -468,14 +468,14 @@ describe("seasonder_runMUSIC_in_FOR",{
     test_5 <- seasonder_getSeaSondeRCS_MUSIC(test_obj_5)
 
 
-    test <- dplyr::bind_rows( test_1,test_2, test_3, test_4, test_5)
+    test <- dplyr::bind_rows( test_1 %>% dplyr::mutate(time = 1),test_2%>% dplyr::mutate(time = 2), test_3%>% dplyr::mutate(time = 3), test_4%>% dplyr::mutate(time = 4), test_5%>% dplyr::mutate(time = 5))
 
 test %<>% dplyr::filter(range < 5)
 test_ideal <- test
 antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(seasonder_apm_obj)
 
-    to.plot <- test %>% dplyr::select(range, range_cell,radial_v,DOA_solutions,retained_solution) %>%
-      dplyr::mutate(bearing = purrr::map2(DOA_solutions, retained_solution, \(x,y) data.frame(bearing=x[[y]]$bearing))) %>% tidyr::unnest(bearing) %>% dplyr::select(bearing,range, range_cell,radial_v, retained_solution) %>% dplyr::mutate(bearing = (((bearing * -1 + 360) %% 360) + antenna_bearing ) %% 360)
+    to.plot <- test %>% dplyr::select(range, range_cell,radial_v,DOA_solutions,retained_solution, time) %>%
+      dplyr::mutate(bearing = purrr::map2(DOA_solutions, retained_solution, \(x,y) data.frame(bearing=x[[y]]$bearing))) %>% tidyr::unnest(bearing) %>% dplyr::select(bearing,range, range_cell,radial_v, retained_solution, time) %>% dplyr::mutate(bearing = (((bearing * -1 + 360) %% 360) + antenna_bearing ) %% 360)
 
 
 
@@ -497,8 +497,18 @@ antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(seasonder_apm_obj)
     ggplot2::ggplot(to.plot, ggplot2::aes(x=bearing, y = radial_v, color = retained_solution)) + ggplot2::geom_point(alpha = 0.5)
 
 
+bearing_bins <- seq(0,360,2)
+bearing_bin_center <- seq(1,359,2)
+radials <- to.plot %>%
+  dplyr::mutate(bearing_bin = findInterval(bearing,bearing_bins)) %>%
+  dplyr::group_by(range, range_cell, bearing_bin) %>%
+  dplyr::group_by(range, range_cell, bearing_bin) %>% dplyr::summarise(max_v = max(radial_v), min_v = min(radial_v),radial_v = median(radial_v), n = dplyr::n(), time_count = length(unique(time)), .groups = "drop") %>%
+  dplyr::mutate(bearing = bearing_bin_center[bearing_bin])
 
-radials <- to.plot %>% dplyr::group_by(range, range_cell, bearing) %>% dplyr::summarise(max_v = max(radial_v), min_v = min(radial_v),radial_v = mean(radial_v), n = dplyr::n(), .groups = "drop")
+
+
+
+
 
 
 
@@ -548,13 +558,22 @@ ggplot2::ggplot(to.plot_ruv,ggplot2::aes(y=range_cell, x = bearing )) +
 
 
 
-  radial_comparison <-  ruv %>% dplyr::rename(bearing = `Bearing (True)`, range_cell = `Spectra RngCell`) %>% dplyr::left_join(radials, by = c("bearing","range_cell")) %>% dplyr::mutate(radial_v = radial_v * 100, min_v = min_v * 100, max_v = max_v* 100)
+  radial_comparison <-  ruv %>% dplyr::rename(bearing = `Bearing (True)`, range_cell = `Spectra RngCell`) %>% dplyr::mutate(bearing_bin = findInterval(bearing,bearing_bins))
 
 
-  radial_comparison %>% dplyr::select(range_cell, bearing, min_v, `Velocity Minimum`, max_v, `Velocity Maximum`, radial_v, `Velocity (cm/s)`, n, `Spatial Count`) %>% dplyr::arrange(range_cell, bearing) %>% View()
+
+
+
+  radial_comparison %<>% dplyr::left_join(radials, by = c("bearing","range_cell")) %>% dplyr::mutate(radial_v = radial_v * 100, min_v = min_v * 100, max_v = max_v* 100)
+
+
+  radial_comparison %>% dplyr::select(range_cell, bearing, min_v, `Velocity Minimum`, max_v, `Velocity Maximum`, radial_v, `Velocity (cm/s)`, n, `Spatial Count`, `Temporal Count`) %>% dplyr::arrange(range_cell, bearing) %>% View()
 
 
   lm(radial_v ~ `Velocity (cm/s)`, radial_comparison)
+
+
+
 
   ggplot2::ggplot(radial_comparison, ggplot2::aes(x= `Velocity (cm/s)`, y = radial_v)) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "lm")
 

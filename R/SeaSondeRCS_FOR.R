@@ -34,7 +34,10 @@ seasonder_validateFOR_parameters <- function(seasonder_cs_obj, FOR_parameters, m
   if (method == "SeaSonde") {
 
     FOR_parameters$nsm <- FOR_parameters$nsm %||% seasonder_defaultFOR_parameters()$nsm
+
     FOR_parameters$reference_noise_normalized_limits <- FOR_parameters$reference_noise_normalized_limits %||% seasonder_estimateReferenceNoiseNormalizedLimits(seasonder_cs_obj)
+
+
     FOR_parameters$fdown <- FOR_parameters$fdown %||% seasonder_defaultFOR_parameters()$fdown
     FOR_parameters$flim <- FOR_parameters$flim %||% seasonder_defaultFOR_parameters()$flim
     FOR_parameters$noisefact <- FOR_parameters$noisefact %||% seasonder_defaultFOR_parameters()$noisefact
