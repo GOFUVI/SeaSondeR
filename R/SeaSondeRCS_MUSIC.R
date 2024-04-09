@@ -187,7 +187,16 @@ seasonder_setSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object
 
 }
 
+seasonder_setSeaSondeRCS_MUSIC_interpolated_doppler_cells_index <- function(seasonder_cs_object, interpolated_doppler_cells_index){
 
+  # TODO: Valiate interpolated_doppler_cells_index (should be integer in the range of 1: (nDopplerCells))
+
+
+  attr(seasonder_cs_object, "MUSIC_data")$interpolated_doppler_cells_index <- interpolated_doppler_cells_index
+
+  return(seasonder_cs_object)
+
+}
 #### Getters ####
 
 
@@ -245,7 +254,13 @@ seasonder_getSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object
   return(out)
 }
 
+seasonder_getSeaSondeRCS_MUSIC_interpolated_doppler_cells_index <- function(seasonder_cs_object){
 
+  out <-  attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$interpolated_doppler_cells_index
+
+  return(out)
+
+}
 #### Derived quantities ####
 
 seasonder_MUSICComputePropDualSols <- function(seasonder_cs_object){
@@ -604,7 +619,9 @@ seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_obj){
           data <- c(matrix_so_far[i,,drop = TRUE],matrix_so_far[i,1,drop = TRUE])
 
           if(!rlang::is_complex(data)){
-            data <- zoo::na.approx(data)[-length(data)]
+
+            data[interpolated_cells] <- zoo::na.approx(abs(data))[interpolated_cells]
+            data <- data[-length(data)]
           }else{
 
 
@@ -627,7 +644,7 @@ seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_obj){
     })
 
 
-    out %<>% seasonder_setSeaSondeRCS_interpolated_doppler_cells_index(interpolated_cells)
+    out %<>% seasonder_setSeaSondeRCS_MUSIC_interpolated_doppler_cells_index(interpolated_cells)
 
 
     out %<>% seasonder_setSeaSondeRCS_MUSIC_interpolated_data(interpolated_data)

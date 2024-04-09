@@ -37,10 +37,10 @@ test_that("test 1 works with ideals",{
   seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR()
   orig_data <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj)
   interp_data <- seasonder_getSeaSondeRCS_MUSIC_interpolated_data(seasonder_cs_obj)
-  SSA1_orig <- orig_data$SSA1
-  SSA1_interp <- interp_data$SSA1
+  SSA_orig <- orig_data$SSA3
+  SSA_interp <- interp_data$SSA3
 csd_data <- seasonder_getSeaSondeRCS_data(seasonder_csd_obj)
-SSA1_csd <- csd_data$SSA1
+SSA_csd <- csd_data$SSA3
   # MUSIC <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
   #
   # test1txt <- readLines(here::here("tests/testthat/data/TORA/test1/test1.txt"))
