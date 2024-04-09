@@ -6,104 +6,254 @@ test_that("Related functions are defined",{
 
 describe("short-time radials",{
 
-  it("compute and return a SeaSondeRShortTimeRadials object",{
+  describe("compute and return a SeaSondeRShortTimeRadials object",{
+
+test_that("test 1 works with ideals",{
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"))
+
+  attr(seasonder_apm_obj,"AntennaBearing") <- 13.0
+
+  FOS <-   list(nsm = 2,
+                fdown = 10^(10/10),
+                flim = 10^(20/10),
+                noisefact = 10^(6/10),
+                currmax = 1,
+                reject_distant_bragg = TRUE, #  Default is to apply this test
+                reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+
+                reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
+  )
 
 
-    seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"))
-
-    attr(seasonder_apm_obj,"AntennaBearing") <- 13.0
-
-    FOS <-   list(nsm = 2,
-                  fdown = 10^(10/10),
-                  flim = 10^(20/10),
-                  noisefact = 10^(6/10),
-                  currmax = 1,
-                  reject_distant_bragg = TRUE, #  Default is to apply this test
-                  reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
-
-                  reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
-    )
-
-
-    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/CSS_TORA_24_04_04_0700.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
-
-    seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
-
-    seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR()
-
-    test <- seasonder_getSeaSondeRCSShortTimeRadials(seasonder_cs_obj)
-
-    test %<>% dplyr::filter(range_cell >= 3 & range_cell <= 48)
-
-    to.plot <- test %>% dplyr::select(range_cell,bearing)
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
 
 
 
-
-    ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing )) +
-
-      ggplot2::geom_point(alpha = 0.5) +  ggplot2::coord_polar()
+  seasonder_csd_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSD_XXXX_0000_00_00_0000.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
 
 
+  # seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
 
-    ruv <- data.table::fread("tests/testthat/data/TORA/RDLx_TORA_2024_04_04_0700.ruv",skip = 52, header = F)
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR()
+  orig_data <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj)
+  interp_data <- seasonder_getSeaSondeRCS_MUSIC_interpolated_data(seasonder_cs_obj)
+  SSA1_orig <- orig_data$SSA1
+  SSA1_interp <- interp_data$SSA1
+csd_data <- seasonder_getSeaSondeRCS_data(seasonder_csd_obj)
+SSA1_csd <- csd_data$SSA1
+  # MUSIC <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
+  #
+  # test1txt <- readLines(here::here("tests/testthat/data/TORA/test1/test1.txt"))
 
-    header <- data.table::fread("tests/testthat/data/TORA/RDLx_TORA_2024_04_04_0700.ruv",skip = 50, header = F,nrows = 1)  %>% unlist
+  # test1txt[grepl("Reading CrossSpectra Range|Vectors|dual/sing",test1txt)]
 
-    header[14] <- paste(header[14],header[15])
+  # MUSIC %>% dplyr::filter(range_cell == 20) %$% table(retained_solution)
 
-    header <- header[-15]
+  test <- seasonder_getSeaSondeRCSShortTimeRadials(seasonder_cs_obj)
 
-    header[15] <- paste(header[15],header[16])
+  test %<>% dplyr::filter(range_cell >= 3 & range_cell <= 48)
 
-    header <- header[-16]
-
-    header[4] <- paste(header[4],header[5])
-
-    header <- header[-5]
-
-    header[5] <- paste(header[5],header[6])
-
-    header <- header[-6]
-
-    header <- header[-1]
-
-    header2 <- data.table::fread("tests/testthat/data/TORA/RDLx_TORA_2024_04_04_0700.ruv",skip = 51, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
-
-
-    names(ruv) <- paste(header,header2)
-
-
-    to.plot_ruv <- ruv %>% dplyr::select(range_cell = `Spectra RngCell`,bearing = `Bearing (True)`)
+  to.plot <- test %>% dplyr::select(range_cell,bearing)
 
 
 
 
-    ggplot2::ggplot(to.plot_ruv,ggplot2::aes(y=range_cell, x = bearing )) +
+  ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing )) +
 
-      ggplot2::geom_point(alpha = 0.5) +  ggplot2::coord_polar()
-
-
-
-
-    radial_comparison <-  ruv %>% dplyr::rename(bearing = `Bearing (True)`, range_cell = `Spectra RngCell`)
+    ggplot2::geom_point(alpha = 0.5) +  ggplot2::coord_polar()
 
 
 
+  ruv <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 52, header = F)
+
+  header <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 50, header = F,nrows = 1)  %>% unlist
+
+  header[14] <- paste(header[14],header[15])
+
+  header <- header[-15]
+
+  header[15] <- paste(header[15],header[16])
+
+  header <- header[-16]
+
+  header[4] <- paste(header[4],header[5])
+
+  header <- header[-5]
+
+  header[5] <- paste(header[5],header[6])
+
+  header <- header[-6]
+
+  header <- header[-1]
+
+  header2 <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 51, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
 
 
-    radial_comparison %<>% dplyr::left_join(test, by = c("bearing","range_cell")) %>% dplyr::mutate(radial_v = radial_v * 100, MINV = MINV * 100, MAXV = MAXV* 100, ESPC = ESPC * 100)
+  names(ruv) <- paste(header,header2)
 
 
-    radial_comparison %>% dplyr::select(range_cell, bearing, MINV, `Velocity Minimum`, MAXV, `Velocity Maximum`, radial_v, `Velocity (cm/s)`, `Velocity Count`,EDVC, `Spatial Count`,  ERSC) %>% dplyr::arrange(range_cell, bearing) %>% View()
+  ruv_vels <- c(ruv$`Velocity Minimum`,ruv$`Velocity Maximum`) %>% unique() %>% sort()
+
+  test_vels <- (MUSIC$radial_v*100) %>% unique() %>% sort() %>% round(3)
 
 
-    lm(radial_v ~ `Velocity (cm/s)`, radial_comparison)
+  dplyr::intersect(ruv_vels, test_vels)
+
+  to.plot_ruv <- ruv %>% dplyr::select(range_cell = `Spectra RngCell`,bearing = `Bearing (True)`, radial_v =`Velocity (cm/s)`)
+
+plot_radials(to.plot_ruv$range_cell, to.plot_ruv$bearing,to.plot_ruv$radial_v)
+
+plot_radials(test$range_cell,test$bearing,test$radial_v)
+
+
+
+  ggplot2::ggplot(to.plot_ruv,ggplot2::aes(y=range_cell, x = bearing )) +
+
+    ggplot2::geom_point(alpha = 0.5) +  ggplot2::coord_polar()
 
 
 
 
-    ggplot2::ggplot(radial_comparison, ggplot2::aes(x= `Velocity (cm/s)`, y = radial_v)) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "lm")
+  radial_comparison <-  ruv %>% dplyr::rename(bearing = `Bearing (True)`, range_cell = `Spectra RngCell`)
+
+
+
+
+
+  radial_comparison %<>% dplyr::left_join(test, by = c("bearing","range_cell")) %>% dplyr::mutate(radial_v = radial_v * 100, MINV = MINV * 100, MAXV = MAXV* 100, ESPC = ESPC * 100)
+
+
+  radial_comparison %>% dplyr::select(range_cell, bearing, MINV, `Velocity Minimum`, MAXV, `Velocity Maximum`, radial_v, `Velocity (cm/s)`, `Velocity Count`,EDVC, `Spatial Count`,  ERSC) %>% dplyr::arrange(range_cell, bearing) %>% View()
+
+
+  dplyr::intersect(radial_comparison$MINV, radial_comparison$`Velocity Minimum`)
+
+  lm(radial_v ~ `Velocity (cm/s)`, radial_comparison)
+
+
+
+
+  ggplot2::ggplot(radial_comparison, ggplot2::aes(x= `Velocity (cm/s)`, y = radial_v)) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "lm")
+})
+
+    test_that("test 1 works with measured",{
+      seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/MeasPattern.txt"))
+
+
+
+      FOS <-   list(nsm = 2,
+                    fdown = 10^(10/10),
+                    flim = 10^(20/10),
+                    noisefact = 10^(6/10),
+                    currmax = 1,
+                    reject_distant_bragg = TRUE, #  Default is to apply this test
+                    reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+
+                    reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
+      )
+
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
+
+
+      # seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
+
+      seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR()
+
+      # MUSIC <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
+      #
+      # test1txt <- readLines(here::here("tests/testthat/data/TORA/test1/test1.txt"))
+
+      # test1txt[grepl("Reading CrossSpectra Range|Vectors|dual/sing",test1txt)]
+
+      # MUSIC %>% dplyr::filter(range_cell == 20) %$% table(retained_solution)
+
+      test <- seasonder_getSeaSondeRCSShortTimeRadials(seasonder_cs_obj)
+
+      test %<>% dplyr::filter(range_cell >= 3 & range_cell <= 48)
+
+      to.plot <- test %>% dplyr::select(range_cell,bearing)
+
+
+
+
+      ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing )) +
+
+        ggplot2::geom_point(alpha = 0.5) +  ggplot2::coord_polar()
+
+
+
+      ruv <- data.table::fread("tests/testthat/data/TORA/test1/RDLy_TORA_2024_04_05_0730.ruv",skip = 53, header = F)
+
+      header <- data.table::fread("tests/testthat/data/TORA/test1/RDLy_TORA_2024_04_05_0730.ruv",skip = 51, header = F,nrows = 1)  %>% unlist
+
+      header[14] <- paste(header[14],header[15])
+
+      header <- header[-15]
+
+      header[15] <- paste(header[15],header[16])
+
+      header <- header[-16]
+
+      header[4] <- paste(header[4],header[5])
+
+      header <- header[-5]
+
+      header[5] <- paste(header[5],header[6])
+
+      header <- header[-6]
+
+      header <- header[-1]
+
+      header2 <- data.table::fread("tests/testthat/data/TORA/test1/RDLy_TORA_2024_04_05_0730.ruv",skip = 52, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+
+
+      names(ruv) <- paste(header,header2)
+
+
+      ruv_vels <- c(ruv$`Velocity Minimum`,ruv$`Velocity Maximum`) %>% unique() %>% sort()
+
+      test_vels <- (MUSIC$radial_v*100) %>% unique() %>% sort() %>% round(3)
+
+
+      dplyr::intersect(ruv_vels, test_vels)
+
+      to.plot_ruv <- ruv %>% dplyr::select(range_cell = `Spectra RngCell`,bearing = `Bearing (True)`, radial_v =`Velocity (cm/s)`)
+
+      plot_radials(to.plot_ruv$range_cell, to.plot_ruv$bearing,to.plot_ruv$radial_v)
+
+      plot_radials(test$range_cell,test$bearing,test$radial_v*100)
+
+
+
+      ggplot2::ggplot(to.plot_ruv,ggplot2::aes(y=range_cell, x = bearing )) +
+
+        ggplot2::geom_point(alpha = 0.5) +  ggplot2::coord_polar()
+
+
+
+
+      radial_comparison <-  ruv %>% dplyr::rename(bearing = `Bearing (True)`, range_cell = `Spectra RngCell`)
+
+
+
+
+
+      radial_comparison %<>% dplyr::left_join(test, by = c("bearing","range_cell")) %>% dplyr::mutate(radial_v = radial_v * 100, MINV = MINV * 100, MAXV = MAXV* 100, ESPC = ESPC * 100)
+
+
+      radial_comparison %>% dplyr::select(range_cell, bearing, MINV, `Velocity Minimum`, MAXV, `Velocity Maximum`, radial_v, `Velocity (cm/s)`, `Velocity Count`,EDVC, `Spatial Count`,  ERSC) %>% dplyr::arrange(range_cell, bearing) %>% View()
+
+
+      dplyr::intersect(radial_comparison$MINV, radial_comparison$`Velocity Minimum`)
+
+      lm(radial_v ~ `Velocity (cm/s)`, radial_comparison)
+
+
+
+
+      ggplot2::ggplot(radial_comparison, ggplot2::aes(x= `Velocity (cm/s)`, y = radial_v)) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "lm")
+    })
 
 
   })

@@ -95,3 +95,161 @@ describe("FOR", {
   })
 
 })
+
+describe("NoiseFloor tests",{
+
+
+  describe("Ideal",{
+test_that("test 1 is correct",{
+  FOS <-   list(nsm = 2,
+                fdown = 10^(10/10),
+                flim = 10^(20/10),
+                noisefact = 10^(6/10),
+                currmax = 1,
+                reject_distant_bragg = TRUE, #  Default is to apply this test
+                reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+
+                reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
+  )
+
+
+
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), doppler_interpolation = 1L)
+
+
+
+  test_cs_obj <- seasonder_cs_obj %>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
+
+  test <- seasonder_getSeaSondeRCS_NoiseLevel(test_cs_obj)
+  seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits(test_cs_obj)
+  target <- read.table("tests/testthat/data/TORA/test1/NoiseFloor.ideal.txt", skip=2, header = F,col.names = c("range_cell", "Amp_1","Amp_2","Amp_3","dB_1","dB_2","dB_3"))
+
+  comparison <- data.frame(test=test[2:48],target = target$dB_3)
+  sqrt(sum((comparison$test-comparison$target)^2))
+})
+
+    test_that("test 2 is correct",{
+      FOS <-   list(nsm = 2,
+                    fdown = 10^(10/10),
+                    flim = 10^(20/10),
+                    noisefact = 10^(6/10),
+                    currmax = 1,
+                    reject_distant_bragg = TRUE, #  Default is to apply this test
+                    reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+
+                    reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
+      )
+
+
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test2/CSS_TORA_24_04_05_0740.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"),doppler_interpolation = 1L)
+
+
+
+      test_cs_obj <- seasonder_cs_obj %>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
+
+      test <- seasonder_getSeaSondeRCS_NoiseLevel(test_cs_obj)
+      seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits(test_cs_obj)
+      target <- read.table("tests/testthat/data/TORA/test2/NoiseFloor.ideal.txt", skip=2, header = F,col.names = c("range_cell", "Amp_1","Amp_2","Amp_3","dB_1","dB_2","dB_3"))
+
+      comparison <- data.frame(test=test[2:48],target = target$dB_3)
+      sqrt(sum((comparison$test-comparison$target)^2))
+    })
+
+  })
+})
+
+
+describe("FOL tests",{
+
+
+  describe("Ideal",{
+    test_that("test 1 is correct",{
+      FOS <-   list(nsm = 2,
+                    fdown = 10^(10/10),
+                    flim = 10^(20/10),
+                    noisefact = 10^(6/10),
+                    currmax = 1,
+                    reject_distant_bragg = TRUE, #  Default is to apply this test
+                    reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+
+                    reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
+      )
+
+
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), doppler_interpolation = 1L)
+
+
+
+      test_cs_obj <- seasonder_cs_obj %>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
+
+    test <- seasonder_getSeaSondeRCS_FOR(test_cs_obj) %>% magrittr::extract(2:48) %>% purrr::map(\(x) data.frame(min_p = min(x$positive_FOR), max_p = max(x$positive_FOR), min_n = min(x$negative_FOR), max_n = max(x$negative_FOR))) %>% dplyr::bind_rows()
+      seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits(test_cs_obj)
+      target <- read.table("tests/testthat/data/TORA/test1/FirstOrderLimits.ideal.txt", skip=5, header = F,col.names = c("range_cell", "tgt_min_p","tgt_max_p","tgt_min_n","tgt_max_n"))
+
+comparison <- dplyr::bind_cols(test,target) %>% dplyr::select(range_cell, min_p, tgt_min_p, max_p,tgt_max_p, min_n, tgt_min_n, max_n, tgt_max_n)
+
+    })
+
+    test_that("test 2 is correct",{
+      FOS <-   list(nsm = 2,
+                    fdown = 10^(10/10),
+                    flim = 10^(20/10),
+                    noisefact = 10^(6/10),
+                    currmax = 1,
+                    reject_distant_bragg = TRUE, #  Default is to apply this test
+                    reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+
+                    reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
+      )
+
+
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test2/CSS_TORA_24_04_05_0740.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"),doppler_interpolation = 2L)
+
+
+
+      test_cs_obj <- seasonder_cs_obj %>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
+
+      test <- seasonder_getSeaSondeRCS_NoiseLevel(test_cs_obj)
+      seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits(test_cs_obj)
+      target <- read.table("tests/testthat/data/TORA/test2/NoiseFloor.ideal.txt", skip=2, header = F,col.names = c("range_cell", "Amp_1","Amp_2","Amp_3","dB_1","dB_2","dB_3"))
+
+      comparison <- data.frame(test=test[2:48],target = target$dB_3)
+      sqrt(sum((comparison$test-comparison$target)^2))
+    })
+
+  })
+})
+
+
+describe("plots",{
+  describe("test 1",{
+
+    FOS <-   list(nsm = 2,
+                  fdown = 10^(10/10),
+                  flim = 10^(20/10),
+                  noisefact = 10^(6/10),
+                  currmax = 1,
+                  reject_distant_bragg = TRUE, #  Default is to apply this test
+                  reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+
+                  reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
+    )
+
+
+
+    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), doppler_interpolation = 1L)
+
+    seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
+
+    test_cs_obj <- seasonder_cs_obj %>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
+
+          seasonder_SeaSondeRCS_plotSelfSpectrum(test_cs_obj, 3 , 20,plot_FORs = TRUE)
+
+
+
+
+  })
+})

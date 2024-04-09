@@ -207,7 +207,7 @@ seasonder_getSeaSondeRCS_FOR_method  <- function(seasonder_cs_obj) {
 
 }
 
-seasonder_getSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, NoiseLevel, dB = TRUE) {
+seasonder_getSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, dB = TRUE) {
 
 
   out <- attr(seasonder_cs_obj, "NoiseLevel", exact = TRUE) %||% numeric(0)
@@ -253,7 +253,7 @@ seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_obj) {
 
   freq <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = T)
 
-  out <- max(freq)*c(0.9,1)
+  out <- max(freq)*c(0.565,1)
 
   return(out)
 

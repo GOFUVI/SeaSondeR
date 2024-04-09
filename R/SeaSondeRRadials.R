@@ -17,7 +17,7 @@ seasonder_validateShortTimeRadials_parameters <- function(seasonder_cs_obj, shor
 
 
 
-    # short_time_radials_parameters$x <- short_time_radials_parameters$x %||% seasonder_defaultShortTimeRadials_parameters()$x
+  # short_time_radials_parameters$x <- short_time_radials_parameters$x %||% seasonder_defaultShortTimeRadials_parameters()$x
 
 
 
@@ -75,33 +75,41 @@ seasonder_MUSIC2ShortTimeRadials <- function(seasonder_cs_obj, short_time_radial
 
 
 
-out %<>% tidyr::nest(range_data = -c(range_cell)) %>%
-      dplyr::mutate(range_data = purrr::map(range_data,\(range_df){
+    out %<>% tidyr::nest(range_data = -c(range_cell))
+
+
+
+    out %<>%
+      dplyr::mutate(range_data = purrr::map2(range_data, range_cell,\(range_df, range_cell){
 
         radial_v_df <- bearings %>% purrr::map(\(comp_bearing){
 
-  df <- range_df %>% dplyr::filter(bearing > comp_bearing - half_angular_window & bearing <= comp_bearing + half_angular_window) %>% dplyr::summarise(radial_v = compute_radial_median(radial_v), bearing = comp_bearing)
+          df <- range_df %>% dplyr::filter(bearing > comp_bearing - half_angular_window & bearing <= comp_bearing + half_angular_window) %>% dplyr::summarise(radial_v = compute_radial_median(radial_v), bearing = comp_bearing)
 
-}) %>% dplyr::bind_rows() %>% dplyr::filter(complete.cases(.))
+        }) %>% dplyr::bind_rows() %>% dplyr::filter(complete.cases(.))
 
-       quality_df <-  bearings %>% purrr::map(\(comp_bearing){
+        if(nrow(radial_v_df) >0){
 
-          df <- range_df %>% dplyr::filter(bearing > comp_bearing - half_spatial_window & bearing <= comp_bearing + half_spatial_window)
-if(nrow(df) >0){
-  df %<>% dplyr::summarise(ESPC = sd(radial_v), EDVC = length(unique(doppler_bin)), ERSC = length(radial_v),MAXV = max(radial_v), MINV = min(radial_v), bearing = comp_bearing )
-}else{
-  NULL
-}
+          quality_df <-  bearings %>% purrr::map(\(comp_bearing){
+
+            df <- range_df %>% dplyr::filter(bearing > comp_bearing - half_spatial_window & bearing <= comp_bearing + half_spatial_window)
+
+            if(nrow(df) >0){
+              df %<>% dplyr::summarise(ESPC = sd(radial_v), EDVC = length(unique(doppler_bin)), ERSC = length(radial_v),MAXV = max(radial_v), MINV = min(radial_v), bearing = comp_bearing )
+            }
 
 
-          }) %>% purrr::compact() %>% dplyr::bind_rows()
+          })  %>% purrr::compact() %>% dplyr::bind_rows()
 
-df <- dplyr::full_join(radial_v_df, quality_df, by = "bearing")
 
-        return(df)
 
-      })) %>% tidyr::unnest(range_data)
-browser()
+          df <- dplyr::left_join(radial_v_df, quality_df, by = "bearing")
+
+          return(df)
+        }
+      }) %>% purrr::compact()
+      ) %>% tidyr::unnest(range_data)
+
   }else{
 
     stop("only median method is implemented for short-time radials")
@@ -114,12 +122,44 @@ browser()
 new_SeaSondeRCSShortTimeRadials <- function(seasonder_cs_obj, short_time_radials_parameters = seasonder_defaultShortTimeRadials_parameters()){
 
 
-radials <- seasonder_MUSIC2ShortTimeRadials(seasonder_cs_obj, short_time_radials_parameters)
+  radials <- seasonder_MUSIC2ShortTimeRadials(seasonder_cs_obj, short_time_radials_parameters)
 
-attr(radials,"class") <- c("SeaSondeRShortTimeRadials", class(radials))
+  attr(radials,"class") <- c("SeaSondeRShortTimeRadials", class(radials))
 
-out <- radials
+  out <- radials
 
-return(out)
+  return(out)
+
+}
+
+
+
+plot_radials <- function(range_cells,bearings, radial_v){
+  vectores <- data.frame(
+    range_cell = range_cells,
+    bearing = bearings, # Angulos en grados
+    magnitud = radial_v
+  )
+
+  # Convertir origen y dirección de los vectores a coordenadas cartesianas
+  vectores <- dplyr::mutate(vectores,
+                            reverse = magnitud < 0)
+
+  vectores %<>% dplyr::mutate(x_inicio = dplyr::case_when(reverse~ vectores$range_cell + 1, TRUE ~ vectores$range_cell),
+
+                              x_fin = dplyr::case_when(reverse~ vectores$range_cell, TRUE ~ vectores$range_cell + 1),
+  )
+
+  # Crear el gráfico con ggplot
+  g <- ggplot2::ggplot() +
+    ggplot2::geom_segment(data = vectores, ggplot2::aes(x = x_inicio, y = bearing, xend = x_fin, yend = bearing, color = magnitud),
+                          arrow = ggplot2::arrow(length = ggplot2::unit(0.1,"cm"))) +
+    ggplot2::coord_polar(theta = "y",direction = 1) + # Usar coordenadas polares para simular el contexto radial
+    ggplot2::ylim(c(0,360)) +
+    ggplot2::scale_color_gradient2() +
+    ggplot2::theme_minimal()
+
+
+  return(g)
 
 }
