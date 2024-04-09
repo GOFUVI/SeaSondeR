@@ -579,35 +579,37 @@ seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_obj){
     # 3 -> 7 i* 3-2
     # 1, int, int, int ,2,int, int, int ,3 n*4-3
 
-    ratio <- (nDoppler -1)/(ncol(data[[1]])-1)
-    mapped <- seq(1,nDoppler,by=ratio )
+    index_mapping <- data.frame(original=1:ncol(data[[1]]), mapped=(0:(ncol(data[[1]])-1))*doppler_interpolation  +1)
 
-    index_mapping <- data.frame(original=1:ncol(data[[1]]), mapped=mapped)
-
+    interpolated_cells <- dplyr::setdiff(1:nDoppler, index_mapping$mapped
+    )
 
     interpolated_data %<>% purrr::map2(names(.), \(matrix, name){
+
+      if(!name %in% names(data)){
+        seasonder_logAndAbort(glue::glue("{name} is not a data matrix name."), calling_function = "seasonder_SeaSondeRCSInterpolateDoppler")
+      }
 
 
 
       original_matrix <- data[[name]]
 
+      matrix[,index_mapping$mapped] <- original_matrix[,index_mapping$original]
 
       if(name == "QC"){
-        matrix[,1:ncol(matrix)] <- -1L
+        matrix[,interpolated_cells] <- -1L
       }else{
         matrix <-  1:nrow(matrix) %>% purrr::reduce(\(matrix_so_far,i){
 
-          data <- original_matrix[i,,drop = TRUE]
-
-
+          data <- c(matrix_so_far[i,,drop = TRUE],matrix_so_far[i,1,drop = TRUE])
 
           if(!rlang::is_complex(data)){
-            data <- approx(x=index_mapping$mapped, y= data, xout = seq_len(nDoppler))$y
+            data <- zoo::na.approx(data)[-length(data)]
           }else{
 
 
-            data <- complex(real=approx(x=index_mapping$mapped, y= pracma::Real(data), xout = seq_len(nDoppler))$y,
-                            imaginary= approx(x=index_mapping$mapped, y= pracma::Imag(data), xout = seq_len(nDoppler))$y)
+            data <- complex(real= zoo::na.approx(pracma::Real(data))[-length(data)],
+                            imaginary= zoo::na.approx(pracma::Imag(data))[-length(data)])
 
           }
 
@@ -624,6 +626,8 @@ seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_obj){
 
     })
 
+
+    out %<>% seasonder_setSeaSondeRCS_interpolated_doppler_cells_index(interpolated_cells)
 
 
     out %<>% seasonder_setSeaSondeRCS_MUSIC_interpolated_data(interpolated_data)
