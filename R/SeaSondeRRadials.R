@@ -52,7 +52,7 @@ seasonder_MUSIC2ShortTimeRadials <- function(seasonder_cs_obj, short_time_radial
   antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(seasonder_apm_obj)
 
   out <- MUSIC %>% dplyr::select(range, range_cell, doppler_bin,radial_v,DOA_solutions,retained_solution) %>%
-    dplyr::mutate(bearing = purrr::map2(DOA_solutions, retained_solution, \(x,y) data.frame(bearing=x[[y]]$bearing))) %>% tidyr::unnest(bearing) %>% dplyr::select(bearing,range, range_cell, doppler_bin, radial_v) %>% dplyr::mutate(bearing = (((bearing * -1 + 360) %% 360) + antenna_bearing ) %% 360) %>% dplyr::arrange(range_cell,bearing)
+    dplyr::mutate(bearing = purrr::map2(DOA_solutions, retained_solution, \(x,y) data.frame(bearing=x[[y]]$bearing))) %>% tidyr::unnest(bearing) %>% dplyr::select(bearing,range, range_cell, doppler_bin, radial_v) %>% dplyr::mutate(bearing = (bearing -antenna_bearing) %% 360) %>% dplyr::arrange(range_cell,bearing)
 
 
 
@@ -157,7 +157,8 @@ plot_radials <- function(range_cells,bearings, radial_v){
     ggplot2::coord_polar(theta = "y",direction = 1) + # Usar coordenadas polares para simular el contexto radial
     ggplot2::ylim(c(0,360)) +
     ggplot2::scale_color_gradient2() +
-    ggplot2::theme_minimal()
+    ggplot2::theme_minimal() +
+    ggplot2::scale_y_continuous(n.breaks = 36)
 
 
   return(g)

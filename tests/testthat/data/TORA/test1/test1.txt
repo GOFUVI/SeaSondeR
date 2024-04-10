@@ -1,0 +1,3890 @@
+
+
+#######################################################################
+# CODAR Ocean Sensors, Ltd
+# SeaSonde 10
+# Spectra Processing 10.9.8
+# Radial Site TORA
+# Using Radial MUSIC Processing.
+# Using Ideal Antenna Pattern.
+# Using Measured Antenna Pattern.
+# Process CSS files only.
+# Outputting short time radials/ellipticals enabled.
+# Radial coverage 55 minutes with output every 30 minutes.
+#######################################################################
+viernes,  5 de abril de 2024, 07:38:14 GMT
+# Waiting for next CrossSpectra to appear...
+/Codar/SeaSonde/Data/Spectra/SpectraToProcess/CSS_TORA_24_04_05_0730.cs
+   Spectra Version=6
+   Spectra Datetime=3795147000
+   Spectra Extents v1=377,v2=371,v3=363,v4=315
+   Spectra Site=TORA
+   Spectra AverMinutes=15
+   Spectra StartFreqMHz=46.9007,BandwidthKHz=801.428,RepFreqHz=4.000000, UpSweep=0
+   Spectra Dopplers=1024,ranges=63,1rstRange=1,1rstRangeKm=0.187
+viernes,  5 de abril de 2024, 07:43:15 GMT
+ Running SpectraToRadial 11.6.2
+  Diagnostics Output Enabled         1000
+  Config Folder:/Codar/SeaSonde/Configs/RadialConfigs/
+  Proc Folder:/Codar/SeaSonde/Data/Processing/
+   Reading analysis options /Codar/SeaSonde/Configs/RadialConfigs/AnalysisOptions.txt
+  Opened /Codar/SeaSonde/Configs/RadialConfigs/AnalysisOptions.txt
+  Closed /Codar/SeaSonde/Configs/RadialConfigs/AnalysisOptions.txt
+  Read options lines           26
+  AnalysisOpt         Radial Proc Enable        1
+  AnalysisOpt         Min Radial Vectors        2
+  AnalysisOpt           Radial Smoothing        0
+  AnalysisOpt           Wave Proc Enable        0
+  AnalysisOpt            Antenna Pattern        2
+  AnalysisOpt           Force Amplitudes        0
+  AnalysisOpt      Override Spectra Info        0
+  AnalysisOpt           Dont Process CSA        1
+  AnalysisOpt         Waves are Offshore        0
+  AnalysisOpt             Mirror Spectra        0
+  AnalysisOpt      Waves use Inner Bragg        0
+  AnalysisOpt          Elliptical Enable        0
+  AnalysisOpt           Ionosphere Noise        0
+  AnalysisOpt          ShortTime Radials        1
+  AnalysisOpt         FirstOrder Special        0
+  AnalysisOpt           CSSlider Disable        0
+  AnalysisOpt              Merger Method        0
+  AnalysisOpt                 Over Water        0
+  AnalysisOpt                 Wave Waves        1
+  AnalysisOpt                 AlimMethod        0
+  AnalysisOpt          WaveSlider Method        0
+  AnalysisOpt          Keep Pattern Ends        0
+  AnalysisOpt      Doppler Interpolation        1
+  AnalysisOpt                  Use Bragg        0
+  AnalysisOpt              Radial Metric        0
+  AnalysisOpt              Radial Filler        0
+  AnalysisOpt       Wave Period Override        0
+  AnalysisOpt       Wave Antenna Pattern        0
+  AnalysisOpt       Wave Offshore method        0
+  AnalysisOpt   Wave Second Order method        1
+   Reading header /Codar/SeaSonde/Configs/RadialConfigs/Header.txt
+  Opened header /Codar/SeaSonde/Configs/RadialConfigs/Header.txt
+  Header                Site Number,Name        0 TORA
+  Header          Site Location(lat,lon) 42¡12.076'N,008¡48.113'W
+  Header            Antenna Bearing(deg)   13.000
+  Header      Last Range Cell To Process       48
+  Header       Range Start(km), Step(km)    0.187   0.187
+  Header           Baseline Bearing(deg)   90.000
+  Header         CSA Averaging Time(hrs)    1.000
+  Header           Center Frequency(MHz)   46.500
+  Header             Number Freq. Points     1024
+  Header             Step Frequency(MHz)    0.004
+  Header                        Timezone UTC 0.00
+  Header         Max Vel., Bragg Smooth.  100.000       2
+  Header   Down Peak Limit, Second Order  100.000       1  80.000
+  Header             Number CSA Averaged        0
+  Header                 Wave Range Cell       10    17.0
+  Header    Down Peak Null, Above Noise    10.000   3.980  40.000   3.000
+  Header                CSA,CSS,Rad Keep        0       0       0
+  Header    Factor Amp1,Amp2 Meas1,Meas2    1.000   1.000   1.000   1.000
+  Header           Coastline Angles(deg)  235.000  55.000
+  Header          Eigrat,Sigprat,Diagrat   40.000  20.000   2.000
+  Header          MdWid,SmrWid,VThsh,Gap   15.000  15.000  25.000  15.000
+  Header    Rad:Cover,Out,Ofs,Watch(min)   55.000  30.000   0.000     0
+  Header               BearingResolution    2.000
+  Header    Wav:Cover,Out,Ofs,Watch(min)   75.000  10.000   0.000     0
+  Header                IonosphereFactor    1.000
+  Header               NoiseDopplerLimit        0
+  Header             WaveLimits StartStop 255.000  75.000
+  Header                Rad,Wav Start RC        2       2
+  Header                     AmplAverMin  360.000
+  Header                   WaveMinDopPts       10
+  Header                       RadFiller      2.1    10.0    30.0      30.0     3.0
+  Header          WaveLimits Center Width 165.000 180.000
+  Header             WavePeriod Low  High   5.000  17.000
+  Header            Wave Saturation Ratio   0.800
+  Header               Wave Height Maxium  20.000
+  Header              Wave Period Onshore  10.000
+  Header                Split Bragg Ratio   0.000
+  Close /Codar/SeaSonde/Configs/RadialConfigs/Header.txt
+  Read lines           36
+   Reading first order options /Codar/SeaSonde/Configs/RadialConfigs/FirstOrderOptions.txt
+  Opened /Codar/SeaSonde/Configs/RadialConfigs/FirstOrderOptions.txt
+  Failure: Reading /Codar/SeaSonde/Configs/RadialConfigs/FirstOrderOptions.txt at line            3
+   Could not read first order options /Codar/SeaSonde/Configs/RadialConfigs/FirstOrderOptions.txt
+  Remove Antenna Pattern Endpoints.
+   Using measured antenna pattern.
+   Will fit vectors to pattern and filter angular (angseg).
+   Using both Bragg peaks.
+   Initializing CodarToolLib...
+   Reading cs to process /Codar/SeaSonde/Data/Processing/SpectraToProcess.txt
+   Spectra to Process: /Codar/SeaSonde/Data/Processing/CSD_XXXX_0000_00_00_0000.cs
+ Version        6
+ DateTime   -499820296
+ V1Extent          102
+ Kind           2
+ V2Extent           96
+ Site     TORA
+ V3Extent           88
+ AveMins            15
+ Erase               0
+ Override            0
+ StartFreq   46.9007149    
+ SweepRate   4.00000000    
+ Bandwidth   801.427612    
+ SweepUp             0
+ Dopplers         2048
+ Ranges             63
+ 1stRange            1
+ Distance   0.187036529    
+ V4Extent           40
+ More            0
+    From CS File:
+     CS Start Freq (MHz)         46.9007149    
+     CS Bandwidth  (kHz)         801.427612    
+     CS Sweep Up                         0
+     CS Ranges                          63
+     CS Dopplers                      2048
+     CS Sweep Rate (Hz)          4.00000000    
+     CS First Range Cell                 1
+    Using:
+     DateTime (Mac secs)     -499820296
+     Hour Coverage (hrs)     0.250000000    
+     Doppler Cells (bins)          2048
+     Center Freq   (MHz)      46.5000000    
+     Doppler Freq  (Hz)       1.95312500E-03
+     Start Range Dist. (km)  0.187036514    
+     Step Range Dist. (km)   0.187036514    
+                        07:30 AM Friday, April  5, 2024 UTC 0.00      -499820296
+   Reading Pattern /Codar/SeaSonde/Configs/RadialConfigs/MeasPattern.txt
+  Opened /Codar/SeaSonde/Configs/RadialConfigs/MeasPattern.txt
+  Closed /Codar/SeaSonde/Configs/RadialConfigs/MeasPattern.txt
+               Pattern Ampl    1.416    1.123
+            Pattern AntBear     13.0
+               Pattern Site TORA
+                Pattern Loc 42.2012667  -8.8018833
+              Pattern Resol      1.0
+             Pattern Smooth     20.0
+               Pattern Date 2022 07 08  07 03 06
+               User Comment Acq4.0                                                          
+               Pattern UUID 072E1AE5-F8DF-47C7-9408-28B2D594B4C8
+             Pattern Phases  -12.200  -37.600
+   Antenna Ampl Factors    1.416   1.123
+   Reading Averaged CSSs for first order /Codar/SeaSonde/Data/Processing/SpectraSliders/CSA_AVER_00_00_00_0000.cs
+  Calling  First Order Determination with Averaged CSSs.
+    Reading CrossSpectra Range            1
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.           0           0           0           0
+  FO Out             1           1           1           1
+    Reading CrossSpectra Range            2
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         667         356         667         356
+  FO Out           669         357         667         355
+    Reading CrossSpectra Range            3
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         641         356         657         356
+  FO Out           643         357         657         355
+    Reading CrossSpectra Range            4
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         636         356         679         356
+  FO Out           637         357         679         355
+    Reading CrossSpectra Range            5
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         635         324         681         370
+  FO Out           637         325         681         369
+    Reading CrossSpectra Range            6
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         632         324         676         377
+  FO Out           633         325         675         377
+    Reading CrossSpectra Range            7
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         632         317         669         372
+  FO Out           633         317         669         371
+    Reading CrossSpectra Range            8
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         636         322         667         373
+  FO Out           637         323         667         373
+    Reading CrossSpectra Range            9
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         634         315         668         361
+  FO Out           635         315         667         361
+    Reading CrossSpectra Range           10
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         632         315         670         359
+  FO Out           633         315         669         359
+    Reading CrossSpectra Range           11
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         632         313         672         358
+  FO Out           633         313         671         357
+    Reading CrossSpectra Range           12
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         629         309         679         355
+  FO Out           631         309         679         355
+    Reading CrossSpectra Range           13
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         619         308         677         362
+  FO Out           621         309         677         361
+    Reading CrossSpectra Range           14
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         620         302         678         361
+  FO Out           621         303         677         361
+    Reading CrossSpectra Range           15
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         625         304         674         360
+  FO Out           627         305         673         359
+    Reading CrossSpectra Range           16
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         615         308         679         359
+  FO Out           617         309         679         359
+    Reading CrossSpectra Range           17
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         620         310         676         359
+  FO Out           621         311         675         359
+    Reading CrossSpectra Range           18
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         628         311         674         354
+  FO Out           629         311         673         353
+    Reading CrossSpectra Range           19
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         629         311         665         362
+  FO Out           631         311         665         361
+    Reading CrossSpectra Range           20
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         628         311         665         347
+  FO Out           629         311         665         347
+    Reading CrossSpectra Range           21
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         622         311         670         352
+  FO Out           623         311         669         351
+    Reading CrossSpectra Range           22
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         621         313         676         358
+  FO Out           623         313         675         357
+    Reading CrossSpectra Range           23
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         621         310         679         364
+  FO Out           623         311         679         363
+    Reading CrossSpectra Range           24
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         618         306         691         367
+  FO Out           619         307         691         367
+    Reading CrossSpectra Range           25
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         617         309         695         381
+  FO Out           619         309         695         381
+    Reading CrossSpectra Range           26
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         619         307         701         382
+  FO Out           621         307         701         381
+    Reading CrossSpectra Range           27
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         619         303         707         383
+  FO Out           621         303         707         383
+    Reading CrossSpectra Range           28
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         613         307         708         385
+  FO Out           615         307         707         385
+    Reading CrossSpectra Range           29
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         611         311         714         376
+  FO Out           613         311         713         375
+    Reading CrossSpectra Range           30
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         629         312         720         394
+  FO Out           631         313         719         393
+    Reading CrossSpectra Range           31
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         606         317         720         394
+  FO Out           607         317         719         393
+    Reading CrossSpectra Range           32
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         596         279         713         387
+  FO Out           597         279         713         387
+    Reading CrossSpectra Range           33
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         597         311         711         377
+  FO Out           599         311         711         377
+    Reading CrossSpectra Range           34
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         587         285         707         376
+  FO Out           589         285         707         375
+    Reading CrossSpectra Range           35
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         590         288         695         367
+  FO Out           591         289         695         367
+    Reading CrossSpectra Range           36
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         596         275         709         371
+  FO Out           597         275         709         371
+    Reading CrossSpectra Range           37
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         593         267         709         377
+  FO Out           595         267         709         377
+    Reading CrossSpectra Range           38
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         589         267         702         384
+  FO Out           591         267         701         383
+    Reading CrossSpectra Range           39
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         590         197         703         397
+  FO Out           591         197         703         397
+    Reading CrossSpectra Range           40
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         585         197         709         395
+  FO Out           587         197         709         395
+    Reading CrossSpectra Range           41
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         630         197         701         361
+  FO Out           631         197         701         361
+    Reading CrossSpectra Range           42
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         595         197         706         362
+  FO Out           597         197         705         361
+    Reading CrossSpectra Range           43
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         597         197         711         362
+  FO Out           599         197         711         361
+    Reading CrossSpectra Range           44
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         598         356         726         356
+  FO Out           599         357         725         355
+    Reading CrossSpectra Range           45
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         597         197         720         302
+  FO Out           599         197         719         301
+    Reading CrossSpectra Range           46
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         586         318         696         338
+  FO Out           587         319         695         337
+    Reading CrossSpectra Range           47
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         581         318         692         341
+  FO Out           583         319         691         341
+    Reading CrossSpectra Range           48
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         592         311         703         340
+  FO Out           593         311         703         339
+   Using First Order Limits Calculated from Averaged CrossSpectra
+   Using Averaged FirstOrder Calc.
+  Reading /Codar/SeaSonde/Data/Processing/RadialDiag.txt
+  Read         1343  entries in /Codar/SeaSonde/Data/Processing/RadialDiagNew.txt
+  Opened /Codar/SeaSonde/Configs/RadialConfigs/AngSeg.txt
+  Closed /Codar/SeaSonde/Configs/RadialConfigs/AngSeg.txt
+  AngularFilter Ranges  47
+  AngularFilter Range   1    0.187km     1 seg.s  39.5  11.0
+  AngularFilter Range   2    0.374km     1 seg.s  37.5 145.0
+  AngularFilter Range   3    0.561km     1 seg.s  37.5 145.0
+  AngularFilter Range   4    0.748km     1 seg.s  37.5 145.0
+  AngularFilter Range   5    0.935km     1 seg.s  37.5 145.0
+  AngularFilter Range   6    1.122km     1 seg.s  37.5 145.0
+  AngularFilter Range   7    1.309km     1 seg.s  37.5 145.0
+  AngularFilter Range   8    1.496km     1 seg.s  37.5 145.0
+  AngularFilter Range   9    1.683km     1 seg.s  37.5 145.0
+  AngularFilter Range  10    1.870km     1 seg.s  37.5 145.0
+  AngularFilter Range  11    2.057km     1 seg.s  37.5 145.0
+  AngularFilter Range  12    2.244km     1 seg.s  37.5 145.0
+  AngularFilter Range  13    2.431km     1 seg.s  37.5 145.0
+  AngularFilter Range  14    2.618km     1 seg.s  37.5 145.0
+  AngularFilter Range  15    2.805km     1 seg.s  37.5 145.0
+  AngularFilter Range  16    2.992km     1 seg.s  37.5 145.0
+  AngularFilter Range  17    3.179km     1 seg.s  37.5 145.0
+  AngularFilter Range  18    3.366km     1 seg.s  37.5 145.0
+  AngularFilter Range  19    3.553km     1 seg.s  37.5 145.0
+  AngularFilter Range  20    3.740km     1 seg.s  37.5 145.0
+  AngularFilter Range  21    3.927km     1 seg.s  37.5 145.0
+  AngularFilter Range  22    4.114km     1 seg.s  37.5 145.0
+  AngularFilter Range  23    4.301km     1 seg.s  37.5 145.0
+  AngularFilter Range  24    4.488km     1 seg.s  37.5 145.0
+  AngularFilter Range  25    4.675km     1 seg.s  37.5 145.0
+  AngularFilter Range  26    4.862km     1 seg.s  37.5 145.0
+  AngularFilter Range  27    5.049km     1 seg.s  37.5 145.0
+  AngularFilter Range  28    5.236km     3 seg.s  53.0 114.0  350.0   1.0  336.0  22.0
+  AngularFilter Range  29    5.423km     2 seg.s  55.0 110.0  337.5  25.0
+  AngularFilter Range  30    5.610km     2 seg.s  57.5 105.0  337.0  24.0
+  AngularFilter Range  31    5.797km     3 seg.s  67.0  86.0   13.0  16.0  337.0  24.0
+  AngularFilter Range  32    5.984km     3 seg.s  65.5  89.0   11.5  11.0  337.0  24.0
+  AngularFilter Range  33    6.171km     3 seg.s  66.5  87.0    9.5   5.0  336.5  23.0
+  AngularFilter Range  34    6.358km     4 seg.s  67.5  85.0   11.0   1.0    8.0   1.0  336.5  23.0
+  AngularFilter Range  35    6.545km     4 seg.s  69.0  82.0   26.0   1.0   10.0   2.0  336.5  23.0
+  AngularFilter Range  36    6.732km     2 seg.s  68.0  84.0  336.5  23.0
+  AngularFilter Range  37    6.919km     4 seg.s  69.5  81.0   26.5   1.0  341.0  12.0  329.0   8.0
+  AngularFilter Range  38    7.106km     7 seg.s  78.5  63.0   36.5  15.0   27.0   1.0  342.5   1.0
+  AngularFilter Range  39    7.293km     3 seg.s  77.5  65.0   35.5  13.0  329.0   8.0
+  AngularFilter Range  40    7.480km     4 seg.s 104.5  11.0   71.5  49.0   35.0  10.0  328.5   7.0
+  AngularFilter Range  41    7.667km     4 seg.s 104.5  11.0   69.0  46.0   35.5   7.0  327.5   5.0
+  AngularFilter Range  42    7.854km     4 seg.s 104.0  12.0   68.5  43.0   35.0   4.0  327.5   5.0
+  AngularFilter Range  43    8.041km     4 seg.s 103.5  13.0   85.0  10.0   62.5  31.0  327.5   5.0
+  AngularFilter Range  44    8.228km     5 seg.s 103.5  13.0   85.0   8.0   75.0   6.0   58.0  22.0
+  AngularFilter Range  45    8.415km     5 seg.s 103.0  14.0   84.0  10.0   74.0   4.0   56.0  26.0
+  AngularFilter Range  46    8.602km     6 seg.s 103.5  13.0   84.5   7.0   73.0   2.0   55.0  26.0
+  AngularFilter Range  47    8.789km     6 seg.s 103.5  13.0   84.0   4.0   75.5   1.0   53.0  28.0
+   Reading phase /Codar/SeaSonde/Configs/RadialConfigs/Phases.txt
+    Calculating Amplitude factors 
+    Reading Amp CrossSpectra Range            1
+    Reading Amp CrossSpectra Range            2
+    Reading Amp CrossSpectra Range            3
+    Reading Amp CrossSpectra Range            4
+    Reading Amp CrossSpectra Range            5
+    Reading Amp CrossSpectra Range            6
+    Reading Amp CrossSpectra Range            7
+    Reading Amp CrossSpectra Range            8
+    Reading Amp CrossSpectra Range            9
+    Reading Amp CrossSpectra Range           10
+  10212 V3 Points Flagged for first  10 range cells
+  calling Amp
+  return Amp: ava,avb   1.22398329       1.32768297    
+  calling Phase
+  return Phase: ph13,ph23  -13.5155048      -55.7809219    
+   Processing CrossSpectra for Radials...
+   Opened /Codar/SeaSonde/Data/Processing/CSD_XXXX_0000_00_00_0000.cs
+   Starting /Codar/SeaSonde/Data/Processing/RdlsXXXX_00_00_00_0000.rv
+   Starting /Codar/SeaSonde/Data/Processing/FirstOrderLimits.txt
+   Starting /Codar/SeaSonde/Data/Processing/IrCells.txt
+   Starting /Codar/SeaSonde/Data/Processing/CsMark.txt
+   Starting /Codar/SeaSonde/Data/Processing/NoiseFloor.txt
+    Reading CrossSpectra Range            1           1
+    Reading CrossSpectra Range            2           2
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1  0.374000013       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    669  667      357  355
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   669  667      357  355
+   Vectors            0           0
+    Iter              0           0
+    NumNeg         1019
+    nhd            1343
+iono     1    1
+dual/sing      0     0
+    Reading CrossSpectra Range            3           3
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1  0.560999990       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    643  657      357  355
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   643  657      357  355
+   Vectors           12           1
+    Iter              0           0
+    NumNeg         1020
+    nhd            1343
+iono     1    1
+dual/sing     10     6
+    Reading CrossSpectra Range            4           4
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1  0.748000026       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    637  679      357  355
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   637  679      357  355
+   Vectors           43           1
+    Iter              0           0
+    NumNeg         1019
+    nhd            1343
+iono     1    1
+dual/sing     41    13
+    Reading CrossSpectra Range            5           5
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1  0.935000002       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    637  681      325  369
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   637  681      325  369
+   Vectors           64           1
+    Iter              0           0
+    NumNeg         1020
+    nhd            1343
+iono     1    1
+dual/sing     77    39
+    Reading CrossSpectra Range            6           6
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   1.12199998       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    633  675      325  377
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   633  675      325  377
+   Vectors           66           1
+    Iter              0           0
+    NumNeg         1019
+    nhd            1343
+iono     1    1
+dual/sing     83    45
+    Reading CrossSpectra Range            7           7
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   1.30900002       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    633  669      317  371
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   633  669      317  371
+   Vectors           69           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     86    54
+    Reading CrossSpectra Range            8           8
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   1.49600005       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    637  667      323  373
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   637  667      323  373
+   Vectors           65           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     75    40
+    Reading CrossSpectra Range            9           9
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   1.68299997       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    635  667      315  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   635  667      315  361
+   Vectors           63           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     72    35
+    Reading CrossSpectra Range           10          10
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   1.87000000       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    633  669      315  359
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   633  669      315  359
+   Vectors           71           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     75    34
+    Reading CrossSpectra Range           11          11
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   2.05699992       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    633  671      313  357
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   633  671      313  357
+   Vectors           73           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     78    39
+    Reading CrossSpectra Range           12          12
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   2.24399996       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    631  679      309  355
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   631  679      309  355
+   Vectors           82           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     91    42
+    Reading CrossSpectra Range           13          13
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   2.43099999       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    621  677      309  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   621  677      309  361
+   Vectors           78           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    104    52
+    Reading CrossSpectra Range           14          14
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   2.61800003       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    621  677      303  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   621  677      303  361
+   Vectors           83           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    107    56
+    Reading CrossSpectra Range           15          15
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   2.80500007       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    627  673      305  359
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   627  673      305  359
+   Vectors           68           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     92    44
+    Reading CrossSpectra Range           16          16
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   2.99200010       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    617  679      309  359
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   617  679      309  359
+   Vectors           93           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    109    57
+    Reading CrossSpectra Range           17          17
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   3.17899990       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    621  675      311  359
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   621  675      311  359
+   Vectors           74           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     92    38
+    Reading CrossSpectra Range           18          18
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   3.36599994       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    629  673      311  353
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   629  673      311  353
+   Vectors           69           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     72    39
+    Reading CrossSpectra Range           19          19
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   3.55299997       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    631  665      311  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   631  665      311  361
+   Vectors           65           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     74    36
+    Reading CrossSpectra Range           20          20
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   3.74000001       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    629  665      311  347
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   629  665      311  347
+   Vectors           74           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     66    41
+    Reading CrossSpectra Range           21          21
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   3.92700005       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    623  669      311  351
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   623  669      311  351
+   Vectors           70           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     83    44
+    Reading CrossSpectra Range           22          22
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   4.11399984       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    623  675      313  357
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   623  675      313  357
+   Vectors           75           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     92    41
+    Reading CrossSpectra Range           23          23
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   4.30100012       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    623  679      311  363
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   623  679      311  363
+   Vectors           78           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     99    61
+    Reading CrossSpectra Range           24          24
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   4.48799992       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    619  691      307  367
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   619  691      307  367
+   Vectors           90           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    122    56
+    Reading CrossSpectra Range           25          25
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   4.67500019       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    619  695      309  381
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   619  695      309  381
+   Vectors           95           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    140    84
+    Reading CrossSpectra Range           26          26
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   4.86199999       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    621  701      307  381
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   621  701      307  381
+   Vectors           83           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    141    66
+    Reading CrossSpectra Range           27          27
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   5.04899979       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    621  707      303  383
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   621  707      303  383
+   Vectors           94           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    156    70
+    Reading CrossSpectra Range           28          28
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           3   5.23600006       53.0000000       350.000000       336.000000       114.000000       1.00000000       22.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    615  707      307  385
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   615  707      307  385
+   Vectors           90           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    159    79
+    Reading CrossSpectra Range           29          29
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           2   5.42299986       55.0000000       337.500000       110.000000       25.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    613  713      311  375
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   613  713      311  375
+   Vectors           82           1
+    Iter           -999           0
+    NumNeg         1020
+    nhd            1343
+iono     1    1
+dual/sing    157    76
+    Reading CrossSpectra Range           30          30
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           2   5.61000013       57.5000000       337.000000       105.000000       24.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    631  719      313  393
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   631  719      313  393
+   Vectors           85           1
+    Iter           -999           0
+    NumNeg         1023
+    nhd            1343
+iono     1    1
+dual/sing    157    99
+    Reading CrossSpectra Range           31          31
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           3   5.79699993       67.0000000       13.0000000       337.000000       86.0000000       16.0000000       24.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    607  719      317  393
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   607  719      317  393
+   Vectors           90           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    179    89
+    Reading CrossSpectra Range           32          32
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           3   5.98400021       65.5000000       11.5000000       337.000000       89.0000000       11.0000000       24.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    597  713      279  387
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   597  713      279  387
+   Vectors           90           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    203   126
+    Reading CrossSpectra Range           33          33
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           3   6.17100000       66.5000000       9.50000000       336.500000       87.0000000       5.00000000       23.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    599  711      311  377
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   599  711      311  377
+   Vectors           69           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    171    84
+    Reading CrossSpectra Range           34          34
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   6.35799980       67.5000000       11.0000000       8.00000000       336.500000       85.0000000       1.00000000       1.00000000       23.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    589  707      285  375
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   589  707      285  375
+   Vectors           80           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    193    93
+    Reading CrossSpectra Range           35          35
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   6.54500008       69.0000000       26.0000000       10.0000000       336.500000       82.0000000       1.00000000       2.00000000       23.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    591  695      289  367
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   591  695      289  367
+   Vectors           75           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    170    85
+    Reading CrossSpectra Range           36          36
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           2   6.73199987       68.0000000       336.500000       84.0000000       23.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    597  709      275  371
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   597  709      275  371
+   Vectors           72           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    191    89
+    Reading CrossSpectra Range           37          37
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   6.91900015       69.5000000       26.5000000       341.000000       329.000000       81.0000000       1.00000000       12.0000000       8.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    595  709      267  377
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   595  709      267  377
+   Vectors           68           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    194   106
+    Reading CrossSpectra Range           38          38
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           7   7.10599995       78.5000000       36.5000000       27.0000000       342.500000       340.000000       334.000000       328.000000       63.0000000       15.0000000       1.00000000       1.00000000       1.00000000       1.00000000       6.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    591  701      267  383
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   591  701      267  383
+   Vectors           59           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    204   130
+    Reading CrossSpectra Range           39          39
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           3   7.29300022       77.5000000       35.5000000       329.000000       65.0000000       13.0000000       8.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    591  703      197  397
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   591  703      197  397
+   Vectors           54           1
+    Iter           -999           0
+    NumNeg         1016
+    nhd            1343
+iono     1    1
+dual/sing    296   145
+    Reading CrossSpectra Range           40          40
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   7.48000002       104.500000       71.5000000       35.0000000       328.500000       11.0000000       49.0000000       10.0000000       7.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    587  709      197  395
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   587  709      197  395
+   Vectors           49           1
+    Iter           -999           0
+    NumNeg          995
+    nhd            1343
+iono     1    1
+dual/sing    285   158
+    Reading CrossSpectra Range           41          41
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   7.66699982       104.500000       69.0000000       35.5000000       327.500000       11.0000000       46.0000000       7.00000000       5.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    631  701      197  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   631  701      197  361
+   Vectors           43           1
+    Iter              0           0
+    NumNeg          968
+    nhd            1343
+iono     1    1
+dual/sing    217   111
+    Reading CrossSpectra Range           42          42
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   7.85400009       104.000000       68.5000000       35.0000000       327.500000       12.0000000       43.0000000       4.00000000       5.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    597  705      197  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   597  705      197  361
+   Vectors           45           1
+    Iter           -999           0
+    NumNeg          866
+    nhd            1343
+iono     1    1
+dual/sing    259   133
+    Reading CrossSpectra Range           43          43
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   8.04100037       103.500000       85.0000000       62.5000000       327.500000       13.0000000       10.0000000       31.0000000       5.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    599  711      197  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   599  711      197  361
+   Vectors           35           1
+    Iter           -999           0
+    NumNeg          871
+    nhd            1343
+iono     1    1
+dual/sing    242   125
+    Reading CrossSpectra Range           44          44
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           5   8.22799969       103.500000       85.0000000       75.0000000       58.0000000       327.500000       13.0000000       8.00000000       6.00000000       22.0000000       5.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    599  725      357  355
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   599  725      357  355
+   Vectors           34           1
+    Iter              0           0
+    NumNeg          947
+    nhd            1343
+iono     1    1
+dual/sing    117    64
+    Reading CrossSpectra Range           45          45
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           5   8.41499996       103.000000       84.0000000       74.0000000       56.0000000       327.000000       14.0000000       10.0000000       4.00000000       26.0000000       4.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    599  719      197  301
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   599  719      197  301
+   Vectors           33           1
+    Iter              0           0
+    NumNeg          990
+    nhd            1343
+iono     1    1
+dual/sing    202    98
+    Reading CrossSpectra Range           46          46
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           6   8.60200024       103.500000       84.5000000       73.0000000       55.0000000       11.5000000       326.500000       13.0000000       7.00000000       2.00000000       26.0000000       3.00000000       3.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    587  695      319  337
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   587  695      319  337
+   Vectors           31           1
+    Iter           -999           0
+    NumNeg         1004
+    nhd            1343
+iono     1    1
+dual/sing    112    57
+    Reading CrossSpectra Range           47          47
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           6   8.78899956       103.500000       84.0000000       75.5000000       53.0000000       12.0000000       326.000000       13.0000000       4.00000000       1.00000000       28.0000000       4.00000000       2.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    583  691      319  341
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   583  691      319  341
+   Vectors           28           1
+    Iter           -999           0
+    NumNeg         1015
+    nhd            1343
+iono     1    1
+dual/sing    113    52
+    Reading CrossSpectra Range           48          48
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   0.00000000       90.0000000       360.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.41631448       1.12317693    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         141           1
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    593  703      311  339
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   593  703      311  339
+   Vectors           33           1
+    Iter           -999           0
+    NumNeg         1018
+    nhd            1343
+iono     1    1
+dual/sing    108    59
+   Writing /Codar/SeaSonde/Data/Processing/RadialDiagInfo.txt
+   Writing /Codar/SeaSonde/Data/Processing/RadialInfo.txt
+   Writing /Codar/SeaSonde/Data/Processing/AmpNew.txt
+   Writing /Codar/SeaSonde/Data/Processing/PhaseNew.txt
+  Finished.
+ Running RadialDiagnostic 12.1.2
+ Running RadialArchiver 12.1.0
+  Reading /Codar/SeaSonde/Configs/SiteDefinitions/SiteMap_TORA.smap/gshhs_TORA.b
+ Flagged Vectors overland in /Codar/SeaSonde/Configs/SiteDefinitions/SiteMap_TORA.smap/gshhs_TORA.b.
+  Writing LLUV RDLy_TORA_2024_04_05_0730.ruv
+ Running RadialSlider 12.2.0
+ Running SpectraToRadial 11.6.2
+  Diagnostics Output Enabled         1000
+  Config Folder:/Codar/SeaSonde/Configs/RadialConfigs/
+  Proc Folder:/Codar/SeaSonde/Data/Processing/
+   Reading analysis options /Codar/SeaSonde/Configs/RadialConfigs/AnalysisOptions.txt
+  Opened /Codar/SeaSonde/Configs/RadialConfigs/AnalysisOptions.txt
+  Closed /Codar/SeaSonde/Configs/RadialConfigs/AnalysisOptions.txt
+  Read options lines           26
+  AnalysisOpt         Radial Proc Enable        1
+  AnalysisOpt         Min Radial Vectors        2
+  AnalysisOpt           Radial Smoothing        0
+  AnalysisOpt           Wave Proc Enable        0
+  AnalysisOpt            Antenna Pattern        2
+  AnalysisOpt           Force Amplitudes        0
+  AnalysisOpt      Override Spectra Info        0
+  AnalysisOpt           Dont Process CSA        1
+  AnalysisOpt         Waves are Offshore        0
+  AnalysisOpt             Mirror Spectra        0
+  AnalysisOpt      Waves use Inner Bragg        0
+  AnalysisOpt          Elliptical Enable        0
+  AnalysisOpt           Ionosphere Noise        0
+  AnalysisOpt          ShortTime Radials        1
+  AnalysisOpt         FirstOrder Special        0
+  AnalysisOpt           CSSlider Disable        0
+  AnalysisOpt              Merger Method        0
+  AnalysisOpt                 Over Water        0
+  AnalysisOpt                 Wave Waves        1
+  AnalysisOpt                 AlimMethod        0
+  AnalysisOpt          WaveSlider Method        0
+  AnalysisOpt          Keep Pattern Ends        0
+  AnalysisOpt      Doppler Interpolation        1
+  AnalysisOpt                  Use Bragg        0
+  AnalysisOpt              Radial Metric        0
+  AnalysisOpt              Radial Filler        0
+  AnalysisOpt       Wave Period Override        0
+  AnalysisOpt       Wave Antenna Pattern        0
+  AnalysisOpt       Wave Offshore method        0
+  AnalysisOpt   Wave Second Order method        1
+   Reading header /Codar/SeaSonde/Configs/RadialConfigs/Header.txt
+  Opened header /Codar/SeaSonde/Configs/RadialConfigs/Header.txt
+  Header                Site Number,Name        0 TORA
+  Header          Site Location(lat,lon) 42¡12.076'N,008¡48.113'W
+  Header            Antenna Bearing(deg)   13.000
+  Header      Last Range Cell To Process       48
+  Header       Range Start(km), Step(km)    0.187   0.187
+  Header           Baseline Bearing(deg)   90.000
+  Header         CSA Averaging Time(hrs)    1.000
+  Header           Center Frequency(MHz)   46.500
+  Header             Number Freq. Points     1024
+  Header             Step Frequency(MHz)    0.004
+  Header                        Timezone UTC 0.00
+  Header         Max Vel., Bragg Smooth.  100.000       2
+  Header   Down Peak Limit, Second Order  100.000       1  80.000
+  Header             Number CSA Averaged        0
+  Header                 Wave Range Cell       10    17.0
+  Header    Down Peak Null, Above Noise    10.000   3.980  40.000   3.000
+  Header                CSA,CSS,Rad Keep        0       0       0
+  Header    Factor Amp1,Amp2 Meas1,Meas2    1.000   1.000   1.000   1.000
+  Header           Coastline Angles(deg)  235.000  55.000
+  Header          Eigrat,Sigprat,Diagrat   40.000  20.000   2.000
+  Header          MdWid,SmrWid,VThsh,Gap   15.000  15.000  25.000  15.000
+  Header    Rad:Cover,Out,Ofs,Watch(min)   55.000  30.000   0.000     0
+  Header               BearingResolution    2.000
+  Header    Wav:Cover,Out,Ofs,Watch(min)   75.000  10.000   0.000     0
+  Header                IonosphereFactor    1.000
+  Header               NoiseDopplerLimit        0
+  Header             WaveLimits StartStop 255.000  75.000
+  Header                Rad,Wav Start RC        2       2
+  Header                     AmplAverMin  360.000
+  Header                   WaveMinDopPts       10
+  Header                       RadFiller      2.1    10.0    30.0      30.0     3.0
+  Header          WaveLimits Center Width 165.000 180.000
+  Header             WavePeriod Low  High   5.000  17.000
+  Header            Wave Saturation Ratio   0.800
+  Header               Wave Height Maxium  20.000
+  Header              Wave Period Onshore  10.000
+  Header                Split Bragg Ratio   0.000
+  Close /Codar/SeaSonde/Configs/RadialConfigs/Header.txt
+  Read lines           36
+   Reading first order options /Codar/SeaSonde/Configs/RadialConfigs/FirstOrderOptions.txt
+  Opened /Codar/SeaSonde/Configs/RadialConfigs/FirstOrderOptions.txt
+  Failure: Reading /Codar/SeaSonde/Configs/RadialConfigs/FirstOrderOptions.txt at line            3
+   Could not read first order options /Codar/SeaSonde/Configs/RadialConfigs/FirstOrderOptions.txt
+  Remove Antenna Pattern Endpoints.
+   Using ideal antenna pattern.
+   Will fit vectors to pattern and filter angular (angseg).
+   Using both Bragg peaks.
+   Initializing CodarToolLib...
+   Reading cs to process /Codar/SeaSonde/Data/Processing/SpectraToProcess.txt
+   Spectra to Process: /Codar/SeaSonde/Data/Processing/CSD_XXXX_0000_00_00_0000.cs
+ Version        6
+ DateTime   -499820296
+ V1Extent          102
+ Kind           2
+ V2Extent           96
+ Site     TORA
+ V3Extent           88
+ AveMins            15
+ Erase               0
+ Override            0
+ StartFreq   46.9007149    
+ SweepRate   4.00000000    
+ Bandwidth   801.427612    
+ SweepUp             0
+ Dopplers         2048
+ Ranges             63
+ 1stRange            1
+ Distance   0.187036529    
+ V4Extent           40
+ More            0
+    From CS File:
+     CS Start Freq (MHz)         46.9007149    
+     CS Bandwidth  (kHz)         801.427612    
+     CS Sweep Up                         0
+     CS Ranges                          63
+     CS Dopplers                      2048
+     CS Sweep Rate (Hz)          4.00000000    
+     CS First Range Cell                 1
+    Using:
+     DateTime (Mac secs)     -499820296
+     Hour Coverage (hrs)     0.250000000    
+     Doppler Cells (bins)          2048
+     Center Freq   (MHz)      46.5000000    
+     Doppler Freq  (Hz)       1.95312500E-03
+     Start Range Dist. (km)  0.187036514    
+     Step Range Dist. (km)   0.187036514    
+                        07:30 AM Friday, April  5, 2024 UTC 0.00      -499820296
+   Reading Pattern /Codar/SeaSonde/Configs/RadialConfigs/IdealPattern.txt
+  Opened /Codar/SeaSonde/Configs/RadialConfigs/IdealPattern.txt
+  Closed /Codar/SeaSonde/Configs/RadialConfigs/IdealPattern.txt
+               Pattern Ampl    1.000    1.000
+            Pattern AntBear      0.0
+               Pattern Site XXXX
+                Pattern Loc 0.0000000   0.0000000
+              Pattern Resol      1.0
+             Pattern Smooth      0.0
+               Pattern Date 2008 07 31  15 33 36
+               User Comment                                                                 
+               Pattern UUID 0
+             Pattern Phases    0.000    0.000
+   Antenna Ampl Factors    1.000   1.000
+   Reading Averaged CSSs for first order /Codar/SeaSonde/Data/Processing/SpectraSliders/CSA_AVER_00_00_00_0000.cs
+  Calling  First Order Determination with Averaged CSSs.
+    Reading CrossSpectra Range            1
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.           0           0           0           0
+  FO Out             1           1           1           1
+    Reading CrossSpectra Range            2
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         667         356         667         356
+  FO Out           669         357         667         355
+    Reading CrossSpectra Range            3
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         641         356         657         356
+  FO Out           643         357         657         355
+    Reading CrossSpectra Range            4
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         636         356         679         356
+  FO Out           637         357         679         355
+    Reading CrossSpectra Range            5
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         635         324         681         370
+  FO Out           637         325         681         369
+    Reading CrossSpectra Range            6
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         632         324         676         377
+  FO Out           633         325         675         377
+    Reading CrossSpectra Range            7
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         632         317         669         372
+  FO Out           633         317         669         371
+    Reading CrossSpectra Range            8
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         636         322         667         373
+  FO Out           637         323         667         373
+    Reading CrossSpectra Range            9
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         634         315         668         361
+  FO Out           635         315         667         361
+    Reading CrossSpectra Range           10
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         632         315         670         359
+  FO Out           633         315         669         359
+    Reading CrossSpectra Range           11
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         632         313         672         358
+  FO Out           633         313         671         357
+    Reading CrossSpectra Range           12
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         629         309         679         355
+  FO Out           631         309         679         355
+    Reading CrossSpectra Range           13
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         619         308         677         362
+  FO Out           621         309         677         361
+    Reading CrossSpectra Range           14
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         620         302         678         361
+  FO Out           621         303         677         361
+    Reading CrossSpectra Range           15
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         625         304         674         360
+  FO Out           627         305         673         359
+    Reading CrossSpectra Range           16
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         615         308         679         359
+  FO Out           617         309         679         359
+    Reading CrossSpectra Range           17
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         620         310         676         359
+  FO Out           621         311         675         359
+    Reading CrossSpectra Range           18
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         628         311         674         354
+  FO Out           629         311         673         353
+    Reading CrossSpectra Range           19
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         629         311         665         362
+  FO Out           631         311         665         361
+    Reading CrossSpectra Range           20
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         628         311         665         347
+  FO Out           629         311         665         347
+    Reading CrossSpectra Range           21
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         622         311         670         352
+  FO Out           623         311         669         351
+    Reading CrossSpectra Range           22
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         621         313         676         358
+  FO Out           623         313         675         357
+    Reading CrossSpectra Range           23
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         621         310         679         364
+  FO Out           623         311         679         363
+    Reading CrossSpectra Range           24
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         618         306         691         367
+  FO Out           619         307         691         367
+    Reading CrossSpectra Range           25
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         617         309         695         381
+  FO Out           619         309         695         381
+    Reading CrossSpectra Range           26
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         619         307         701         382
+  FO Out           621         307         701         381
+    Reading CrossSpectra Range           27
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         619         303         707         383
+  FO Out           621         303         707         383
+    Reading CrossSpectra Range           28
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         613         307         708         385
+  FO Out           615         307         707         385
+    Reading CrossSpectra Range           29
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         611         311         714         376
+  FO Out           613         311         713         375
+    Reading CrossSpectra Range           30
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         629         312         720         394
+  FO Out           631         313         719         393
+    Reading CrossSpectra Range           31
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         606         317         720         394
+  FO Out           607         317         719         393
+    Reading CrossSpectra Range           32
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         596         279         713         387
+  FO Out           597         279         713         387
+    Reading CrossSpectra Range           33
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         597         311         711         377
+  FO Out           599         311         711         377
+    Reading CrossSpectra Range           34
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         587         285         707         376
+  FO Out           589         285         707         375
+    Reading CrossSpectra Range           35
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         590         288         695         367
+  FO Out           591         289         695         367
+    Reading CrossSpectra Range           36
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         596         275         709         371
+  FO Out           597         275         709         371
+    Reading CrossSpectra Range           37
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         593         267         709         377
+  FO Out           595         267         709         377
+    Reading CrossSpectra Range           38
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         589         267         702         384
+  FO Out           591         267         701         383
+    Reading CrossSpectra Range           39
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         590         197         703         397
+  FO Out           591         197         703         397
+    Reading CrossSpectra Range           40
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         585         197         709         395
+  FO Out           587         197         709         395
+    Reading CrossSpectra Range           41
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         630         197         701         361
+  FO Out           631         197         701         361
+    Reading CrossSpectra Range           42
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         595         197         706         362
+  FO Out           597         197         705         361
+    Reading CrossSpectra Range           43
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         597         197         711         362
+  FO Out           599         197         711         361
+    Reading CrossSpectra Range           44
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         598         356         726         356
+  FO Out           599         357         725         355
+    Reading CrossSpectra Range           45
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         597         197         720         302
+  FO Out           599         197         719         301
+    Reading CrossSpectra Range           46
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         586         318         696         338
+  FO Out           587         319         695         337
+    Reading CrossSpectra Range           47
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         581         318         692         341
+  FO Out           583         319         691         341
+    Reading CrossSpectra Range           48
+   Using Header First Order Options.
+  Call Fir...
+  Fir Done.         592         311         703         340
+  FO Out           593         311         703         339
+   Using First Order Limits Calculated from Averaged CrossSpectra
+   Using Averaged FirstOrder Calc.
+  Reading /Codar/SeaSonde/Data/Processing/RadialDiag.txt
+  Read         1343  entries in /Codar/SeaSonde/Data/Processing/RadialDiagNew.txt
+  Opened /Codar/SeaSonde/Configs/RadialConfigs/AngSeg.txt
+  Closed /Codar/SeaSonde/Configs/RadialConfigs/AngSeg.txt
+  AngularFilter Ranges  47
+  AngularFilter Range   1    0.187km     1 seg.s  39.5  11.0
+  AngularFilter Range   2    0.374km     1 seg.s  37.5 145.0
+  AngularFilter Range   3    0.561km     1 seg.s  37.5 145.0
+  AngularFilter Range   4    0.748km     1 seg.s  37.5 145.0
+  AngularFilter Range   5    0.935km     1 seg.s  37.5 145.0
+  AngularFilter Range   6    1.122km     1 seg.s  37.5 145.0
+  AngularFilter Range   7    1.309km     1 seg.s  37.5 145.0
+  AngularFilter Range   8    1.496km     1 seg.s  37.5 145.0
+  AngularFilter Range   9    1.683km     1 seg.s  37.5 145.0
+  AngularFilter Range  10    1.870km     1 seg.s  37.5 145.0
+  AngularFilter Range  11    2.057km     1 seg.s  37.5 145.0
+  AngularFilter Range  12    2.244km     1 seg.s  37.5 145.0
+  AngularFilter Range  13    2.431km     1 seg.s  37.5 145.0
+  AngularFilter Range  14    2.618km     1 seg.s  37.5 145.0
+  AngularFilter Range  15    2.805km     1 seg.s  37.5 145.0
+  AngularFilter Range  16    2.992km     1 seg.s  37.5 145.0
+  AngularFilter Range  17    3.179km     1 seg.s  37.5 145.0
+  AngularFilter Range  18    3.366km     1 seg.s  37.5 145.0
+  AngularFilter Range  19    3.553km     1 seg.s  37.5 145.0
+  AngularFilter Range  20    3.740km     1 seg.s  37.5 145.0
+  AngularFilter Range  21    3.927km     1 seg.s  37.5 145.0
+  AngularFilter Range  22    4.114km     1 seg.s  37.5 145.0
+  AngularFilter Range  23    4.301km     1 seg.s  37.5 145.0
+  AngularFilter Range  24    4.488km     1 seg.s  37.5 145.0
+  AngularFilter Range  25    4.675km     1 seg.s  37.5 145.0
+  AngularFilter Range  26    4.862km     1 seg.s  37.5 145.0
+  AngularFilter Range  27    5.049km     1 seg.s  37.5 145.0
+  AngularFilter Range  28    5.236km     3 seg.s  53.0 114.0  350.0   1.0  336.0  22.0
+  AngularFilter Range  29    5.423km     2 seg.s  55.0 110.0  337.5  25.0
+  AngularFilter Range  30    5.610km     2 seg.s  57.5 105.0  337.0  24.0
+  AngularFilter Range  31    5.797km     3 seg.s  67.0  86.0   13.0  16.0  337.0  24.0
+  AngularFilter Range  32    5.984km     3 seg.s  65.5  89.0   11.5  11.0  337.0  24.0
+  AngularFilter Range  33    6.171km     3 seg.s  66.5  87.0    9.5   5.0  336.5  23.0
+  AngularFilter Range  34    6.358km     4 seg.s  67.5  85.0   11.0   1.0    8.0   1.0  336.5  23.0
+  AngularFilter Range  35    6.545km     4 seg.s  69.0  82.0   26.0   1.0   10.0   2.0  336.5  23.0
+  AngularFilter Range  36    6.732km     2 seg.s  68.0  84.0  336.5  23.0
+  AngularFilter Range  37    6.919km     4 seg.s  69.5  81.0   26.5   1.0  341.0  12.0  329.0   8.0
+  AngularFilter Range  38    7.106km     7 seg.s  78.5  63.0   36.5  15.0   27.0   1.0  342.5   1.0
+  AngularFilter Range  39    7.293km     3 seg.s  77.5  65.0   35.5  13.0  329.0   8.0
+  AngularFilter Range  40    7.480km     4 seg.s 104.5  11.0   71.5  49.0   35.0  10.0  328.5   7.0
+  AngularFilter Range  41    7.667km     4 seg.s 104.5  11.0   69.0  46.0   35.5   7.0  327.5   5.0
+  AngularFilter Range  42    7.854km     4 seg.s 104.0  12.0   68.5  43.0   35.0   4.0  327.5   5.0
+  AngularFilter Range  43    8.041km     4 seg.s 103.5  13.0   85.0  10.0   62.5  31.0  327.5   5.0
+  AngularFilter Range  44    8.228km     5 seg.s 103.5  13.0   85.0   8.0   75.0   6.0   58.0  22.0
+  AngularFilter Range  45    8.415km     5 seg.s 103.0  14.0   84.0  10.0   74.0   4.0   56.0  26.0
+  AngularFilter Range  46    8.602km     6 seg.s 103.5  13.0   84.5   7.0   73.0   2.0   55.0  26.0
+  AngularFilter Range  47    8.789km     6 seg.s 103.5  13.0   84.0   4.0   75.5   1.0   53.0  28.0
+   Reading phase /Codar/SeaSonde/Configs/RadialConfigs/Phases.txt
+    Calculating Amplitude factors 
+    Reading Amp CrossSpectra Range            1
+    Reading Amp CrossSpectra Range            2
+    Reading Amp CrossSpectra Range            3
+    Reading Amp CrossSpectra Range            4
+    Reading Amp CrossSpectra Range            5
+    Reading Amp CrossSpectra Range            6
+    Reading Amp CrossSpectra Range            7
+    Reading Amp CrossSpectra Range            8
+    Reading Amp CrossSpectra Range            9
+    Reading Amp CrossSpectra Range           10
+  10212 V3 Points Flagged for first  10 range cells
+  calling Amp
+  return Amp: ava,avb   1.22398329       1.32768297    
+  calling Phase
+  return Phase: ph13,ph23  -13.5155048      -55.7809219    
+   Processing CrossSpectra for Radials...
+   Opened /Codar/SeaSonde/Data/Processing/CSD_XXXX_0000_00_00_0000.cs
+   Starting /Codar/SeaSonde/Data/Processing/RdlsXXXX_00_00_00_0000.rv
+   Starting /Codar/SeaSonde/Data/Processing/FirstOrderLimits.txt
+   Starting /Codar/SeaSonde/Data/Processing/IrCells.txt
+   Starting /Codar/SeaSonde/Data/Processing/CsMark.txt
+   Starting /Codar/SeaSonde/Data/Processing/NoiseFloor.txt
+    Reading CrossSpectra Range            1           1
+    Reading CrossSpectra Range            2           2
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1  0.374000013       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    669  667      357  355
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   669  667      357  355
+   Vectors            0           0
+    Iter              0           0
+    NumNeg         1019
+    nhd            1343
+iono     1    1
+dual/sing      0     0
+    Reading CrossSpectra Range            3           3
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1  0.560999990       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    643  657      357  355
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   643  657      357  355
+   Vectors           11           1
+    Iter           -999           0
+    NumNeg         1020
+    nhd            1343
+iono     1    1
+dual/sing     10     3
+    Reading CrossSpectra Range            4           4
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1  0.748000026       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    637  679      357  355
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   637  679      357  355
+   Vectors           33           1
+    Iter           -999           0
+    NumNeg         1019
+    nhd            1343
+iono     1    1
+dual/sing     41    11
+    Reading CrossSpectra Range            5           5
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1  0.935000002       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    637  681      325  369
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   637  681      325  369
+   Vectors           66           1
+    Iter           -999           0
+    NumNeg         1020
+    nhd            1343
+iono     1    1
+dual/sing     80    34
+    Reading CrossSpectra Range            6           6
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   1.12199998       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    633  675      325  377
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   633  675      325  377
+   Vectors           64           1
+    Iter           -999           0
+    NumNeg         1019
+    nhd            1343
+iono     1    1
+dual/sing     83    35
+    Reading CrossSpectra Range            7           7
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   1.30900002       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    633  669      317  371
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   633  669      317  371
+   Vectors           68           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     87    32
+    Reading CrossSpectra Range            8           8
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   1.49600005       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    637  667      323  373
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   637  667      323  373
+   Vectors           62           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     75    33
+    Reading CrossSpectra Range            9           9
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   1.68299997       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    635  667      315  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   635  667      315  361
+   Vectors           62           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     73    23
+    Reading CrossSpectra Range           10          10
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   1.87000000       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    633  669      315  359
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   633  669      315  359
+   Vectors           62           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     75    21
+    Reading CrossSpectra Range           11          11
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   2.05699992       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    633  671      313  357
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   633  671      313  357
+   Vectors           63           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     80    25
+    Reading CrossSpectra Range           12          12
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   2.24399996       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    631  679      309  355
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   631  679      309  355
+   Vectors           69           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     92    22
+    Reading CrossSpectra Range           13          13
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   2.43099999       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    621  677      309  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   621  677      309  361
+   Vectors           73           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    106    24
+    Reading CrossSpectra Range           14          14
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   2.61800003       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    621  677      303  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   621  677      303  361
+   Vectors           71           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    111    25
+    Reading CrossSpectra Range           15          15
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   2.80500007       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    627  673      305  359
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   627  673      305  359
+   Vectors           59           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    100    18
+    Reading CrossSpectra Range           16          16
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   2.99200010       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    617  679      309  359
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   617  679      309  359
+   Vectors           81           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    112    41
+    Reading CrossSpectra Range           17          17
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   3.17899990       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    621  675      311  359
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   621  675      311  359
+   Vectors           67           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     97    29
+    Reading CrossSpectra Range           18          18
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   3.36599994       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    629  673      311  353
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   629  673      311  353
+   Vectors           55           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     78    26
+    Reading CrossSpectra Range           19          19
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   3.55299997       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    631  665      311  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   631  665      311  361
+   Vectors           59           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     83    23
+    Reading CrossSpectra Range           20          20
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   3.74000001       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    629  665      311  347
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   629  665      311  347
+   Vectors           58           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     69    21
+    Reading CrossSpectra Range           21          21
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   3.92700005       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    623  669      311  351
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   623  669      311  351
+   Vectors           59           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     84    29
+    Reading CrossSpectra Range           22          22
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   4.11399984       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    623  675      313  357
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   623  675      313  357
+   Vectors           67           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing     94    30
+    Reading CrossSpectra Range           23          23
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   4.30100012       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    623  679      311  363
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   623  679      311  363
+   Vectors           73           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    104    37
+    Reading CrossSpectra Range           24          24
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   4.48799992       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    619  691      307  367
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   619  691      307  367
+   Vectors           70           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    127    31
+    Reading CrossSpectra Range           25          25
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   4.67500019       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    619  695      309  381
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   619  695      309  381
+   Vectors           88           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    144    49
+    Reading CrossSpectra Range           26          26
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   4.86199999       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    621  701      307  381
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   621  701      307  381
+   Vectors           83           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    148    49
+    Reading CrossSpectra Range           27          27
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   5.04899979       37.5000000       145.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    621  707      303  383
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   621  707      303  383
+   Vectors          104           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    163    69
+    Reading CrossSpectra Range           28          28
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           3   5.23600006       53.0000000       350.000000       336.000000       114.000000       1.00000000       22.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    615  707      307  385
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   615  707      307  385
+   Vectors           87           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    169    74
+    Reading CrossSpectra Range           29          29
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           2   5.42299986       55.0000000       337.500000       110.000000       25.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    613  713      311  375
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   613  713      311  375
+   Vectors           79           1
+    Iter              0           0
+    NumNeg         1020
+    nhd            1343
+iono     1    1
+dual/sing    161    61
+    Reading CrossSpectra Range           30          30
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           2   5.61000013       57.5000000       337.000000       105.000000       24.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    631  719      313  393
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   631  719      313  393
+   Vectors           90           1
+    Iter           -999           0
+    NumNeg         1023
+    nhd            1343
+iono     1    1
+dual/sing    166    87
+    Reading CrossSpectra Range           31          31
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           3   5.79699993       67.0000000       13.0000000       337.000000       86.0000000       16.0000000       24.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    607  719      317  393
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   607  719      317  393
+   Vectors           87           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    188    80
+    Reading CrossSpectra Range           32          32
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           3   5.98400021       65.5000000       11.5000000       337.000000       89.0000000       11.0000000       24.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    597  713      279  387
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   597  713      279  387
+   Vectors           93           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    210    92
+    Reading CrossSpectra Range           33          33
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           3   6.17100000       66.5000000       9.50000000       336.500000       87.0000000       5.00000000       23.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    599  711      311  377
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   599  711      311  377
+   Vectors           81           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    175    78
+    Reading CrossSpectra Range           34          34
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   6.35799980       67.5000000       11.0000000       8.00000000       336.500000       85.0000000       1.00000000       1.00000000       23.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    589  707      285  375
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   589  707      285  375
+   Vectors           74           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    194    79
+    Reading CrossSpectra Range           35          35
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   6.54500008       69.0000000       26.0000000       10.0000000       336.500000       82.0000000       1.00000000       2.00000000       23.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    591  695      289  367
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   591  695      289  367
+   Vectors           76           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    173    83
+    Reading CrossSpectra Range           36          36
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           2   6.73199987       68.0000000       336.500000       84.0000000       23.0000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    597  709      275  371
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   597  709      275  371
+   Vectors           63           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    195    95
+    Reading CrossSpectra Range           37          37
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   6.91900015       69.5000000       26.5000000       341.000000       329.000000       81.0000000       1.00000000       12.0000000       8.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    595  709      267  377
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   595  709      267  377
+   Vectors           63           1
+    Iter           -999           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    198    82
+    Reading CrossSpectra Range           38          38
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           7   7.10599995       78.5000000       36.5000000       27.0000000       342.500000       340.000000       334.000000       328.000000       63.0000000       15.0000000       1.00000000       1.00000000       1.00000000       1.00000000       6.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    591  701      267  383
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   591  701      267  383
+   Vectors           56           1
+    Iter              0           0
+    NumNeg         1024
+    nhd            1343
+iono     1    1
+dual/sing    207   102
+    Reading CrossSpectra Range           39          39
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           3   7.29300022       77.5000000       35.5000000       329.000000       65.0000000       13.0000000       8.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    591  703      197  397
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   591  703      197  397
+   Vectors           66           1
+    Iter              0           0
+    NumNeg         1016
+    nhd            1343
+iono     1    1
+dual/sing    301   102
+    Reading CrossSpectra Range           40          40
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   7.48000002       104.500000       71.5000000       35.0000000       328.500000       11.0000000       49.0000000       10.0000000       7.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    587  709      197  395
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   587  709      197  395
+   Vectors           57           1
+    Iter              0           0
+    NumNeg          995
+    nhd            1343
+iono     1    1
+dual/sing    286   121
+    Reading CrossSpectra Range           41          41
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   7.66699982       104.500000       69.0000000       35.5000000       327.500000       11.0000000       46.0000000       7.00000000       5.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    631  701      197  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   631  701      197  361
+   Vectors           52           1
+    Iter              0           0
+    NumNeg          968
+    nhd            1343
+iono     1    1
+dual/sing    218    79
+    Reading CrossSpectra Range           42          42
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   7.85400009       104.000000       68.5000000       35.0000000       327.500000       12.0000000       43.0000000       4.00000000       5.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    597  705      197  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   597  705      197  361
+   Vectors           46           1
+    Iter           -999           0
+    NumNeg          866
+    nhd            1343
+iono     1    1
+dual/sing    261    93
+    Reading CrossSpectra Range           43          43
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           4   8.04100037       103.500000       85.0000000       62.5000000       327.500000       13.0000000       10.0000000       31.0000000       5.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    599  711      197  361
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   599  711      197  361
+   Vectors           48           1
+    Iter           -999           0
+    NumNeg          871
+    nhd            1343
+iono     1    1
+dual/sing    245    92
+    Reading CrossSpectra Range           44          44
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           5   8.22799969       103.500000       85.0000000       75.0000000       58.0000000       327.500000       13.0000000       8.00000000       6.00000000       22.0000000       5.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    599  725      357  355
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   599  725      357  355
+   Vectors           28           1
+    Iter              0           0
+    NumNeg          947
+    nhd            1343
+iono     1    1
+dual/sing    117    56
+    Reading CrossSpectra Range           45          45
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           5   8.41499996       103.000000       84.0000000       74.0000000       56.0000000       327.000000       14.0000000       10.0000000       4.00000000       26.0000000       4.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    599  719      197  301
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   599  719      197  301
+   Vectors           46           1
+    Iter              0           0
+    NumNeg          990
+    nhd            1343
+iono     1    1
+dual/sing    202   102
+    Reading CrossSpectra Range           46          46
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           6   8.60200024       103.500000       84.5000000       73.0000000       55.0000000       11.5000000       326.500000       13.0000000       7.00000000       2.00000000       26.0000000       3.00000000       3.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    587  695      319  337
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   587  695      319  337
+   Vectors           25           1
+    Iter           -999           0
+    NumNeg         1004
+    nhd            1343
+iono     1    1
+dual/sing    113    68
+    Reading CrossSpectra Range           47          47
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           6   8.78899956       103.500000       84.0000000       75.5000000       53.0000000       12.0000000       326.000000       13.0000000       4.00000000       1.00000000       28.0000000       4.00000000       2.00000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    583  691      319  341
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   583  691      319  341
+   Vectors           19           1
+    Iter              0           0
+    NumNeg         1015
+    nhd            1343
+iono     1    1
+dual/sing    113    75
+    Reading CrossSpectra Range           48          48
+   Using Header First Order Options.
+ iFirstRangeCell,maxrangecell,bDopplerInterp           2          48           0
+ fAmplAver   6.00000000    
+ bPatternEndPoints,nPattMethod,nElliptical           0           1           0
+ nBragg,xorig,yorig           3   0.00000000       0.00000000    
+ anr,nh,rrh,thb,seg          47           1   0.00000000       90.0000000       360.000000    
+ nh2,rrh,thb,seg           1   2.24399996       37.5000000       145.000000    
+ curmax,nsm,nsec   100.000000               4           1
+ factor,fact2   100.000000       10.0000000    
+ noisefact           4   3.98000002    
+ ndelang           2
+ ionfact,nIonosphere,nForceAmp   1.00000000               0           0
+ ibr,balph          13   90.0000000    
+ zrc,delr  0.187036514      0.187036514    
+ eigrat,sigprat,diagrat   40.0000000       20.0000000       2.00000000    
+ amp1orig,amp2orig   1.00028455       1.00028312    
+ delfreq,xfreq   1.95312500E-03   46.5000000    
+ nhd        1343
+ npatt,mpatt         360           0
+ PH13,PH23,AVA,AVB  -12.1999998      -37.5999985       1.22398329       1.32768297    
+  FO In    593  703      311  339
+   Calc Radials... 
+   Done Calc Radials.
+  FO Out   593  703      311  339
+   Vectors           26           1
+    Iter           -999           0
+    NumNeg         1018
+    nhd            1343
+iono     1    1
+dual/sing    113    69
+   Writing /Codar/SeaSonde/Data/Processing/RadialDiagInfo.txt
+   Writing /Codar/SeaSonde/Data/Processing/RadialInfo.txt
+   Writing /Codar/SeaSonde/Data/Processing/AmpNew.txt
+   Writing /Codar/SeaSonde/Data/Processing/PhaseNew.txt
+  Finished.
+ Running RadialDiagnostic 12.1.2
+ Running RadialArchiver 12.1.0
+  Reading /Codar/SeaSonde/Configs/SiteDefinitions/SiteMap_TORA.smap/gshhs_TORA.b
+ Flagged Vectors overland in /Codar/SeaSonde/Configs/SiteDefinitions/SiteMap_TORA.smap/gshhs_TORA.b.
+  Writing LLUV RDLx_TORA_2024_04_05_0730.ruv
+ Running RadialSlider 12.2.0
+ Running SpectraArchiver 12.0.2
+viernes,  5 de abril de 2024, 07:43:24 GMT
+# Finished processing one cross spectra.
+
+# Waiting for next CrossSpectra to appear...
