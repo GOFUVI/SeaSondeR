@@ -16,7 +16,7 @@
 #' @return A SeaSondeRCS object with the specified header, data, and version.
 #'
 #'
-new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL, doppler_interpolation = 1L) {
+new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 
 
 
@@ -1031,10 +1031,9 @@ seasonder_computeBinsRadialVelocity <- function(seasonder_cs_obj, freq){
 
   bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
 
-
   k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj)/(2*pi)
 
-  v <- c((freq[freq < 0]  - bragg_freq[1])/(2*k0),(freq[freq >= 0]  - bragg_freq[2])/(2*k0))
+  v <- c((freq[freq <= 0]  - bragg_freq[1])/(2*k0),(freq[freq > 0]  - bragg_freq[2])/(2*k0))
 
 
   return(v)

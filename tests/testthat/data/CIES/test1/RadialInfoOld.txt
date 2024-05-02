@@ -1,0 +1,21 @@
+                  SpectraToRadial 11.6.2
+                    CenterFreqMHz   46.500000000
+                    DopplerFreqHz    0.001953125
+                  LimitMaxCurrent 100.000000 ! cm/s
+                    AverFirmssPts   4
+              FactorDownPeakLimit 100.00
+                   UseSecondOrder   1
+               FactorDownPeakNull  10.00
+                 FactorAboveNoise    4
+                 AmpAdjustFactors    1.0003    1.0003
+                    AmpCalculated    0.3586    0.3699
+               PhaseAdjustFactors  136.1  140.3
+                  PhaseCalculated  141.7  138.7
+                      MusicParams    40.00    20.00     2.00
+                   FirstOrderCalc   1
+                    PatternMethod   1
+             DopplerInterpolation   2
+                 RadialResolution   1.0
+                SpatialResolution   5.0
+                  SplitBraggRatio   0.00
+                     RadialSlider 12.2.0
