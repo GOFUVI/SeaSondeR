@@ -13,6 +13,42 @@ test_that("test 1 works with ideals",{
 
    attr(seasonder_apm_obj,"AntennaBearing") <- 13.0
 
+
+
+phasec1 <-    readLines("tests/testthat/data/TORA/Phases.txt") %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 1) %>% as.numeric()
+phasec2 <-    readLines("tests/testthat/data/TORA/Phases.txt") %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 2) %>% as.numeric()
+
+amp1 <-  1.22398329
+
+amp2 <-  1.32768297
+
+# amp1 <-    seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(1)
+#
+# amp2 <-   seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(2)
+
+
+# amp1 <- seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(1)
+#
+# amp2 <- seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(2)
+
+   seasonder_apm_obj[1,] <- seasonder_apm_obj[1,]*amp1*exp(1i*phasec1*pi/180)
+
+   seasonder_apm_obj[2,] <- seasonder_apm_obj[2,]*amp2*exp(1i*phasec2*pi/180)
+
+   #     smoothing <- 20
+   #
+   #     seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[1,]),before = smoothing, na_rm = T), imaginary =
+   # slider::slide_mean(pracma::Imag(seasonder_apm_obj[1,]),before = smoothing, na_rm = T))
+   #
+   #     seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[2,]),before = smoothing, na_rm = T), imaginary =
+   #                                        slider::slide_mean(pracma::Imag(seasonder_apm_obj[2,]),before = smoothing, na_rm = T))
+
+
+   plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[1,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
+
+    plot(attr(seasonder_apm_obj, "BEAR",exact = T),Mod(seasonder_apm_obj[1,]),xlim = c(-180,180))
+
+
   FOS <-   list(nsm = 2,
                 fdown = 10^(10/10),
                 flim = 10^(20/10),
@@ -25,26 +61,30 @@ test_that("test 1 works with ideals",{
   )
 
 
-  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj)
 
 
 
-  seasonder_csd_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSD_XXXX_0000_00_00_0000.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
+  # seasonder_csd_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSD_XXXX_0000_00_00_0000.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
 
 
   # seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
 
-  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR()
+  # seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_MUSIC_parameters(c(40, 20, 4))
 
-  orig_data <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj)
-  interp_data <- seasonder_getSeaSondeRCS_MUSIC_interpolated_data(seasonder_cs_obj)
-  SSA_orig <- orig_data$SSA3
-  SSA_interp <- interp_data$SSA3
-csd_data <- seasonder_getSeaSondeRCS_data(seasonder_csd_obj)
-SSA_csd <- csd_data$SSA3
 
-x <- (SSA_csd-SSA_interp)
-which(abs(x) > 1e-12,arr.ind = T)
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+#   orig_data <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj)
+#   interp_data <- seasonder_getSeaSondeRCS_MUSIC_interpolated_data(seasonder_cs_obj)
+#   SSA_orig <- orig_data$SSA3
+#   SSA_interp <- interp_data$SSA3
+# csd_data <- seasonder_getSeaSondeRCS_data(seasonder_csd_obj)
+# SSA_csd <- csd_data$SSA3
+#
+# x <- (SSA_csd-SSA_interp)
+# which(abs(x) > 1e-12,arr.ind = T)
 
   MUSIC <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
   #
@@ -54,12 +94,38 @@ which(abs(x) > 1e-12,arr.ind = T)
 
   # MUSIC %>% dplyr::filter(range_cell == 20) %$% table(retained_solution)
 
-  test <- seasonder_getSeaSondeRCSShortTimeRadials(seasonder_cs_obj)
-
-  test %<>% dplyr::filter((range_cell >= 3 & range_cell <= 20) & (bearing >= 330 | bearing <= 110))
 
 
 
+
+
+  # ruv <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 52, header = F)
+  #
+  # header <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 50, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+  #
+  # header[14] <- paste(header[14],header[15])
+  #
+  # header <- header[-15]
+  #
+  # header[15] <- paste(header[15],header[16])
+  #
+  # header <- header[-16]
+  #
+  # header[3] <- paste(header[3],header[4])
+  #
+  # header <- header[-4]
+  #
+  # header[4] <- paste(header[4],header[5])
+  #
+  # header <- header[-5]
+  #
+  #
+  # header2 <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 51, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+  #
+  #
+  # names(ruv) <- paste(header,header2)
+  #
+  # test_vectors <- ruv %>% dplyr::rename(range_cell = `Spectra RngCell`, bearing = `Bearing (True)`,maxv = `Velocity Maximum`, minv = `Velocity Minimum`)
 
 
   ruv <- data.table::fread("tests/testthat/data/TORA/test1/RdliXXXX_00_00_00_0000sr.rv",skip = 3, header = F)
@@ -69,25 +135,59 @@ which(abs(x) > 1e-12,arr.ind = T)
 
   names(ruv) <- c("dx", "dy", "u", "v", "bearing", "radial_v", "espc", "maxv", "minv", "range_cell", "etmp", "nvel", "ntmp", "nspc")
 
-  test_vectors <- ruv %>% dplyr::filter(nvel ==1 & nspc == 1)
+  test_vectors <- ruv
 
-  test_vectors %<>% dplyr::select(range_cell,bearing, radial_v)
-
-  bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
+  test_vectors %<>% dplyr::select(range_cell,bearing, maxv, minv) %>% tidyr::pivot_longer(cols = c(maxv, minv), names_to = "drop", values_to = "radial_v") %>% dplyr::select(-drop) %>% dplyr::distinct()
 
 
-  k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj)/(2*pi)
 
-  test_vectors %<>% dplyr::mutate(freq = dplyr::case_when(radial_v < 0 ~ radial_v/100 * 2*k0+ bragg_freq[1], TRUE ~ radial_v/100 * 2*k0 +bragg_freq[2]))
-
-  test_vectors %<>% dplyr::mutate(doppler_bin = seasonder_MUSIC_DopplerFreq2Bins(seasonder_cs_obj,freq))
 
   test_vectors %<>% dplyr::arrange(range_cell, radial_v)
 
-  rc <- 10
-  db <- 1381
+  # test_vectors$radial_v[order(abs(test_vectors$radial_v))]
+  #
+  # MUSIC$radial_v[order(abs(MUSIC$radial_v))]
+  #
+  # bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
+  #
+  # k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj)/(2*pi)
+  #
+  # freq <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_obj)
+  #
+  # v <- c((freq[freq < 0]  - bragg_freq[1])/(2*k0),(freq[freq >= 0]  - bragg_freq[2])/(2*k0))
+  #
+  # MUSIC$radial_v %>% abs() %>% sort() %>% unique() %>%  magrittr::extract(1:2) %>% diff()
+  #
+  music_v <- MUSIC %>% dplyr::pull("radial_v") %>% unique()
+#
+#   test_vectors$radial_v %>% abs() %>% sort() %>% unique() %>%  magrittr::extract(1:2) %>% diff()
+
+  closest_vel <- test_vectors %>% dplyr::select(range_cell, radial_v) %>% dplyr::distinct() %>% dplyr::group_by(range_cell) %>% dplyr::mutate(music_v = purrr::map_dbl(radial_v,\(x) music_v[which.min(abs((x-music_v*100)))])) %>% dplyr::mutate(music_v = music_v, radial_v = radial_v)%>% dplyr::ungroup() %>% dplyr::arrange(range_cell, radial_v) %>% dplyr::mutate(d = abs(music_v*100 - radial_v)) %>% dplyr::arrange(range_cell, radial_v)
+
+
+  test_vectors %<>% dplyr::left_join(closest_vel, by = c("range_cell","radial_v"))
+
+  test_vectors %<>% dplyr::left_join(MUSIC, by = c("music_v" = "radial_v", "range_cell" = "range_cell"))
+
+  test_vectors %<>% dplyr::mutate(music_bearing = purrr::map(DOA, "bearing" )) %>% tidyr::unnest(music_bearing) %>% dplyr::arrange(range_cell,doppler_bin) %>% dplyr::mutate(music_bearing = music_bearing %% 360)
+
+
+  inspect <- test_vectors %>% dplyr::select(range_cell, doppler_bin, radial_v,music_v, bearing, music_bearing) %>% dplyr::group_by(range_cell, doppler_bin, bearing) %>% dplyr::filter(music_bearing == music_bearing[which.min(abs(bearing-music_bearing))]) %>% dplyr::ungroup() %>% dplyr::arrange(range_cell, doppler_bin) %>% dplyr::mutate(music_bearing = (music_bearing ) %% 360) %>% dplyr::group_by(range_cell, doppler_bin, music_bearing)  %>% dplyr::mutate( bearing  = dplyr::case_when(bearing >200 ~ bearing - 360, TRUE ~ bearing), music_bearing  = dplyr::case_when(music_bearing >200 ~ music_bearing - 360, TRUE ~ music_bearing)) %>% dplyr::filter(bearing == bearing[which.min(abs(bearing - music_bearing))])
+
+
+  ggplot2::ggplot(inspect, ggplot2::aes(x= music_bearing , y = bearing )) + ggplot2::geom_point(alpha = 0.2) + ggplot2::geom_smooth(method = "lm") + ggplot2::geom_abline(slope = 1, intercept = 0, color = "red")  + ggplot2::scale_x_continuous(limits = c(-180, 180),n.breaks = 12,expand = c(0,0),minor_breaks = NULL)  + ggplot2::scale_y_continuous(limits = c(-180, 180),n.breaks = 12, expand = c(0,0),minor_breaks = NULL)
+
+
+
+  summary(lm(bearing ~ music_bearing, inspect))
+
+
+  rc <- 3
+  db <- 322
 
   MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% View()
+
+  MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% dplyr::pull("cov") %>% magrittr::extract2(1)
 
   MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% dplyr::pull("eigen") %>% magrittr::extract2(1)
 
@@ -95,14 +195,17 @@ which(abs(x) > 1e-12,arr.ind = T)
 
 
   distances <- MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% dplyr::pull("distances") %>% magrittr::extract2(1)
-  rev_dual_solution_dist = pracma::Real(1/distances['dual',,drop = TRUE])
+  rev_dual_solution_dist = pracma::Real(1/distances['single',,drop = TRUE])
 
   pracma::findpeaks(rev_dual_solution_dist,npeaks = 2, sortstr = TRUE)
 
-  plot((attr(distances,"bearing")+13) %% 360,rev_dual_solution_dist)
+  plot((attr(distances,"bearing")) %% 360,rev_dual_solution_dist)
 
   ruv %<>% dplyr::filter(range_cell < 20)
 
+  test <- seasonder_getSeaSondeRCSShortTimeRadials(seasonder_cs_obj)
+
+  test %<>% dplyr::filter((range_cell >= 3 & range_cell <= 20))
 
 
 plot_radials(ruv$range_cell, ruv$bearing,ruv$radial_v)
@@ -137,7 +240,106 @@ plot_radials(test$range_cell,test$bearing,test$radial_v*100)
 })
 
     test_that("test 1 works with measured",{
+
+
+      ideal_seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"))
+
+      attr(ideal_seasonder_apm_obj,"AntennaBearing") <- 13.0
+
+
+
+      phasec1 <-    readLines("tests/testthat/data/TORA/Phases.txt") %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 1) %>% as.numeric()
+      phasec2 <-     readLines("tests/testthat/data/TORA/Phases.txt") %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 2) %>% as.numeric()
+
+
+      amp1 <-  1 #1.4163 #  seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(1)
+
+      amp2 <-  1 # 1.1232 # seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(2)
+
+      # amp1 <- seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(1)
+      #
+      # amp2 <- seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(2)
+
+      ideal_seasonder_apm_obj[1,] <- ideal_seasonder_apm_obj[1,]*amp1*exp(1i*phasec1)
+
+      ideal_seasonder_apm_obj[2,] <- ideal_seasonder_apm_obj[2,]*amp2*exp(1i*phasec2)
+
+
       seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/MeasPattern.txt"))
+
+
+      phasec1 <-   0# -13.50 #readLines("tests/testthat/data/TORA/Phases.txt") %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 1) %>% as.numeric()
+      phasec2 <-  0#  -55.80 # readLines("tests/testthat/data/TORA/Phases.txt") %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 2) %>% as.numeric()
+
+      amp1 <-  1.4163 #  seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(1)
+
+      amp2 <-  1.1232 # seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(2)
+
+
+      seasonder_apm_obj[1,] <- seasonder_apm_obj[1,]*amp1*exp(1i*phasec1)
+
+      seasonder_apm_obj[2,] <- seasonder_apm_obj[2,]*amp2*exp(1i*phasec2)
+
+
+      trimming <- 1
+
+      attrib <- attributes(seasonder_apm_obj)
+
+      trimmed_seasonder_apm_obj <-   seasonder_apm_obj[,-c(1:(trimming),(dim(seasonder_apm_obj)[2]-trimming)+1:dim(seasonder_apm_obj)[2])]
+
+      attrib[["dim"]] <- dim(trimmed_seasonder_apm_obj)
+
+      attrib[["dimnames"]][[2]] <- attrib[["dimnames"]][[2]][-c(1:(trimming),(length(attrib[["dimnames"]][[2]])-trimming+1):length(attrib[["dimnames"]][[2]]))]
+
+      new_bear <-  attrib[["BEAR"]]
+
+      new_bear <- new_bear[-c(1:(trimming),(length(new_bear)-trimming+1):length(new_bear))]
+
+      attrib[["BEAR"]] <- new_bear
+
+      attributes(trimmed_seasonder_apm_obj) <- attrib
+
+      smoothed_seasonder_apm_obj <- trimmed_seasonder_apm_obj
+
+      smoothing <- 20
+
+      smoothed_seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(smoothed_seasonder_apm_obj[1,]),before = smoothing, na_rm = T), imaginary =
+                                         slider::slide_mean(pracma::Imag(smoothed_seasonder_apm_obj[1,]),before = smoothing, na_rm = T))
+
+      smoothed_seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(smoothed_seasonder_apm_obj[2,]),before = smoothing, na_rm = T), imaginary =
+                                         slider::slide_mean(pracma::Imag(smoothed_seasonder_apm_obj[2,]),before = smoothing, na_rm = T))
+
+      # combined_apm_obj <- seasonder_apm_obj
+      # combined_apm_obj <- trimmed_seasonder_apm_obj
+combined_apm_obj <- smoothed_seasonder_apm_obj
+      # combined_apm_obj <- ideal_seasonder_apm_obj
+
+
+
+# combined_apm_obj[,as.character(as.integer(dimnames(seasonder_apm_obj)[[2]]))] <- seasonder_apm_obj
+
+plot(attr(combined_apm_obj, "BEAR",exact = T),Arg(combined_apm_obj[1,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
+
+plot(attr(combined_apm_obj, "BEAR",exact = T),Mod(combined_apm_obj[1,]),xlim = c(-180,180))
+
+
+plot(attr(combined_apm_obj, "BEAR",exact = T),Arg(combined_apm_obj[2,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
+
+plot(attr(combined_apm_obj, "BEAR",exact = T),Mod(combined_apm_obj[2,]),xlim = c(-180,180))
+
+ggplot2::ggplot() + ggplot2::coord_polar(theta = "x", start = 0) + ggplot2::xlim(0,360) +
+  ggplot2::geom_point(data=data.frame(theta = attr(ideal_seasonder_apm_obj, "BEAR",exact = T) %% 360, mag = Mod(ideal_seasonder_apm_obj[1,])),  ggplot2::aes(x = theta, y = mag), color = "black") +
+  ggplot2::geom_point(data=data.frame(theta = attr(ideal_seasonder_apm_obj, "BEAR",exact = T) %% 360, mag = Mod(ideal_seasonder_apm_obj[2,])),  ggplot2::aes(x = theta, y = mag), color = "black") +
+
+  ggplot2::geom_point(data=data.frame(theta = attr(combined_apm_obj, "BEAR",exact = T) %% 360, mag = Mod(combined_apm_obj[1,])),  ggplot2::aes(x = theta, y = mag), color = "red") +
+  ggplot2::geom_point(data=data.frame(theta = attr(combined_apm_obj, "BEAR",exact = T) %% 360, mag = Mod(combined_apm_obj[2,])),  ggplot2::aes(x = theta, y = mag), color = "blue") +
+  ggplot2::scale_x_continuous(n.breaks = 18)
+
+
+
+
+
+
 
 
 
@@ -153,14 +355,32 @@ plot_radials(test$range_cell,test$bearing,test$radial_v*100)
       )
 
 
-      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = combined_apm_obj)
+
+
+
+      # seasonder_csd_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSD_XXXX_0000_00_00_0000.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
 
 
       # seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
 
-      seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR()
 
-      # MUSIC <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
+
+
+      seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+
+      #   orig_data <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj)
+      #   interp_data <- seasonder_getSeaSondeRCS_MUSIC_interpolated_data(seasonder_cs_obj)
+      #   SSA_orig <- orig_data$SSA3
+      #   SSA_interp <- interp_data$SSA3
+      # csd_data <- seasonder_getSeaSondeRCS_data(seasonder_csd_obj)
+      # SSA_csd <- csd_data$SSA3
+      #
+      # x <- (SSA_csd-SSA_interp)
+      # which(abs(x) > 1e-12,arr.ind = T)
+
+      MUSIC <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
       #
       # test1txt <- readLines(here::here("tests/testthat/data/TORA/test1/test1.txt"))
 
@@ -168,52 +388,362 @@ plot_radials(test$range_cell,test$bearing,test$radial_v*100)
 
       # MUSIC %>% dplyr::filter(range_cell == 20) %$% table(retained_solution)
 
-      test <- seasonder_getSeaSondeRCSShortTimeRadials(seasonder_cs_obj)
-
-      test %<>% dplyr::filter(range_cell >= 3 & range_cell <= 48)
-
-      to.plot <- test %>% dplyr::select(range_cell,bearing)
 
 
 
 
-      ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing )) +
 
-        ggplot2::geom_point(alpha = 0.5) +  ggplot2::coord_polar()
-
+      # ruv <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 52, header = F)
+      #
+      # header <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 50, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+      #
+      # header[14] <- paste(header[14],header[15])
+      #
+      # header <- header[-15]
+      #
+      # header[15] <- paste(header[15],header[16])
+      #
+      # header <- header[-16]
+      #
+      # header[3] <- paste(header[3],header[4])
+      #
+      # header <- header[-4]
+      #
+      # header[4] <- paste(header[4],header[5])
+      #
+      # header <- header[-5]
+      #
+      #
+      # header2 <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 51, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+      #
+      #
+      # names(ruv) <- paste(header,header2)
+      #
+      # test_vectors <- ruv %>% dplyr::rename(range_cell = `Spectra RngCell`, bearing = `Bearing (True)`,maxv = `Velocity Maximum`, minv = `Velocity Minimum`)
 
 
       ruv <- data.table::fread("tests/testthat/data/TORA/test1/RdlmXXXX_00_00_00_0000sr.rv",skip = 3, header = F)
+
+      iruv <- data.table::fread("tests/testthat/data/TORA/test1/RdliXXXX_00_00_00_0000sr.rv",skip = 3, header = F)
+
 
 
 
 
       names(ruv) <- c("dx", "dy", "u", "v", "bearing", "radial_v", "espc", "maxv", "minv", "range_cell", "etmp", "nvel", "ntmp", "nspc")
 
+      names(iruv) <- c("dx", "dy", "u", "v", "ibearing", "radial_v", "espc", "maxv", "minv", "range_cell", "etmp", "nvel", "ntmp", "nspc")
 
-      ruv_vels <- c(ruv$maxv,ruv$minv) %>% unique() %>% sort()
+      x <- dplyr::full_join(ruv,iruv, by = c("radial_v","range_cell")) %>% dplyr::select(range_cell, radial_v, bearing, ibearing)
 
-      test_vels <- (MUSIC$radial_v*100) %>% unique() %>% sort() %>% round(3)
+      test_vectors <- ruv
+
+      test_vectors %<>% dplyr::select(range_cell,bearing, maxv, minv) %>% tidyr::pivot_longer(cols = c(maxv, minv), names_to = "drop", values_to = "radial_v") %>% dplyr::select(-drop) %>% dplyr::distinct()
 
 
-      dplyr::intersect(ruv_vels, test_vels)
+      # itest_vectors <- iruv
+      #
+      # itest_vectors %<>% dplyr::select(range_cell,bearing, maxv, minv) %>% tidyr::pivot_longer(cols = c(maxv, minv), names_to = "drop", values_to = "radial_v") %>% dplyr::select(-drop) %>% dplyr::distinct()
+      #
+      # x <- dplyr::full_join(test_vectors,itest_vectors, by = c("radial_v","range_cell")) %>% dplyr::select(range_cell, radial_v, bearing, ibearing)
 
-      to.plot_ruv <- ruv %>% dplyr::select(range_cell = `Spectra RngCell`,bearing = `Bearing (True)`, radial_v =`Velocity (cm/s)`)
+      test_vectors %<>% dplyr::arrange(range_cell, radial_v)
 
-      plot_radials(to.plot_ruv$range_cell, to.plot_ruv$bearing,to.plot_ruv$radial_v)
+      # test_vectors$radial_v[order(abs(test_vectors$radial_v))]
+      #
+      # MUSIC$radial_v[order(abs(MUSIC$radial_v))]
+      #
+      # bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
+      #
+      # k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj)/(2*pi)
+      #
+      # freq <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_obj)
+      #
+      # v <- c((freq[freq < 0]  - bragg_freq[1])/(2*k0),(freq[freq >= 0]  - bragg_freq[2])/(2*k0))
+      #
+      # MUSIC$radial_v %>% abs() %>% sort() %>% unique() %>%  magrittr::extract(1:2) %>% diff()
+      #
+      music_v <- MUSIC %>% dplyr::pull("radial_v") %>% unique()
+      #
+      #   test_vectors$radial_v %>% abs() %>% sort() %>% unique() %>%  magrittr::extract(1:2) %>% diff()
+
+      closest_vel <- test_vectors %>% dplyr::select(range_cell, radial_v) %>% dplyr::distinct() %>% dplyr::group_by(range_cell) %>% dplyr::mutate(music_v = purrr::map_dbl(radial_v,\(x) music_v[which.min(abs((x-music_v*100)))])) %>% dplyr::mutate(music_v = music_v, radial_v = radial_v)%>% dplyr::ungroup() %>% dplyr::arrange(range_cell, radial_v) %>% dplyr::mutate(d = abs(music_v*100 - radial_v)) %>% dplyr::arrange(range_cell, radial_v)
+
+
+      test_vectors %<>% dplyr::left_join(closest_vel, by = c("range_cell","radial_v"))
+
+      test_vectors %<>% dplyr::left_join(MUSIC, by = c("music_v" = "radial_v", "range_cell" = "range_cell"))
+
+      test_vectors %<>% dplyr::mutate(music_bearing = purrr::map(DOA, "bearing" )) %>% tidyr::unnest(music_bearing) %>% dplyr::arrange(range_cell,doppler_bin) %>% dplyr::mutate(music_bearing = music_bearing %% 360)
+
+
+      inspect <- test_vectors %>% dplyr::select(range_cell, doppler_bin, radial_v,music_v, bearing, music_bearing) %>% dplyr::group_by(range_cell, doppler_bin, bearing) %>% dplyr::filter(music_bearing == music_bearing[which.min(abs(bearing-music_bearing))]) %>% dplyr::ungroup() %>% dplyr::arrange(range_cell, doppler_bin) %>% dplyr::mutate(music_bearing = (music_bearing ) %% 360) %>% dplyr::group_by(range_cell, doppler_bin, music_bearing)  %>% dplyr::mutate( bearing  = dplyr::case_when(bearing >200 ~ bearing - 360, TRUE ~ bearing), music_bearing  = dplyr::case_when(music_bearing >200 ~ music_bearing - 360, TRUE ~ music_bearing)) %>% dplyr::filter(bearing == bearing[which.min(abs(bearing - music_bearing))])
+
+
+      ggplot2::ggplot(inspect, ggplot2::aes(x= music_bearing , y = bearing )) + ggplot2::geom_point(alpha = 0.2) + ggplot2::geom_smooth(method = "lm") + ggplot2::geom_abline(slope = 1, intercept = 0, color = "red") + ggplot2::scale_x_continuous(limits = c(-30, 120),n.breaks = 15,expand = c(0,0),minor_breaks = NULL)  + ggplot2::scale_y_continuous(limits = c(-60, 120),n.breaks = 18, expand = c(0,0),minor_breaks = NULL)
+
+
+
+      summary(lm(bearing ~ music_bearing, inspect))
+
+
+      rc <- 3
+      db <- 322
+
+      MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% View()
+
+      MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% dplyr::pull("cov") %>% magrittr::extract2(1)
+
+      MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% dplyr::pull("eigen") %>% magrittr::extract2(1)
+
+      MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% dplyr::pull("distances") %>% magrittr::extract2(1)
+
+      MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% dplyr::pull("DOA_solutions") %>% magrittr::extract2(1)
+
+
+      distances <- MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% dplyr::pull("distances") %>% magrittr::extract2(1)
+      rev_dual_solution_dist = pracma::Real(1/distances['dual',,drop = TRUE])
+
+      pracma::findpeaks(rev_dual_solution_dist,npeaks = 2, sortstr = TRUE)
+
+      plot((attr(distances,"bearing")) %% 360,rev_dual_solution_dist)
+
+      plot(rev_dual_solution_dist)
+
+      ruv %<>% dplyr::filter(range_cell < 20)
+
+      test <- seasonder_getSeaSondeRCSShortTimeRadials(seasonder_cs_obj)
+
+      test %<>% dplyr::filter((range_cell >= 3 & range_cell <= 20))
+
+
+      plot_radials(ruv$range_cell, ruv$bearing,ruv$radial_v)
+
+      plot_radials(test$range_cell,test$bearing,test$radial_v*100)
+
+
+### Amplitudes ####
+
+
+      to.plot <- MUSIC %>% dplyr::filter(purrr::map_lgl(DOA, \(x) all(!is.na(pracma::Real(x$P))))) %>% dplyr::mutate(bearing = purrr::map(DOA, \(x) x$bearing), P = purrr::map(DOA, \(x) diag(x$P) )) %>% dplyr::select(range, bearing,P) %>% tidyr::unnest(c(bearing, P)) %>% dplyr::mutate(bearing = (bearing * -1) %% 360, P = 10*log10(pracma::Real(P)))
+
+to.plot %>% ggplot2::ggplot(ggplot2::aes(x=range, y = bearing ,color = P))+ ggplot2::geom_point() + ggplot2::coord_polar(theta = "y") + ggplot2::ylim(c(0,360))
+
+to.plot %>% dplyr::group_by(range) %>% dplyr::summarise(P = mean(P)) %>% ggplot2::ggplot(ggplot2::aes(x=range, y= P)) + ggplot2::geom_point()
+
+
+    })
+
+    test_that("CIES test 1 works with ideals",{
+      seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/CIES/IdealPattern.txt"))
+
+      attr(seasonder_apm_obj,"AntennaBearing") <- 128
+
+
+
+      phasec1 <-    readLines("tests/testthat/data/CIES/Phases.txt") %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 1) %>% as.numeric()
+      phasec2 <-    readLines("tests/testthat/data/CIES/Phases.txt") %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 2) %>% as.numeric()
+
+      # amp1 <-  0.358626842 #  seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(1)
+      #
+      # amp2 <-  0.369909227 # seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(2)
+
+
+      amp1 <-    seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(1)
+
+      amp2 <-   seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(2)
+
+      # amp1 <- seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(1)
+      #
+      # amp2 <- seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(2)
+
+      seasonder_apm_obj[1,] <- seasonder_apm_obj[1,]*amp1*exp(1i*phasec1*pi/180)
+
+      seasonder_apm_obj[2,] <- seasonder_apm_obj[2,]*amp2*exp(1i*phasec2*pi/180)
+
+      #     smoothing <- 20
+      #
+      #     seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[1,]),before = smoothing, na_rm = T), imaginary =
+      # slider::slide_mean(pracma::Imag(seasonder_apm_obj[1,]),before = smoothing, na_rm = T))
+      #
+      #     seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[2,]),before = smoothing, na_rm = T), imaginary =
+      #                                        slider::slide_mean(pracma::Imag(seasonder_apm_obj[2,]),before = smoothing, na_rm = T))
+
+
+      plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[1,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
+
+      plot(attr(seasonder_apm_obj, "BEAR",exact = T),Mod(seasonder_apm_obj[1,]),xlim = c(-180,180))
+
+
+      FOS <-   list(nsm = 2,
+                    fdown = 10^(10/10),
+                    flim = 10^(20/10),
+                    noisefact = 10^(6/10),
+                    currmax = 1,
+                    reject_distant_bragg = TRUE, #  Default is to apply this test
+                    reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+
+                    reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
+      )
+
+
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CIES/test1/CSS_CIES_24_04_18_0530.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj)
+
+
+
+      # seasonder_csd_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSD_XXXX_0000_00_00_0000.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
+
+
+      # seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
+
+      # seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_MUSIC_parameters(c(40, 20, 4))
+
+
+
+      seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+      #   orig_data <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj)
+      #   interp_data <- seasonder_getSeaSondeRCS_MUSIC_interpolated_data(seasonder_cs_obj)
+      #   SSA_orig <- orig_data$SSA3
+      #   SSA_interp <- interp_data$SSA3
+      # csd_data <- seasonder_getSeaSondeRCS_data(seasonder_csd_obj)
+      # SSA_csd <- csd_data$SSA3
+      #
+      # x <- (SSA_csd-SSA_interp)
+      # which(abs(x) > 1e-12,arr.ind = T)
+
+      MUSIC <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
+      #
+      # test1txt <- readLines(here::here("tests/testthat/data/TORA/test1/test1.txt"))
+
+      # test1txt[grepl("Reading CrossSpectra Range|Vectors|dual/sing",test1txt)]
+
+      # MUSIC %>% dplyr::filter(range_cell == 20) %$% table(retained_solution)
+
+
+
+
+
+
+      # ruv <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 52, header = F)
+      #
+      # header <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 50, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+      #
+      # header[14] <- paste(header[14],header[15])
+      #
+      # header <- header[-15]
+      #
+      # header[15] <- paste(header[15],header[16])
+      #
+      # header <- header[-16]
+      #
+      # header[3] <- paste(header[3],header[4])
+      #
+      # header <- header[-4]
+      #
+      # header[4] <- paste(header[4],header[5])
+      #
+      # header <- header[-5]
+      #
+      #
+      # header2 <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 51, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+      #
+      #
+      # names(ruv) <- paste(header,header2)
+      #
+      # test_vectors <- ruv %>% dplyr::rename(range_cell = `Spectra RngCell`, bearing = `Bearing (True)`,maxv = `Velocity Maximum`, minv = `Velocity Minimum`)
+
+
+      ruv <- data.table::fread("tests/testthat/data/CIES/test1/RdliXXXX_00_00_00_0000sr.rv",skip = 3, header = F)
+
+
+
+
+      names(ruv) <- c("dx", "dy", "u", "v", "bearing", "radial_v", "espc", "maxv", "minv", "range_cell", "etmp", "nvel", "ntmp", "nspc")
+
+      test_vectors <- ruv
+
+      test_vectors %<>% dplyr::select(range_cell,bearing, maxv, minv) %>% tidyr::pivot_longer(cols = c(maxv, minv), names_to = "drop", values_to = "radial_v") %>% dplyr::select(-drop) %>% dplyr::distinct()
+
+
+
+
+      test_vectors %<>% dplyr::arrange(range_cell, radial_v)
+
+      # test_vectors$radial_v[order(abs(test_vectors$radial_v))]
+      #
+      # MUSIC$radial_v[order(abs(MUSIC$radial_v))]
+      #
+      # bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
+      #
+      # k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj)/(2*pi)
+      #
+      # freq <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_obj)
+      #
+      # v <- c((freq[freq < 0]  - bragg_freq[1])/(2*k0),(freq[freq >= 0]  - bragg_freq[2])/(2*k0))
+      #
+      # MUSIC$radial_v %>% abs() %>% sort() %>% unique() %>%  magrittr::extract(1:2) %>% diff()
+      #
+      music_v <- MUSIC %>% dplyr::pull("radial_v") %>% unique()
+      #
+      #   test_vectors$radial_v %>% abs() %>% sort() %>% unique() %>%  magrittr::extract(1:2) %>% diff()
+
+      closest_vel <- test_vectors %>% dplyr::select(range_cell, radial_v) %>% dplyr::distinct() %>% dplyr::group_by(range_cell) %>% dplyr::mutate(music_v = purrr::map_dbl(radial_v,\(x) music_v[which.min(abs((x-music_v*100)))])) %>% dplyr::mutate(music_v = music_v, radial_v = radial_v)%>% dplyr::ungroup() %>% dplyr::arrange(range_cell, radial_v) %>% dplyr::mutate(d = abs(music_v*100 - radial_v)) %>% dplyr::arrange(range_cell, radial_v)
+
+
+      test_vectors %<>% dplyr::left_join(closest_vel, by = c("range_cell","radial_v"))
+
+      test_vectors %<>% dplyr::left_join(MUSIC, by = c("music_v" = "radial_v", "range_cell" = "range_cell"))
+
+      test_vectors %<>% dplyr::mutate(music_bearing = purrr::map(DOA, "bearing" )) %>% tidyr::unnest(music_bearing) %>% dplyr::arrange(range_cell,doppler_bin) %>% dplyr::mutate(music_bearing = music_bearing %% 360)
+
+
+      inspect <- test_vectors %>% dplyr::select(range_cell, doppler_bin, radial_v,music_v, bearing, music_bearing) %>% dplyr::group_by(range_cell, doppler_bin, bearing) %>% dplyr::filter(music_bearing == music_bearing[which.min(abs(bearing-music_bearing))]) %>% dplyr::ungroup() %>% dplyr::arrange(range_cell, doppler_bin) %>% dplyr::mutate(music_bearing = (music_bearing  ) %% 360, bearing = (bearing ) %% 360) %>% dplyr::group_by(range_cell, doppler_bin, music_bearing) %>% dplyr::filter(bearing == bearing[which.min(abs(bearing - music_bearing))]) # %>% dplyr::mutate( bearing  = dplyr::case_when(bearing >200 ~ bearing - 360, TRUE ~ bearing), music_bearing  = dplyr::case_when(music_bearing >200 ~ music_bearing - 360, TRUE ~ music_bearing))
+
+
+      ggplot2::ggplot(inspect, ggplot2::aes(x= music_bearing , y = bearing )) + ggplot2::geom_point(alpha = 0.2) + ggplot2::geom_smooth(method = "lm") + ggplot2::geom_abline(slope = 1, intercept = 0, color = "red") #+ ggplot2::scale_x_continuous(limits = c(-60, 180),n.breaks = 12,expand = c(0,0),minor_breaks = NULL)  + ggplot2::scale_y_continuous(limits = c(-60, 180),n.breaks = 12, expand = c(0,0),minor_breaks = NULL)
+
+
+
+      summary(lm(bearing ~ music_bearing, inspect))
+
+
+      rc <- 3
+      db <- 653
+
+      MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% View()
+
+      MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% dplyr::pull("cov") %>% magrittr::extract2(1)
+
+      MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% dplyr::pull("eigen") %>% magrittr::extract2(1)
+
+      MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% dplyr::pull("DOA_solutions") %>% magrittr::extract2(1)
+
+
+      distances <- MUSIC %>% dplyr::filter(range_cell == rc & doppler_bin == db) %>% dplyr::pull("distances") %>% magrittr::extract2(1)
+      rev_dual_solution_dist = pracma::Real(1/distances['single',,drop = TRUE])
+
+      pracma::findpeaks(rev_dual_solution_dist,npeaks = 2, sortstr = TRUE)
+
+      plot((attr(distances,"bearing")) %% 360,rev_dual_solution_dist)
+
+      ruv %<>% dplyr::filter(range_cell < 20)
+
+      test <- seasonder_getSeaSondeRCSShortTimeRadials(seasonder_cs_obj)
+
+      test %<>% dplyr::filter((range_cell >= 3 & range_cell <= 20))
+
+
+      plot_radials(ruv$range_cell, ruv$bearing,ruv$radial_v)
 
       plot_radials(test$range_cell,test$bearing,test$radial_v*100)
 
 
 
-      ggplot2::ggplot(to.plot_ruv,ggplot2::aes(y=range_cell, x = bearing )) +
-
-        ggplot2::geom_point(alpha = 0.5) +  ggplot2::coord_polar()
 
 
 
-
-      radial_comparison <-  ruv %>% dplyr::rename(bearing = `Bearing (True)`, range_cell = `Spectra RngCell`)
+      radial_comparison <-  ruv %>% dplyr::rename(radial_v_ruv = radial_v) %>% dplyr::filter(range_cell < 20)
 
 
 
@@ -225,17 +755,15 @@ plot_radials(test$range_cell,test$bearing,test$radial_v*100)
       radial_comparison %>% dplyr::select(range_cell, bearing, MINV, `Velocity Minimum`, MAXV, `Velocity Maximum`, radial_v, `Velocity (cm/s)`, `Velocity Count`,EDVC, `Spatial Count`,  ERSC) %>% dplyr::arrange(range_cell, bearing) %>% View()
 
 
-      dplyr::intersect(radial_comparison$MINV, radial_comparison$`Velocity Minimum`)
-
-      lm(radial_v ~ `Velocity (cm/s)`, radial_comparison)
 
 
+      lm(radial_v ~ radial_v_ruv, radial_comparison)
 
 
-      ggplot2::ggplot(radial_comparison, ggplot2::aes(x= `Velocity (cm/s)`, y = radial_v)) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "lm")
+
+
+      ggplot2::ggplot(radial_comparison, ggplot2::aes(x= radial_v_ruv, y = radial_v)) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "lm")
     })
-
-
   })
 
 })
@@ -440,6 +968,7 @@ describe("radials computation",{
 
 
   })
+
 
 
 })
