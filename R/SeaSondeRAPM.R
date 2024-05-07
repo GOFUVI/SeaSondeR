@@ -32,7 +32,7 @@
 #' @importFrom rlang %||%
 #' @importFrom magrittr %>% %<>%
 #' @export
-seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(real=NA_real_, imaginary=NA_real_), nrow = 2, ncol = 0),...) {
+seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(real=NA_real_, imaginary=NA_real_), nrow = 2, ncol = 0), ...) {
 
   # Validate calibration matrix
   seasonder_validateCalibrationMatrixSeaSondeRAPM(calibration_matrix)
@@ -114,7 +114,7 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
 #'
 #' @importFrom magrittr %<>%
 #' @export
-seasonder_initializeAttributesSeaSondeRAPM <- function(calibration_matrix,...) {
+seasonder_initializeAttributesSeaSondeRAPM <- function(calibration_matrix, ...) {
 
 
 
