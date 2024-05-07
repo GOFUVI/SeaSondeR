@@ -9,9 +9,9 @@ describe("short-time radials",{
   describe("compute and return a SeaSondeRShortTimeRadials object",{
 
 test_that("test 1 works with ideals",{
-  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"))
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"), override_antenna_bearing = 13.0)
 
-   attr(seasonder_apm_obj,"AntennaBearing") <- 13.0
+
 
 
 
@@ -242,9 +242,9 @@ plot_radials(test$range_cell,test$bearing,test$radial_v*100)
     test_that("test 1 works with measured",{
 
 
-      ideal_seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"))
+      ideal_seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"), override_antenna_bearing = 13.0)
 
-      attr(ideal_seasonder_apm_obj,"AntennaBearing") <- 13.0
+
 
 
 
@@ -535,9 +535,9 @@ to.plot %>% dplyr::group_by(range) %>% dplyr::summarise(P = mean(P)) %>% ggplot2
     })
 
     test_that("CIES test 1 works with ideals",{
-      seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/CIES/IdealPattern.txt"))
+      seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/CIES/IdealPattern.txt"), override_antenna_bearing = 128)
 
-      attr(seasonder_apm_obj,"AntennaBearing") <- 128
+
 
 
 

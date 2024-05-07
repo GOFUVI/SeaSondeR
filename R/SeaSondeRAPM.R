@@ -1088,13 +1088,14 @@ parse_metadata_line <- function(line) {
 #' the parsed data.
 #'
 #' @param file_path The path to the SeaSonde APM file to read.
+#' @param override_antenna_bearing If not NULL, overrides the Antenna Bearing data in the file
 #' @param ... Additional arguments passed to the object creation function (See \code{\link{seasonder_createSeaSondeRAPM}} for more details).
 #' @return Returns a SeaSondeRAPM object containing the parsed data.
 #' @export
 #' @importFrom magrittr %<>%
 #' @seealso \code{\link{seasonder_createSeaSondeRAPM}}
 #' @seealso \code{\link{seasonder_validateAttributesSeaSondeRAPM}}
-seasonder_readSeaSondeRAPMFile <- function(file_path,...) {
+seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing = NULL, ...) {
 
   lines <- readLines(file_path)
   num_angles <- as.integer(lines[1])
@@ -1151,6 +1152,9 @@ seasonder_readSeaSondeRAPMFile <- function(file_path,...) {
   for (meta in metadata_list) {
     attribute_name <- meta$attribute_name
     value <- meta$value
+    if(attribute_name == "AntennaBearing"){
+      value <- override_antenna_bearing %||% value
+    }
 
     if (attribute_name == "Unknown") {
       comment_lines <- c(comment_lines, value)
