@@ -303,11 +303,8 @@ plot_radials(test$range_cell,test$bearing,test$radial_v*100)
 
       smoothing <- 20
 
-      smoothed_seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(smoothed_seasonder_apm_obj[1,]),before = smoothing, na_rm = T), imaginary =
-                                         slider::slide_mean(pracma::Imag(smoothed_seasonder_apm_obj[1,]),before = smoothing, na_rm = T))
+      smoothed_seasonder_apm_obj %<>% seasonder_smoothAPM(smoothing)
 
-      smoothed_seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(smoothed_seasonder_apm_obj[2,]),before = smoothing, na_rm = T), imaginary =
-                                         slider::slide_mean(pracma::Imag(smoothed_seasonder_apm_obj[2,]),before = smoothing, na_rm = T))
 
       # combined_apm_obj <- seasonder_apm_obj
       # combined_apm_obj <- trimmed_seasonder_apm_obj
@@ -561,13 +558,7 @@ to.plot %>% dplyr::group_by(range) %>% dplyr::summarise(P = mean(P)) %>% ggplot2
 
       seasonder_apm_obj[2,] <- seasonder_apm_obj[2,]*amp2*exp(1i*phasec2*pi/180)
 
-      #     smoothing <- 20
-      #
-      #     seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[1,]),before = smoothing, na_rm = T), imaginary =
-      # slider::slide_mean(pracma::Imag(seasonder_apm_obj[1,]),before = smoothing, na_rm = T))
-      #
-      #     seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[2,]),before = smoothing, na_rm = T), imaginary =
-      #                                        slider::slide_mean(pracma::Imag(seasonder_apm_obj[2,]),before = smoothing, na_rm = T))
+
 
 
       plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[1,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
@@ -774,13 +765,7 @@ describe("radials computation",{
 
     seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"))
 
-    #     smoothing <- 10
-    #
-    #     seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[1,]),before = smoothing, na_rm = T), imaginary =
-    # slider::slide_mean(pracma::Imag(seasonder_apm_obj[1,]),before = smoothing, na_rm = T))
-    #
-    #     seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[2,]),before = smoothing, na_rm = T), imaginary =
-    #                                        slider::slide_mean(pracma::Imag(seasonder_apm_obj[2,]),before = smoothing, na_rm = T))
+
 
     plot(attr(seasonder_apm_obj, "BEAR",exact = T),Mod(seasonder_apm_obj[2,]),xlim = c(-180,180))
     plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[2,]),xlim = c(-180,180))

@@ -162,6 +162,17 @@ SeaSondeRAPM_creation_step_text <- function(file_path) {
   glue::glue("{Sys.time()}: Created from {file_path}.")
 }
 
+SeaSondeRAPM_antenna_bearing_override_step_text <- function(antenna_bearing) {
+
+  glue::glue("{Sys.time()}: AntennaBearing overriden with value {antenna_bearing}.")
+
+}
+
+SeaSondeRAPM_smoothing_step_text <- function(smoothing){
+
+  glue::glue("{Sys.time()}: APM smoothed with smoothing {smoothing}.")
+
+}
 
 #### Validation ####
 
@@ -1025,6 +1036,22 @@ seasonder_getSeaSondeRAPM_FileID <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$FileID)
 }
 
+#### Methods ####
+
+#'@export
+seasonder_smoothAPM <- function(seasonder_apm_object, smoothing){
+
+  seasonder_apm_object[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_object[1,]),before = smoothing, na_rm = T), imaginary =
+                                              slider::slide_mean(pracma::Imag(seasonder_apm_object[1,]),before = smoothing, na_rm = T))
+
+  seasonder_apm_object[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_object[2,]),before = smoothing, na_rm = T), imaginary =
+                                              slider::slide_mean(pracma::Imag(seasonder_apm_object[2,]),before = smoothing, na_rm = T))
+
+  seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_smoothing_step_text(smoothing))
+
+  return(seasonder_apm_object)
+
+}
 
 #### File Reading ####
 
@@ -1176,6 +1203,10 @@ seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing =
 
 
   out %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_creation_step_text(file_path))
+
+  if (!is.null(override_antenna_bearing)) {
+    out  %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_antenna_bearing_override_step_text(override_antenna_bearing))
+  }
 
   # Validar los atributos después de la lectura
   seasonder_validateAttributesSeaSondeRAPM(out)
