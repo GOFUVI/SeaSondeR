@@ -283,21 +283,7 @@ plot_radials(test$range_cell,test$bearing,test$radial_v*100)
 
       trimming <- 1
 
-      attrib <- attributes(seasonder_apm_obj)
-
-      trimmed_seasonder_apm_obj <-   seasonder_apm_obj[,-c(1:(trimming),(dim(seasonder_apm_obj)[2]-trimming)+1:dim(seasonder_apm_obj)[2])]
-
-      attrib[["dim"]] <- dim(trimmed_seasonder_apm_obj)
-
-      attrib[["dimnames"]][[2]] <- attrib[["dimnames"]][[2]][-c(1:(trimming),(length(attrib[["dimnames"]][[2]])-trimming+1):length(attrib[["dimnames"]][[2]]))]
-
-      new_bear <-  attrib[["BEAR"]]
-
-      new_bear <- new_bear[-c(1:(trimming),(length(new_bear)-trimming+1):length(new_bear))]
-
-      attrib[["BEAR"]] <- new_bear
-
-      attributes(trimmed_seasonder_apm_obj) <- attrib
+      trimmed_seasonder_apm_obj <- seasonder_apm_obj %>% seasonder_trimAPM(trimming)
 
       smoothed_seasonder_apm_obj <- trimmed_seasonder_apm_obj
 
