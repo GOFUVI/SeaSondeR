@@ -174,6 +174,13 @@ SeaSondeRAPM_smoothing_step_text <- function(smoothing){
 
 }
 
+SeaSondeRAPM_trimming_step_text <- function(trimming){
+
+  glue::glue("{Sys.time()}: trimmed {trimming} points on APM ends.")
+
+}
+
+
 #### Validation ####
 
 
@@ -1048,6 +1055,34 @@ seasonder_smoothAPM <- function(seasonder_apm_object, smoothing){
                                               slider::slide_mean(pracma::Imag(seasonder_apm_object[2,]),before = smoothing, na_rm = T))
 
   seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_smoothing_step_text(smoothing))
+
+  return(seasonder_apm_object)
+
+}
+
+
+#'@export
+seasonder_trimAPM <- function(seasonder_apm_object, trimming){
+
+
+  attrib <- attributes(seasonder_apm_object)
+
+  seasonder_apm_object <-   seasonder_apm_object[,-c(1:(trimming),(dim(seasonder_apm_object)[2]-trimming)+1:dim(seasonder_apm_object)[2])]
+
+  attrib[["dim"]] <- dim(seasonder_apm_object)
+
+  attrib[["dimnames"]][[2]] <- attrib[["dimnames"]][[2]][-c(1:(trimming),(length(attrib[["dimnames"]][[2]])-trimming+1):length(attrib[["dimnames"]][[2]]))]
+
+  new_bear <-  attrib[["BEAR"]]
+
+  new_bear <- new_bear[-c(1:(trimming),(length(new_bear)-trimming+1):length(new_bear))]
+
+  attrib[["BEAR"]] <- new_bear
+
+  attributes(seasonder_apm_object) <- attrib
+
+
+  seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_trimming_step_text(trimming))
 
   return(seasonder_apm_object)
 
