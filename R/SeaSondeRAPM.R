@@ -32,7 +32,7 @@
 #' @importFrom rlang %||%
 #' @importFrom magrittr %>% %<>%
 #' @export
-seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(real=NA_real_, imaginary=NA_real_), nrow = 2, ncol = 0),...) {
+seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(real=NA_real_, imaginary=NA_real_), nrow = 2, ncol = 0), ...) {
 
   # Validate calibration matrix
   seasonder_validateCalibrationMatrixSeaSondeRAPM(calibration_matrix)
@@ -114,7 +114,7 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
 #'
 #' @importFrom magrittr %<>%
 #' @export
-seasonder_initializeAttributesSeaSondeRAPM <- function(calibration_matrix,...) {
+seasonder_initializeAttributesSeaSondeRAPM <- function(calibration_matrix, ...) {
 
 
 
@@ -160,6 +160,43 @@ seasonder_initializeAttributesSeaSondeRAPM <- function(calibration_matrix,...) {
 SeaSondeRAPM_creation_step_text <- function(file_path) {
   # Use glue to format the message with the current system time and the provided file path
   glue::glue("{Sys.time()}: Created from {file_path}.")
+}
+
+SeaSondeRAPM_antenna_bearing_override_step_text <- function(antenna_bearing) {
+
+  glue::glue("{Sys.time()}: AntennaBearing overriden with value {antenna_bearing}.")
+
+}
+
+SeaSondeRAPM_smoothing_step_text <- function(smoothing){
+
+  glue::glue("{Sys.time()}: APM smoothed with smoothing {smoothing}.")
+
+}
+
+SeaSondeRAPM_trimming_step_text <- function(trimming){
+
+  glue::glue("{Sys.time()}: trimmed {trimming} points on APM ends.")
+
+}
+
+SeaSondeRAPM_amplitude_and_phase_corrections_step_text <- function( amplitude1, amplitude2, phase1, phase2){
+
+  glue::glue("{Sys.time()}: Phase corrections {phase1}, {phase2}, and amplitude correction {amplitude1}, {amplitude2} applied to APM.")
+
+}
+
+SeaSondeRAPM_phase_correction_override_step_text <- function(phase_correction) {
+
+  glue::glue("{Sys.time()}: PhaseCorrection overriden with values {phase_correction[1]} and {phase_correction[2]}.")
+
+}
+
+
+SeaSondeRAPM_amplitude_factors_override_step_text <- function(amplitude_factors) {
+
+  glue::glue("{Sys.time()}: AmplitudeFactors overriden with values {amplitude_factors[1]} and {amplitude_factors[2]}.")
+
 }
 
 
@@ -1025,7 +1062,78 @@ seasonder_getSeaSondeRAPM_FileID <- function(seasonde_apm_obj) {
   return(attributes(seasonde_apm_obj)$FileID)
 }
 
+#### Methods ####
 
+#'@export
+seasonder_smoothAPM <- function(seasonder_apm_object, smoothing){
+
+  seasonder_apm_object[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_object[1,]),before = smoothing, na_rm = T), imaginary =
+                                              slider::slide_mean(pracma::Imag(seasonder_apm_object[1,]),before = smoothing, na_rm = T))
+
+  seasonder_apm_object[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_object[2,]),before = smoothing, na_rm = T), imaginary =
+                                              slider::slide_mean(pracma::Imag(seasonder_apm_object[2,]),before = smoothing, na_rm = T))
+
+  seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_smoothing_step_text(smoothing))
+
+  return(seasonder_apm_object)
+
+}
+
+
+#'@export
+seasonder_trimAPM <- function(seasonder_apm_object, trimming){
+
+
+  attrib <- attributes(seasonder_apm_object)
+
+  seasonder_apm_object <-   seasonder_apm_object[,-c(1:(trimming),(dim(seasonder_apm_object)[2]-trimming)+1:dim(seasonder_apm_object)[2])]
+
+  attrib[["dim"]] <- dim(seasonder_apm_object)
+
+  attrib[["dimnames"]][[2]] <- attrib[["dimnames"]][[2]][-c(1:(trimming),(length(attrib[["dimnames"]][[2]])-trimming+1):length(attrib[["dimnames"]][[2]]))]
+
+  new_bear <-  attrib[["BEAR"]]
+
+  new_bear <- new_bear[-c(1:(trimming),(length(new_bear)-trimming+1):length(new_bear))]
+
+  attrib[["BEAR"]] <- new_bear
+
+  attributes(seasonder_apm_object) <- attrib
+
+
+  seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_trimming_step_text(trimming))
+
+  return(seasonder_apm_object)
+
+}
+
+
+#' @param phase1 phase correction in degrees
+#' @param phase2 phase correction in degrees
+#' @export
+seasonder_applyAPMAmplitudeAndPhaseCorrections <- function(seasonder_apm_object){
+
+# TODO: Validate corrections
+
+  amplitude_factors <- seasonder_getSeaSondeRAPM_AmplitudeFactors(seasonder_apm_object)
+
+  phase_corrections <- seasonder_getSeaSondeRAPM_PhaseCorrections(seasonder_apm_object)
+
+  amplitude1 <- amplitude_factors[1]
+  amplitude2 <- amplitude_factors[2]
+  phase1 <- phase_corrections[1]
+  phase2 <- phase_corrections[2]
+
+  seasonder_apm_object[1,] <- seasonder_apm_object[1,]*amplitude1*exp(1i*phase1*pi/180)
+
+  seasonder_apm_object[2,] <- seasonder_apm_object[2,]*amplitude2*exp(1i*phase2*pi/180)
+
+
+  seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_amplitude_and_phase_corrections_step_text(amplitude1, amplitude2, phase1, phase2))
+
+  return(seasonder_apm_object)
+
+}
 #### File Reading ####
 
 #' Read a Row from a Matrix Represented as Text Lines
@@ -1088,13 +1196,14 @@ parse_metadata_line <- function(line) {
 #' the parsed data.
 #'
 #' @param file_path The path to the SeaSonde APM file to read.
+#' @param override_antenna_bearing If not NULL, overrides the Antenna Bearing data in the file
 #' @param ... Additional arguments passed to the object creation function (See \code{\link{seasonder_createSeaSondeRAPM}} for more details).
 #' @return Returns a SeaSondeRAPM object containing the parsed data.
 #' @export
 #' @importFrom magrittr %<>%
 #' @seealso \code{\link{seasonder_createSeaSondeRAPM}}
 #' @seealso \code{\link{seasonder_validateAttributesSeaSondeRAPM}}
-seasonder_readSeaSondeRAPMFile <- function(file_path,...) {
+seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing = NULL, override_phase_corrections = NULL, override_amplitude_factors = NULL, ...) {
 
   lines <- readLines(file_path)
   num_angles <- as.integer(lines[1])
@@ -1173,8 +1282,59 @@ seasonder_readSeaSondeRAPMFile <- function(file_path,...) {
 
   out %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_creation_step_text(file_path))
 
+  if (!is.null(override_antenna_bearing)) {
+
+
+    out %<>% seasonder_setSeaSondeRAPM_AntennaBearing(override_antenna_bearing)
+
+
+    out  %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_antenna_bearing_override_step_text(override_antenna_bearing))
+  }
+
+
+  if (!is.null(override_phase_corrections)) {
+
+    if (is.character(override_phase_corrections) && file.exists(override_phase_corrections)) {
+      override_phase_corrections <- seasonder_readPhaseFile(override_phase_corrections)
+    }
+
+    if (is.numeric(override_phase_corrections) && length(override_phase_corrections) == 2) {
+
+out %<>% seasonder_setSeaSondeRAPM_PhaseCorrections(override_phase_corrections)
+      out  %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_phase_correction_override_step_text(override_phase_corrections))
+    }else{
+      seasonder_logAndMessage("override_phase_corrections parameters is not a valid file path with valid phase correction values, or a numeric vector of length 2",log_level = "error", calling_function = "seasonder_readSeaSondeRAPMFile")
+    }
+
+  }
+
+
+  if (!is.null(override_amplitude_factors)) {
+
+
+
+    if (is.numeric(override_amplitude_factors) && length(override_amplitude_factors) == 2) {
+
+      out %<>% seasonder_setSeaSondeRAPM_AmplitudeFactors(override_amplitude_factors)
+      out  %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_amplitude_factors_override_step_text(override_amplitude_factors))
+    }
+
+  }
+
+
   # Validar los atributos después de la lectura
   seasonder_validateAttributesSeaSondeRAPM(out)
 
   return(out)
+}
+
+#' @export
+seasonder_readPhaseFile <- function(file_path){
+
+  phasec1 <-    readLines(file_path) %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 1) %>% as.numeric()
+  phasec2 <-    readLines(file_path) %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 2) %>% as.numeric()
+
+
+  return(c(phase1 = phasec1, phase2 = phasec2))
+
 }

@@ -4,10 +4,18 @@
 \alias{seasonder_readSeaSondeRAPMFile}
 \title{Read and Parse a SeaSonde APM File}
 \usage{
-seasonder_readSeaSondeRAPMFile(file_path, ...)
+seasonder_readSeaSondeRAPMFile(
+  file_path,
+  override_antenna_bearing = NULL,
+  override_phase_corrections = NULL,
+  override_amplitude_factors = NULL,
+  ...
+)
 }
 \arguments{
 \item{file_path}{The path to the SeaSonde APM file to read.}
+
+\item{override_antenna_bearing}{If not NULL, overrides the Antenna Bearing data in the file}
 
 \item{...}{Additional arguments passed to the object creation function (See \code{\link{seasonder_createSeaSondeRAPM}} for more details).}
 }

@@ -9,39 +9,19 @@ describe("short-time radials",{
   describe("compute and return a SeaSondeRShortTimeRadials object",{
 
 test_that("test 1 works with ideals",{
-  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"))
-
-   attr(seasonder_apm_obj,"AntennaBearing") <- 13.0
 
 
+  phase_path <- here::here("tests/testthat/data/TORA/Phases.txt")
 
-phasec1 <-    readLines("tests/testthat/data/TORA/Phases.txt") %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 1) %>% as.numeric()
-phasec2 <-    readLines("tests/testthat/data/TORA/Phases.txt") %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 2) %>% as.numeric()
+  amplitude_corrections <- c(1.22398329,1.32768297)
 
-amp1 <-  1.22398329
-
-amp2 <-  1.32768297
-
-# amp1 <-    seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(1)
-#
-# amp2 <-   seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(2)
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"), override_antenna_bearing = 13.0, override_phase_corrections = phase_path, override_amplitude_factors = amplitude_corrections, apply_phase_and_amplitude_corrections = TRUE)
 
 
-# amp1 <- seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(1)
-#
-# amp2 <- seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AmplitudeFactors() %>% magrittr::extract(2)
+seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
 
-   seasonder_apm_obj[1,] <- seasonder_apm_obj[1,]*amp1*exp(1i*phasec1*pi/180)
 
-   seasonder_apm_obj[2,] <- seasonder_apm_obj[2,]*amp2*exp(1i*phasec2*pi/180)
 
-   #     smoothing <- 20
-   #
-   #     seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[1,]),before = smoothing, na_rm = T), imaginary =
-   # slider::slide_mean(pracma::Imag(seasonder_apm_obj[1,]),before = smoothing, na_rm = T))
-   #
-   #     seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[2,]),before = smoothing, na_rm = T), imaginary =
-   #                                        slider::slide_mean(pracma::Imag(seasonder_apm_obj[2,]),before = smoothing, na_rm = T))
 
 
    plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[1,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
@@ -242,9 +222,9 @@ plot_radials(test$range_cell,test$bearing,test$radial_v*100)
     test_that("test 1 works with measured",{
 
 
-      ideal_seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"))
+      ideal_seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"), override_antenna_bearing = 13.0)
 
-      attr(ideal_seasonder_apm_obj,"AntennaBearing") <- 13.0
+
 
 
 
@@ -283,31 +263,14 @@ plot_radials(test$range_cell,test$bearing,test$radial_v*100)
 
       trimming <- 1
 
-      attrib <- attributes(seasonder_apm_obj)
-
-      trimmed_seasonder_apm_obj <-   seasonder_apm_obj[,-c(1:(trimming),(dim(seasonder_apm_obj)[2]-trimming)+1:dim(seasonder_apm_obj)[2])]
-
-      attrib[["dim"]] <- dim(trimmed_seasonder_apm_obj)
-
-      attrib[["dimnames"]][[2]] <- attrib[["dimnames"]][[2]][-c(1:(trimming),(length(attrib[["dimnames"]][[2]])-trimming+1):length(attrib[["dimnames"]][[2]]))]
-
-      new_bear <-  attrib[["BEAR"]]
-
-      new_bear <- new_bear[-c(1:(trimming),(length(new_bear)-trimming+1):length(new_bear))]
-
-      attrib[["BEAR"]] <- new_bear
-
-      attributes(trimmed_seasonder_apm_obj) <- attrib
+      trimmed_seasonder_apm_obj <- seasonder_apm_obj %>% seasonder_trimAPM(trimming)
 
       smoothed_seasonder_apm_obj <- trimmed_seasonder_apm_obj
 
       smoothing <- 20
 
-      smoothed_seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(smoothed_seasonder_apm_obj[1,]),before = smoothing, na_rm = T), imaginary =
-                                         slider::slide_mean(pracma::Imag(smoothed_seasonder_apm_obj[1,]),before = smoothing, na_rm = T))
+      smoothed_seasonder_apm_obj %<>% seasonder_smoothAPM(smoothing)
 
-      smoothed_seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(smoothed_seasonder_apm_obj[2,]),before = smoothing, na_rm = T), imaginary =
-                                         slider::slide_mean(pracma::Imag(smoothed_seasonder_apm_obj[2,]),before = smoothing, na_rm = T))
 
       # combined_apm_obj <- seasonder_apm_obj
       # combined_apm_obj <- trimmed_seasonder_apm_obj
@@ -535,9 +498,9 @@ to.plot %>% dplyr::group_by(range) %>% dplyr::summarise(P = mean(P)) %>% ggplot2
     })
 
     test_that("CIES test 1 works with ideals",{
-      seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/CIES/IdealPattern.txt"))
+      seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/CIES/IdealPattern.txt"), override_antenna_bearing = 128)
 
-      attr(seasonder_apm_obj,"AntennaBearing") <- 128
+
 
 
 
@@ -561,13 +524,7 @@ to.plot %>% dplyr::group_by(range) %>% dplyr::summarise(P = mean(P)) %>% ggplot2
 
       seasonder_apm_obj[2,] <- seasonder_apm_obj[2,]*amp2*exp(1i*phasec2*pi/180)
 
-      #     smoothing <- 20
-      #
-      #     seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[1,]),before = smoothing, na_rm = T), imaginary =
-      # slider::slide_mean(pracma::Imag(seasonder_apm_obj[1,]),before = smoothing, na_rm = T))
-      #
-      #     seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[2,]),before = smoothing, na_rm = T), imaginary =
-      #                                        slider::slide_mean(pracma::Imag(seasonder_apm_obj[2,]),before = smoothing, na_rm = T))
+
 
 
       plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[1,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
@@ -774,13 +731,7 @@ describe("radials computation",{
 
     seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"))
 
-    #     smoothing <- 10
-    #
-    #     seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[1,]),before = smoothing, na_rm = T), imaginary =
-    # slider::slide_mean(pracma::Imag(seasonder_apm_obj[1,]),before = smoothing, na_rm = T))
-    #
-    #     seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[2,]),before = smoothing, na_rm = T), imaginary =
-    #                                        slider::slide_mean(pracma::Imag(seasonder_apm_obj[2,]),before = smoothing, na_rm = T))
+
 
     plot(attr(seasonder_apm_obj, "BEAR",exact = T),Mod(seasonder_apm_obj[2,]),xlim = c(-180,180))
     plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[2,]),xlim = c(-180,180))
