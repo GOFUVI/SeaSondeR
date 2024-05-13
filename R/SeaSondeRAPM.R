@@ -180,6 +180,25 @@ SeaSondeRAPM_trimming_step_text <- function(trimming){
 
 }
 
+SeaSondeRAPM_amplitude_and_phase_corrections_step_text <- function( amplitude1, amplitude2, phase1, phase2){
+
+  glue::glue("{Sys.time()}: Phase corrections {phase1}, {phase2}, and amplitude correction {amplitude1}, {amplitude2} applied to APM.")
+
+}
+
+SeaSondeRAPM_phase_correction_override_step_text <- function(phase_correction) {
+
+  glue::glue("{Sys.time()}: PhaseCorrection overriden with values {phase_correction[1]} and {phase_correction[2]}.")
+
+}
+
+
+SeaSondeRAPM_amplitude_factors_override_step_text <- function(amplitude_factors) {
+
+  glue::glue("{Sys.time()}: AmplitudeFactors overriden with values {amplitude_factors[1]} and {amplitude_factors[2]}.")
+
+}
+
 
 #### Validation ####
 
@@ -1088,6 +1107,33 @@ seasonder_trimAPM <- function(seasonder_apm_object, trimming){
 
 }
 
+
+#' @param phase1 phase correction in degrees
+#' @param phase2 phase correction in degrees
+#' @export
+seasonder_applyAPMAmplitudeAndPhaseCorrections <- function(seasonder_apm_object){
+
+# TODO: Validate corrections
+
+  amplitude_factors <- seasonder_getSeaSondeRAPM_AmplitudeFactors(seasonder_apm_object)
+
+  phase_corrections <- seasonder_getSeaSondeRAPM_PhaseCorrections(seasonder_apm_object)
+
+  amplitude1 <- amplitude_factors[1]
+  amplitude2 <- amplitude_factors[2]
+  phase1 <- phase_corrections[1]
+  phase2 <- phase_corrections[2]
+
+  seasonder_apm_object[1,] <- seasonder_apm_object[1,]*amplitude1*exp(1i*phase1*pi/180)
+
+  seasonder_apm_object[2,] <- seasonder_apm_object[2,]*amplitude2*exp(1i*phase2*pi/180)
+
+
+  seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_amplitude_and_phase_corrections_step_text(amplitude1, amplitude2, phase1, phase2))
+
+  return(seasonder_apm_object)
+
+}
 #### File Reading ####
 
 #' Read a Row from a Matrix Represented as Text Lines
@@ -1157,7 +1203,7 @@ parse_metadata_line <- function(line) {
 #' @importFrom magrittr %<>%
 #' @seealso \code{\link{seasonder_createSeaSondeRAPM}}
 #' @seealso \code{\link{seasonder_validateAttributesSeaSondeRAPM}}
-seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing = NULL, ...) {
+seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing = NULL, override_phase_corrections = NULL, override_amplitude_factors = NULL, ...) {
 
   lines <- readLines(file_path)
   num_angles <- as.integer(lines[1])
@@ -1214,9 +1260,6 @@ seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing =
   for (meta in metadata_list) {
     attribute_name <- meta$attribute_name
     value <- meta$value
-    if(attribute_name == "AntennaBearing"){
-      value <- override_antenna_bearing %||% value
-    }
 
     if (attribute_name == "Unknown") {
       comment_lines <- c(comment_lines, value)
@@ -1240,11 +1283,58 @@ seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing =
   out %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_creation_step_text(file_path))
 
   if (!is.null(override_antenna_bearing)) {
+
+
+    out %<>% seasonder_setSeaSondeRAPM_AntennaBearing(override_antenna_bearing)
+
+
     out  %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_antenna_bearing_override_step_text(override_antenna_bearing))
   }
+
+
+  if (!is.null(override_phase_corrections)) {
+
+    if (is.character(override_phase_corrections) && file.exists(override_phase_corrections)) {
+      override_phase_corrections <- seasonder_readPhaseFile(override_phase_corrections)
+    }
+
+    if (is.numeric(override_phase_corrections) && length(override_phase_corrections) == 2) {
+
+out %<>% seasonder_setSeaSondeRAPM_PhaseCorrections(override_phase_corrections)
+      out  %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_phase_correction_override_step_text(override_phase_corrections))
+    }else{
+      seasonder_logAndMessage("override_phase_corrections parameters is not a valid file path with valid phase correction values, or a numeric vector of length 2",log_level = "error", calling_function = "seasonder_readSeaSondeRAPMFile")
+    }
+
+  }
+
+
+  if (!is.null(override_amplitude_factors)) {
+
+
+
+    if (is.numeric(override_amplitude_factors) && length(override_amplitude_factors) == 2) {
+
+      out %<>% seasonder_setSeaSondeRAPM_AmplitudeFactors(override_amplitude_factors)
+      out  %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_amplitude_factors_override_step_text(override_amplitude_factors))
+    }
+
+  }
+
 
   # Validar los atributos después de la lectura
   seasonder_validateAttributesSeaSondeRAPM(out)
 
   return(out)
+}
+
+#' @export
+seasonder_readPhaseFile <- function(file_path){
+
+  phasec1 <-    readLines(file_path) %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 1) %>% as.numeric()
+  phasec2 <-    readLines(file_path) %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 2) %>% as.numeric()
+
+
+  return(c(phase1 = phasec1, phase2 = phasec2))
+
 }
