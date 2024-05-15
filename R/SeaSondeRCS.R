@@ -881,6 +881,33 @@ seasonder_getCenterFreqMHz <- function(seasonder_cs_obj) {
   return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "CenterFreq"))
 }
 
+seasonder_getnCsFileVersion <- function(seasonder_cs_object){
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nCsFileVersion"))
+}
+
+seasonder_getfLongitude <- function(seasonder_cs_object){
+
+  out <- NULL
+
+  if( seasonder_getnCsFileVersion(seasonder_cs_object) >= 6) {
+    out <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fLongitude")
+  }
+
+  return(out)
+
+}
+
+seasonder_getfLatitude <- function(seasonder_cs_object){
+
+  out <- NULL
+
+  if( seasonder_getnCsFileVersion(seasonder_cs_object) >= 6) {
+    out <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fLatitude")
+  }
+
+  return(out)
+
+}
 ###### + Derived parameters ######
 
 seasonder_getReceiverGain_dB <- function(seasonder_cs_obj) {

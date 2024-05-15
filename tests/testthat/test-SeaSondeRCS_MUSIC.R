@@ -765,5 +765,45 @@ test_measured <- test
 
 })
 
+#### seasonder_MUSIC_LonLat ####
+
+describe("seasonder_MUSIC_lonlat",{
+
+  phase_path <- here::here("tests/testthat/data/TORA/Phases.txt")
+
+  amplitude_corrections <- c(1.22398329,1.32768297)
+
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"), override_antenna_bearing = 13.0, override_phase_corrections = phase_path, override_amplitude_factors = amplitude_corrections, apply_phase_and_amplitude_corrections = TRUE)
 
 
+  seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
+
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj)
+
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_MUSIC(seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj) %>% dplyr::select(-dplyr::one_of("lonlat")))
+
+test_that("Longitude and latitude are added to the MUSIC matrix",{
+
+
+  seasonder_cs_obj %<>% seasonder_MUSIC_LonLat()
+
+  MUSIC <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
+
+expect_true("lonlat" %in% names(MUSIC))
+
+to.plot_bearing <- MUSIC %>% dplyr::mutate(bearing = DOA %>% purrr::map("bearing")) %>% dplyr::select(range_cell, bearing, radial_v) %>% tidyr::unnest(bearing) %>% dplyr::mutate(bearing = ((-1* bearing %% 360) + seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AntennaBearing()) %% 360)
+
+
+
+plot_radials(to.plot_bearing$range_cell,to.plot_bearing$bearing,to.plot_bearing$radial_v*100)
+
+MUSIC %>%  dplyr::select(lonlat, radial_v) %>% tidyr::unnest(lonlat) %>% ggplot2::ggplot(ggplot2::aes(x=lon, y=lat, color = radial_v)) + ggplot2::geom_point() +ggplot2::scale_color_gradient2()
+
+
+
+})
+
+})
