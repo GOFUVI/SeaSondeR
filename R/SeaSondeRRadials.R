@@ -154,11 +154,10 @@ plot_radials <- function(range_cells,bearings, radial_v){
   g <- ggplot2::ggplot() +
     ggplot2::geom_segment(data = vectores, ggplot2::aes(x = x_inicio, y = bearing, xend = x_fin, yend = bearing, color = magnitud),
                           arrow = ggplot2::arrow(length = ggplot2::unit(0.1,"cm"))) +
-    ggplot2::coord_polar(theta = "y",direction = 1) + # Usar coordenadas polares para simular el contexto radial
-    ggplot2::ylim(c(0,360)) +
+    ggplot2::coord_polar(theta = "y",direction = 1) + # Usar coordenadas polares para simular el contexto radials
     ggplot2::scale_color_gradient2() +
     ggplot2::theme_minimal() +
-    ggplot2::scale_y_continuous(n.breaks = 36)
+    ggplot2::scale_y_continuous(n.breaks = 36,limits = c(0,360))
 
 
   return(g)

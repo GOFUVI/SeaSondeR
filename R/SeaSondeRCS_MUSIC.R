@@ -969,6 +969,8 @@ seasonder_runMUSIC <- function(seasonder_cs_object){
 
   out %<>% seasonder_MUSICSelectDOA()
 
+  out %<>% seasonder_MUSIC_LonLat()
+
   return(out)
 
 }
@@ -1039,3 +1041,56 @@ seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation
 
 
 }
+
+
+#### Utils ####
+
+#' Convert MUSIC Algorithm Output to Geolocated Coordinates
+#'
+#' This function takes the output from the MUSIC algorithm, typically used in direction finding
+#' within the SeaSonde remote sensing system, and converts the directional data (range and bearings)
+#' into geographic coordinates based on the originating radar site.
+#'
+#' @param seasonder_cs_object A complex SeaSondeR data object that includes both the MUSIC data
+#'        and the Antenna Pattern Matching (APM) data necessary for locating the source of the signals.
+#'
+#' @return Returns the modified `seasonder_cs_object` with MUSIC data updated to include longitude
+#'         and latitude coordinates for each detected signal.
+#'
+#' @export
+#' @importFrom geosphere destPoint
+seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
+
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+  # Retrieve original longitude and latitude, or fallback to APM data if unavailable
+  longitude <- seasonder_getfLongitude(seasonder_cs_object)
+  latitude <- seasonder_getfLatitude(seasonder_cs_object)
+
+  if (is.null(longitude) || is.null(latitude)) {
+    origin <- seasonder_cs_object %>%
+      seasonder_getSeaSondeRCS_APM() %>%
+      seasonder_getSeaSondeRAPM_SiteOrigin()
+    latitude <- origin[1]
+    longitude <- origin[2]
+  }
+
+  # Calculate geographic coordinates for each MUSIC detection
+  range <- MUSIC$range
+  bearings <- MUSIC$DOA %>% purrr::map("bearing")
+  antennaBearing <- seasonder_cs_object %>%
+    seasonder_getSeaSondeRCS_APM() %>%
+    seasonder_getSeaSondeRAPM_AntennaBearing()
+  bearings %<>% purrr::map(\(angles) ((-1 * angles %% 360) + antennaBearing) %% 360)
+
+  MUSIC$lonlat <- purrr::map2(range, bearings, \(dist, bear) {
+    geosphere::destPoint(c(longitude, latitude), bear, dist * 1000) %>%
+      as.data.frame()
+  })
+
+  # Update the seasonder_cs_object with new lon-lat data
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+  return(seasonder_cs_object)
+}
+
