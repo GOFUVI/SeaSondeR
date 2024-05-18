@@ -809,6 +809,8 @@ seasonder_getSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj) {
 seasonder_setSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj, new_value) {
   validate_SeaSondeRAPM_SiteOrigin(new_value)
   modified_obj <- seasonde_apm_obj
+  names(new_value) <- c("Latitude", "Longitude")
+
   attributes(modified_obj)$SiteOrigin <- new_value
   return(modified_obj)
 }
@@ -1108,15 +1110,20 @@ seasonder_trimAPM <- function(seasonder_apm_object, trimming){
 }
 
 
-#' @param phase1 phase correction in degrees
-#' @param phase2 phase correction in degrees
+#' Apply Amplitude and Phase Corrections to a SeaSonde RAPM Object
+#'
+#' This function applies amplitude and phase corrections to each antenna channel
+#' of a SeaSonde RAPM object based on the specified corrections retrieved from the object.
+#' The corrections are applied to the raw data matrix within the SeaSonde RAPM object.
+#'
+#' @param seasonder_apm_object A SeaSonde RAPM object containing raw data and correction factors.
+#'
+#' @return Returns the SeaSonde RAPM object with amplitude and phase corrections applied to the data.
+#'
 #' @export
-seasonder_applyAPMAmplitudeAndPhaseCorrections <- function(seasonder_apm_object){
-
-# TODO: Validate corrections
-
+seasonder_applyAPMAmplitudeAndPhaseCorrections <- function(seasonder_apm_object) {
+  # TODO: Validate corrections
   amplitude_factors <- seasonder_getSeaSondeRAPM_AmplitudeFactors(seasonder_apm_object)
-
   phase_corrections <- seasonder_getSeaSondeRAPM_PhaseCorrections(seasonder_apm_object)
 
   amplitude1 <- amplitude_factors[1]
@@ -1124,16 +1131,18 @@ seasonder_applyAPMAmplitudeAndPhaseCorrections <- function(seasonder_apm_object)
   phase1 <- phase_corrections[1]
   phase2 <- phase_corrections[2]
 
-  seasonder_apm_object[1,] <- seasonder_apm_object[1,]*amplitude1*exp(1i*phase1*pi/180)
+  # Apply corrections to channel 1
+  seasonder_apm_object[1,] <- seasonder_apm_object[1,] * amplitude1 * exp(1i * phase1 * pi / 180)
 
-  seasonder_apm_object[2,] <- seasonder_apm_object[2,]*amplitude2*exp(1i*phase2*pi/180)
+  # Apply corrections to channel 2
+  seasonder_apm_object[2,] <- seasonder_apm_object[2,] * amplitude2 * exp(1i * phase2 * pi / 180)
 
-
+  # Update the processing steps in the object
   seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_amplitude_and_phase_corrections_step_text(amplitude1, amplitude2, phase1, phase2))
 
   return(seasonder_apm_object)
-
 }
+
 #### File Reading ####
 
 #' Read a Row from a Matrix Represented as Text Lines
