@@ -807,3 +807,44 @@ MUSIC %>%  dplyr::select(lonlat, radial_v) %>% tidyr::unnest(lonlat) %>% ggplot2
 })
 
 })
+
+#### seasonder_exportMUSICTable ####
+
+describe("seasonder_exportMUSICTable", {
+  phase_path <- here::here("tests/testthat/data/TORA/Phases.txt")
+  amplitude_corrections <- c(1.22398329, 1.32768297)
+
+  # Create a SeaSondeRAPM object with corrections
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(
+    here::here("tests/testthat/data/TORA/IdealPattern.txt"),
+    override_antenna_bearing = 13.0,
+    override_phase_corrections = phase_path,
+    override_amplitude_factors = amplitude_corrections,
+    apply_phase_and_amplitude_corrections = TRUE
+  )
+
+  seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
+
+  # Create a SeaSondeRCS object
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(
+    here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"),
+    system.file("specs", "CS_V1.yaml", package = "SeaSondeR"),
+    seasonder_apm_object = seasonder_apm_obj
+  )
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+  test <- seasonder_exportMUSICTable(seasonder_cs_obj)
+
+  test_that("The table created includes longitude, latitude, cell_number, range, doppler_cell, doppler_freq, radial_velocity, signal_power, bearing", {
+    expect_named(test, c("longitude", "latitude", "range_cell", "range", "doppler_bin", "doppler_freq", "radial_velocity", "signal_power", "bearing"))
+  })
+
+  test_that("The table created has the same data as the CS object MUSIC table", {
+    MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)
+    col_test <- test %>% dplyr::select(range_cell, doppler_bin) %>% dplyr::distinct()
+
+    expect_equal(col_test$range_cell, MUSIC$range_cell)
+    expect_equal(col_test$doppler_bin, MUSIC$doppler_bin)
+  })
+})
