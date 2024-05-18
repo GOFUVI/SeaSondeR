@@ -1050,7 +1050,7 @@ seasonder_MUSICBearing2GeographicalBearing <- function(bearings, seasonder_apm_o
   antennaBearing <-
     seasonder_apm_object %>%
     seasonder_getSeaSondeRAPM_AntennaBearing()
-  bearings %<>% purrr::map(\(angles) ((-1 * angles %% 360) + antennaBearing) %% 360)
+  bearings %<>% purrr::map_dbl(\(angles) ((-1 * angles %% 360) + antennaBearing) %% 360)
 
   return(bearings)
 
@@ -1184,3 +1184,17 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object){
   return(out)
 }
 
+#' @export
+seasonder_exportCSVMUSICTable <- function(seasonder_cs_object, filepath){
+
+  table <- seasonder_exportMUSICTable(seasonder_cs_object) %>% as.data.frame()
+
+
+
+data.table::fwrite(table,file = filepath)
+
+
+  invisible(NULL)
+
+
+}
