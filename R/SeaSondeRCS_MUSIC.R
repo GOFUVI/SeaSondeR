@@ -1045,6 +1045,18 @@ seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation
 
 #### Utils ####
 
+seasonder_MUSICBearing2GeographicalBearing <- function(bearings, seasonder_apm_object){
+
+  antennaBearing <-
+    seasonder_apm_object %>%
+    seasonder_getSeaSondeRAPM_AntennaBearing()
+  bearings %<>% purrr::map(\(angles) ((-1 * angles %% 360) + antennaBearing) %% 360)
+
+  return(bearings)
+
+}
+
+
 #' Convert MUSIC Algorithm Output to Geolocated Coordinates
 #'
 #' This function takes the output from the MUSIC algorithm, typically used in direction finding
@@ -1078,10 +1090,11 @@ seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
   # Calculate geographic coordinates for each MUSIC detection
   range <- MUSIC$range
   bearings <- MUSIC$DOA %>% purrr::map("bearing")
-  antennaBearing <- seasonder_cs_object %>%
-    seasonder_getSeaSondeRCS_APM() %>%
-    seasonder_getSeaSondeRAPM_AntennaBearing()
-  bearings %<>% purrr::map(\(angles) ((-1 * angles %% 360) + antennaBearing) %% 360)
+
+  seasonder_apm_object <- seasonder_cs_object %>%
+    seasonder_getSeaSondeRCS_APM()
+
+  bearings %<>% seasonder_MUSICBearing2GeographicalBearing(seasonder_apm_object)
 
   MUSIC$lonlat <- purrr::map2(range, bearings, \(dist, bear) {
     geosphere::destPoint(c(longitude, latitude), bear, dist * 1000) %>%
@@ -1092,5 +1105,82 @@ seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
   return(seasonder_cs_object)
+}
+
+#' Export a MUSIC Table from a SeaSondeRCS Object
+#'
+#' This function extracts and exports a MUSIC (Multiple Signal Classification) table from a
+#' SeaSondeRCS (Compact System) object. The MUSIC algorithm is used to estimate the direction of
+#' arrival (DOA) of signals, and this function processes the results to produce a data frame
+#' containing relevant information such as longitude, latitude, range, doppler frequency, radial
+#' velocity, signal power, and bearing.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object from which the MUSIC table will be extracted.
+#'
+#' @return A data frame containing the following columns:
+#' \itemize{
+#'   \item \code{longitude} - Longitude of the detected signal.
+#'   \item \code{latitude} - Latitude of the detected signal.
+#'   \item \code{range_cell} - Range cell number.
+#'   \item \code{range} - Range of the detected signal.
+#'   \item \code{doppler_bin} - Doppler cell number.
+#'   \item \code{doppler_freq} - Doppler frequency of the detected signal.
+#'   \item \code{radial_velocity} - Radial velocity of the detected signal.
+#'   \item \code{signal_power} - Signal power.
+#'   \item \code{bearing} - Geographical bearing of the detected signal.
+#' }
+#'
+#' @export
+seasonder_exportMUSICTable <- function(seasonder_cs_object){
+
+  # Initialize an empty data frame with the required columns
+  longitude <- numeric(0)
+  latitude <- numeric(0)
+  cell_number <- integer(0)
+  range <- numeric(0)
+  doppler_cell <- integer(0)
+  freq <- numeric(0)
+  velocity <- numeric(0)
+  power <- numeric(0)
+  bearing <- numeric(0)
+
+  out <- data.frame(longitude = longitude,
+                    latitude = latitude,
+                    range_cell = cell_number,
+                    range = range,
+                    doppler_bin = doppler_cell,
+                    doppler_freq = freq,
+                    radial_velocity = velocity,
+                    signal_power = power,
+                    bearing = bearing)
+
+  # Retrieve MUSIC data from the SeaSondeRCS object
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+  # Select relevant columns from MUSIC data
+  out <- MUSIC %>% dplyr::select(range_cell, doppler_bin, range, doppler_freq = freq, radial_velocity = radial_v, DOA, lonlat)
+
+  # Process the DOA and lonlat columns and unnest them
+  out %<>% dplyr::mutate(DOA = purrr::map(DOA, \(DOA_sol) data.frame(bearing = DOA_sol$bearing, signal_power = pracma::Real(diag(DOA_sol$P))))) %>%
+    tidyr::unnest(c(DOA, lonlat))
+
+  # Get APM object from the SeaSondeRCS object
+  seasonder_apm_object <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_APM()
+
+  # Convert MUSIC bearing to geographical bearing
+  out$bearing %<>% seasonder_MUSICBearing2GeographicalBearing(seasonder_apm_object)
+
+  # Reorder columns to match the final output structure
+  out %<>% dplyr::select(longitude = lon,
+                         latitude = lat,
+                         range_cell,
+                         range,
+                         doppler_bin,
+                         doppler_freq,
+                         radial_velocity,
+                         signal_power,
+                         bearing)
+
+  return(out)
 }
 
