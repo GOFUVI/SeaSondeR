@@ -848,3 +848,44 @@ describe("seasonder_exportMUSICTable", {
     expect_equal(col_test$doppler_bin, MUSIC$doppler_bin)
   })
 })
+
+describe("seasonder_exportCSVMUSICTable",{
+
+  phase_path <- here::here("tests/testthat/data/TORA/Phases.txt")
+  amplitude_corrections <- c(1.22398329, 1.32768297)
+
+  # Create a SeaSondeRAPM object with corrections
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(
+    here::here("tests/testthat/data/TORA/IdealPattern.txt"),
+    override_antenna_bearing = 13.0,
+    override_phase_corrections = phase_path,
+    override_amplitude_factors = amplitude_corrections,
+    apply_phase_and_amplitude_corrections = TRUE
+  )
+
+  seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
+
+  # Create a SeaSondeRCS object
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(
+    here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"),
+    system.file("specs", "CS_V1.yaml", package = "SeaSondeR"),
+    seasonder_apm_object = seasonder_apm_obj
+  )
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+  target <- seasonder_exportMUSICTable(seasonder_cs_obj) %>% as.data.frame()
+
+test_that("writes the table to the file path",{
+
+file_path <- tempfile(fileext = ".csv")
+
+seasonder_exportCSVMUSICTable(seasonder_cs_obj, file_path)
+
+test <- data.table::fread(file_path) %>% as.data.frame()
+
+expect_equal(test, target)
+
+})
+
+})
