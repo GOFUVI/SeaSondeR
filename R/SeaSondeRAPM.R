@@ -199,6 +199,11 @@ SeaSondeRAPM_amplitude_factors_override_step_text <- function(amplitude_factors)
 
 }
 
+SeaSondeRAPM_SiteOrigin_override_step_text <- function(SiteOrigin) {
+
+  glue::glue("{Sys.time()}: SiteOrigin overriden with Latitude {SiteOrigin[1]} and Longitude {SiteOrigin[2]}.")
+
+}
 
 #### Validation ####
 
@@ -1212,7 +1217,7 @@ parse_metadata_line <- function(line) {
 #' @importFrom magrittr %<>%
 #' @seealso \code{\link{seasonder_createSeaSondeRAPM}}
 #' @seealso \code{\link{seasonder_validateAttributesSeaSondeRAPM}}
-seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing = NULL, override_phase_corrections = NULL, override_amplitude_factors = NULL, ...) {
+seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing = NULL, override_phase_corrections = NULL, override_amplitude_factors = NULL, override_SiteOrigin = NULL, ...) {
 
   lines <- readLines(file_path)
   num_angles <- as.integer(lines[1])
@@ -1330,6 +1335,13 @@ out %<>% seasonder_setSeaSondeRAPM_PhaseCorrections(override_phase_corrections)
 
   }
 
+  if (!is.null(override_SiteOrigin)) {
+
+      out %<>% seasonder_setSeaSondeRAPM_SiteOrigin(override_SiteOrigin)
+      out  %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_SiteOrigin_override_step_text(override_SiteOrigin))
+
+
+  }
 
   # Validar los atributos después de la lectura
   seasonder_validateAttributesSeaSondeRAPM(out)
