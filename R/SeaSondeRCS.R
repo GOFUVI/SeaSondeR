@@ -46,6 +46,7 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
   out %<>% seasonder_setSeaSondeRCS_FOR(seasonder_initSeaSondeRCS_FOR(out))
 
 
+  seasonder_logAndMessage("new_SeaSondeRCS: SeaSondeRCS object created successfully.", "info")
 
 
 

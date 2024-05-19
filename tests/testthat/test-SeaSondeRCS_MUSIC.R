@@ -794,13 +794,13 @@ test_that("Longitude and latitude are added to the MUSIC matrix",{
 
 expect_true("lonlat" %in% names(MUSIC))
 
-to.plot_bearing <- MUSIC %>% dplyr::mutate(bearing = DOA %>% purrr::map("bearing")) %>% dplyr::select(range_cell, bearing, radial_v) %>% tidyr::unnest(bearing) %>% dplyr::mutate(bearing = ((-1* bearing %% 360) + seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AntennaBearing()) %% 360)
-
-
-
-plot_radials(to.plot_bearing$range_cell,to.plot_bearing$bearing,to.plot_bearing$radial_v*100)
-
-MUSIC %>%  dplyr::select(lonlat, radial_v) %>% tidyr::unnest(lonlat) %>% ggplot2::ggplot(ggplot2::aes(x=lon, y=lat, color = radial_v)) + ggplot2::geom_point() +ggplot2::scale_color_gradient2()
+# to.plot_bearing <- MUSIC %>% dplyr::mutate(bearing = DOA %>% purrr::map("bearing")) %>% dplyr::select(range_cell, bearing, radial_v) %>% tidyr::unnest(bearing) %>% dplyr::mutate(bearing = ((-1* bearing %% 360) + seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AntennaBearing()) %% 360)
+#
+#
+#
+# plot_radials(to.plot_bearing$range_cell,to.plot_bearing$bearing,to.plot_bearing$radial_v*100)
+#
+# MUSIC %>%  dplyr::select(lonlat, radial_v) %>% tidyr::unnest(lonlat) %>% ggplot2::ggplot(ggplot2::aes(x=lon, y=lat, color = radial_v)) + ggplot2::geom_point() +ggplot2::scale_color_gradient2()
 
 
 
@@ -887,5 +887,39 @@ test <- data.table::fread(file_path) %>% as.data.frame()
 expect_equal(test, target)
 
 })
+
+})
+
+
+#### Processing steps ####
+
+test_that("The CS object records the steps of the MUSIC algorithm",{
+
+  phase_path <- here::here("tests/testthat/data/TORA/Phases.txt")
+  amplitude_corrections <- c(1.22398329, 1.32768297)
+
+  # Create a SeaSondeRAPM object with corrections
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(
+    here::here("tests/testthat/data/TORA/IdealPattern.txt"),
+    override_antenna_bearing = 13.0,
+    override_phase_corrections = phase_path,
+    override_amplitude_factors = amplitude_corrections,
+    apply_phase_and_amplitude_corrections = TRUE
+  )
+
+  seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
+
+  # Create a SeaSondeRCS object
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(
+    here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"),
+    system.file("specs", "CS_V1.yaml", package = "SeaSondeR"),
+    seasonder_apm_object = seasonder_apm_obj
+  )
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+  test <- seasonder_getSeaSondeRCS_ProcessingSteps(seasonder_cs_obj)
+
+  expect_snapshot_value(test, style = "json2")
 
 })
