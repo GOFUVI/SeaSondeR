@@ -76,6 +76,12 @@
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_MUSICEuclideanDistance.html</loc>
   </url>
   <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_MUSIC_LonLat.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_applyAPMAmplitudeAndPhaseCorrections.html</loc>
+  </url>
+  <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_areLogsEnabled.html</loc>
   </url>
   <url>
@@ -107,6 +113,9 @@
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_enableMessages.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_exportMUSICTable.html</loc>
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getBinsRadialVelocity.html</loc>
@@ -272,6 +281,12 @@
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_rejectDistantBragg.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_rejectDistantBraggPeakTest.html</loc>
+  </url>
+  <url>
+    <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_rejectNoiseIonospheric.html</loc>
   </url>
   <url>
     <loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_rerun_qc_with_fun.html</loc>
