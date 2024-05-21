@@ -242,7 +242,21 @@ seasonder_getSeaSondeRCS_FOR_reject_noise_ionospheric_threshold <- function(seas
   return(out)
 }
 
+#### Processing_steps ####
 
+
+SeaSondeRCS_FOR_SeaSonde_start_step_text <- function() {
+  # Use glue to format the message with the current system time and the provided file path
+  glue::glue("{Sys.time()}: FOR computation started using the SeaSonde method.")
+}
+
+
+SeaSondeRCS_FOR_SeaSonde_end_step_text <- function(seasonder_cs_object) {
+  # Use glue to format the message with the current system time and the provided file path
+
+
+  glue::glue("{Sys.time()}: FOR computation using the SeaSonde method ended.")
+}
 
 ##### FOR #####
 
@@ -761,6 +775,7 @@ seasonder_rejectNoiseIonospheric <- function(seasonder_cs_obj) {
 
 seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_obj) {
 
+  seasonder_cs_obj  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_FOR_SeaSonde_start_step_text())
 
   seasonder_cs_obj %<>% seasonder_findFORNulls()
 
@@ -779,6 +794,8 @@ seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_obj) {
 
     seasonder_cs_obj %<>% seasonder_rejectNoiseIonospheric()
   }
+
+  seasonder_cs_obj  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_FOR_SeaSonde_end_step_text())
 
   return(seasonder_cs_obj)
 
