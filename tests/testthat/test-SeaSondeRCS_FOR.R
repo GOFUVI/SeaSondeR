@@ -253,3 +253,47 @@ describe("plots",{
 
   })
 })
+
+
+#### Processing steps ####
+
+test_that("The CS object records the steps of the FOR algorithm",{
+
+  phase_path <- here::here("tests/testthat/data/TORA/Phases.txt")
+  amplitude_corrections <- c(1.22398329, 1.32768297)
+
+  # Create a SeaSondeRAPM object with corrections
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(
+    here::here("tests/testthat/data/TORA/IdealPattern.txt"),
+    override_antenna_bearing = 13.0,
+    override_phase_corrections = phase_path,
+    override_amplitude_factors = amplitude_corrections,
+    apply_phase_and_amplitude_corrections = TRUE
+  )
+
+  seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
+
+  # Create a SeaSondeRCS object
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(
+    here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"),
+    system.file("specs", "CS_V1.yaml", package = "SeaSondeR"),
+    seasonder_apm_object = seasonder_apm_obj
+  )
+
+  FOS <-   list(nsm = 2,
+                fdown = 10^(10/10),
+                flim = 10^(20/10),
+                noisefact = 10^(6/10),
+                currmax = 1,
+                reject_distant_bragg = TRUE, #  Default is to apply this test
+                reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+
+                reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
+  )
+
+  seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
+  test <- seasonder_getSeaSondeRCS_ProcessingSteps(seasonder_cs_obj)
+
+  expect_snapshot_value(test, style = "json2")
+
+})
