@@ -261,7 +261,7 @@ describe("seasonder_validateAttributesSeaSondeRAPM",{
 
 describe("file reading",{
 
-  it("File reading works", {
+  test_that("File reading works", {
     file_path <- here::here("tests/testthat/data/MeasPattern.txt")
     msg <- glue::glue("2022-01-02 03:45:03: Created from {file_path}.")
     mk <- mockthat::mock(msg)
@@ -275,5 +275,17 @@ describe("file reading",{
     expect_snapshot_value(test,style ="serialize")
   })
 
+  test_that("longitude and latitude override works",{
 
+
+    file_path <- here::here("tests/testthat/data/TORA/IdealPattern.txt")
+
+    target <- c(Latitude = 42, Longitude = -8)
+    test <- seasonder_readSeaSondeRAPMFile(file_path,
+                                           override_SiteOrigin = target,
+) %>% seasonder_getSeaSondeRAPM_SiteOrigin()
+
+expect_equal(test,target)
+
+  })
 })

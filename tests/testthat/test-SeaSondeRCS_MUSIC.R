@@ -340,47 +340,49 @@ for(i in seq_len(nrow(MUSIC))){
 
 describe("seasonder_runMUSIC_in_FOR",{
 
-  it("should run the MUSIC algorithm on the cells and doppler bins specified",{
-
-    seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"))
-
-    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj)
-
-    seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T, reject_noise_ionospheric = T, currmax = 1))
-
-    test_obj <- seasonder_runMUSIC_in_FOR(seasonder_cs_obj)
-
-     seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion(test_obj)
-
-test <- seasonder_getSeaSondeRCS_MUSIC(test_obj)
-
-
-
-
-
-to.plot <- test %>% dplyr::select(range_cell,radial_v,DOA_solutions,retained_solution) %>%
-  dplyr::mutate(bearing = purrr::map2(DOA_solutions, retained_solution, \(x,y) data.frame(bearing=x[[y]]$bearing))) %>% tidyr::unnest(bearing) %>% dplyr::select(bearing,range_cell,radial_v, retained_solution)
-
-
-
-ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing*-1 , color = retained_solution)) +
-
-  ggplot2::geom_point(alpha = 0.5) +  ggplot2::coord_polar(start = pi+pi/8) + ggplot2::xlim(c(-180,180))
-
-
-
-
-
-  ggplot2::ggplot(to.plot, ggplot2::aes(x=bearing)) + ggplot2::geom_histogram()
-
-
-  ggplot2::ggplot(to.plot, ggplot2::aes(x=radial_v)) + ggplot2::geom_histogram()
-
-  ggplot2::ggplot(to.plot, ggplot2::aes(x=bearing, y = radial_v, color = retained_solution)) + ggplot2::geom_point(alpha = 0.5)
-
-  test$distances[900:1000] %>% purrr::map(\(dist) Real(dist["single",, drop=F]) %>% data.frame() %>% set_colnames(sprintf("X%03d",seq_len(ncol(dist))))) %>% dplyr::bind_rows() %>% tidyr::pivot_longer(cols = dplyr::everything()) %>% ggplot2::ggplot(ggplot2::aes(y=value, x=name)) + ggplot2::geom_point(alpha = 0.5)
-
-})
+#   it("should run the MUSIC algorithm on the cells and doppler bins specified",{
+#
+#     seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"))
+#
+#     seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj,doppler_interpolation=2L)
+#
+#
+#
+#     seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T, reject_noise_ionospheric = T, currmax = 1))
+#
+#     test_obj <- seasonder_runMUSIC_in_FOR(seasonder_cs_obj)
+#
+#      seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion(test_obj)
+#
+# test <- seasonder_getSeaSondeRCS_MUSIC(test_obj)
+#
+#
+#
+#
+#
+# to.plot <- test %>% dplyr::select(range_cell,radial_v,DOA_solutions,retained_solution) %>%
+#   dplyr::mutate(bearing = purrr::map2(DOA_solutions, retained_solution, \(x,y) data.frame(bearing=x[[y]]$bearing))) %>% tidyr::unnest(bearing) %>% dplyr::select(bearing,range_cell,radial_v, retained_solution)
+#
+#
+#
+# ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing*-1 , color = retained_solution)) +
+#
+#   ggplot2::geom_point(alpha = 0.5) +  ggplot2::coord_polar(start = pi+pi/8) + ggplot2::xlim(c(-180,180))
+#
+#
+#
+#
+#
+#   ggplot2::ggplot(to.plot, ggplot2::aes(x=bearing)) + ggplot2::geom_histogram()
+#
+#
+#   ggplot2::ggplot(to.plot, ggplot2::aes(x=radial_v)) + ggplot2::geom_histogram()
+#
+#   ggplot2::ggplot(to.plot, ggplot2::aes(x=bearing, y = radial_v, color = retained_solution)) + ggplot2::geom_point(alpha = 0.5)
+#
+#   test$distances[900:1000] %>% purrr::map(\(dist) Real(dist["single",, drop=F]) %>% data.frame() %>% set_colnames(sprintf("X%03d",seq_len(ncol(dist))))) %>% dplyr::bind_rows() %>% tidyr::pivot_longer(cols = dplyr::everything()) %>% ggplot2::ggplot(ggplot2::aes(y=value, x=name)) + ggplot2::geom_point(alpha = 0.5)
+#
+# })
 
 
   it("should run the MUSIC algorithm on the cells and doppler bins specified to get the ideals",{
@@ -411,7 +413,7 @@ ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing*-1 , color = reta
     )
 
 
-    seasonder_cs_obj_1 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/CSS_TORA_24_03_19_1610.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj)
+    seasonder_cs_obj_1 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/CSS_TORA_24_03_19_1610.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
 
     seasonder_cs_obj_1 %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
 
@@ -422,7 +424,7 @@ ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing*-1 , color = reta
     test_1 <- seasonder_getSeaSondeRCS_MUSIC(test_obj_1)
 
 
-    seasonder_cs_obj_2 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/CSS_TORA_24_03_19_1620.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj)
+    seasonder_cs_obj_2 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/CSS_TORA_24_03_19_1620.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
 
     seasonder_cs_obj_2 %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
 
@@ -433,7 +435,7 @@ ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing*-1 , color = reta
     test_2 <- seasonder_getSeaSondeRCS_MUSIC(test_obj_2)
 
 
-    seasonder_cs_obj_3 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/CSS_TORA_24_03_19_1630.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj)
+    seasonder_cs_obj_3 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/CSS_TORA_24_03_19_1630.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
 
     seasonder_cs_obj_3 %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
 
@@ -444,7 +446,7 @@ ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing*-1 , color = reta
     test_3 <- seasonder_getSeaSondeRCS_MUSIC(test_obj_3)
 
 
-    seasonder_cs_obj_4 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/CSS_TORA_24_03_19_1640.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj)
+    seasonder_cs_obj_4 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/CSS_TORA_24_03_19_1640.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
 
     seasonder_cs_obj_4 %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
 
@@ -455,7 +457,7 @@ ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing*-1 , color = reta
     test_4 <- seasonder_getSeaSondeRCS_MUSIC(test_obj_4)
 
 
-    seasonder_cs_obj_5 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/CSS_TORA_24_03_19_1650.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj)
+    seasonder_cs_obj_5 <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/CSS_TORA_24_03_19_1650.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj, doppler_interpolation = 2L)
 
     seasonder_cs_obj_5 %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
 
@@ -466,14 +468,14 @@ ggplot2::ggplot(to.plot,ggplot2::aes(y=range_cell, x = bearing*-1 , color = reta
     test_5 <- seasonder_getSeaSondeRCS_MUSIC(test_obj_5)
 
 
-    test <- dplyr::bind_rows( test_1,test_2, test_3, test_4, test_5)
+    test <- dplyr::bind_rows( test_1 %>% dplyr::mutate(time = 1),test_2%>% dplyr::mutate(time = 2), test_3%>% dplyr::mutate(time = 3), test_4%>% dplyr::mutate(time = 4), test_5%>% dplyr::mutate(time = 5))
 
 test %<>% dplyr::filter(range < 5)
 test_ideal <- test
 antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(seasonder_apm_obj)
 
-    to.plot <- test %>% dplyr::select(range, range_cell,radial_v,DOA_solutions,retained_solution) %>%
-      dplyr::mutate(bearing = purrr::map2(DOA_solutions, retained_solution, \(x,y) data.frame(bearing=x[[y]]$bearing))) %>% tidyr::unnest(bearing) %>% dplyr::select(bearing,range, range_cell,radial_v, retained_solution) %>% dplyr::mutate(bearing = (((bearing * -1 + 360) %% 360) + antenna_bearing ) %% 360)
+    to.plot <- test %>% dplyr::select(range, range_cell,radial_v,DOA_solutions,retained_solution, time) %>%
+      dplyr::mutate(bearing = purrr::map2(DOA_solutions, retained_solution, \(x,y) data.frame(bearing=x[[y]]$bearing))) %>% tidyr::unnest(bearing) %>% dplyr::select(bearing,range, range_cell,radial_v, retained_solution, time) %>% dplyr::mutate(bearing = (((bearing * -1 + 360) %% 360) + antenna_bearing ) %% 360)
 
 
 
@@ -495,8 +497,18 @@ antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(seasonder_apm_obj)
     ggplot2::ggplot(to.plot, ggplot2::aes(x=bearing, y = radial_v, color = retained_solution)) + ggplot2::geom_point(alpha = 0.5)
 
 
+bearing_bins <- seq(0,360,2)
+bearing_bin_center <- seq(1,359,2)
+radials <- to.plot %>%
+  dplyr::mutate(bearing_bin = findInterval(bearing,bearing_bins)) %>%
+  dplyr::group_by(range, range_cell, bearing_bin) %>%
+  dplyr::group_by(range, range_cell, bearing_bin) %>% dplyr::summarise(max_v = max(radial_v), min_v = min(radial_v),radial_v = median(radial_v), n = dplyr::n(), time_count = length(unique(time)), .groups = "drop") %>%
+  dplyr::mutate(bearing = bearing_bin_center[bearing_bin])
 
-radials <- to.plot %>% dplyr::group_by(range, range_cell, bearing) %>% dplyr::summarise(max_v = max(radial_v), min_v = min(radial_v),radial_v = mean(radial_v), n = dplyr::n(), .groups = "drop")
+
+
+
+
 
 
 
@@ -546,13 +558,22 @@ ggplot2::ggplot(to.plot_ruv,ggplot2::aes(y=range_cell, x = bearing )) +
 
 
 
-  radial_comparison <-  ruv %>% dplyr::rename(bearing = `Bearing (True)`, range_cell = `Spectra RngCell`) %>% dplyr::left_join(radials, by = c("bearing","range_cell")) %>% dplyr::mutate(radial_v = radial_v * 100, min_v = min_v * 100, max_v = max_v* 100)
+  radial_comparison <-  ruv %>% dplyr::rename(bearing = `Bearing (True)`, range_cell = `Spectra RngCell`) %>% dplyr::mutate(bearing_bin = findInterval(bearing,bearing_bins))
 
 
-  radial_comparison %>% dplyr::select(range_cell, bearing, min_v, `Velocity Minimum`, max_v, `Velocity Maximum`, radial_v, `Velocity (cm/s)`, n, `Spatial Count`) %>% dplyr::arrange(range_cell, bearing) %>% View()
+
+
+
+  radial_comparison %<>% dplyr::left_join(radials, by = c("bearing","range_cell")) %>% dplyr::mutate(radial_v = radial_v * 100, min_v = min_v * 100, max_v = max_v* 100)
+
+
+  radial_comparison %>% dplyr::select(range_cell, bearing, min_v, `Velocity Minimum`, max_v, `Velocity Maximum`, radial_v, `Velocity (cm/s)`, n, `Spatial Count`, `Temporal Count`) %>% dplyr::arrange(range_cell, bearing) %>% View()
 
 
   lm(radial_v ~ `Velocity (cm/s)`, radial_comparison)
+
+
+
 
   ggplot2::ggplot(radial_comparison, ggplot2::aes(x= `Velocity (cm/s)`, y = radial_v)) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "lm")
 
@@ -744,5 +765,161 @@ test_measured <- test
 
 })
 
+#### seasonder_MUSIC_LonLat ####
+
+describe("seasonder_MUSIC_lonlat",{
+
+  phase_path <- here::here("tests/testthat/data/TORA/Phases.txt")
+
+  amplitude_corrections <- c(1.22398329,1.32768297)
+
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(here::here("tests/testthat/data/TORA/IdealPattern.txt"), override_antenna_bearing = 13.0, override_phase_corrections = phase_path, override_amplitude_factors = amplitude_corrections, apply_phase_and_amplitude_corrections = TRUE)
 
 
+  seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
+
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = seasonder_apm_obj)
+
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_MUSIC(seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj) %>% dplyr::select(-dplyr::one_of("lonlat")))
+
+test_that("Longitude and latitude are added to the MUSIC matrix",{
+
+
+  seasonder_cs_obj %<>% seasonder_MUSIC_LonLat()
+
+  MUSIC <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
+
+expect_true("lonlat" %in% names(MUSIC))
+
+# to.plot_bearing <- MUSIC %>% dplyr::mutate(bearing = DOA %>% purrr::map("bearing")) %>% dplyr::select(range_cell, bearing, radial_v) %>% tidyr::unnest(bearing) %>% dplyr::mutate(bearing = ((-1* bearing %% 360) + seasonder_apm_obj %>% seasonder_getSeaSondeRAPM_AntennaBearing()) %% 360)
+#
+#
+#
+# plot_radials(to.plot_bearing$range_cell,to.plot_bearing$bearing,to.plot_bearing$radial_v*100)
+#
+# MUSIC %>%  dplyr::select(lonlat, radial_v) %>% tidyr::unnest(lonlat) %>% ggplot2::ggplot(ggplot2::aes(x=lon, y=lat, color = radial_v)) + ggplot2::geom_point() +ggplot2::scale_color_gradient2()
+
+
+
+})
+
+})
+
+#### seasonder_exportMUSICTable ####
+
+describe("seasonder_exportMUSICTable", {
+  phase_path <- here::here("tests/testthat/data/TORA/Phases.txt")
+  amplitude_corrections <- c(1.22398329, 1.32768297)
+
+  # Create a SeaSondeRAPM object with corrections
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(
+    here::here("tests/testthat/data/TORA/IdealPattern.txt"),
+    override_antenna_bearing = 13.0,
+    override_phase_corrections = phase_path,
+    override_amplitude_factors = amplitude_corrections,
+    apply_phase_and_amplitude_corrections = TRUE
+  )
+
+  seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
+
+  # Create a SeaSondeRCS object
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(
+    here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"),
+    system.file("specs", "CS_V1.yaml", package = "SeaSondeR"),
+    seasonder_apm_object = seasonder_apm_obj
+  )
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+  test <- seasonder_exportMUSICTable(seasonder_cs_obj)
+
+  test_that("The table created includes longitude, latitude, cell_number, range, doppler_cell, doppler_freq, radial_velocity, signal_power, bearing", {
+    expect_named(test, c("longitude", "latitude", "range_cell", "range", "doppler_bin", "doppler_freq", "radial_velocity", "signal_power", "bearing"))
+  })
+
+  test_that("The table created has the same data as the CS object MUSIC table", {
+    MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)
+    col_test <- test %>% dplyr::select(range_cell, doppler_bin) %>% dplyr::distinct()
+
+    expect_equal(col_test$range_cell, MUSIC$range_cell)
+    expect_equal(col_test$doppler_bin, MUSIC$doppler_bin)
+  })
+})
+
+describe("seasonder_exportCSVMUSICTable",{
+
+  phase_path <- here::here("tests/testthat/data/TORA/Phases.txt")
+  amplitude_corrections <- c(1.22398329, 1.32768297)
+
+  # Create a SeaSondeRAPM object with corrections
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(
+    here::here("tests/testthat/data/TORA/IdealPattern.txt"),
+    override_antenna_bearing = 13.0,
+    override_phase_corrections = phase_path,
+    override_amplitude_factors = amplitude_corrections,
+    apply_phase_and_amplitude_corrections = TRUE
+  )
+
+  seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
+
+  # Create a SeaSondeRCS object
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(
+    here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"),
+    system.file("specs", "CS_V1.yaml", package = "SeaSondeR"),
+    seasonder_apm_object = seasonder_apm_obj
+  )
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+  target <- seasonder_exportMUSICTable(seasonder_cs_obj) %>% as.data.frame()
+
+test_that("writes the table to the file path",{
+
+file_path <- tempfile(fileext = ".csv")
+
+seasonder_exportCSVMUSICTable(seasonder_cs_obj, file_path)
+
+test <- data.table::fread(file_path) %>% as.data.frame()
+
+expect_equal(test, target)
+
+})
+
+})
+
+
+#### Processing steps ####
+
+test_that("The CS object records the steps of the MUSIC algorithm",{
+
+  phase_path <- here::here("tests/testthat/data/TORA/Phases.txt")
+  amplitude_corrections <- c(1.22398329, 1.32768297)
+
+  # Create a SeaSondeRAPM object with corrections
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(
+    here::here("tests/testthat/data/TORA/IdealPattern.txt"),
+    override_antenna_bearing = 13.0,
+    override_phase_corrections = phase_path,
+    override_amplitude_factors = amplitude_corrections,
+    apply_phase_and_amplitude_corrections = TRUE
+  )
+
+  seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
+
+  # Create a SeaSondeRCS object
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(
+    here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"),
+    system.file("specs", "CS_V1.yaml", package = "SeaSondeR"),
+    seasonder_apm_object = seasonder_apm_obj
+  )
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+  test <- seasonder_getSeaSondeRCS_ProcessingSteps(seasonder_cs_obj)
+
+  expect_snapshot_value(test, style = "json2")
+
+})

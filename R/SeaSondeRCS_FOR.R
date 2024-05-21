@@ -34,7 +34,10 @@ seasonder_validateFOR_parameters <- function(seasonder_cs_obj, FOR_parameters, m
   if (method == "SeaSonde") {
 
     FOR_parameters$nsm <- FOR_parameters$nsm %||% seasonder_defaultFOR_parameters()$nsm
+
     FOR_parameters$reference_noise_normalized_limits <- FOR_parameters$reference_noise_normalized_limits %||% seasonder_estimateReferenceNoiseNormalizedLimits(seasonder_cs_obj)
+
+
     FOR_parameters$fdown <- FOR_parameters$fdown %||% seasonder_defaultFOR_parameters()$fdown
     FOR_parameters$flim <- FOR_parameters$flim %||% seasonder_defaultFOR_parameters()$flim
     FOR_parameters$noisefact <- FOR_parameters$noisefact %||% seasonder_defaultFOR_parameters()$noisefact
@@ -204,7 +207,7 @@ seasonder_getSeaSondeRCS_FOR_method  <- function(seasonder_cs_obj) {
 
 }
 
-seasonder_getSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, NoiseLevel, dB = TRUE) {
+seasonder_getSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, dB = TRUE) {
 
 
   out <- attr(seasonder_cs_obj, "NoiseLevel", exact = TRUE) %||% numeric(0)
@@ -239,7 +242,21 @@ seasonder_getSeaSondeRCS_FOR_reject_noise_ionospheric_threshold <- function(seas
   return(out)
 }
 
+#### Processing_steps ####
 
+
+SeaSondeRCS_FOR_SeaSonde_start_step_text <- function() {
+  # Use glue to format the message with the current system time and the provided file path
+  glue::glue("{Sys.time()}: FOR computation started using the SeaSonde method.")
+}
+
+
+SeaSondeRCS_FOR_SeaSonde_end_step_text <- function(seasonder_cs_object) {
+  # Use glue to format the message with the current system time and the provided file path
+
+
+  glue::glue("{Sys.time()}: FOR computation using the SeaSonde method ended.")
+}
 
 ##### FOR #####
 
@@ -250,7 +267,7 @@ seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_obj) {
 
   freq <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = T)
 
-  out <- max(freq)*c(0.9,1)
+  out <- max(freq)*c(0.565,1)
 
   return(out)
 
@@ -263,9 +280,17 @@ seasonder_computeNoiseLevel <- function(seasonder_cs_obj) {
 
   normalized_doppler_range <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$reference_noise_normalized_limits
 
-  positive_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, normalized_doppler_range, in_units = "normalized doppler frequency", out_units = "bins")
+  positive_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, sort(normalized_doppler_range), in_units = "normalized doppler frequency", out_units = "bins")
 
-  negative_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, -1 * normalized_doppler_range, in_units = "normalized doppler frequency", out_units = "bins")
+if(is.na(positive_doppler_range[2])){
+  positive_doppler_range[2] <- seasonder_getnDopplerCells(seasonder_cs_obj)
+}
+
+  negative_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, sort(-1 * normalized_doppler_range), in_units = "normalized doppler frequency", out_units = "bins")
+
+  if(is.na(negative_doppler_range[1])){
+    negative_doppler_range[1] <- 1
+  }
 
   SS3 <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj, antennae = 3, doppler_ranges = list(negative = negative_doppler_range, positive = positive_doppler_range), collapse = TRUE)
 
@@ -566,8 +591,29 @@ seasonder_limitFORCurrentRange <- function(seasonder_cs_obj) {
 
 }
 
+#' Reject Distant Bragg Peaks
+#'
+#' This function evaluates Bragg peaks based on their proximity to expected Bragg line bins.
+#' If the boundaries of a peak are farther from all Bragg lines than the width of the peak itself,
+#' the peak is rejected by setting it to an empty integer vector.
+#'
+#' @param seasonder_cs_obj An object representing the current state of the radar cross section analysis,
+#'        expected to contain methods or properties needed to determine Bragg lines.
+#' @param peak A numeric vector indicating the positions of the peak under consideration.
+#' @param range Optional; A numeric or integer NA indicating the range over which to consider the peak.
+#'        Defaults to NA if not specified.
+#' @param peak_name Optional; A character string representing the name or identifier of the peak.
+#'        Defaults to an empty string if not specified.
+#'
 #' @details
-#' Reject the First Order when the limits are farther away from the Bragg index than the width of the first order. This is implemented by setting the peak to integer(0).
+#' The function computes the left and right limits of the given peak and checks if the distance
+#' from these limits to the nearest Bragg lines exceeds the width of the peak. If both boundaries
+#' exceed this threshold, the peak is rejected.
+#'
+#' @return Returns a possibly modified version of the `peak` argument, where a rejected peak
+#'         is returned as `integer(0)`, indicating that no valid peak is present.
+#'
+#' @export
 seasonder_rejectDistantBraggPeakTest <- function(seasonder_cs_obj, peak, range = NA, peak_name = ""){
 
   # If there is a peak
@@ -697,10 +743,24 @@ seasonder_rejectNoiseIonosphericTest <- function(seasonder_cs_obj, peak, range =
 }
 
 
-#' @details
-#' When applied, reject the Negative and/or Positive Bragg when the total external (Non Bragg) is greater then the Bragg power by the dB amount entered.
+#' Reject Ionospheric Noise in SeaSonde Data
 #'
-seasonder_rejectNoiseIonospheric <- function(seasonder_cs_obj){
+#' @description
+#' This function rejects negative and positive Bragg peaks when the total external (non-Bragg)
+#' power is greater than the Bragg power by a specified dB amount. This is applied across each
+#' range for both negative and positive Bragg peaks.
+#'
+#' @param seasonder_cs_obj a SeaSonde cross-section object, which contains data for various ranges
+#'        and peaks that need processing.
+#'
+#' @details
+#' The function iterates over each range and applies a test to each negative and positive Bragg peak.
+#' It uses the `seasonder_rejectNoiseIonosphericTest` function to evaluate whether the Bragg peak should
+#' be rejected based on the comparison of Bragg and non-Bragg power levels.
+#'
+#' @return Returns the modified SeaSonde cross-section object with appropriate Bragg peaks rejected.
+#' @export
+seasonder_rejectNoiseIonospheric <- function(seasonder_cs_obj) {
 
   FORs <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_obj)
 
@@ -710,11 +770,12 @@ seasonder_rejectNoiseIonospheric <- function(seasonder_cs_obj){
   seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR(FORs)
 
   return(seasonder_cs_obj)
-
 }
+
 
 seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_obj) {
 
+  seasonder_cs_obj  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_FOR_SeaSonde_start_step_text())
 
   seasonder_cs_obj %<>% seasonder_findFORNulls()
 
@@ -733,6 +794,8 @@ seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_obj) {
 
     seasonder_cs_obj %<>% seasonder_rejectNoiseIonospheric()
   }
+
+  seasonder_cs_obj  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_FOR_SeaSonde_end_step_text())
 
   return(seasonder_cs_obj)
 

@@ -28,15 +28,25 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
                    MUSIC_data = list(),
                    NoiseLevel = numeric(0),
                    APM = seasonder_apm_object,
-                   class = "SeaSondeRCS")
+                   interpolated_doppler_cells_index = integer(0),
+                   class = c("SeaSondeRCS", "list"))
+
+
+
 
   out %<>% seasonder_setSeaSondeRCS_header(header)
   out %<>% seasonder_setSeaSondeRCS_data(data)
 
+
+
+
+
+
   out %<>% seasonder_setSeaSondeRCS_FOR_parameters(list())
   out %<>% seasonder_setSeaSondeRCS_FOR(seasonder_initSeaSondeRCS_FOR(out))
 
-  out %<>% seasonder_initMUSICData()
+
+  seasonder_logAndMessage("new_SeaSondeRCS: SeaSondeRCS object created successfully.", "info")
 
 
 
@@ -112,7 +122,7 @@ new_SeaSondeRCS_SSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL
 
   out <- structure(matrix,
                    name = name,
-                   class = "SeaSondeRCS_SSMatrix")
+                   class = c("SeaSondeRCS_SSMatrix",class(matrix)))
 
   return(out)
 }
@@ -129,7 +139,7 @@ new_SeaSondeRCS_QCMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL
 
   out <- structure(matrix,
                    name = name,
-                   class = "SeaSondeRCS_QCMatrix")
+                   class = c("SeaSondeRCS_QCMatrix", class(matrix)))
 
   return(out)
 }
@@ -146,7 +156,7 @@ new_SeaSondeRCS_CSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL
 
   out <- structure(matrix,
                    name = name,
-                   class = "SeaSondeRCS_CSMatrix")
+                   class = c("SeaSondeRCS_CSMatrix", class(matrix)))
 
   return(out)
 }
@@ -204,7 +214,7 @@ seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_obj, FOR) {
         right_index <- nNegBraggRightIndex[i]
 
         if (left_index > 0 && right_index > 0 && left_index <= right_index) {
-          result[[i]]$negative_FOR <- seq(left_index, right_index)
+          result[[i]]$negative_FOR <- seq(left_index+1, right_index+1)
         }
         return(result)
       },.init = out)
@@ -223,7 +233,7 @@ seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_obj, FOR) {
         right_index <- nPosBraggRightIndex[i]
 
         if (left_index > 0 && right_index > 0 && left_index <= right_index) {
-          result[[i]]$positive_FOR <- seq(left_index, right_index)
+          result[[i]]$positive_FOR <- seq(left_index+1, right_index+1)
         }
         return(result)
       },.init = out)
@@ -412,6 +422,7 @@ seasonder_validateCSDataStructure <- function(data, nRanges, nDoppler) {
 }
 
 
+
 ##### Setters #####
 
 #' Setter for header
@@ -492,6 +503,10 @@ seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_obje
   return(seasonder_cs_object)
 
 }
+
+
+
+
 
 ##### Getters #####
 
@@ -584,6 +599,10 @@ seasonder_getSeaSondeRCS_APM <- function(seasonder_cs_object){
   return(out)
 
 }
+
+
+
+
 
 ###### Data ######
 #' Getter for data
@@ -848,7 +867,11 @@ seasonder_getnRangeCells <- function(seasonder_obj) {
 #' @return The nDopplerCells value.
 #' @export
 seasonder_getnDopplerCells <- function(seasonder_obj) {
-  return(seasonder_getSeaSondeRCS_headerField(seasonder_obj, "nDopplerCells"))
+
+  out <- seasonder_getSeaSondeRCS_headerField(seasonder_obj, "nDopplerCells")
+
+
+  return(out)
 }
 
 seasonder_getCellsDistKm <- function(seasonder_cs_obj) {
@@ -859,6 +882,33 @@ seasonder_getCenterFreqMHz <- function(seasonder_cs_obj) {
   return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "CenterFreq"))
 }
 
+seasonder_getnCsFileVersion <- function(seasonder_cs_object){
+  return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nCsFileVersion"))
+}
+
+seasonder_getfLongitude <- function(seasonder_cs_object){
+
+  out <- NULL
+
+  if( seasonder_getnCsFileVersion(seasonder_cs_object) >= 6) {
+    out <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fLongitude")
+  }
+
+  return(out)
+
+}
+
+seasonder_getfLatitude <- function(seasonder_cs_object){
+
+  out <- NULL
+
+  if( seasonder_getnCsFileVersion(seasonder_cs_object) >= 6) {
+    out <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fLatitude")
+  }
+
+  return(out)
+
+}
 ###### + Derived parameters ######
 
 seasonder_getReceiverGain_dB <- function(seasonder_cs_obj) {
@@ -872,14 +922,23 @@ seasonder_getReceiverGain_dB <- function(seasonder_cs_obj) {
 
 }
 
+seasonder_computeCenterDopplerBin <- function(seasonder_cs_obj, nDoppler){
+
+  center_bin <- nDoppler / 2
+
+  return(center_bin)
+
+}
 
 seasonder_getCenterDopplerBin <- function(seasonder_cs_obj) {
 
   nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
 
-  center_bin <- nDoppler / 2
+  out <- seasonder_computeCenterDopplerBin(seasonder_cs_obj, nDoppler)
 
-  return(center_bin)
+
+
+  return(out)
 
 
 }
@@ -950,6 +1009,25 @@ seasonder_getBraggLineBins <- function(seasonder_cs_obj) {
 
 }
 
+seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_obj,nDoppler,center_bin,spectra_res, normalized = FALSE) {
+
+  frequencies <- (seq(1,nDoppler) - center_bin) * spectra_res
+
+
+  if (normalized) {
+
+    bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)[2]
+
+
+    frequencies <- frequencies / bragg_freq
+
+
+  }
+
+  return(frequencies)
+
+}
+
 #' Get Doppler Bins Frequency
 #'
 #' This function calculates the frequency limits for each Doppler bin within a SeaSonde Cross Spectrum (CS) object. It can return frequencies either in their original Hz values or normalized by the second Bragg frequency. The frequencies are calculated as the high limit of each Doppler bin interval, similar to what is displayed in SpectraPlotterMap.
@@ -970,25 +1048,24 @@ seasonder_getDopplerBinsFrequency <- function(seasonder_cs_obj, normalized = FAL
 
   spectra_res <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
 
-  frequencies <- (seq(1,nDoppler) - center_bin) * spectra_res
 
+  out <- seasonder_computeDopplerBinsFrequency(seasonder_cs_obj, nDoppler, center_bin, spectra_res)
 
-  if (normalized) {
-
-    bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)[2]
-
-
-    frequencies <- frequencies / bragg_freq
-
-
-  }
-
-  return(frequencies)
-
+  return(out)
 
 }
 
+seasonder_computeBinsRadialVelocity <- function(seasonder_cs_obj, freq){
 
+  bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
+
+  k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj)/(2*pi)
+
+  v <- c((freq[freq <= 0]  - bragg_freq[1])/(2*k0),(freq[freq > 0]  - bragg_freq[2])/(2*k0))
+
+
+  return(v)
+}
 
 #' Calculate Radial Velocities for Each Doppler Bin
 #'
@@ -1023,16 +1100,9 @@ seasonder_getBinsRadialVelocity <- function(seasonder_cs_obj) {
 
   freq <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj)
 
-  bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
+  out <- seasonder_computeBinsRadialVelocity(seasonder_cs_obj, freq)
 
-
-  k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj)/(2*pi)
-
-  v <- c((freq[freq < 0]  - bragg_freq[1])/(2*k0),(freq[freq >= 0]  - bragg_freq[2])/(2*k0))
-
-
-  return(v)
-
+  return(out)
 
 }
 
@@ -1076,6 +1146,17 @@ seasonder_getRadialVelocityResolution <- function(seasonder_cs_obj) {
 
   return(vel_res)
 }
+
+
+# @export
+seasonder_getSeaSondeRCSShortTimeRadials <- function(seasonder_cs_obj, short_time_radials_parameters = seasonder_defaultShortTimeRadials_parameters()){
+
+  out <- new_SeaSondeRCSShortTimeRadials(seasonder_cs_obj, short_time_radials_parameters = short_time_radials_parameters)
+
+  return(out)
+
+}
+
 
 ##### Utils #####
 
@@ -1134,6 +1215,22 @@ seasonder_NormalizedDopplerFreq2Bins <- function(seasonder_cs_obj, doppler_value
 
 }
 
+seasonder_computeDopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values,doppler_freqs, delta_freq, nDoppler){
+
+  boundaries <- c(doppler_freqs[1] - delta_freq, doppler_freqs)
+
+  bins <- findInterval(doppler_values,boundaries, rightmost.closed = T, all.inside = F,left.open = T)
+
+
+
+  bins[bins < 1 | bins > nDoppler] <- NA_integer_
+
+
+
+  return(bins)
+
+
+}
 
 seasonder_DopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values) {
 
@@ -1141,17 +1238,11 @@ seasonder_DopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values) {
 
   delta_freq <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
 
-  boundaries <- c(doppler_freqs[1] - delta_freq, doppler_freqs)
-
-  bins <- findInterval(doppler_values,boundaries, rightmost.closed = T, all.inside = F,left.open = T)
-
   nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
 
-  bins[bins < 1 | bins > nDoppler] <- NA_integer_
+ out <- seasonder_computeDopplerFreq2Bins(seasonder_cs_obj, doppler_values,  doppler_freqs, delta_freq, nDoppler)
 
-
-
-  return(bins)
+ return(out)
 
 }
 
@@ -2569,12 +2660,12 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
   # Read the general header (Version 1)
   withCallingHandlers({
     header_v1 <- seasonder_readSeaSondeCSFileHeaderV1(specs$V1, connection, endian)
-    },
-    error = function(err) {
-      err$message <- glue::glue("Header version 1: {conditionMessage(err)}")
+  },
+  error = function(err) {
+    err$message <- glue::glue("Header version 1: {conditionMessage(err)}")
 
-      rlang::cnd_signal(err)
-    }
+    rlang::cnd_signal(err)
+  }
   )
 
   # Extract the file version to determine subsequent headers to process
