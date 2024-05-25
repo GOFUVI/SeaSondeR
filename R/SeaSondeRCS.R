@@ -981,7 +981,9 @@ seasonder_getBraggWaveLength <- function(seasonder_cs_obj) {
 }
 
 seasonder_getBraggDopplerAngularFrequency <- function(seasonder_cs_obj) {
-
+  if(seasonder_is_debug_point_enabled("seasonder_getBraggDopplerAngularFrequency")){
+    browser() # Debug point, do not remove
+  }
   k <- seasonder_getRadarWaveNumber(seasonder_cs_obj = seasonder_cs_obj)
 
   wb <- sqrt(2*constants::syms$gn*k) / (2*pi) * c(-1,1)
@@ -991,7 +993,9 @@ seasonder_getBraggDopplerAngularFrequency <- function(seasonder_cs_obj) {
 }
 
 seasonder_getDopplerSpectrumResolution <- function(seasonder_cs_obj) {
-
+  if(seasonder_is_debug_point_enabled("seasonder_getDopplerSpectrumResolution")){
+    browser() # Debug point, do not remove
+  }
   nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
 
   SweepRate <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")
@@ -1010,7 +1014,9 @@ seasonder_getBraggLineBins <- function(seasonder_cs_obj) {
 }
 
 seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_obj,nDoppler,center_bin,spectra_res, normalized = FALSE) {
-
+  if(seasonder_is_debug_point_enabled("seasonder_computeDopplerBinsFrequency")){
+    browser() # Debug point, do not remove
+  }
   frequencies <- (seq(1,nDoppler) - center_bin) * spectra_res
 
 
