@@ -331,10 +331,10 @@ before_bins <- 0
 if(nsm > 0 ){
   # even
   after_bins  <- nsm/2
-  before_bins <- nsm/2 - 1
+  before_bins <- nsm/2
 
   if (nsm %% 2 != 0) { #odd
-    after_bins <- max(1,(nsm - 1)/2)
+    after_bins <- (nsm - 1)/2 + 1
     before_bins <- (nsm - 1)/2
   }
 }
