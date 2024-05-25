@@ -325,14 +325,20 @@ seasonder_SmoothSS <- function(seasonder_cs_obj, antenna, smoothing = NULL) {
 
   SS <- seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_obj, antenna = antenna)
 
+after_bins <- 0
+before_bins <- 0
+
+if(nsm > 0 ){
+  # even
+  after_bins  <- nsm/2
+  before_bins <- nsm/2 - 1
 
   if (nsm %% 2 != 0) { #odd
-    after_bins <- before_bins <- (nsm - 1)/2
-  }else{ # even
-
-    after_bins  <- nsm/2
-    before_bins <- nsm/2 - 1
+    after_bins <- max(1,(nsm - 1)/2)
+    before_bins <- (nsm - 1)/2
   }
+}
+
 
   out <- purrr::map(1:nrow(SS),\(i) {
 
