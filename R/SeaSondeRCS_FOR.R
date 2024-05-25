@@ -615,7 +615,9 @@ seasonder_limitFORCurrentRange <- function(seasonder_cs_obj) {
 #'
 #' @export
 seasonder_rejectDistantBraggPeakTest <- function(seasonder_cs_obj, peak, range = NA, peak_name = ""){
-
+  if(seasonder_is_debug_point_enabled("seasonder_rejectDistantBraggPeakTest")){
+    browser() # Debug point, do not remove
+  }
   # If there is a peak
   if (length(peak) > 0) {
 
@@ -676,6 +678,10 @@ seasonder_rejectDistantBragg <- function(seasonder_cs_obj){
 
 
 seasonder_rejectNoiseIonosphericTest <- function(seasonder_cs_obj, peak, range = NA, peak_name = ""){
+
+  if(seasonder_is_debug_point_enabled("seasonder_rejectNoiseIonosphericTest")){
+    browser() # Debug point, do not remove
+  }
 
   # Si hay pico
 

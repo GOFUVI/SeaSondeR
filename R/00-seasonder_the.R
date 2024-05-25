@@ -45,3 +45,24 @@ seasonder_disableMessages <- function() seasonder_the$messages_enabled <- FALSE
 #' @examples
 #' seasonder_areMessagesEnabled()
 seasonder_areMessagesEnabled <- function() seasonder_the$messages_enabled
+
+
+#### Debug points ####
+
+
+seasonder_the$debug_points_enabled <- c("none")
+
+#' @export
+seasonder_enable_debug_points <- function(debug_points) {
+  seasonder_the$debug_points_enabled <- c(seasonder_the$debug_points_enabled, debug_points)
+}
+
+#' @export
+seasonder_get_enabled_debug_points <- function() seasonder_the$debug_points_enabled
+
+seasonder_is_debug_point_enabled <- function(debug_point){
+
+  debug_point %in% seasonder_get_enabled_debug_points()
+
+
+}
