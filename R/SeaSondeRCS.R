@@ -1057,7 +1057,7 @@ seasonder_getDopplerBinsFrequency <- function(seasonder_cs_obj, normalized = FAL
   spectra_res <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
 
 
-  out <- seasonder_computeDopplerBinsFrequency(seasonder_cs_obj, nDoppler, center_bin, spectra_res)
+  out <- seasonder_computeDopplerBinsFrequency(seasonder_cs_obj, nDoppler, center_bin, spectra_res, normalized = normalized)
 
   return(out)
 
