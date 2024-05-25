@@ -1041,7 +1041,9 @@ seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_obj,nDoppler,cent
 #'
 #' @importFrom dplyr last
 seasonder_getDopplerBinsFrequency <- function(seasonder_cs_obj, normalized = FALSE) {
-
+  if(seasonder_is_debug_point_enabled("seasonder_getDopplerBinsFrequency")){
+    browser() # Debug point, do not remove
+  }
   center_bin <- seasonder_getCenterDopplerBin(seasonder_cs_obj) # Freq 0
 
   nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
