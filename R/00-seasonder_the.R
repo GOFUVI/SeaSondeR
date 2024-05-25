@@ -67,3 +67,12 @@ seasonder_is_debug_point_enabled <- function(debug_point){
 
 
 }
+
+
+#' @export
+seasonder_disable_all_debug_points <- function(){
+
+  seasonder_the$debug_points_enabled <- c("none")
+
+
+}
