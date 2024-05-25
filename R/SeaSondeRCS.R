@@ -1196,7 +1196,9 @@ seasonder_Bins2NormalizedDopplerFreq <- function(seasonder_cs_obj, bins) {
 }
 
 seasonder_NormalizedDopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values) {
-
+  if(seasonder_is_debug_point_enabled("seasonder_NormalizedDopplerFreq2Bins")){
+    browser() # Debug point, do not remove
+  }
   normalized_doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = TRUE)
 
   delta_freq <- normalized_doppler_freqs %>% diff()
