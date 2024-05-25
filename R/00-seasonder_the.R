@@ -60,6 +60,7 @@ seasonder_enable_debug_points <- function(debug_points) {
 #' @export
 seasonder_get_enabled_debug_points <- function() seasonder_the$debug_points_enabled
 
+#' @export
 seasonder_is_debug_point_enabled <- function(debug_point){
 
   debug_point %in% seasonder_get_enabled_debug_points()

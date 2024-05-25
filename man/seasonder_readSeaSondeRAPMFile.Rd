@@ -9,6 +9,7 @@ seasonder_readSeaSondeRAPMFile(
   override_antenna_bearing = NULL,
   override_phase_corrections = NULL,
   override_amplitude_factors = NULL,
+  override_SiteOrigin = NULL,
   ...
 )
 }
