@@ -172,6 +172,7 @@ seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits <- function(seaso
   return(out)
 }
 
+#' @export
 seasonder_getSeaSondeRCS_FOR <- function(seasonder_cs_obj) {
 
 
@@ -324,14 +325,20 @@ seasonder_SmoothSS <- function(seasonder_cs_obj, antenna, smoothing = NULL) {
 
   SS <- seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_obj, antenna = antenna)
 
+after_bins <- 0
+before_bins <- 0
+
+if(nsm > 0 ){
+  # even
+  after_bins  <- nsm/2
+  before_bins <- nsm/2
 
   if (nsm %% 2 != 0) { #odd
-    after_bins <- before_bins <- (nsm - 1)/2
-  }else{ # even
-
-    after_bins  <- nsm/2
-    before_bins <- nsm/2 - 1
+    after_bins <- (nsm - 1)/2 + 1
+    before_bins <- (nsm - 1)/2
   }
+}
+
 
   out <- purrr::map(1:nrow(SS),\(i) {
 
@@ -615,7 +622,9 @@ seasonder_limitFORCurrentRange <- function(seasonder_cs_obj) {
 #'
 #' @export
 seasonder_rejectDistantBraggPeakTest <- function(seasonder_cs_obj, peak, range = NA, peak_name = ""){
-
+  if(seasonder_is_debug_point_enabled("seasonder_rejectDistantBraggPeakTest")){
+    browser() # Debug point, do not remove
+  }
   # If there is a peak
   if (length(peak) > 0) {
 
@@ -676,6 +685,10 @@ seasonder_rejectDistantBragg <- function(seasonder_cs_obj){
 
 
 seasonder_rejectNoiseIonosphericTest <- function(seasonder_cs_obj, peak, range = NA, peak_name = ""){
+
+  if(seasonder_is_debug_point_enabled("seasonder_rejectNoiseIonosphericTest")){
+    browser() # Debug point, do not remove
+  }
 
   # Si hay pico
 
@@ -819,4 +832,51 @@ seasonder_computeFORs <- function(seasonder_cs_obj, method = NULL, FOR_control =
   }
 
   return(seasonder_cs_obj)
+}
+
+#### Utils ####
+
+#' @export
+seasonder_SeaSondeRCSExportFORBoundaries <- function(seasonder_cs_object){
+
+  FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_object)
+
+  FOR <-  1:length(FOR) %>% purrr::map(\(range_cell) {
+
+    o <- NULL
+
+    doppler_bins <- integer(0)
+
+    neg_bins <- FOR[[range_cell]]$negative_FOR
+neg_range <- NA_integer_
+    if(length(neg_bins) > 0){
+      neg_range <- range(neg_bins)
+
+
+
+
+    }
+
+    pos_bins <- FOR[[range_cell]]$positive_FOR
+    pos_range <- NA_integer_
+    if(length(pos_bins) > 0){
+      pos_range <- range(pos_bins)
+
+
+    }
+
+
+
+
+
+
+
+      o <- data.frame(range_cell = range_cell, first_neg_doppler_cell = neg_range[1], last_neg_doppler_cell = neg_range[2], first_pos_doppler_cell = pos_range[1], last_pos_doppler_cell = pos_range[2])
+
+
+    return(o)
+
+  }) %>% purrr::compact() %>% dplyr::bind_rows()
+
+return(FOR)
 }

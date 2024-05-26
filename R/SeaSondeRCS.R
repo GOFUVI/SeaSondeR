@@ -493,6 +493,7 @@ seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_obj, processin
   return(out)
 }
 
+#' @export
 seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_object){
 
   # TODO: Valiate APM obj
@@ -981,7 +982,9 @@ seasonder_getBraggWaveLength <- function(seasonder_cs_obj) {
 }
 
 seasonder_getBraggDopplerAngularFrequency <- function(seasonder_cs_obj) {
-
+  if(seasonder_is_debug_point_enabled("seasonder_getBraggDopplerAngularFrequency")){
+    browser() # Debug point, do not remove
+  }
   k <- seasonder_getRadarWaveNumber(seasonder_cs_obj = seasonder_cs_obj)
 
   wb <- sqrt(2*constants::syms$gn*k) / (2*pi) * c(-1,1)
@@ -991,7 +994,9 @@ seasonder_getBraggDopplerAngularFrequency <- function(seasonder_cs_obj) {
 }
 
 seasonder_getDopplerSpectrumResolution <- function(seasonder_cs_obj) {
-
+  if(seasonder_is_debug_point_enabled("seasonder_getDopplerSpectrumResolution")){
+    browser() # Debug point, do not remove
+  }
   nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
 
   SweepRate <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")
@@ -1010,7 +1015,9 @@ seasonder_getBraggLineBins <- function(seasonder_cs_obj) {
 }
 
 seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_obj,nDoppler,center_bin,spectra_res, normalized = FALSE) {
-
+  if(seasonder_is_debug_point_enabled("seasonder_computeDopplerBinsFrequency")){
+    browser() # Debug point, do not remove
+  }
   frequencies <- (seq(1,nDoppler) - center_bin) * spectra_res
 
 
@@ -1041,7 +1048,9 @@ seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_obj,nDoppler,cent
 #'
 #' @importFrom dplyr last
 seasonder_getDopplerBinsFrequency <- function(seasonder_cs_obj, normalized = FALSE) {
-
+  if(seasonder_is_debug_point_enabled("seasonder_getDopplerBinsFrequency")){
+    browser() # Debug point, do not remove
+  }
   center_bin <- seasonder_getCenterDopplerBin(seasonder_cs_obj) # Freq 0
 
   nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
@@ -1049,7 +1058,7 @@ seasonder_getDopplerBinsFrequency <- function(seasonder_cs_obj, normalized = FAL
   spectra_res <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
 
 
-  out <- seasonder_computeDopplerBinsFrequency(seasonder_cs_obj, nDoppler, center_bin, spectra_res)
+  out <- seasonder_computeDopplerBinsFrequency(seasonder_cs_obj, nDoppler, center_bin, spectra_res, normalized = normalized)
 
   return(out)
 
@@ -1196,7 +1205,9 @@ seasonder_Bins2NormalizedDopplerFreq <- function(seasonder_cs_obj, bins) {
 }
 
 seasonder_NormalizedDopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values) {
-
+  if(seasonder_is_debug_point_enabled("seasonder_NormalizedDopplerFreq2Bins")){
+    browser() # Debug point, do not remove
+  }
   normalized_doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = TRUE)
 
   delta_freq <- normalized_doppler_freqs %>% diff()

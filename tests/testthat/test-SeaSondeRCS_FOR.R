@@ -114,7 +114,7 @@ test_that("test 1 is correct",{
 
 
 
-  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), doppler_interpolation = 1L)
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
 
 
@@ -178,7 +178,7 @@ describe("FOL tests",{
 
 
 
-      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), doppler_interpolation = 1L)
+      seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
 
 
@@ -224,6 +224,8 @@ comparison <- dplyr::bind_cols(test,target) %>% dplyr::select(range_cell, min_p,
 })
 
 
+#### Plots ####
+
 describe("plots",{
   describe("test 1",{
 
@@ -240,7 +242,7 @@ describe("plots",{
 
 
 
-    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), doppler_interpolation = 1L)
+    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
     seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
 
@@ -254,6 +256,36 @@ describe("plots",{
   })
 })
 
+#### seasonder_SeaSondeRCSExportFORBoundaries ####
+
+describe("seasonder_SeaSondeRCSExportFORBoundaries",{
+
+  test_that("seasonder_SeaSondeRCSExportFORBoundaries exports the boundaries in a table",{
+
+    FOS <-   list(nsm = 2,
+                  fdown = 10^(10/10),
+                  flim = 10^(20/10),
+                  noisefact = 10^(6/10),
+                  currmax = 1,
+                  reject_distant_bragg = TRUE, #  Default is to apply this test
+                  reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+
+                  reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
+    )
+
+
+
+    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+
+
+    test_cs_obj <- seasonder_cs_obj %>% seasonder_computeFORs(method = "SeaSonde", FOR_control = FOS)
+
+    test <- seasonder_SeaSondeRCSExportFORBoundaries(test_cs_obj)
+
+
+  })
+
+})
 
 #### Processing steps ####
 

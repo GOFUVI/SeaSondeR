@@ -303,7 +303,7 @@ seasonder_getSeaSondeRCS_MUSIC <- function(seasonder_cs_obj) {
 
 }
 
-
+#' @export
 seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_cs_obj) {
 
 
@@ -1088,6 +1088,7 @@ seasonder_runMUSIC <- function(seasonder_cs_object){
 
 }
 
+#' @export
 seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation = 2L){
 
   out <- seasonder_cs_object
