@@ -493,6 +493,7 @@ seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_obj, processin
   return(out)
 }
 
+#' @export
 seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_object){
 
   # TODO: Valiate APM obj
