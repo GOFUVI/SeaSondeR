@@ -303,7 +303,7 @@ seasonder_getSeaSondeRCS_MUSIC <- function(seasonder_cs_obj) {
 
 }
 
-
+#' @export
 seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_cs_obj) {
 
 
