@@ -1088,6 +1088,7 @@ seasonder_runMUSIC <- function(seasonder_cs_object){
 
 }
 
+#' @export
 seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation = 2L){
 
   out <- seasonder_cs_object
