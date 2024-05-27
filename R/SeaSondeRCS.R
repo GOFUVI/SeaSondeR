@@ -592,7 +592,7 @@ seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_obj, path = NULL) {
   return(out)
 }
 
-
+#' @export
 seasonder_getSeaSondeRCS_APM <- function(seasonder_cs_object){
 
   out <- attr(seasonder_cs_object, "APM", exact = T)

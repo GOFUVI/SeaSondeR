@@ -1,6 +1,6 @@
-#### FOR ####
+#### MUSIC ####
 
-test_that("SeaSondeRCS Related functions are defined",{
+test_that("SeaSondeRCS_MUSIC Related functions are defined",{
 
   expect_true(is.function(seasonder_MUSICComputeCov))
   expect_true(is.function(seasonder_MUSICCovDecomposition))

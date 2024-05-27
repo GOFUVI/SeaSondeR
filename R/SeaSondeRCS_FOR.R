@@ -243,6 +243,17 @@ seasonder_getSeaSondeRCS_FOR_reject_noise_ionospheric_threshold <- function(seas
   return(out)
 }
 
+#' @export
+seasonder_getSeaSondeRCS_FORConfig <- function(seasonder_cs_object){
+
+
+  out <- list(FOR_parameters = seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_object),
+              NoiseLevel = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object))
+
+  return(out)
+
+}
+
 #### Processing_steps ####
 
 

@@ -342,6 +342,17 @@ seasonder_getSeaSondeRCS_MUSIC_interpolated_doppler_cells_index <- function(seas
   return(out)
 
 }
+
+#' @export
+seasonder_getSeaSondeRCS_MUSICConfig <- function(seasonder_cs_object){
+
+  out <- list(doppler_interpolation = seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_cs_object),
+              MUSIC_parameters = seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object))
+
+
+  return(out)
+}
+
 #### Derived quantities ####
 
 seasonder_MUSICComputePropDualSols <- function(seasonder_cs_object){
