@@ -847,7 +847,7 @@ seasonder_getSeaSondeRCS_headerField <- function(seasonder_cs_obj,field) {
 
   header <- seasonder_getSeaSondeRCS_header(seasonder_cs_obj)
 
-  value <- purrr:::list_flatten(header,name_spec = "{inner}") %>% purrr::pluck(field)
+  value <- purrr::list_flatten(header,name_spec = "{inner}") %>% purrr::pluck(field)
 
   return(value)
 
