@@ -78,7 +78,7 @@ seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = N
 
     if (is.null(doppler_bins)) {
 
-      doppler_bins <- 1:seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(seasonder_obj = seasonder_cs_object)
+      doppler_bins <- 1:seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(seasonder_cs_object = seasonder_cs_object)
     }
 
     out <- expand.grid(range_cell = range_cells, doppler_bin = doppler_bins)
@@ -452,7 +452,7 @@ seasonder_getSeaSondeRCS_MUSIC_interpolated_dataMatrix <- function(seasonder_cs_
 
   matrix_name %in% c("SSA1","SSA2","SSA3","CS12","CS13","CS23","QC") || seasonder_logAndAbort(glue::glue("Unknown data matrix name '{matrix_name}'"),calling_function = "matrix_name", class = "seasonder_unknown_data_matrix_name", seasonder_matrix_name = matrix_name)
 
-  matrix <- seasonder_getSeaSondeRCS_MUSIC_interpolated_data(seasonder_cs_obj = seasonder_cs_obj)[[matrix_name]]
+  matrix <- seasonder_getSeaSondeRCS_MUSIC_interpolated_data(seasonder_cs_object = seasonder_cs_obj)[[matrix_name]]
 
   return(matrix)
 

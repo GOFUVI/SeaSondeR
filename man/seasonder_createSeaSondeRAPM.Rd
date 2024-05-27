@@ -33,15 +33,6 @@ The function performs the following operations:
 
 For more details on the attributes, see \code{\link{seasonder_initializeAttributesSeaSondeRAPM}}.
 }
-\examples{
-cal_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2)
-apm <- seasonder_createSeaSondeRAPM(cal_matrix)
-
-apm <- seasonder_createSeaSondeRAPM(cal_matrix,Creator="Me")
-print(attr(apm,"Creator"))
-# [1] "Me"
-
-}
 \seealso{
 \code{\link{seasonder_validateCalibrationMatrixSeaSondeRAPM}},
 \code{\link{seasonder_initializeAttributesSeaSondeRAPM}}
