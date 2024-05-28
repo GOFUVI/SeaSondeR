@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -114,21 +114,6 @@
 <code><a href="validate_SeaSondeRAPM_PhaseCorrections.html">validate_SeaSondeRAPM_PhaseCorrections</a></code></p></div>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a mock SeaSondeRAPM object with valid attributes</span></span></span>
-<span class="r-in"><span><span class="va">mock_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">complex</a></span><span class="op">(</span>real <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, imaginary <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">mock_apm</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRAPM.html">seasonder_createSeaSondeRAPM</a></span><span class="op">(</span><span class="va">mock_matrix</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in seasonder_validateCalibrationMatrixSeaSondeRAPM(calibration_matrix):</span> seasonder_validateCalibrationMatrixSeaSondeRAPM: Calibration matrix must have three rows.</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Validate attributes</span></span></span>
-<span class="r-in"><span><span class="va">valid</span> <span class="op">&lt;-</span> <span class="fu">seasonder_validateAttributesSeaSondeRAPM</span><span class="op">(</span><span class="va">mock_apm</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'mock_apm' not found</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">valid</span><span class="op">)</span>  <span class="co"># Should print TRUE if all attributes are valid</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'valid' not found</span>
-<span class="r-in"><span></span></span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
