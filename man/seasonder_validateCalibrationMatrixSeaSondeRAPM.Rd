@@ -26,22 +26,6 @@ The function performs the following validation checks:
 
 If any of these validation steps fail, the function will log a fatal error and stop the execution using \code{rlang::abort}.
 }
-\examples{
-# Invalid matrix: not a matrix
-invalid_matrix1 <- c(1, 2)
-# This will cause an error
-# seasonder_validateCalibrationMatrixSeaSondeRAPM(invalid_matrix1)
-
-# Invalid matrix: not two rows
-invalid_matrix2 <- matrix(complex(real = c(1, 2, 3), imaginary = c(4, 5, 6)), nrow = 3)
-# This will cause an error
-# seasonder_validateCalibrationMatrixSeaSondeRAPM(invalid_matrix2)
-
-# Valid matrix
-valid_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2)
-seasonder_validateCalibrationMatrixSeaSondeRAPM(valid_matrix)  # No error
-
-}
 \seealso{
 \code{\link{seasonder_createSeaSondeRAPM}}
 }

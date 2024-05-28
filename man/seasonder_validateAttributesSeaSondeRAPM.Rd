@@ -41,16 +41,6 @@ It internally calls specific validation functions for each of these attributes. 
 
 For more details on the attributes, see \code{\link{seasonder_initializeAttributesSeaSondeRAPM}}.
 }
-\examples{
-# Create a mock SeaSondeRAPM object with valid attributes
-mock_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2)
-mock_apm <- seasonder_createSeaSondeRAPM(mock_matrix)
-
-# Validate attributes
-valid <- seasonder_validateAttributesSeaSondeRAPM(mock_apm)
-print(valid)  # Should print TRUE if all attributes are valid
-
-}
 \seealso{
 \code{\link{validate_SeaSondeRAPM_quality_matrix}},
 \code{\link{validate_SeaSondeRAPM_BEAR}},
