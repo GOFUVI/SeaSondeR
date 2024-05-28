@@ -1222,8 +1222,15 @@ seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
   bearings %<>% seasonder_MUSICBearing2GeographicalBearing(seasonder_apm_object)
 
   MUSIC$lonlat <- purrr::map2(range, bearings, \(dist, bear) {
-    geosphere::destPoint(c(longitude, latitude), bear, dist * 1000) %>%
-      as.data.frame()
+
+    if(length(bear ) > 0){
+      geosphere::destPoint(c(longitude, latitude), bear, dist * 1000) %>%
+        as.data.frame()
+    }else{
+      data.frame(lon = NA_real_, lat = NA_real_)
+    }
+
+
   })
 
   # Update the seasonder_cs_object with new lon-lat data
@@ -1286,7 +1293,13 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object){
   out <- MUSIC %>% dplyr::select(range_cell, doppler_bin, range, doppler_freq = freq, radial_velocity = radial_v, DOA, lonlat)
 
   # Process the DOA and lonlat columns and unnest them
-  out %<>% dplyr::mutate(DOA = purrr::map(DOA, \(DOA_sol) data.frame(bearing = DOA_sol$bearing, signal_power = pracma::Real(diag(DOA_sol$P))))) %>%
+  out %<>% dplyr::mutate(DOA = purrr::map(DOA, \(DOA_sol) {
+    if(length(DOA_sol$bearing)>0){
+    data.frame(bearing = DOA_sol$bearing, signal_power = pracma::Real(diag(DOA_sol$P)))
+    }else{
+      data.frame(bearing = NA_real_, signal_power = NA_real_)
+    }
+    })) %>%
     tidyr::unnest(c(DOA, lonlat))
 
   # Get APM object from the SeaSondeRCS object
