@@ -91,18 +91,6 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
 #' \code{\link{seasonder_createSeaSondeRAPM}},
 #' \code{\link{seasonder_validateAttributesSeaSondeRAPM}}
 #'
-#' @examples
-#' # Create a calibration_matrix
-#' cal_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2, ncol = 2)
-#'
-#' # Initialize attributes with default settings
-#' attr_list <- seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix = cal_matrix)
-#' str(attr_list)
-#'
-#' # Initialize attributes with custom 'Type'
-#' attr_list_custom <- seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix = cal_matrix,
-#' Type = "Custom Pattern")
-#' str(attr_list_custom)
 #'
 #' @importFrom magrittr %<>%
 #' @export
@@ -220,21 +208,6 @@ SeaSondeRAPM_SiteOrigin_override_step_text <- function(SiteOrigin) {
 #' @seealso
 #' \code{\link{seasonder_createSeaSondeRAPM}}
 #'
-#' @examples
-#' # Invalid matrix: not a matrix
-#' invalid_matrix1 <- c(1, 2)
-#' # This will cause an error
-#' # seasonder_validateCalibrationMatrixSeaSondeRAPM(invalid_matrix1)
-#'
-#' # Invalid matrix: not two rows
-#' invalid_matrix2 <- matrix(complex(real = c(1, 2, 3), imaginary = c(4, 5, 6)), nrow = 3)
-#' # This will cause an error
-#' # seasonder_validateCalibrationMatrixSeaSondeRAPM(invalid_matrix2)
-#'
-#' # Valid matrix
-#' valid_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2)
-#' seasonder_validateCalibrationMatrixSeaSondeRAPM(valid_matrix)  # No error
-#'
 #' @export
 seasonder_validateCalibrationMatrixSeaSondeRAPM <- function(matrix) {
   # Implement validation logic here
@@ -307,15 +280,6 @@ seasonder_validateCalibrationMatrixSeaSondeRAPM <- function(matrix) {
 #' \code{\link{validate_SeaSondeRAPM_CommentLine}},
 #' \code{\link{validate_SeaSondeRAPM_FileID}},
 #' \code{\link{validate_SeaSondeRAPM_PhaseCorrections}}
-#'
-#' @examples
-#' # Create a mock SeaSondeRAPM object with valid attributes
-#' mock_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2)
-#' mock_apm <- seasonder_createSeaSondeRAPM(mock_matrix)
-#'
-#' # Validate attributes
-#' valid <- seasonder_validateAttributesSeaSondeRAPM(mock_apm)
-#' print(valid)  # Should print TRUE if all attributes are valid
 #'
 #'@export
 seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {

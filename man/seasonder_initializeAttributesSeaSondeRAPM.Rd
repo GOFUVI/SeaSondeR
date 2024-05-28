@@ -43,20 +43,6 @@ Each attribute has a corresponding setter and getter function, following the nam
 
 Please see \code{\link{seasonder_validateAttributesSeaSondeRAPM}} for details in attributes validation.
 }
-\examples{
-# Create a calibration_matrix
-cal_matrix <- matrix(complex(real = c(1, 2), imaginary = c(3, 4)), nrow = 2, ncol = 2)
-
-# Initialize attributes with default settings
-attr_list <- seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix = cal_matrix)
-str(attr_list)
-
-# Initialize attributes with custom 'Type'
-attr_list_custom <- seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix = cal_matrix,
-Type = "Custom Pattern")
-str(attr_list_custom)
-
-}
 \seealso{
 \code{\link{seasonder_createSeaSondeRAPM}},
 \code{\link{seasonder_validateAttributesSeaSondeRAPM}}
