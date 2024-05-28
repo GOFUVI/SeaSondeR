@@ -65,6 +65,33 @@ seasonder_MUSICInitInterpolatedData <- function(seasonder_cs_object){
 
 }
 
+
+seasonder_NULLSeaSondeRCS_MUSIC <- function(){
+
+out <- data.frame(
+  range_cell = numeric(0),
+  doppler_bin = numeric(0),
+  range= numeric(0),
+  freq =  numeric(0),
+  radial_v =  numeric(0),
+  cov = list(),
+  eigen = list(),
+  distances = list(),
+  DOA_solutions = list(),
+  eigen_values_ratio= numeric(0),
+  P1_check = logical(0),
+  retained_solution = character(0),
+  DOA = list(),
+  lonlat = list(data.frame(lon = numeric(0) , lat = numeric(0)) ))
+
+  out <- tibble::as_tibble(out)
+
+
+
+
+  return(out)
+}
+
 seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL){
 
 
@@ -99,7 +126,8 @@ seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = N
                          eigen_values_ratio=NA_real_,
                          P1_check = TRUE,
                          retained_solution = "dual",
-                         DOA = list(c(NA_real_, NA_real_))
+                         DOA = list(c(NA_real_, NA_real_)),
+                         lonlat = list(data.frame(lon = NA_real_, lat = NA_real_))
   )
 
 
@@ -107,7 +135,7 @@ seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = N
   return(out)
 }
 
-seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL){
+seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL, NULL_MUSIC = FALSE){
 
   out <- seasonder_cs_object
 
@@ -117,10 +145,21 @@ seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, dop
 
 
   out %<>% seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(out))
+
   out %<>% seasonder_setSeaSondeRCS_MUSIC_parameters(seasonder_getSeaSondeRCS_MUSIC_parameters(out))
-  out %<>% seasonder_setSeaSondeRCS_MUSIC(seasonder_initSeaSondeRCS_MUSIC(out, range_cells = range_cells, doppler_bins = doppler_bins))
+MUSIC <- seasonder_NULLSeaSondeRCS_MUSIC()
+
+if(!NULL_MUSIC){
+
+ MUSIC <- seasonder_initSeaSondeRCS_MUSIC(out, range_cells = range_cells, doppler_bins = doppler_bins)
+
+}
+  out %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
   out %<>% seasonder_MUSICComputePropDualSols()
+
   out %<>% seasonder_setSeaSondeRCS_MUSIC_interpolated_data(seasonder_MUSICInitInterpolatedData(out))
+
   return(out)
 }
 
@@ -1154,13 +1193,19 @@ seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation
 
 
 
-  out %<>% seasonder_initMUSICData(range_cells = FOR$range_cell, doppler_bins = FOR$doppler_bin)
+  out %<>% seasonder_initMUSICData(range_cells = FOR$range_cell, doppler_bins = FOR$doppler_bin, NULL_MUSIC = nrow(FOR) == 0)
+
+
+  out %<>% seasonder_initMUSICData(NULL_MUSIC = TRUE)
+
 
 
   out %<>% seasonder_SeaSondeRCSMUSICInterpolateDoppler()
 
 
   out %<>% seasonder_runMUSIC()
+
+
 
   return(out)
 
@@ -1289,7 +1334,19 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object){
   # Retrieve MUSIC data from the SeaSondeRCS object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
+
+  out <- data.frame(longitude = numeric(0),
+                         latitude = numeric(0),
+                         range_cell = numeric(0),
+                         range = numeric(0),
+                         doppler_bin = numeric(0),
+                         doppler_freq = numeric(0),
+                         radial_velocity = numeric(0),
+                         signal_power = numeric(0),
+                         bearing = numeric(0))
   # Select relevant columns from MUSIC data
+
+if(nrow(MUSIC) > 0 ){
   out <- MUSIC %>% dplyr::select(range_cell, doppler_bin, range, doppler_freq = freq, radial_velocity = radial_v, DOA, lonlat)
 
   # Process the DOA and lonlat columns and unnest them
@@ -1318,7 +1375,7 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object){
                          radial_velocity,
                          signal_power,
                          bearing)
-
+}
   return(out)
 }
 
