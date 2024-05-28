@@ -147,6 +147,7 @@ seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, dop
   out %<>% seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(out))
 
   out %<>% seasonder_setSeaSondeRCS_MUSIC_parameters(seasonder_getSeaSondeRCS_MUSIC_parameters(out))
+
 MUSIC <- seasonder_NULLSeaSondeRCS_MUSIC()
 
 if(!NULL_MUSIC){
@@ -1194,9 +1195,6 @@ seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation
 
 
   out %<>% seasonder_initMUSICData(range_cells = FOR$range_cell, doppler_bins = FOR$doppler_bin, NULL_MUSIC = nrow(FOR) == 0)
-
-
-  out %<>% seasonder_initMUSICData(NULL_MUSIC = TRUE)
 
 
 
