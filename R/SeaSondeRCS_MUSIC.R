@@ -1224,6 +1224,15 @@ seasonder_MUSICBearing2GeographicalBearing <- function(bearings, seasonder_apm_o
 
 }
 
+#' @export
+seasonder_computeLonLatFromOriginDistBearing <- function(origin_lon, origin_lat, dist, bearing){
+
+  geosphere::destPoint(c(origin_lon, origin_lat), bearing, dist * 1000) %>%
+    as.data.frame()
+
+
+}
+
 
 #' Convert MUSIC Algorithm Output to Geolocated Coordinates
 #'
@@ -1267,8 +1276,7 @@ seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
   MUSIC$lonlat <- purrr::map2(range, bearings, \(dist, bear) {
 
     if(length(bear ) > 0){
-      geosphere::destPoint(c(longitude, latitude), bear, dist * 1000) %>%
-        as.data.frame()
+      seasonder_computeLonLatFromOriginDistBearing(longitude, latitude, dist = dist, bearing = bear)
     }else{
       data.frame(lon = NA_real_, lat = NA_real_)
     }
