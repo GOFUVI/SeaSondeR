@@ -28,7 +28,7 @@ seasonder_install_gshhg <- function(gshhg_version = seasonder_the$config$gshhg_v
   cache_dir <- tools::R_user_dir("SeaSondeR","cache")
 
 
-  gshhg_prefix_and_url <- modist_get_gshhg_prefix_and_url(gshhg_version = gshhg_version)
+  gshhg_prefix_and_url <- seasonder_get_gshhg_prefix_and_url(gshhg_version = gshhg_version)
 
   gshhg_prefix <- gshhg_prefix_and_url$gshhg_prefix
 
