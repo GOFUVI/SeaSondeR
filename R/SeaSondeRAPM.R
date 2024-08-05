@@ -1315,3 +1315,17 @@ seasonder_readPhaseFile <- function(file_path){
   return(c(phase1 = phasec1, phase2 = phasec2))
 
 }
+
+
+#### Plots ####
+
+#' @export
+seasonder_plotAPMLoops <- function(seasonder_apm_obj){
+
+  bearings <- seasonder_MUSICBearing2GeographicalBearing(attr(seasonder_apm_obj, "BEAR",exact = T),seasonder_apm_obj) %>% unlist
+
+  data.frame(bearings = bearings, loop1 = Mod(seasonder_apm_obj[1,]), loop2 = Mod(seasonder_apm_obj[2,]) ) %>%
+    tidyr::pivot_longer(cols = - bearings, names_to = "loop", values_to = "Mod") %>%
+    ggplot2::ggplot(ggplot2::aes(x = bearings, y = Mod, color = loop)) + ggplot2::geom_point() + ggplot2::coord_polar() + ggplot2::xlim(c(0,360))
+
+}

@@ -289,3 +289,16 @@ expect_equal(test,target)
 
   })
 })
+
+
+#### Plots ####
+
+
+test_that("Loops plot works",{
+
+  file_path <- here::here("tests/testthat/data/MeasPattern.txt")
+
+  seasonder_apm_object <- seasonder_readSeaSondeRAPMFile(file_path)
+
+seasonder_plotAPMLoops(seasonder_apm_object)
+})

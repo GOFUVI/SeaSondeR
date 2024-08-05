@@ -2253,6 +2253,16 @@ describe("CSS file",{
 
     })
 
+    test_that("works for the new csr format",{
+      specs <- seasonder_readYAMLSpecs(system.file("specs","CS_V1.yaml",package = "SeaSondeR"),"header")
+      con <- file(here::here("tests/testthat/data/CSS_FIST_2023_05_01_000000.csr"),"rb")
+      on.exit(close(con))
+
+      test <- expect_silent(seasonder_readSeaSondeCSFileHeader(specs,con))
+
+      expect_snapshot_value(test,style="serialize")
+    })
+
   })
 
 
