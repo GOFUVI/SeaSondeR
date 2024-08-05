@@ -1326,6 +1326,6 @@ seasonder_plotAPMLoops <- function(seasonder_apm_obj){
 
   data.frame(bearings = bearings, loop1 = Mod(seasonder_apm_obj[1,]), loop2 = Mod(seasonder_apm_obj[2,]) ) %>%
     tidyr::pivot_longer(cols = - bearings, names_to = "loop", values_to = "Mod") %>%
-    ggplot2::ggplot(ggplot2::aes(x = bearings, y = Mod, color = loop)) + ggplot2::geom_point() + ggplot2::coord_polar() + ggplot2::xlim(c(0,360))
+    ggplot2::ggplot(ggplot2::aes(x = bearings, y = Mod, color = loop)) + ggplot2::geom_point() + ggplot2::coord_polar() + ggplot2::scale_x_continuous(limits=c(0,360), breaks = c(0,90,180,270))
 
 }
