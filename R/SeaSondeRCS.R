@@ -1184,12 +1184,25 @@ seasonder_rangeCellsDists2RangeNumber <- function(seasonder_cs_obj,cells_dists) 
   return(range_numbers)
 }
 
-seasonder_SelfSpectra2dB <- function(seasonder_cs_obj, spectrum_values) {
+# Start SEAS-109
 
-  receiver_gain <- seasonder_getReceiverGain_dB(seasonder_cs_obj)
+self_spectra_to_dB <- function(spectrum_values, receiver_gain){
 
   spectrum_dB <- 10 * log10(abs(spectrum_values)) - receiver_gain
 
+  return(spectrum_dB)
+
+}
+
+# End SEAS-109
+
+seasonder_SelfSpectra2dB <- function(seasonder_cs_obj, spectrum_values) {
+
+  receiver_gain <- seasonder_getReceiverGain_dB(seasonder_cs_obj)
+# Start SEAS-109
+  # spectrum_dB <- 10 * log10(abs(spectrum_values)) - receiver_gain
+  spectrum_dB <- self_spectra_to_dB(spectrum_values, receiver_gain)
+# End SEAS-109
   return(spectrum_dB)
 
 }
