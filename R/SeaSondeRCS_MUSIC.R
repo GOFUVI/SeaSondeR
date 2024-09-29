@@ -1399,3 +1399,43 @@ data.table::fwrite(table,file = filepath)
 
 
 }
+
+# Start SEAS-104
+seasonder_computeSignalSNR <- function(object, ...){
+  UseMethod("seasonder_computeSignalSNR")
+}
+
+
+# Start SEAS-108
+seasonder_computeSignalSNR.data.frame <- function(object, SNR, receiver_gain){
+
+  # Assume SNR has a range_cell column and a noise_level column
+  SNR %<>% dplyr::select(range_cell, noise_level)
+
+  out <- object
+
+  # TODO: join object and SNR on cell_range column
+
+out %<>% dplyr::left_join(SNR, by = "range_cell")
+
+# TODO: transform signal_power to dB
+# self_spectra_to_dB
+# TODO: get receiver gain
+
+  # TODO: compute noise level for each signal using signal_power
+# Assume each row in object is a signal with an signal_power column and a range_cell column
+
+  # QUESTION: how are the noise_levels computed?
+# Computes the mean of SS3 matrix in the noise level computation range, then if recovered using the get_NoiseLevel method is returned in db. Compute db for amplitude?
+# QUESTION: Can SNR be computed form dB levels?
+# QUESTION: How do I compute SNR in FOR?
+
+
+
+
+  return(out)
+}
+
+# End SEAS-108
+
+# End SEAS-104
