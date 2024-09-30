@@ -923,3 +923,52 @@ test_that("The CS object records the steps of the MUSIC algorithm",{
   expect_snapshot_value(test, style = "json2")
 
 })
+
+#### seasonder_computeSignalSNR ####
+
+describe("seasonder_exportMUSICTable", {
+  phase_path <- here::here("tests/testthat/data/TORA/Phases.txt")
+  amplitude_corrections <- c(1.22398329, 1.32768297)
+
+  # Create a SeaSondeRAPM object with corrections
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(
+    here::here("tests/testthat/data/TORA/IdealPattern.txt"),
+    override_antenna_bearing = 13.0,
+    override_phase_corrections = phase_path,
+    override_amplitude_factors = amplitude_corrections,
+    apply_phase_and_amplitude_corrections = TRUE
+  )
+
+  seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
+
+  # Create a SeaSondeRCS object
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(
+    here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"),
+    system.file("specs", "CS_V1.yaml", package = "SeaSondeR"),
+    seasonder_apm_object = seasonder_apm_obj
+  )
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+  MUSIC_table <- seasonder_exportMUSICTable(seasonder_cs_obj)
+
+  receiver_gain <- seasonder_getReceiverGain_dB(seasonder_cs_obj)
+
+  seasonder_cs_obj <- seasonder_computeNoiseLevel(seasonder_cs_obj)
+
+  SNR <- data.frame(range_cell = 1:seasonder_getnRangeCells(seasonder_cs_obj), noise_level =  seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_obj, dB = T))
+
+  test <- seasonder_computeSignalSNR(MUSIC_table, SNR  = SNR,receiver_gain = receiver_gain)
+
+  test_that("SNR is computed correctly", {
+
+   expect_true("SNR" %in% names(test))
+
+    noise_level <- SNR %>% dplyr::select(range_cell, noise_level) %>% dplyr::mutate(noise_level = dB_to_self_spectra(dB_values = noise_level, receiver_gain = receiver_gain)) %>% dplyr::right_join(MUSIC_table,by = "range_cell") %>% dplyr::pull("noise_level")
+
+    expect_equal(test$SNR, MUSIC_table$signal_power/noise_level)
+
+  })
+
+
+})
