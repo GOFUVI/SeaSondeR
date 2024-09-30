@@ -1186,6 +1186,14 @@ seasonder_rangeCellsDists2RangeNumber <- function(seasonder_cs_obj,cells_dists) 
 
 # Start SEAS-109
 
+dB_to_self_spectra <- function(dB_values, receiver_gain){
+
+  spectrum_values <- 10 ^ ((dB_values + receiver_gain)/10)
+
+  return(spectrum_values)
+
+}
+
 self_spectra_to_dB <- function(spectrum_values, receiver_gain){
 
   spectrum_dB <- 10 * log10(abs(spectrum_values)) - receiver_gain
