@@ -1368,6 +1368,8 @@ if(nrow(MUSIC) > 0 ){
   # Get APM object from the SeaSondeRCS object
   seasonder_apm_object <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_APM()
 
+  out$bearing_raw <- out$bearing
+
   # Convert MUSIC bearing to geographical bearing
   out$bearing %<>% seasonder_MUSICBearing2GeographicalBearing(seasonder_apm_object) %>% unlist()
 
