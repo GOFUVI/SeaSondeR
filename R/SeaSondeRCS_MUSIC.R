@@ -1382,7 +1382,8 @@ if(nrow(MUSIC) > 0 ){
                          doppler_freq,
                          radial_velocity,
                          signal_power,
-                         bearing)
+                         bearing,
+                         bearing_raw)
 }
   return(out)
 }
