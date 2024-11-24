@@ -302,3 +302,35 @@ test_that("Loops plot works",{
 
 seasonder_plotAPMLoops(seasonder_apm_object)
 })
+
+
+test_that("Ambiguity plot works",{
+  file_path <- here::here("tests/testthat/data/2018-06-21  170220.txt")
+
+  seasonder_apm_object <- seasonder_readSeaSondeRAPMFile(file_path)
+
+  seasonder_apm_object %<>% seasonder_smoothAPM(10)
+
+distances <- 1:ncol(seasonder_apm_object) %>% purrr::map(\(i){
+
+  x <-  matrix(rep(seasonder_apm_object[,i, drop = FALSE], ncol(seasonder_apm_object) ), nrow = 3, byrow = F) - as.matrix(seasonder_apm_object)
+
+  y <- pracma::Real(sqrt(diag(Conj(t(x)) %*% (x)))) %>% matrix(nrow = 1)
+
+    as.data.frame(y)
+
+
+}) %>% purrr::list_rbind() %>% as.matrix()
+
+
+inverse_distance <- 10*log10(1/distances)
+
+inverse_distance[is.infinite(inverse_distance)] <- 25
+
+as.data.frame(as.table(inverse_distance)) %>%
+ggplot2::ggplot(ggplot2::aes(Var2, Var1, fill = Freq)) +
+  ggplot2::geom_tile() +
+  ggplot2::scale_fill_gradientn(colours = rainbow(256)) +
+  ggplot2::theme_minimal()
+
+})

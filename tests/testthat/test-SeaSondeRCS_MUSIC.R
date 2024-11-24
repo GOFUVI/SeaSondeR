@@ -972,3 +972,172 @@ describe("seasonder_exportMUSICTable", {
 
 
 })
+
+
+#### Paolo, T. de, Cook, T. & Terrill, E. Properties of HF RADAR Compact Antenna Arrays and Their Effect on the MUSIC Algorithm. OCEANS 2007 1–10 (2007) doi:10.1109/oceans.2007.4449265. ####
+
+describe("Paolo and Cook 2007",{
+
+  C <- matrix(c(
+    complex(real = 0.2162, imaginary = 0),
+    complex(real = 0.0303, imaginary = -0.0090),
+    complex(real = 0.3170, imaginary = -0.0063),
+    complex(real = 0.0303, imaginary = 0.0090),
+    complex(real = 0.0436, imaginary = 0),
+    complex(real = -0.0091, imaginary = 0.0213),
+    complex(real = 0.3170, imaginary = 0.0063),
+    complex(real = -0.0091, imaginary = -0.0213),
+    complex(real = 0.5416, imaginary = 0)
+  ), nrow = 3, byrow = TRUE)
+
+  E <- matrix(c(
+    complex(real = 0.6916, imaginary = -0.0499),
+    complex(real = 0.4957, imaginary = 0.0432),
+    complex(real = 0.5212, imaginary = -0.0087),
+    complex(real = -0.5785, imaginary = 0.0956),
+    complex(real = 0.8084, imaginary = -0.0392),
+    complex(real = 0.0117, imaginary = 0.0326),
+    complex(real = -0.4189, imaginary = 0),
+    complex(real = -0.3121, imaginary = 0),
+    complex(real = 0.8527, imaginary = 0)
+  ), nrow = 3, byrow = TRUE)
+
+  # Definir la matriz Lambda (diagonal)
+  Lambda <- c(0.0001, 0.0653, 0.7362)
+
+
+  A_255 <- matrix(as.complex(c(1,0,1)))
+  A_225 <- matrix(as.complex(c(0.8397,0.5420,1)))
+  A_205 <- matrix(as.complex(c(0.9397,0.3420,1)))
+  A_190 <- matrix(as.complex(c(0.7397,0.6420,1)))
+  A_330 <- matrix(as.complex(c(-0.2588,-0.9659, 1)))
+  A_340 <- matrix(as.complex(c(-0.4588,-0.8659, 1)))
+APM <- cbind(A_190, A_205, A_225, A_255,A_330, A_340)
+
+  apm_obj <- seasonder_createSeaSondeRAPM(calibration_matrix = APM, BEAR = c(190, 205, 225,255,330, 340)-360)
+
+
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/CSS_V6.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"), seasonder_apm_object = apm_obj)
+
+  reduced_MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj) %>% dplyr::filter(range_cell %in% c(12) & doppler_bin %in%  c(711))
+
+  reduced_MUSIC$cov[[1]] <- C
+
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_MUSIC(reduced_MUSIC)
+
+  seasonder_cs_obj %<>% seasonder_MUSICCovDecomposition()
+
+
+  seasonder_cs_obj %<>% seasonder_MUSICEuclideanDistance()
+
+  seasonder_cs_obj %<>% seasonder_MUSICExtractPeaks()
+
+  seasonder_cs_obj %<>% seasonder_MUSICComputeSignalPowerMatrix()
+
+  seasonder_cs_obj %<>% seasonder_MUSICTestDualSolutions()
+
+
+
+  describe("seasonder_MUSICCovDecomposition",{
+
+    it("should work",{
+
+
+
+      test <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$eigen[[1]]
+
+      expect_equal(rev(test$values), Lambda, tolerance = 0.001)
+
+      expect_equal(abs(pracma::Real(test$vectors[,3:1])),abs(pracma::Real(E)), tolerance = 0.01)
+      expect_equal(abs(pracma::Imag(test$vectors[,3:1])),abs(pracma::Imag(E)), tolerance = 0.01)
+
+    })
+  })
+
+
+
+  describe("seasonder_MUSICEuclideanDistance",{
+
+    it("should work",{
+
+
+
+      test <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$distances[[1]]
+
+      expect_equal(10*log10(1/as.vector(abs(test["single",4]))), 9.5, tolerance = 0.05)
+
+      expect_equal(10*log10(1/as.vector(abs(test["dual",2]))), 28.6, tolerance = 0.05)
+
+      expect_equal(10*log10(1/as.vector(abs(test["dual",5]))), 21.1, tolerance = 0.05)
+
+    })
+  })
+
+  describe("seasonder_MUSICExtractPeaks",{
+
+    it("should work",{
+
+
+
+      test <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$DOA_solutions[[1]]
+
+expect_equal(test$single$bearing , -105)
+
+expect_equal(test$dual$bearing , c(-155, -30))
+
+
+
+    })
+  })
+
+
+  describe("seasonder_MUSICSelectDOA",{
+
+
+    describe("seasonder_MUSICCheckEigenValueRatio",{
+      it("should work",{
+
+
+
+        test <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$eigen_values_ratio
+
+        expect_equal(test , 11.28, tolerance = 0.005)
+        expect_true(seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$P1_check)
+
+
+      })
+    })
+
+    describe("seasonder_MUSICCheckSignalPowers",{
+      it("should work",{
+
+
+
+        test <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$signal_power_ratio
+
+        expect_equal(test , 4.43, tolerance = 0.005)
+        expect_true(seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$P2_check)
+
+
+      })
+    })
+
+    describe("seasonder_MUSICCheckSignalMatrix",{
+      it("should work",{
+
+
+
+        test <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$diag_off_diag_power_ratio
+
+        expect_equal(test , 2.72, tolerance = 0.05)
+        expect_true(seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$P3_check)
+
+
+      })
+    })
+
+  })
+
+})
+
+

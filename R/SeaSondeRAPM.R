@@ -34,6 +34,8 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
   # Initialize attributes
   attributes_list <- seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix,...)
 
+
+
   colnames(calibration_matrix) <- attributes_list$BEAR
 
   calibration_matrix <- attributes_list %>% purrr::reduce2(names(attributes_list),\(cal_matrix_so_far,attribute,attribute_name) {
@@ -99,7 +101,7 @@ seasonder_initializeAttributesSeaSondeRAPM <- function(calibration_matrix, ...) 
 
 
   defaults <- list(
-    quality_matrix = matrix(complex(real=NA_real_, imaginary=NA_real_), nrow=2, ncol=ncol(calibration_matrix)),
+    quality_matrix = matrix(complex(real=NA_real_, imaginary=NA_real_), nrow=3, ncol=ncol(calibration_matrix)),
     BEAR = numeric(ncol(calibration_matrix)),
     Type = character(0),
     Creator = character(0),
@@ -306,7 +308,7 @@ seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {
 
 #' Validate quality_matrix Attribute for a SeaSondeRAPM Object
 #'
-#' This function validates if the provided quality_matrix is a 2-row complex matrix.
+#' This function validates if the provided quality_matrix is a 3-row complex matrix.
 #' It also checks if the number of columns matches that of the calibration_matrix in the given SeaSondeRAPM object.
 #'
 #' @param matrix The matrix to be validated.
@@ -314,7 +316,7 @@ seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_quality_matrix <- function(matrix,seasonde_apm_obj) {
   if (!is.matrix(matrix) || nrow(matrix) != 3 || !is.complex(matrix)) {
-    msg <- "validate_SeaSondeRAPM_quality_matrix: The quality_matrix must be a 2-row complex matrix."
+    msg <- "validate_SeaSondeRAPM_quality_matrix: The quality_matrix must be a 3-row complex matrix."
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
@@ -1027,6 +1029,7 @@ seasonder_getSeaSondeRAPM_FileID <- function(seasonde_apm_obj) {
 
 #### Methods ####
 
+#' smoothing is the number of points, not degrees
 #'@export
 seasonder_smoothAPM <- function(seasonder_apm_object, smoothing){
 

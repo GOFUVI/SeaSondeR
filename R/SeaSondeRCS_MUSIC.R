@@ -422,22 +422,23 @@ seasonder_computePowerMatrix <- function(C,eig,a){
       eigValues <- eig$values[c(1,2)]
 
       G <- a_star %*% eigVector
-      G_t <- Conj(t(eigVector)) %*% a
-
       G_inv <- solve(G)
-      G_t_inv <- solve(G_t)
-      P <- G_t_inv %*% diag(eigValues) %*% G_inv
+
+      G_inv_t <- Conj(t(G_inv))
+
+
+      P <- G_inv_t %*% diag(eigValues) %*% G_inv
     }else if(ncol(a) == 1) {
 
-      eigVector <- eig$vectors[,c(1)]
+      eigVector <- eig$vectors[,c(1), drop = F]
       eigValues <- eig$values[c(1)]
-
       G <- a_star %*% eigVector
-      G_t <- Conj(t(eigVector)) %*% a
-
       G_inv <- solve(G)
-      G_t_inv <- solve(G_t)
-      P <- G_t_inv %*% eigValues %*% G_inv
+
+      G_inv_t <- Conj(t(G_inv))
+
+
+      P <- G_inv_t %*% matrix(eigValues) %*% G_inv
     }
   }
 
@@ -640,7 +641,7 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
 
   MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(2)
 
-  MUSIC %<>% dplyr::mutate(P2_check = purrr::map_lgl(DOA_solutions, \(DOA_sol) length(DOA_sol$dual$bearing) == 1 ) | !is.na(signal_power_ratio) & signal_power_ratio < MUSIC_parameter, .after = "signal_power_ratio")
+  MUSIC %<>% dplyr::mutate(P2_check = purrr::map_lgl(DOA_solutions, \(DOA_sol) length(DOA_sol$dual$bearing) == 2 ) & !is.na(signal_power_ratio) & signal_power_ratio < MUSIC_parameter, .after = "signal_power_ratio")
 
 
   MUSIC$retained_solution[!MUSIC$P2_check] <- "single"
@@ -673,7 +674,7 @@ if(length(DOA_sol$dual$bearing) == 2){
 
   MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(3)
 
-  MUSIC %<>% dplyr::mutate(P3_check = purrr::map_lgl(DOA_solutions, \(DOA_sol) length(DOA_sol$dual$bearing) == 1 ) | !is.na(diag_off_diag_power_ratio) & diag_off_diag_power_ratio > MUSIC_parameter, .after = "diag_off_diag_power_ratio")
+  MUSIC %<>% dplyr::mutate(P3_check = purrr::map_lgl(DOA_solutions, \(DOA_sol) length(DOA_sol$dual$bearing) == 2 ) & !is.na(diag_off_diag_power_ratio) & diag_off_diag_power_ratio > MUSIC_parameter, .after = "diag_off_diag_power_ratio")
 
 
   MUSIC$retained_solution[!MUSIC$P3_check] <- "single"
@@ -873,6 +874,18 @@ seasonder_MUSICComputeCov <- function(seasonder_cs_object){
   return(seasonder_cs_object)
 }
 
+seasonder_eigen_decomp_C <- function(C){
+  out <- seasonder_MUSICInitEigenDecomp()
+
+  # Get eigen-decomposition
+  eigen_decomp <- eigen(C, symmetric = TRUE)
+
+  out$values <- eigen_decomp$values
+  out$vectors <- eigen_decomp$vectors
+
+  return(out)
+}
+
 # TODO: update docs
 
 #' Eigen Decomposition of the MUSIC Covariance Matrix
@@ -903,17 +916,7 @@ seasonder_MUSICCovDecomposition <- function(seasonder_cs_object){
 
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
-  MUSIC %<>% dplyr::mutate(eigen = purrr::map(cov,\(C){
-    out <- seasonder_MUSICInitEigenDecomp()
-
-    # Get eigen-decomposition
-    eigen_decomp <- eigen(C, symmetric = TRUE)
-
-    out$values <- eigen_decomp$values
-    out$vectors <- eigen_decomp$vectors
-
-    return(out)
-  }))
+  MUSIC %<>% dplyr::mutate(eigen = purrr::map(cov,seasonder_eigen_decomp_C))
 
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
@@ -924,6 +927,12 @@ seasonder_MUSICCovDecomposition <- function(seasonder_cs_object){
 }
 
 # TODO: update docs
+
+seasonder_compute_antenna_pattern_proyections <- function(En, a){
+
+  Conj(t(a)) %*% (En %*% Conj(t(En))) %*% a
+
+}
 
 #' Calculate Euclidean Distances for MUSIC Algorithm
 #'
@@ -976,7 +985,7 @@ seasonder_MUSICEuclideanDistance <- function(seasonder_cs_object){
       for(j in 1:length(bearings)){
         a <- seasonder_apm_obj[,j, drop= F]
         names(a) <- NULL
-        out[i,j] <- Conj(t(a)) %*% (En %*% Conj(t(En))) %*% a
+        out[i,j] <- seasonder_compute_antenna_pattern_proyections(En,a)
 
 
       }
