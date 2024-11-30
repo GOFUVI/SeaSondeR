@@ -1025,25 +1025,30 @@ seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
 
     rev_dual_solution_dist = pracma::Real(1/distances['dual',,drop = TRUE])
 
-
-
     single_peaks_results <- pracma::findpeaks(rev_single_solution_dist,npeaks = 1, sortstr = TRUE)
 
     single_peak <-  single_peaks_results[,2,drop = T]# which.max(rev_single_solution_dist)
-
+    single_peak_resp <- NA
+    if(!is.null(single_peaks_results)){
+    single_peak_resp <- 10*log10(single_peaks_results[,1,drop = T])
+}
     dual_peaks_results <- pracma::findpeaks(rev_dual_solution_dist,npeaks = 2, sortstr = TRUE)
 
 
 
     out$single$bearing <-  bearings[single_peak]
     out$single$a <- seasonder_apm_obj[,single_peak, drop = FALSE]
-
+out$single$peak_resp <- single_peak_resp
 
     dual_peaks <- dual_peaks_results[,2,drop = T]
+    dual_peaks_resp <- NA
+    if(!is.null(dual_peaks_results)){
+    dual_peaks_resp <- 10*log10(dual_peaks_results[,1,drop = T])
+}
 
     out$dual$bearing <- bearings[dual_peaks]
     out$dual$a <- seasonder_apm_obj[,dual_peaks, drop = FALSE]
-
+    out$dual$peak_resp <- dual_peaks_resp
 
 
     return(out)
@@ -1335,6 +1340,7 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object){
   velocity <- numeric(0)
   power <- numeric(0)
   bearing <- numeric(0)
+  noise_level <- numeric(0)
 
   out <- data.frame(longitude = longitude,
                     latitude = latitude,
@@ -1344,7 +1350,8 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object){
                     doppler_freq = freq,
                     radial_velocity = velocity,
                     signal_power = power,
-                    bearing = bearing)
+                    bearing = bearing,
+                    noise_level = noise_level)
 
   # Retrieve MUSIC data from the SeaSondeRCS object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
@@ -1358,18 +1365,21 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object){
                          doppler_freq = numeric(0),
                          radial_velocity = numeric(0),
                          signal_power = numeric(0),
-                         bearing = numeric(0))
+                         bearing = numeric(0),
+                    noise_level = numeric(0))
   # Select relevant columns from MUSIC data
 
 if(nrow(MUSIC) > 0 ){
+
+
   out <- MUSIC %>% dplyr::select(range_cell, doppler_bin, range, doppler_freq = freq, radial_velocity = radial_v, DOA, lonlat)
 
   # Process the DOA and lonlat columns and unnest them
   out %<>% dplyr::mutate(DOA = purrr::map(DOA, \(DOA_sol) {
     if(length(DOA_sol$bearing)>0){
-    data.frame(bearing = DOA_sol$bearing, signal_power = pracma::Real(diag(DOA_sol$P)))
+    data.frame(bearing = DOA_sol$bearing, signal_power = pracma::Real(diag(DOA_sol$P)), DOA_peak_resp_db = DOA_sol$peak_resp)
     }else{
-      data.frame(bearing = NA_real_, signal_power = NA_real_)
+      data.frame(bearing = NA_real_, signal_power = NA_real_, DOA_peak_resp_db = NA_real_)
     }
     })) %>%
     tidyr::unnest(c(DOA, lonlat))
@@ -1382,6 +1392,13 @@ if(nrow(MUSIC) > 0 ){
   # Convert MUSIC bearing to geographical bearing
   out$bearing %<>% seasonder_MUSICBearing2GeographicalBearing(seasonder_apm_object) %>% unlist()
 
+  FOR_config <- SeaSondeR::seasonder_getSeaSondeRCS_FORConfig(seasonder_cs_object)
+
+  out$noise_level <- FOR_config$NoiseLevel[out$range_cell] %>% magrittr::set_names(NULL)
+
+  out %<>% dplyr::mutate(signal_power_db = self_spectra_to_dB(signal_power, seasonder_getReceiverGain_dB(seasonder_cs_object)),
+                         SNR = signal_power_db - noise_level)
+
   # Reorder columns to match the final output structure
   out %<>% dplyr::select(longitude = lon,
                          latitude = lat,
@@ -1392,7 +1409,11 @@ if(nrow(MUSIC) > 0 ){
                          radial_velocity,
                          signal_power,
                          bearing,
-                         bearing_raw)
+                         bearing_raw,
+                         noise_level,
+                         signal_power_db,
+                         SNR,
+                         DOA_peak_resp_db)
 }
   return(out)
 }
