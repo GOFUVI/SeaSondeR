@@ -68,21 +68,21 @@ seasonder_MUSICInitInterpolatedData <- function(seasonder_cs_object){
 
 seasonder_NULLSeaSondeRCS_MUSIC <- function(){
 
-out <- data.frame(
-  range_cell = numeric(0),
-  doppler_bin = numeric(0),
-  range= numeric(0),
-  freq =  numeric(0),
-  radial_v =  numeric(0),
-  cov = list(),
-  eigen = list(),
-  distances = list(),
-  DOA_solutions = list(),
-  eigen_values_ratio= numeric(0),
-  P1_check = logical(0),
-  retained_solution = character(0),
-  DOA = list(),
-  lonlat = list(data.frame(lon = numeric(0) , lat = numeric(0)) ))
+  out <- data.frame(
+    range_cell = numeric(0),
+    doppler_bin = numeric(0),
+    range= numeric(0),
+    freq =  numeric(0),
+    radial_v =  numeric(0),
+    cov = list(),
+    eigen = list(),
+    distances = list(),
+    DOA_solutions = list(),
+    eigen_values_ratio= numeric(0),
+    P1_check = logical(0),
+    retained_solution = character(0),
+    DOA = list(),
+    lonlat = list(data.frame(lon = numeric(0) , lat = numeric(0)) ))
 
   out <- tibble::as_tibble(out)
 
@@ -148,13 +148,13 @@ seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, dop
 
   out %<>% seasonder_setSeaSondeRCS_MUSIC_parameters(seasonder_getSeaSondeRCS_MUSIC_parameters(out))
 
-MUSIC <- seasonder_NULLSeaSondeRCS_MUSIC()
+  MUSIC <- seasonder_NULLSeaSondeRCS_MUSIC()
 
-if(!NULL_MUSIC){
+  if(!NULL_MUSIC){
 
- MUSIC <- seasonder_initSeaSondeRCS_MUSIC(out, range_cells = range_cells, doppler_bins = doppler_bins)
+    MUSIC <- seasonder_initSeaSondeRCS_MUSIC(out, range_cells = range_cells, doppler_bins = doppler_bins)
 
-}
+  }
   out %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
   out %<>% seasonder_MUSICComputePropDualSols()
@@ -658,16 +658,16 @@ seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
 
 
   MUSIC %<>% dplyr::mutate(diag_off_diag_power_ratio = purrr::map_dbl(DOA_solutions,\(DOA_sol){
-out <- NA_real_
-if(length(DOA_sol$dual$bearing) == 2){
-    P_diag <- pracma::Real(diag(DOA_sol$dual$P)) %>% prod()
-    P_off_diag <- DOA_sol$dual$P
-    diag(P_off_diag) <- 1
+    out <- NA_real_
+    if(length(DOA_sol$dual$bearing) == 2){
+      P_diag <- pracma::Real(diag(DOA_sol$dual$P)) %>% prod()
+      P_off_diag <- DOA_sol$dual$P
+      diag(P_off_diag) <- 1
 
-    P_off_diag <- pracma::Real(P_off_diag) %>% prod()
+      P_off_diag <- pracma::Real(P_off_diag) %>% prod()
 
-    out <- P_diag/P_off_diag
-}
+      out <- P_diag/P_off_diag
+    }
     return(out)
   }), .after = "P2_check")
 
@@ -1030,21 +1030,21 @@ seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
     single_peak <-  single_peaks_results[,2,drop = T]# which.max(rev_single_solution_dist)
     single_peak_resp <- NA
     if(!is.null(single_peaks_results)){
-    single_peak_resp <- 10*log10(single_peaks_results[,1,drop = T])
-}
+      single_peak_resp <- 10*log10(single_peaks_results[,1,drop = T])
+    }
     dual_peaks_results <- pracma::findpeaks(rev_dual_solution_dist,npeaks = 2, sortstr = TRUE)
 
 
 
     out$single$bearing <-  bearings[single_peak]
     out$single$a <- seasonder_apm_obj[,single_peak, drop = FALSE]
-out$single$peak_resp <- single_peak_resp
+    out$single$peak_resp <- single_peak_resp
 
     dual_peaks <- dual_peaks_results[,2,drop = T]
     dual_peaks_resp <- NA
     if(!is.null(dual_peaks_results)){
-    dual_peaks_resp <- 10*log10(dual_peaks_results[,1,drop = T])
-}
+      dual_peaks_resp <- 10*log10(dual_peaks_results[,1,drop = T])
+    }
 
     out$dual$bearing <- bearings[dual_peaks]
     out$dual$a <- seasonder_apm_obj[,dual_peaks, drop = FALSE]
@@ -1181,17 +1181,17 @@ seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation
 
     }
 
-   pos_bins <- FOR[[range_cell]]$positive_FOR
+    pos_bins <- FOR[[range_cell]]$positive_FOR
 
-   if(length(pos_bins) > 0){
-     pos_range <- range(pos_bins)
+    if(length(pos_bins) > 0){
+      pos_range <- range(pos_bins)
 
-     pos_range_freq  <- seasonder_Bins2DopplerFreq(seasonder_cs_object, pos_range)
+      pos_range_freq  <- seasonder_Bins2DopplerFreq(seasonder_cs_object, pos_range)
 
-     new_pos_range_bins <- seasonder_MUSIC_DopplerFreq2Bins(out, pos_range_freq)
+      new_pos_range_bins <- seasonder_MUSIC_DopplerFreq2Bins(out, pos_range_freq)
 
-     doppler_bins <- c(doppler_bins, new_pos_range_bins[1]:new_pos_range_bins[2])
-   }
+      doppler_bins <- c(doppler_bins, new_pos_range_bins[1]:new_pos_range_bins[2])
+    }
 
 
 
@@ -1330,6 +1330,8 @@ seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
 #' @export
 seasonder_exportMUSICTable <- function(seasonder_cs_object){
 
+
+  datetime <-  seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nDateTime") %||% as.POSIXct(0)
   # Initialize an empty data frame with the required columns
   longitude <- numeric(0)
   latitude <- numeric(0)
@@ -1341,80 +1343,95 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object){
   power <- numeric(0)
   bearing <- numeric(0)
   noise_level <- numeric(0)
+  signal_power_db  <- numeric(0)
+  SNR <- numeric(0)
+  DOA_peak_resp_db <- numeric(0)
 
-  out <- data.frame(longitude = longitude,
-                    latitude = latitude,
-                    range_cell = cell_number,
-                    range = range,
-                    doppler_bin = doppler_cell,
-                    doppler_freq = freq,
-                    radial_velocity = velocity,
-                    signal_power = power,
-                    bearing = bearing,
-                    noise_level = noise_level)
+  out <- data.frame(
+    longitude = longitude,
+    latitude = latitude,
+    range_cell = cell_number,
+    range = range,
+    doppler_bin = doppler_cell,
+    doppler_freq = freq,
+    radial_velocity = velocity,
+    signal_power = power,
+    bearing = bearing,
+    noise_level = noise_level,
+    signal_power_db = signal_power_db,
+    SNR = SNR,
+    DOA_peak_resp_db = DOA_peak_resp_db
+  )
 
   # Retrieve MUSIC data from the SeaSondeRCS object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
 
-  out <- data.frame(longitude = numeric(0),
-                         latitude = numeric(0),
-                         range_cell = numeric(0),
-                         range = numeric(0),
-                         doppler_bin = numeric(0),
-                         doppler_freq = numeric(0),
-                         radial_velocity = numeric(0),
-                         signal_power = numeric(0),
-                         bearing = numeric(0),
-                    noise_level = numeric(0))
+  out <- data.frame(
+    longitude = numeric(0),
+    latitude = numeric(0),
+    range_cell = numeric(0),
+    range = numeric(0),
+    doppler_bin = numeric(0),
+    doppler_freq = numeric(0),
+    radial_velocity = numeric(0),
+    signal_power = numeric(0),
+    bearing = numeric(0),
+    noise_level = numeric(0),
+    signal_power_db = numeric(0),
+    SNR = numeric(0),
+    DOA_peak_resp_db = numeric(0))
   # Select relevant columns from MUSIC data
 
-if(nrow(MUSIC) > 0 ){
+  if(nrow(MUSIC) > 0 ){
 
 
-  out <- MUSIC %>% dplyr::select(range_cell, doppler_bin, range, doppler_freq = freq, radial_velocity = radial_v, DOA, lonlat)
+    out <- MUSIC %>% dplyr::select(range_cell, doppler_bin, range, doppler_freq = freq, radial_velocity = radial_v, DOA, lonlat)
 
-  # Process the DOA and lonlat columns and unnest them
-  out %<>% dplyr::mutate(DOA = purrr::map(DOA, \(DOA_sol) {
-    if(length(DOA_sol$bearing)>0){
-    data.frame(bearing = DOA_sol$bearing, signal_power = pracma::Real(diag(DOA_sol$P)), DOA_peak_resp_db = DOA_sol$peak_resp)
-    }else{
-      data.frame(bearing = NA_real_, signal_power = NA_real_, DOA_peak_resp_db = NA_real_)
-    }
+    # Process the DOA and lonlat columns and unnest them
+    out %<>% dplyr::mutate(DOA = purrr::map(DOA, \(DOA_sol) {
+      if(length(DOA_sol$bearing)>0){
+        data.frame(bearing = DOA_sol$bearing, signal_power = pracma::Real(diag(DOA_sol$P)), DOA_peak_resp_db = DOA_sol$peak_resp)
+      }else{
+        data.frame(bearing = NA_real_, signal_power = NA_real_, DOA_peak_resp_db = NA_real_)
+      }
     })) %>%
-    tidyr::unnest(c(DOA, lonlat))
+      tidyr::unnest(c(DOA, lonlat))
 
-  # Get APM object from the SeaSondeRCS object
-  seasonder_apm_object <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_APM()
+    # Get APM object from the SeaSondeRCS object
+    seasonder_apm_object <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_APM()
 
-  out$bearing_raw <- out$bearing
+    out$bearing_raw <- out$bearing
 
-  # Convert MUSIC bearing to geographical bearing
-  out$bearing %<>% seasonder_MUSICBearing2GeographicalBearing(seasonder_apm_object) %>% unlist()
+    # Convert MUSIC bearing to geographical bearing
+    out$bearing %<>% seasonder_MUSICBearing2GeographicalBearing(seasonder_apm_object) %>% unlist()
 
-  FOR_config <- SeaSondeR::seasonder_getSeaSondeRCS_FORConfig(seasonder_cs_object)
+    FOR_config <- SeaSondeR::seasonder_getSeaSondeRCS_FORConfig(seasonder_cs_object)
 
-  out$noise_level <- FOR_config$NoiseLevel[out$range_cell] %>% magrittr::set_names(NULL)
+    out$noise_level <- FOR_config$NoiseLevel[out$range_cell] %>% magrittr::set_names(NULL)
 
-  out %<>% dplyr::mutate(signal_power_db = self_spectra_to_dB(signal_power, seasonder_getReceiverGain_dB(seasonder_cs_object)),
-                         SNR = signal_power_db - noise_level)
+    out %<>% dplyr::mutate(signal_power_db = self_spectra_to_dB(signal_power, seasonder_getReceiverGain_dB(seasonder_cs_object)),
+                           SNR = signal_power_db - noise_level)
 
-  # Reorder columns to match the final output structure
-  out %<>% dplyr::select(longitude = lon,
-                         latitude = lat,
-                         range_cell,
-                         range,
-                         doppler_bin,
-                         doppler_freq,
-                         radial_velocity,
-                         signal_power,
-                         bearing,
-                         bearing_raw,
-                         noise_level,
-                         signal_power_db,
-                         SNR,
-                         DOA_peak_resp_db)
-}
+    # Reorder columns to match the final output structure
+    out %<>% dplyr::select(longitude = lon,
+                           latitude = lat,
+                           range_cell,
+                           range,
+                           doppler_bin,
+                           doppler_freq,
+                           radial_velocity,
+                           signal_power,
+                           bearing,
+                           bearing_raw,
+                           noise_level,
+                           signal_power_db,
+                           SNR,
+                           DOA_peak_resp_db)
+  }
+
+  out %<>% dplyr::mutate(datetime = datetime, .before = 1)
+
   return(out)
 }
 
@@ -1425,7 +1442,7 @@ seasonder_exportCSVMUSICTable <- function(seasonder_cs_object, filepath){
 
 
 
-data.table::fwrite(table,file = filepath)
+  data.table::fwrite(table,file = filepath)
 
 
   invisible(NULL)
@@ -1459,14 +1476,14 @@ seasonder_computeSignalSNR.data.frame <- function(object, SNR, receiver_gain_dB)
   SNR %<>% dplyr::mutate(noise_level = dB_to_self_spectra(dB_values = noise_level, receiver_gain = receiver_gain_dB))
 
 
-out %<>% dplyr::left_join(SNR, by = "range_cell")
+  out %<>% dplyr::left_join(SNR, by = "range_cell")
 
 
 
   # TODO: compute noise level for each signal using signal_power
-# Assume each row in object is a signal with an signal_power column (in self spectra units) and a range_cell column
+  # Assume each row in object is a signal with an signal_power column (in self spectra units) and a range_cell column
 
-out %<>% dplyr::mutate(SNR = signal_power / noise_level)
+  out %<>% dplyr::mutate(SNR = signal_power / noise_level)
 
 
 
