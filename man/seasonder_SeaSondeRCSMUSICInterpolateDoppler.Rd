@@ -18,9 +18,7 @@ Interpolation is achieved by inserting additional Doppler bins using linear inte
 }
 \details{
 Doppler interpolation increases the number of Doppler bins by a factor of 2, 3, or 4 before radial processing.
-This is accomplished by linearly interpolating between existing bins, creating smoother transitions and potentially
-increasing the number of vectors by approximately 15\% for a 2x interpolation. The interpolation factor is configurable
-via the SeaSondeRCS object's \code{doppler_interpolation} attribute and it's setter \code{seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation}. The number of Doppler bins after interpolation should not exceed 2048; exceeding this limit will result in an error.
+This is accomplished by linearly interpolating between existing bins, increasing the number of radial vectors by approximately 15\% for a 2x interpolation, and yielding smoother radials. The interpolation factor is configurable via the SeaSondeRCS object's \code{doppler_interpolation} attribute and it's setter \code{seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation}. The number of Doppler bins after interpolation should not exceed 2048; exceeding this limit will result in an error.
 
 The interpolation process is as follows:
 \enumerate{
