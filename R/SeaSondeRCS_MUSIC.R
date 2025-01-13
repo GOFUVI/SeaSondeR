@@ -165,6 +165,54 @@ seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, dop
 }
 
 #### Validation ####
+
+#' Validate Doppler Interpolation Factor for SeaSondeRCS Objects
+#'
+#' This function validates the \code{doppler_interpolation} factor for a \code{SeaSondeRCS} object, ensuring it is within the allowed range and does not result in exceeding the maximum number of Doppler bins after interpolation.
+#'
+#' @param value An integer specifying the Doppler interpolation factor. Must be one of 1, 2, 3, or 4.
+#' @param seasonder_cs_object A \code{SeaSondeRCS} object containing metadata for Doppler bin calculations.
+#'
+#' @details
+#' Doppler interpolation is a process that increases the number of Doppler bins by the specified factor before radial processing.
+#' The function performs the following validations:
+#' - Ensures the \code{doppler_interpolation} factor is one of 1, 2, 3, or 4.
+#' - Computes the total number of Doppler bins after applying the specified interpolation factor. If this number exceeds 2048, the function aborts with a descriptive error message.
+#'
+#' The maximum Doppler bins (2048) constraint is derived from CODAR's SeaSonde R8 Radial Config Setup, which specifies that the product of the interpolation factor and the original number of Doppler bins should not exceed this limit.
+#'
+#' @return
+#' The validated \code{doppler_interpolation} factor as an integer.
+#'
+#' @section Warnings:
+#' - Using Doppler interpolation factors of 3x or 4x is not recommended.
+#' - Exceeding 2048 Doppler bins after interpolation will result in an error.
+#'
+#' @seealso
+#' \code{\link{seasonder_getnDopplerCells}} for retrieving the number of Doppler bins,
+#' \code{\link{seasonder_logAndAbort}} for error handling and logging.
+#'
+#' @importFrom glue glue
+#'
+#' @examples
+#' \dontrun{
+#' # Assume `cs_obj` is a valid SeaSondeRCS object
+#' doppler_factor <- SeaSondeRCS_MUSIC_validate_doppler_interpolation(2, cs_obj)
+#' }
+#'
+SeaSondeRCS_MUSIC_validate_doppler_interpolation <- function(value, seasonder_cs_object){
+  value <- as.integer(value)
+
+  value %in% c(1L,2L,3L,4L) || seasonder_logAndAbort(glue::glue("doppler_interpolation should be one of 1, 2, 3 or 4, but is {value}"), calling_function = "SeaSondeRCS_MUSIC_validate_doppler_interpolation")
+
+  ndoppler <- value * seasonder_getnDopplerCells(seasonder_cs_object)
+
+  ndoppler <= 2048 || seasonder_logAndAbort(glue::glue("The number of interpolated doppler cells should not exceed 2048, and current doppler_interpolation settion of {value} would result in {ndoppler} interpolated doppler cells. Please check."), calling_function = "SeaSondeRCS_MUSIC_validate_doppler_interpolation")
+
+  return(value)
+
+}
+
 #### Processing_steps ####
 
 
@@ -287,12 +335,9 @@ seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_c
 
 seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_object, doppler_interpolation){
 
-  # TODO: Valiate doppler_interpolation (must be 1L, 2L, 3L or 4L, also check the number of final doppler bins SEAS-72). The default is 1 (no interpolation)
-
+doppler_interpolation <- SeaSondeRCS_MUSIC_validate_doppler_interpolation(doppler_interpolation, seasonder_cs_object)
 
   attr(seasonder_cs_object, "MUSIC_data")$doppler_interpolation <- doppler_interpolation
-
-
 
   return(seasonder_cs_object)
 
@@ -709,95 +754,143 @@ seasonder_MUSICTestDualSolutions <- function(seasonder_cs_object){
 
 ##### Doppler interpolation #####
 
+
+#' Perform Doppler Interpolation for SeaSonde Cross-Spectra Data
+#'
+#' This function performs Doppler interpolation on the cross-spectra data of a SeaSondeRCS object, preparing the data for MUSIC processing.
+#' Interpolation is achieved by inserting additional Doppler bins using linear interpolation, potentially increasing the number of detected vectors while possibly smoothing the radials. The function tries to mimic CODAR's AnalyzeSpectra tool interpolation, including the addition of a wraparound Doppler cell before interpolation.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing cross-spectra data and metadata for processing.
+#'
+#' @details
+#' Doppler interpolation increases the number of Doppler bins by a factor of 2, 3, or 4 before radial processing.
+#' This is accomplished by linearly interpolating between existing bins, creating smoother transitions and potentially
+#' increasing the number of vectors by approximately 15% for a 2x interpolation. The interpolation factor is configurable
+#' via the SeaSondeRCS object's \code{doppler_interpolation} attribute and it's setter \code{seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation}. The number of Doppler bins after interpolation should not exceed 2048; exceeding this limit will result in an error.
+#'
+#' The interpolation process is as follows:
+#' 1. A wraparound Doppler cell is added to the right of the data.
+#' 2. For non-quality-control (QC) matrices, linear interpolation is applied to fill in the newly added Doppler bins.
+#' 3. QC matrices are updated with a default value (-1) for interpolated bins.
+#'
+#' @note
+#' - CODAR's SeaSonde R8 Radial Config Setup documentation advises against using 3x or 4x interpolation.
+#' - The function ensures the number of Doppler bins after interpolation does not exceed 2048.
+#' - Doppler interpolation is a preprocessing step typically performed by CODAR's AnalyzeSpectra tool before MUSIC processing.
+#'
+#' @return
+#' A \code{SeaSondeRCS} object with updated interpolated cross-spectra data and metadata.
+#'
+#'
+#' @seealso
+#' \code{\link{seasonder_setSeaSondeRCS_MUSIC_interpolated_data}} for setting interpolated data,
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation}} for retrieving the interpolation factor,
+#' \code{\link{seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation}} for setting the interpolation factor,
+#' \code{\link{seasonder_initCSDataStructure}} for initializing the interpolated data structure.
+#'
+#' @importFrom dplyr setdiff
+#' @importFrom purrr map2 reduce
+#' @importFrom zoo na.approx
+#' @importFrom pracma Real Imag
+#'
+#' @examples
+#' \dontrun{
+#' # Assume `cs_obj` is a valid SeaSondeRCS object
+#' cs_obj <- seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+#' }
+#'
 seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_obj){
 
-
+  # Initialize the output object as a copy of the input object
   out <- seasonder_cs_obj
 
+  # Extract the existing cross-spectra data from the input object
   data <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj)
 
+  # Set the initial interpolated data in the output object as a copy of the original data
   out %<>% seasonder_setSeaSondeRCS_MUSIC_interpolated_data(data)
 
+  # Retrieve the Doppler interpolation factor, indicating how much to interpolate
   doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_cs_obj)
 
+  # Proceed only if the Doppler interpolation factor is greater than 1 (indicating interpolation is needed)
   if(doppler_interpolation > 1L){
 
-
+    # Get the number of Doppler and range cells after interpolation
     nDoppler <- seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(seasonder_cs_obj)
     nRanges <- seasonder_getnRangeCells(seasonder_cs_obj)
 
+    # Initialize an empty data structure to store the interpolated results
     interpolated_data <- seasonder_initCSDataStructure(nRanges = nRanges, nDoppler = nDoppler)
 
-
-    # 1, int,2,int,3 n*2-1
-    # 1-> 1 (i-1)*2 +1 = i*2 -2 +1 = i * 2 -1
-    # 2 -> 3 i * 2 -1
-    # 3 -> 5 i * 2 -1
-    # 1, int, int ,2,int, int ,3 n*3-2
-    # 1 -> 1 (i-1)*3 +1 = i *3 -3 +1 = i*3 -2
-    # 2 -> 4 i*3 -2
-    # 3 -> 7 i* 3-2
-    # 1, int, int, int ,2,int, int, int ,3 n*4-3
-
-    index_mapping <- data.frame(original=1:ncol(data[[1]]), mapped=(0:(ncol(data[[1]])-1))*doppler_interpolation  +1)
-
-    interpolated_cells <- dplyr::setdiff(1:nDoppler, index_mapping$mapped
+    # Map the original indices to the interpolated indices based on the interpolation factor
+    index_mapping <- data.frame(
+      original = 1:ncol(data[[1]]),
+      mapped = (0:(ncol(data[[1]]) - 1)) * doppler_interpolation + 1
     )
 
+    # Determine the indices of the Doppler cells that will be interpolated
+    interpolated_cells <- dplyr::setdiff(1:nDoppler, index_mapping$mapped)
+
+    # Perform the interpolation for each matrix in the cross-spectra data structure
     interpolated_data %<>% purrr::map2(names(.), \(matrix, name){
 
+      # Validate that the matrix name exists in the original data
       if(!name %in% names(data)){
-        seasonder_logAndAbort(glue::glue("{name} is not a data matrix name."), calling_function = "seasonder_SeaSondeRCSInterpolateDoppler")
+        seasonder_logAndAbort(
+          glue::glue("{name} is not a data matrix name."),
+          calling_function = "seasonder_SeaSondeRCSInterpolateDoppler"
+        )
       }
 
-
-
+      # Copy the original data into the interpolated matrix based on the mapped indices
       original_matrix <- data[[name]]
+      matrix[, index_mapping$mapped] <- original_matrix[, index_mapping$original]
 
-      matrix[,index_mapping$mapped] <- original_matrix[,index_mapping$original]
-
+      # Special handling for the quality control (QC) matrix
       if(name == "QC"){
-        matrix[,interpolated_cells] <- -1L
-      }else{
-        matrix <-  1:nrow(matrix) %>% purrr::reduce(\(matrix_so_far,i){
+        # Set interpolated cells in the QC matrix to a default value (-1)
+        matrix[, interpolated_cells] <- -1L
+      } else {
+        # For other matrices, perform linear interpolation for the interpolated cells
+        matrix <- 1:nrow(matrix) %>% purrr::reduce(\(matrix_so_far, i){
 
-          data <- c(matrix_so_far[i,,drop = TRUE],matrix_so_far[i,1,drop = TRUE])
+          # Prepare the row data for interpolation, adding a wraparound element
+          data <- c(matrix_so_far[i,, drop = TRUE], matrix_so_far[i, 1, drop = TRUE])
 
           if(!rlang::is_complex(data)){
-
+            # Perform linear interpolation for real-valued data
             data[interpolated_cells] <- zoo::na.approx(abs(data))[interpolated_cells]
-            data <- data[-length(data)]
-          }else{
-
-
-            data <- complex(real= zoo::na.approx(pracma::Real(data))[-length(data)],
-                            imaginary= zoo::na.approx(pracma::Imag(data))[-length(data)])
-
+            data <- data[-length(data)]  # Remove the wraparound element
+          } else {
+            # Perform linear interpolation for complex-valued data
+            data <- complex(
+              real = zoo::na.approx(pracma::Real(data))[-length(data)],
+              imaginary = zoo::na.approx(pracma::Imag(data))[-length(data)]
+            )
           }
 
-          matrix_so_far[i,] <- data
+          # Update the row in the matrix
+          matrix_so_far[i, ] <- data
 
-          matrix_so_far
-
-        }, .init=matrix)
-
+          return(matrix_so_far)
+        }, .init = matrix)
       }
 
-
-      matrix
-
+      return(matrix)
     })
 
-
+    # Set the indices of the interpolated Doppler cells in the output object
     out %<>% seasonder_setSeaSondeRCS_MUSIC_interpolated_doppler_cells_index(interpolated_cells)
 
-
+    # Set the interpolated cross-spectra data in the output object
     out %<>% seasonder_setSeaSondeRCS_MUSIC_interpolated_data(interpolated_data)
-
   }
 
+  # Return the updated object with interpolated data
   return(out)
 }
+
 
 
 #### MUSIC algorithm ####
