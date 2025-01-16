@@ -2,35 +2,50 @@
 % Please edit documentation in R/SeaSondeRCS_MUSIC.R
 \name{seasonder_MUSICComputeCov}
 \alias{seasonder_MUSICComputeCov}
-\title{Calculate the MUSIC Covariance Matrix for a Given Cell Range and Doppler Bin}
+\title{Calculate the MUSIC Covariance Matrix for each Given Cell Range and Doppler Bin}
 \usage{
 seasonder_MUSICComputeCov(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSondeRCS object containing the cross spectra data.}
-
-\item{cell_range}{A numeric vector specifying the range cells for which to calculate the covariance matrix.}
-
-\item{doppler_bin}{An integer specifying the Doppler bin for which the covariance matrix is calculated.}
+\item{seasonder_cs_object}{A SeaSondeRCS object containing the cross-spectra data.}
 }
 \value{
-A 3x3 complex matrix representing the MUSIC covariance matrix for the specified cell range and Doppler bin.
-Each element \eqn{C_{ij}} of the matrix is calculated based on the auto-spectra (for diagonal elements) or
-cross-spectra (for off-diagonal elements) data. For diagonal elements \eqn{i = j}, \eqn{C_{ii}} is obtained
-from the auto-spectra \verb{SSA\{i\}}, and for off-diagonal elements \eqn{i \neq j}, \eqn{C_{ij}} is obtained from the
-cross-spectra \code{CSij}, where \code{i} and \code{j} are indices of the matrix.
+A SeaSondeRCS object updated with a computed 3x3 complex covariance matrix for each cell range and Doppler bin.
+The covariance matrix is stored in the MUSIC data field. Each matrix element \eqn{C_{ij}} is calculated
+based on auto-spectra (for diagonal elements) or cross-spectra (for off-diagonal elements).
+- Diagonal elements (\eqn{i = j}) are derived from auto-spectra \verb{SSA\{i\}}.
+- Off-diagonal elements (\eqn{i \neq j}) are derived from cross-spectra \code{CSij}.
+- Auto-spectra values for the third antenna (\code{SSA3}) are taken as absolute values to comply
+with CODAR's recommendation to handle negative values indicating noise or interference.
 }
 \description{
-This function computes the MUltiple SIgnal Classification (MUSIC) covariance matrix
-for a specific cell range and Doppler bin from SeaSonde Cross Spectra (CS) data. The MUSIC
+This function computes the Multiple Signal Classification (MUSIC) covariance matrix
+for each cell range and Doppler bin from SeaSonde Cross Spectra (CS) data. The MUSIC
 algorithm is used in direction finding and spectral estimation.
 }
 \details{
-The MUSIC algorithm is widely used for estimating the direction of arrival of signals and requires the computation
-of a covariance matrix from sensor data. In the context of SeaSonde radar data, this function utilizes the cross
-spectra (CS) and auto-spectra (SSA) data to construct the covariance matrix necessary for MUSIC analysis.
-The function iterates over a 3x3 matrix to fill in the values based on whether the indices of the matrix are equal
-(diagonal elements) or not (off-diagonal elements). Diagonal elements are derived from auto-spectra data \verb{SSA\{i\}},
-where \code{i} corresponds to the antenna number. Off-diagonal elements are calculated from cross-spectra data \code{CSij},
-representing the cross-spectrum between antennas \code{i} and \code{j}.
+The MUSIC algorithm estimates the direction of arrival (DOA) of signals, requiring the computation of a
+covariance matrix from sensor data. This function constructs the covariance matrix by iterating through
+the auto-spectra (\verb{SSA\{i\}}) and cross-spectra (\code{CSij}) fields of the cross-spectra data.
+
+For diagonal elements (\eqn{i = j}), the matrix uses data from the auto-spectra field corresponding to
+the antenna index (\code{SSA1}, \code{SSA2}, or \code{SSA3}). Negative values in \code{SSA3}, which
+indicate noise or interference, are converted to their absolute values before use, as per the
+Cross Spectra File Format Version 6 guidelines.
+
+Off-diagonal elements (\eqn{i \neq j}) are derived from cross-spectra fields, such as \code{CS12} or \code{CS23}.
+If the row index is greater than the column index, the conjugate of the value is used.
+}
+\examples{
+\dontrun{
+# Assume seasonder_cs_obj is a valid SeaSondeRCS object
+updated_obj <- seasonder_MUSICComputeCov(seasonder_cs_obj)
+}
+}
+\references{
+Cross Spectra File Format Version 6, CODAR. (2016).
+Paolo, T. de, Cook, T. & Terrill, E. Properties of HF RADAR Compact Antenna Arrays and Their Effect on the MUSIC Algorithm. OCEANS 2007 1–10 (2007) doi:10.1109/oceans.2007.4449265.
+}
+\seealso{
+\code{\link{seasonder_getSeaSondeRCS_MUSIC}}, \code{\link{seasonder_setSeaSondeRCS_MUSIC}}
 }
