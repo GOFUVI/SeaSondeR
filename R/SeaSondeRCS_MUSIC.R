@@ -1234,9 +1234,194 @@ seasonder_MUSICComputeDOAFunctions <- function(seasonder_cs_object){
   return(seasonder_cs_object)
 }
 
+#' Extract Direction of Arrival (DOA) Solutions Using MUSIC Algorithm
+#'
+#' This function analyzes projection data using the Multiple Signal Classification (MUSIC) algorithm
+#' to identify Direction of Arrival (DOA) solutions for radar signals. It implements the methodology
+#' described by Paolo and Terril (2007) for HF radar signal analysis.
+#'
+#' @param projections A matrix of projections where each column corresponds to a set of MUSIC spectra for single and dual solutions.
+#'                    The matrix should have the attribute \code{"bearings"} indicating the corresponding bearing angles in degrees.
+#'
+#' @return A list containing the extracted single and dual DOA solutions, each with:
+#' \itemize{
+#'   \item \code{bearing}: The bearing(s) corresponding to the detected peak(s).
+#'   \item \code{a}: The associated antenna pattern matrix values for the detected peak(s).
+#'   \item \code{peak_resp}: The response levels at the detected peak(s) in dB.
+#' }
+#'
+#' @details
+#' The function performs the following steps:
+#' \enumerate{
+#'   \item Reverses the distances for single and dual solution projections to enhance peak detectability.
+#'   \item Detects peaks in the reversed single solution projection, retaining the highest peak.
+#'   \item Detects peaks in the reversed dual solution projection, retaining the two highest peaks.
+#'   \item Maps the identified peak positions back to their corresponding bearings.
+#' }
+#'
+#' The identification of DOA solutions using MUSIC relies on the inversion of spectral distances, as detailed in Paolo and Terril (2007),
+#' to emphasize potential peaks corresponding to source directions.
+#'
+#' @references
+#' Paolo, S., & Terril, E. (2007). Detection and characterization of signals in HF radar cross-spectra using the MUSIC algorithm.
+#' \emph{Journal of Atmospheric and Oceanic Technology}.
+#'
+#' @seealso \code{\link{seasonder_MUSICExtractPeaks}}, \code{\link{pracma::findpeaks}}
+#'
+#' @examples
+#' \dontrun{
+#' projections <- matrix(runif(100), nrow = 2, ncol = 50)
+#' attr(projections, "bearings") <- seq(0, 359, length.out = 50)
+#' result <- seasonder_MUSICExtractDOASolutions(projections)
+#' print(result)
+#' }
+#'
+seasonder_MUSICExtractDOASolutions <- function(projections){
 
+  # Initialize an empty DOA solutions structure
+  out <- seasonder_MUSICInitDOASolutions()
 
+  # Extract the bearings attribute for projections
+  bearings <- attr(projections,"bearings",exact = TRUE)
+
+  # Reverse the single and dual solution projection matrices
+  rev_single_solution_dist = pracma::Real(1/projections['single',,drop = TRUE])
+  rev_dual_solution_dist = pracma::Real(1/projections['dual',,drop = TRUE])
+
+  # Detect peaks in the single solution projections
+  single_peaks_results <- pracma::findpeaks(rev_single_solution_dist, npeaks = 1, sortstr = TRUE)
+  single_peak <- single_peaks_results[,2,drop = TRUE] # Peak location
+  single_peak_resp <- NA
+
+  # If valid peaks are found, calculate the corresponding responses
+  if (!is.null(single_peaks_results)) {
+    single_peak_resp <- 10*log10(single_peaks_results[,1,drop = TRUE])
+  }
+
+  # Detect peaks in the dual solution projections
+  dual_peaks_results <- pracma::findpeaks(rev_dual_solution_dist, npeaks = 2, sortstr = TRUE)
+
+  # Populate the single DOA solution fields
+  out$single$bearing <-  bearings[single_peak]
+  out$single$a <- seasonder_apm_obj[,single_peak, drop = FALSE]
+  out$single$peak_resp <- single_peak_resp
+
+  # Populate the dual DOA solution fields
+  dual_peaks <- dual_peaks_results[,2,drop = TRUE]
+  dual_peaks_resp <- NA
+  if (!is.null(dual_peaks_results)) {
+    dual_peaks_resp <- 10*log10(dual_peaks_results[,1,drop = TRUE])
+  }
+
+  out$dual$bearing <- bearings[dual_peaks]
+  out$dual$a <- seasonder_apm_obj[,dual_peaks, drop = FALSE]
+  out$dual$peak_resp <- dual_peaks_resp
+
+  return(out)
+}
+
+#' Validate Retained Solution in MUSIC Algorithm Peak Extraction
+#'
+#' This function verifies and adjusts the retained solution type ("single" or "dual") based on the
+#' Direction of Arrival (DOA) solutions extracted using the MUSIC algorithm.
+#'
+#' @param ret_sol A character string specifying the initial solution type to retain. Valid values are \code{"single"} or \code{"dual"}.
+#' @param DOA_sol A list containing extracted DOA solutions, as returned by \code{\link{seasonder_MUSICExtractDOASolutions}}.
+#'
+#' @return A character string indicating the validated solution type:
+#' \itemize{
+#'   \item \code{"single"}: If only one single solution bearing is valid.
+#'   \item \code{"dual"}: If valid dual solution bearings are detected.
+#'   \item \code{"none"}: If no valid bearings are found.
+#' }
+#'
+#' @details
+#' The function performs the following checks:
+#' \enumerate{
+#'   \item If the retained solution is "dual" but no valid dual solution bearings exist, it defaults to "single" if valid.
+#'   \item If the retained solution is "single" but no valid single solution bearings exist, it defaults to "none".
+#' }
+#'
+#' This validation ensures the output solutions are consistent with the detected peaks, addressing potential discrepancies
+#' in the initial assumptions about the solution type.
+#'
+#' @seealso \code{\link{seasonder_MUSICExtractPeaks}}, \code{\link{seasonder_MUSICExtractDOASolutions}}
+#'
+#' @examples
+#' \dontrun{
+#' ret_sol <- "dual"
+#' DOA_sol <- list(single = list(bearing = 45), dual = list(bearing = c(30, 60)))
+#' result <- seasonder_MUSICExtractPeaksCheckRetainedSolution(ret_sol, DOA_sol)
+#' print(result)
+#' }
+#'
+seasonder_MUSICExtractPeaksCheckRetainedSolution <- function(ret_sol, DOA_sol){
+
+  out <- ret_sol
+
+  # Validate dual solutions
+  if (ret_sol == "dual") {
+
+    if (length(DOA_sol$dual$bearing) == 0) {
+      if (length(DOA_sol$single$bearing )==1) {
+        out <- "single"
+      }else{
+        out <- "none"
+      }
+    }
+
+    # Validate single solutions
+  }else if (ret_sol == "single") {
+    if (length(DOA_sol$single$bearing ) != 1) {
+      out <- "none"
+    }
+  }
+
+  return(out)
+}
+
+#' Extract and Validate DOA Peaks Using MUSIC Algorithm
+#'
+#' This function processes a \code{SeaSondeRCS} object to extract Direction of Arrival (DOA) solutions using the MUSIC algorithm
+#' and validates the retained solutions based on the extracted peaks.
+#'
+#' @param seasonder_cs_object An object of class \code{SeaSondeRCS} containing cross-spectra data processed with the MUSIC algorithm.
+#'
+#' @return An updated \code{SeaSondeRCS} object with the following fields modified:
+#' \itemize{
+#'   \item \code{MUSIC}: Contains the extracted DOA solutions.
+#'   \item \code{ProcessingSteps}: Includes a log of the peak extraction process.
+#' }
+#'
+#' @details
+#' The function performs the following operations:
+#' \enumerate{
+#'   \item Initializes the peak extraction process and logs the start.
+#'   \item Extracts DOA solutions for each set of projections using \code{\link{seasonder_MUSICExtractDOASolutions}}.
+#'   \item Validates and adjusts the retained solution types using \code{\link{seasonder_MUSICExtractPeaksCheckRetainedSolution}}.
+#'   \item Updates the \code{SeaSondeRCS} object with the extracted and validated solutions.
+#'   \item Logs the completion of the peak extraction process.
+#' }
+#'
+#' The MUSIC algorithm's implementation follows the theoretical framework outlined by Paolo and Terril (2007), emphasizing the identification of signal directions
+#' in HF radar cross-spectra.
+#'
+#' @references
+#' Paolo, S., & Terril, E. (2007). Detection and characterization of signals in HF radar cross-spectra using the MUSIC algorithm.
+#' \emph{Journal of Atmospheric and Oceanic Technology}.
+#'
+#' @seealso \code{\link{seasonder_MUSICExtractDOASolutions}}, \code{\link{seasonder_MUSICExtractPeaksCheckRetainedSolution}}
+#'
+#' @examples
+#' \dontrun{
+#' cs_object <- seasonder_createSeaSondeRCS(x = "path/to/cs_file")
+#' cs_object <- seasonder_MUSICExtractPeaks(cs_object)
+#' print(cs_object)
+#' }
+#'
 seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
+
+  projections <- retained_solution <- DOA_solutions  <- rlang::zap()
 
   # Add a log entry to indicate the start of the peak extraction process
   seasonder_cs_object  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_peak_extraction_start_step_text())
@@ -1248,75 +1433,10 @@ seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
   # Iterate over the projections matrix in the MUSIC object to extract DOA solutions
-  MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::map(projections, \(projections){
-
-    # Initialize an empty DOA solutions structure
-    out <- seasonder_MUSICInitDOASolutions()
-
-    # Extract the bearings attribute for projections
-    bearings <- attr(projections,"bearings",exact = TRUE)
-
-    # Reverse the single and dual solution distance matrices
-    rev_single_solution_dist = pracma::Real(1/projections['single',,drop = TRUE])
-    rev_dual_solution_dist = pracma::Real(1/projections['dual',,drop = TRUE])
-
-    # Detect peaks in the single solution projections
-    single_peaks_results <- pracma::findpeaks(rev_single_solution_dist, npeaks = 1, sortstr = TRUE)
-    single_peak <- single_peaks_results[,2,drop = TRUE] # Peak location
-    single_peak_resp <- NA
-
-    # If valid peaks are found, calculate the corresponding responses
-    if(!is.null(single_peaks_results)){
-      single_peak_resp <- 10*log10(single_peaks_results[,1,drop = TRUE])
-    }
-
-    # Detect peaks in the dual solution projections
-    dual_peaks_results <- pracma::findpeaks(rev_dual_solution_dist, npeaks = 2, sortstr = TRUE)
-
-    # Populate the single DOA solution fields
-    out$single$bearing <-  bearings[single_peak]
-    out$single$a <- seasonder_apm_obj[,single_peak, drop = FALSE]
-    out$single$peak_resp <- single_peak_resp
-
-    # Populate the dual DOA solution fields
-    dual_peaks <- dual_peaks_results[,2,drop = TRUE]
-    dual_peaks_resp <- NA
-    if(!is.null(dual_peaks_results)){
-      dual_peaks_resp <- 10*log10(dual_peaks_results[,1,drop = TRUE])
-    }
-
-    out$dual$bearing <- bearings[dual_peaks]
-    out$dual$a <- seasonder_apm_obj[,dual_peaks, drop = FALSE]
-    out$dual$peak_resp <- dual_peaks_resp
-
-    return(out)
-  }))
+  MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::map(projections, seasonder_MUSICExtractDOASolutions))
 
   # Update the retained solution field based on DOA solutions
-  MUSIC %<>% dplyr::mutate(retained_solution = purrr::map2_chr(retained_solution, DOA_solutions, \(ret_sol, DOA_sol){
-
-    out <- ret_sol
-
-    # Validate dual solutions
-    if(ret_sol == "dual"){
-
-      if(length(DOA_sol$dual$bearing) == 0){
-        if(length(DOA_sol$single$bearing )==1){
-          out <- "single"
-        }else{
-          out <- "none"
-        }
-      }
-
-      # Validate single solutions
-    }else if(ret_sol == "single"){
-      if(length(DOA_sol$single$bearing ) != 1){
-        out <- "none"
-      }
-    }
-
-    return(out)
-  }))
+  MUSIC %<>% dplyr::mutate(retained_solution = purrr::map2_chr(retained_solution, DOA_solutions, seasonder_MUSICExtractPeaksCheckRetainedSolution))
 
   # Update the MUSIC field in the `SeaSondeRCS` object
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
