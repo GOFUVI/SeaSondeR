@@ -18,7 +18,7 @@ seasonder_MUSICInitCov <- function(){
 }
 
 
-seasonder_MUSICInitDistances <- function(bearings = 0){
+seasonder_MUSICInitProjections <- function(bearings = 0){
 
 
 
@@ -76,7 +76,7 @@ seasonder_NULLSeaSondeRCS_MUSIC <- function(){
     radial_v =  numeric(0),
     cov = list(),
     eigen = list(),
-    distances = list(),
+    projections = list(),
     DOA_solutions = list(),
     eigen_values_ratio= numeric(0),
     P1_check = logical(0),
@@ -121,7 +121,7 @@ seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = N
                          radial_v = seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(seasonder_cs_object)[doppler_bin],
                          cov = list(seasonder_MUSICInitCov()),
                          eigen = list(seasonder_MUSICInitEigenDecomp()),
-                         distances = list(seasonder_MUSICInitDistances()),
+                         projections = list(seasonder_MUSICInitProjections()),
                          DOA_solutions = list(seasonder_MUSICInitDOASolutions()),
                          eigen_values_ratio=NA_real_,
                          P1_check = TRUE,
@@ -893,7 +893,6 @@ seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_obj){
 
 #### MUSIC algorithm ####
 
-# TODO: update docs
 
 #' Calculate the MUSIC Covariance Matrix for each Given Cell Range and Doppler Bin
 #'
@@ -1201,9 +1200,9 @@ seasonder_MUSICComputeDOAFunctions <- function(seasonder_cs_object){
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
   # Updates the MUSIC object by calculating proyections of the antenna pattern into the noise sub-space for each Doppler bin.
-  MUSIC %<>% dplyr::mutate(distances = purrr::map(eigen, \(eigen_analysis){
+  MUSIC %<>% dplyr::mutate(projections = purrr::map(eigen, \(eigen_analysis){
     # Initializes an empty matrix to store the projections for single and dual solutions.
-    out <- seasonder_MUSICInitDistances(bearings = bearings)
+    out <- seasonder_MUSICInitProjections(bearings = bearings)
 
     # Iterates over the two possible signal solutions (single and dual).
     for(i in 1:2){
@@ -1239,58 +1238,66 @@ seasonder_MUSICComputeDOAFunctions <- function(seasonder_cs_object){
 
 seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
 
+  # Add a log entry to indicate the start of the peak extraction process
   seasonder_cs_object  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_peak_extraction_start_step_text())
 
-
+  # Retrieve the Antenna Pattern Matrix (APM) from the object
   seasonder_apm_obj <- seasonder_getSeaSondeRCS_APM(seasonder_cs_object)
 
+  # Retrieve the MUSIC data structure
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
-  MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::map(distances,\(distances){
+  # Iterate over the projections matrix in the MUSIC object to extract DOA solutions
+  MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::map(projections, \(projections){
 
+    # Initialize an empty DOA solutions structure
     out <- seasonder_MUSICInitDOASolutions()
 
+    # Extract the bearings attribute for projections
+    bearings <- attr(projections,"bearings",exact = TRUE)
 
-    bearings <- attr(distances,"bearings",exact = TRUE)
+    # Reverse the single and dual solution distance matrices
+    rev_single_solution_dist = pracma::Real(1/projections['single',,drop = TRUE])
+    rev_dual_solution_dist = pracma::Real(1/projections['dual',,drop = TRUE])
 
-    rev_single_solution_dist = pracma::Real(1/distances['single',,drop = TRUE])
-
-    rev_dual_solution_dist = pracma::Real(1/distances['dual',,drop = TRUE])
-
-    single_peaks_results <- pracma::findpeaks(rev_single_solution_dist,npeaks = 1, sortstr = TRUE)
-
-    single_peak <-  single_peaks_results[,2,drop = T]# which.max(rev_single_solution_dist)
+    # Detect peaks in the single solution projections
+    single_peaks_results <- pracma::findpeaks(rev_single_solution_dist, npeaks = 1, sortstr = TRUE)
+    single_peak <- single_peaks_results[,2,drop = TRUE] # Peak location
     single_peak_resp <- NA
+
+    # If valid peaks are found, calculate the corresponding responses
     if(!is.null(single_peaks_results)){
-      single_peak_resp <- 10*log10(single_peaks_results[,1,drop = T])
+      single_peak_resp <- 10*log10(single_peaks_results[,1,drop = TRUE])
     }
-    dual_peaks_results <- pracma::findpeaks(rev_dual_solution_dist,npeaks = 2, sortstr = TRUE)
 
+    # Detect peaks in the dual solution projections
+    dual_peaks_results <- pracma::findpeaks(rev_dual_solution_dist, npeaks = 2, sortstr = TRUE)
 
-
+    # Populate the single DOA solution fields
     out$single$bearing <-  bearings[single_peak]
     out$single$a <- seasonder_apm_obj[,single_peak, drop = FALSE]
     out$single$peak_resp <- single_peak_resp
 
-    dual_peaks <- dual_peaks_results[,2,drop = T]
+    # Populate the dual DOA solution fields
+    dual_peaks <- dual_peaks_results[,2,drop = TRUE]
     dual_peaks_resp <- NA
     if(!is.null(dual_peaks_results)){
-      dual_peaks_resp <- 10*log10(dual_peaks_results[,1,drop = T])
+      dual_peaks_resp <- 10*log10(dual_peaks_results[,1,drop = TRUE])
     }
 
     out$dual$bearing <- bearings[dual_peaks]
     out$dual$a <- seasonder_apm_obj[,dual_peaks, drop = FALSE]
     out$dual$peak_resp <- dual_peaks_resp
 
-
     return(out)
   }))
 
-
+  # Update the retained solution field based on DOA solutions
   MUSIC %<>% dplyr::mutate(retained_solution = purrr::map2_chr(retained_solution, DOA_solutions, \(ret_sol, DOA_sol){
 
     out <- ret_sol
 
+    # Validate dual solutions
     if(ret_sol == "dual"){
 
       if(length(DOA_sol$dual$bearing) == 0){
@@ -1299,9 +1306,9 @@ seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
         }else{
           out <- "none"
         }
-
       }
 
+      # Validate single solutions
     }else if(ret_sol == "single"){
       if(length(DOA_sol$single$bearing ) != 1){
         out <- "none"
@@ -1309,17 +1316,18 @@ seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
     }
 
     return(out)
-
   }))
 
+  # Update the MUSIC field in the `SeaSondeRCS` object
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
-
+  # Log the end of the peak extraction process
   seasonder_cs_object  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_peak_extraction_end_step_text())
 
+  # Return the updated object
   return(seasonder_cs_object)
-
 }
+
 
 
 
