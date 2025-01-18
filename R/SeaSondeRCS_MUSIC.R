@@ -239,9 +239,9 @@ SeaSondeRCS_MUSIC_covariance_decomposition_start_step_text <- function() {
   glue::glue("{Sys.time()}: MUSIC covariance matrix decomposition started")
 }
 
-SeaSondeRCS_compute_distances_start_step_text <- function() {
+SeaSondeRCS_compute_DOA_functions_start_step_text <- function() {
   # Use glue to format the message with the current system time and the provided file path
-  glue::glue("{Sys.time()}: MUSIC distances computation started")
+  glue::glue("{Sys.time()}: MUSIC DOA functions computation started")
 }
 
 
@@ -272,9 +272,9 @@ SeaSondeRCS_MUSIC_covariance_decomposition_end_step_text <- function() {
   glue::glue("{Sys.time()}: MUSIC covariance matrix decomposition ended")
 }
 
-SeaSondeRCS_compute_distances_end_step_text <- function() {
+SeaSondeRCS_compute_DOA_functions_end_step_text <- function() {
   # Use glue to format the message with the current system time and the provided file path
-  glue::glue("{Sys.time()}: MUSIC distances computation ended")
+  glue::glue("{Sys.time()}: MUSIC DOA functions computation ended")
 }
 
 
@@ -1143,53 +1143,53 @@ seasonder_compute_antenna_pattern_proyections <- function(En, a){
 }
 
 
-#' Compute Euclidean Distances for the MUSIC Algorithm
+#' Compute DOA Functions Using the MUSIC Algorithm
 #'
-#' This function computes the magnitude of the projection of each antenna pattern vector onto
-#' the estimated noise subspace. These projections
-#' are essential for identifying the direction of arrival (DOA) of signals, as the smallest
-#' projection indicates the bearing of the signal.
+#' This function calculates the Direction of Arrival (DOA) functions based on the MUSIC algorithm
+#' for a given SeaSonde cross-spectra (CS) object. It projects the antenna patterns onto the noise
+#' subspace for each Doppler bin and computes single and dual signal solutions, following the MUSIC method.
 #'
-#' @param seasonder_cs_object A SeaSondeRCS object containing the MUSIC covariance matrix,
-#'        antenna pattern measurements (APM), and related metadata.
+#' @param seasonder_cs_object An object representing the cross-spectra (CS) data from SeaSonde.
 #'
-#' @return The updated \code{seasonder_cs_object} with the calculated projections stored in
-#'         the MUSIC data. Each Doppler bin contains a 2xN matrix of distances, where:
-#'         \itemize{
-#'           \item Row 1 (`"single"`) corresponds to the projections for a single signal solution.
-#'           \item Row 2 (`"dual"`) corresponds to the projections for a dual signal solution.
-#'         }
+#' @return The updated `seasonder_cs_object` with the MUSIC DOA functions computed and appended.
 #'
 #' @details
-#' The magnitude of the projection in the MUSIC algorithm quantifies how close the antenna manifold
-#' vector is to the noise subspace. The algorithm projects each antenna pattern vector onto
-#' the estimated noise subspace and calculates the magnitude of this projection. The bearing
-#' with the smallest distance is considered the most likely direction of arrival for the signal.
-#'
-#' The computation uses the formula:
-#' \deqn{D_i = a^H (En E_n^H) a}
-#'
-#' where:
-#' - \eqn{a} is the complex antenna manifold vector for a given bearing.
-#' - \eqn{En} is the noise subspace eigenvector matrix.
-#' - \eqn{H} denotes the Hermitian (conjugate transpose) operator.
-#'
-#' The projections are computed for both single and dual solutions. The dual solution considers
-#' the noise subspace corresponding to two eigenvectors, whereas the single solution uses
-#' one eigenvector.
+#' The function operates as follows:
+#' 1. It sets a processing step indicating the start of DOA function computation.
+#' 2. Retrieves the Antenna Pattern Measurement (APM) and bearings associated with the CS object.
+#' 3. Iteratively computes projections of antenna pattern responses into the noise subspace for each
+#'    Doppler bin using the MUSIC algorithm. This includes:
+#'    - Initializing storage for projection results.
+#'    - Calculating projections for single (m = 1) and dual (m = 2) signal solutions using
+#'      the eigenvectors defining the noise subspace.
+#'    - For each bearing, projecting the antenna manifold vector onto the noise subspace,
+#'      as described by the formula:
+#'      \deqn{DOA(\theta) = \frac{1}{A^*(\theta) E_n E_n^* A(\theta)}}
+#'      where:
+#'      - \eqn{E_n} is the eigenvector matrix of the noise subspace.
+#'      - \eqn{A(\theta)} is the antenna pattern response vector at bearing \eqn{\theta}.
+#'      - \eqn{A^*(\theta)} is its conjugate transpose.
+#' 4. Appends the computed DOA functions to the MUSIC data of the CS object.
+#' 5. Updates the processing step to indicate completion.
 #'
 #' @section References:
 #' - Paolo, T. de, Cook, T., & Terrill, E. (2007). Properties of HF RADAR Compact Antenna Arrays and Their Effect on the MUSIC Algorithm. \emph{OCEANS 2007}, 1–10. doi:10.1109/oceans.2007.4449265.
 #'
+#' @seealso
+#' \code{\link{seasonder_compute_antenna_pattern_proyections}} for computing projections.
+#'
+#'
+#' @importFrom dplyr mutate
+#' @importFrom purrr map
+#' @importFrom magrittr %<>%
+#'
 #' @examples
 #' \dontrun{
-#' # Assume cs_object is a valid SeaSondeRCS object.
-#' cs_object <- seasonder_MUSICAntennaPatternProjection(cs_object)
+#' cs_object <- seasonder_MUSICComputeDOAFunctions(cs_object)
 #' }
-#'
-seasonder_MUSICAntennaPatternProjection <- function(seasonder_cs_object){
+seasonder_MUSICComputeDOAFunctions <- function(seasonder_cs_object){
   # Sets a processing step message indicating the start of distance computation.
-  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_compute_distances_start_step_text())
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_compute_DOA_functions_start_step_text())
 
   # Retrieves the Antenna Pattern Measurement (APM) object associated with the cross spectra (CS) object.
   seasonder_apm_obj <- seasonder_getSeaSondeRCS_APM(seasonder_cs_object)
@@ -1200,9 +1200,9 @@ seasonder_MUSICAntennaPatternProjection <- function(seasonder_cs_object){
   # Retrieves the MUSIC-related data associated with the CS object.
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
-  # Updates the MUSIC object by calculating Euclidean distances for each Doppler bin.
+  # Updates the MUSIC object by calculating proyections of the antenna pattern into the noise sub-space for each Doppler bin.
   MUSIC %<>% dplyr::mutate(distances = purrr::map(eigen, \(eigen_analysis){
-    # Initializes an empty matrix to store the distances for single and dual solutions.
+    # Initializes an empty matrix to store the projections for single and dual solutions.
     out <- seasonder_MUSICInitDistances(bearings = bearings)
 
     # Iterates over the two possible signal solutions (single and dual).
@@ -1210,7 +1210,7 @@ seasonder_MUSICAntennaPatternProjection <- function(seasonder_cs_object){
       # Extracts the noise subspace eigenvectors corresponding to the current solution.
       En <- eigen_analysis$vectors[,(i+1):3, drop = F]
 
-      # Iterates over all bearings to calculate the Euclidean distance.
+      # Iterates over all bearings to calculate the projection.
       for(j in 1:length(bearings)){
         # Extracts the antenna pattern response for the current bearing.
         a <- seasonder_apm_obj[,j, drop = F]
@@ -1221,15 +1221,15 @@ seasonder_MUSICAntennaPatternProjection <- function(seasonder_cs_object){
       }
     }
 
-    # Returns the calculated distances for the current Doppler bin.
+    # Returns the calculated projections for the current Doppler bin.
     return(out)
   }))
 
   # Updates the CS object with the modified MUSIC data.
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
-  # Sets a processing step message indicating the end of distance computation.
-  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_compute_distances_end_step_text())
+  # Sets a processing step message indicating the end of projections computation.
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_compute_DOA_functions_end_step_text())
 
   # Returns the updated CS object.
   return(seasonder_cs_object)
@@ -1362,7 +1362,7 @@ seasonder_runMUSIC <- function(seasonder_cs_object){
 
   out %<>% seasonder_MUSICCovDecomposition()
 
-  out %<>% seasonder_MUSICAntennaPatternProjection()
+  out %<>% seasonder_MUSICComputeDOAFunctions()
 
   out %<>% seasonder_MUSICExtractPeaks()
 
