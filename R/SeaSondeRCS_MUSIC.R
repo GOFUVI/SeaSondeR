@@ -1453,28 +1453,86 @@ seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
 
 
 
+#' Select Direction of Arrival (DOA) from MUSIC Algorithm Results
+#'
+#' This function processes the results of the MUSIC algorithm, selects the relevant Direction of Arrival (DOA)
+#' based on the specified retained solution, and updates the corresponding `SeaSondeRCS` object with the selected
+#' DOA and updated processing steps.
+#'
+#' @param seasonder_cs_object A `SeaSondeRCS` object containing the results of the MUSIC algorithm and associated metadata.
+#'
+#' @return An updated `SeaSondeRCS` object with the selected DOA stored in the MUSIC results and updated processing steps.
+#'
+#' @details
+#' The function performs the following steps:
+#' 1. Updates the processing steps to indicate the start of the DOA selection process.
+#' 2. Retrieves the MUSIC algorithm results from the `SeaSondeRCS` object.
+#' 3. Maps the retained solution index to the corresponding DOA solution for each entry in the MUSIC results.
+#' 4. Stores the updated MUSIC results, including the selected DOA, back into the `SeaSondeRCS` object.
+#' 5. Updates the processing steps to indicate the end of the DOA selection process.
+#'
+#' @section Processing Steps:
+#' The function appends the following processing steps to the `ProcessingSteps` attribute of the `SeaSondeRCS` object:
+#' - Start of DOA selection.
+#' - End of DOA selection.
+#'
+#' @seealso
+#' \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}} to manage processing steps.
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC}} to retrieve MUSIC results.
+#' \code{\link{seasonder_setSeaSondeRCS_MUSIC}} to update MUSIC results.
+#'
+#' @importFrom purrr map2
+#' @importFrom dplyr mutate
+#' @importFrom magrittr %<>%
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `seasonder_cs_obj` is a valid SeaSondeRCS object with MUSIC results
+#' updated_obj <- seasonder_MUSICSelectDOA(seasonder_cs_obj)
+#' }
+seasonder_MUSICSelectDOA <- function(seasonder_cs_object) {
 
-seasonder_MUSICSelectDOA <- function(seasonder_cs_object){
+  # Placeholder variables to initialize empty values for DOA solutions and retained solutions
+  DOA_solutions <- retained_solution <- rlang::zap()
 
-  seasonder_cs_object  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_doa_selection_start_step_text())
+  # Append a processing step to indicate the start of the DOA selection process
+  # This logs and tracks the beginning of this operation in the processing history
+  seasonder_cs_object %<>%
+    seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_doa_selection_start_step_text())
 
-
+  # Retrieve the MUSIC algorithm results from the SeaSondeRCS object
+  # These results contain potential DOA solutions and metadata
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
-
-  MUSIC %<>% dplyr::mutate(DOA = purrr::map2(DOA_solutions, retained_solution, \(DOA_sol, retained_sol) {
-    if(retained_sol != "none"){
-      DOA_sol[[retained_sol]]
+  # Define a helper function to extract the relevant DOA solution
+  extract_DOA_sol <- function(DOA_sol, retained_sol) {
+    out <- NULL
+    # If a retained solution is specified, select the corresponding DOA solution
+    if (retained_sol != "none") {
+      out <- DOA_sol[[retained_sol]]
     }
+    return(out)
+  }
 
-  }))
+  # For each row in the MUSIC results, map the retained solution to the corresponding DOA solution
+  # This updates the MUSIC results to include only the selected DOA
+  MUSIC %<>%
+    dplyr::mutate(DOA = purrr::map2(DOA_solutions, retained_solution, extract_DOA_sol))
 
-  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+  # Update the MUSIC results in the SeaSondeRCS object with the selected DOA
+  seasonder_cs_object %<>%
+    seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
-  seasonder_cs_object  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_doa_selection_end_step_text())
+  # Append a processing step to indicate the end of the DOA selection process
+  # This logs and tracks the completion of this operation in the processing history
+  seasonder_cs_object %<>%
+    seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_doa_selection_end_step_text())
 
+  # Return the updated SeaSondeRCS object
+  # This object now includes the selected DOA in the MUSIC results
   return(seasonder_cs_object)
 }
+
 
 
 seasonder_runMUSIC <- function(seasonder_cs_object){
