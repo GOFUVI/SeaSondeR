@@ -453,86 +453,194 @@ seasonder_MUSICComputePropDualSols <- function(seasonder_cs_object){
 }
 
 
-seasonder_computePowerMatrix <- function(C,eig,a){
+#' Compute Power Matrix
+#'
+#' This function calculates the power matrix based on the provided steering vector, eigenvalues, and eigenvectors. The computation differs depending on the number of columns in the steering vector matrix.
+#'
+#' @param eig A list containing the eigenvalues and eigenvectors of a covariance matrix. The list should include:
+#'   - \code{values}: A numeric vector of eigenvalues.
+#'   - \code{vectors}: A matrix where each column is an eigenvector.
+#' @param a A complex matrix representing the steering vector(s). Each column corresponds to a direction of arrival.
+#'
+#' @return A complex matrix representing the power matrix, calculated based on the provided eigenvalues, eigenvectors, and steering vectors. If the number of columns in \code{a} is zero, the function returns \code{NULL}.
+#'
+#' @details
+#' The function computes the power matrix using the following steps:
+#' - If \code{a} has two columns:
+#'   1. Select the first two eigenvalues and their corresponding eigenvectors.
+#'   2. Compute the matrix \eqn{G = a^* \cdot \text{eigVector}}, where \eqn{a^*} is the conjugate transpose of \code{a}.
+#'   3. Calculate the inverse of \code{G} and its conjugate transpose.
+#'   4. Compute the power matrix \eqn{P = G_{\text{inv}}^* \cdot \text{diag(eigValues)} \cdot G_{\text{inv}}}.
+#' - If \code{a} has one column:
+#'   1. Select the first eigenvalue and its corresponding eigenvector.
+#'   2. Follow similar steps as above with single-column operations.
+#'
+#' If \code{a} has no columns, the function returns \code{NULL}.
+#'
+#' @section Mathematical Formula:
+#' For a steering vector matrix \eqn{a}, eigenvectors \eqn{\text{eigVector}}, and eigenvalues \eqn{\text{eigValues}}, the power matrix is calculated as:
+#' \deqn{P = G_{\text{inv}}^* \cdot \text{diag(eigValues)} \cdot G_{\text{inv}}}
+#' where:
+#' \eqn{G = a^* \cdot \text{eigVector}}
+#' and \eqn{G_{\text{inv}}} is the inverse of \eqn{G}.
+#'
+#' @section References:
+#' - Paolo, T. de, Cook, T., & Terrill, E. (2007). Properties of HF RADAR Compact Antenna Arrays and Their Effect on the MUSIC Algorithm. \emph{OCEANS 2007}, 1–10. doi:10.1109/oceans.2007.4449265.
+#'
+#' @examples
+#' \dontrun{
+#' # Example with two steering vectors
+#' eig <- list(
+#'   values = c(10, 5),
+#'   vectors = matrix(c(1+1i, 1-1i, 2+2i, 2-2i), ncol = 2)
+#' )
+#' a <- matrix(c(1+1i, 2+2i, 3+3i, 4+4i), ncol = 2)
+#' power_matrix <- seasonder_computePowerMatrix(eig, a)
+#'
+#' # Example with one steering vector
+#' a <- matrix(c(1+1i, 2+2i), ncol = 1)
+#' power_matrix <- seasonder_computePowerMatrix(eig, a)
+#' }
+seasonder_computePowerMatrix <- function(eig, a) {
 
+  # Initialize the output matrix P as NULL, to store the computed power matrix
   P <- NULL
 
-  if(ncol(a) > 0 ){
+  # Check if the matrix `a` has at least one column
+  if (ncol(a) > 0) {
 
+    # Compute the conjugate transpose of matrix `a`
     a_star <- Conj(t(a))
 
-    if(ncol(a) == 2){
+    # If `a` has exactly two columns, compute the power matrix for two eigenvalues
+    if (ncol(a) == 2) {
 
-      eigVector <- eig$vectors[,c(1,2)]
-      eigValues <- eig$values[c(1,2)]
+      # Select the first two eigenvectors and eigenvalues
+      eigVector <- eig$vectors[, c(1, 2)]
+      eigValues <- eig$values[c(1, 2)]
 
+      # Compute the matrix G as the product of the conjugate transpose of `a` and the selected eigenvectors
       G <- a_star %*% eigVector
+
+      # Compute the inverse of G
       G_inv <- solve(G)
 
+      # Compute the conjugate transpose of G_inv
       G_inv_t <- Conj(t(G_inv))
 
-
+      # Compute the power matrix P using G_inv_t, the diagonal matrix of eigenvalues, and G_inv
       P <- G_inv_t %*% diag(eigValues) %*% G_inv
-    }else if(ncol(a) == 1) {
 
-      eigVector <- eig$vectors[,c(1), drop = F]
+      # If `a` has exactly one column, compute the power matrix for one eigenvalue
+    } else if (ncol(a) == 1) {
+
+      # Select the first eigenvector and eigenvalue
+      eigVector <- eig$vectors[, c(1), drop = FALSE]
       eigValues <- eig$values[c(1)]
+
+      # Compute the matrix G as the product of the conjugate transpose of `a` and the selected eigenvector
       G <- a_star %*% eigVector
+
+      # Compute the inverse of G
       G_inv <- solve(G)
 
+      # Compute the conjugate transpose of G_inv
       G_inv_t <- Conj(t(G_inv))
 
-
+      # Compute the power matrix P using G_inv_t, the eigenvalue (in a matrix form), and G_inv
       P <- G_inv_t %*% matrix(eigValues) %*% G_inv
     }
   }
 
-
-
-
-
+  # Return the computed power matrix P
   return(P)
-
 }
 
-seasonder_MUSICComputeSignalPowerMatrix <- function(seasonder_cs_object){
 
+#' Compute Signal Power Matrix for MUSIC Algorithm
+#'
+#' This function computes the signal power matrix for each direction of arrival (DOA) solution obtained
+#' from the MUSIC algorithm. It updates the MUSIC data in the provided SeaSondeRCS object with the computed
+#' power matrices.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing MUSIC data, including eigenvalues, eigenvectors,
+#' and DOA solutions.
+#'
+#' @return The updated SeaSondeRCS object with the MUSIC data containing the computed power matrices for
+#' both dual and single solutions.
+#'
+#' @details
+#' The function performs the following steps:
+#' 1. Retrieves the MUSIC data from the SeaSondeRCS object.
+#' 2. Defines an internal function to update the DOA solutions with computed power matrices:
+#'    - For dual steering vectors (\code{DOA_sol$dual$a}), computes the power matrix using
+#'      \code{seasonder_computePowerMatrix} and updates \code{DOA_sol$dual$P}.
+#'    - For single steering vectors (\code{DOA_sol$single$a}), computes the power matrix using
+#'      \code{seasonder_computePowerMatrix} and updates \code{DOA_sol$single$P}.
+#' 3. Iterates through the MUSIC data, applying the update function to each set of eigenvalues and DOA solutions.
+#' 4. Updates the SeaSondeRCS object with the modified MUSIC data.
+#'
+#' @seealso
+#' \code{\link{seasonder_computePowerMatrix}}
+#'
+#' @importFrom dplyr mutate
+#' @importFrom purrr map2
+#' @importFrom rlang zap
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming seasonder_cs_object is a valid SeaSondeRCS object
+#' updated_object <- seasonder_MUSICComputeSignalPowerMatrix(seasonder_cs_object)
+#' }
+seasonder_MUSICComputeSignalPowerMatrix <- function(seasonder_cs_object) {
 
+  # Initialize the DOA_solutions with a placeholder indicating no prior solutions
+  DOA_solutions <- rlang::zap()
+
+  # Retrieve the MUSIC data from the SeaSondeRCS object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
+  # Define an internal function to update the DOA solutions with computed power matrices
+  update_DOA_solutions <- function(eig, DOA_sol) {
 
-  MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::pmap(list(cov, eigen, DOA_solutions), \(C,eig,DOA_sol){
-
+    # Copy the current DOA solution to modify and return
     out <- DOA_sol
 
-    if(ncol(DOA_sol$dual$a) > 0){
+    # If dual steering vectors are available, compute the dual power matrix
+    if (ncol(DOA_sol$dual$a) > 0) {
 
-      P_dual <- seasonder_computePowerMatrix(C,eig,DOA_sol$dual$a)
+      # Compute the dual power matrix
+      P_dual <- seasonder_computePowerMatrix(eig, DOA_sol$dual$a)
 
-      if(!is.null(P_dual) ){
-
+      # Update the dual power matrix in the DOA solution if computation was successful
+      if (!is.null(P_dual)) {
         out$dual$P <- P_dual
-
       }
     }
-    P_single <- seasonder_computePowerMatrix(C,eig,DOA_sol$single$a)
 
-    if(!is.null(P_single)){
+    # Compute the single power matrix for single steering vectors
+    P_single <- seasonder_computePowerMatrix(eig, DOA_sol$single$a)
 
+    # Update the single power matrix in the DOA solution if computation was successful
+    if (!is.null(P_single)) {
       out$single$P <- P_single
     }
 
-    return(out)
+    return(out) # Return the updated DOA solution
+  }
 
-  }))
+  # Update DOA solutions for each eigenvalue-eigenvector pair in the MUSIC data
+  MUSIC %<>% dplyr::mutate(
+    DOA_solutions = purrr::map2(eigen, DOA_solutions, update_DOA_solutions)
+  )
 
-
+  # Update the SeaSondeRCS object with the modified MUSIC data
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
-
-
+  # Return the updated SeaSondeRCS object
   return(seasonder_cs_object)
 }
+
 
 seasonder_getSeaSondeRCS_MUSIC_interpolated_dataMatrix <- function(seasonder_cs_obj, matrix_name) {
 
