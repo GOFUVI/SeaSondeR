@@ -746,119 +746,252 @@ seasonder_MUSIC_Bins2DopplerFreq <- function(seasonder_cs_obj, bins) {
 #### Dual solution tests ####
 
 
+#' Validate Eigenvalue Ratio Using MUSIC Algorithm
+#'
+#' This function implements the P1 test for solutions derived using the MUSIC algorithm.
+#' The test checks the ratio between the largest and the second-largest eigenvalues, which
+#' serves as an indicator of signal quality.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing the MUSIC solutions and related data.
+#'
+#' @details
+#' The P1 test is based on the ratio of the largest eigenvalue (\(\lambda_1\)) to the second-largest eigenvalue (\(\lambda_2\)):
+#' \[
+#' \text{Ratio} = \frac{\lambda_1}{\lambda_2}
+#' \]
+#' This ratio is compared to a threshold defined in the MUSIC parameters to determine whether the solution
+#' is considered valid. Solutions failing this test are marked as "single."
+#'
+#' @return The updated SeaSondeRCS object with the following modifications:
+#' - A new column \code{eigen_values_ratio} in the MUSIC data.
+#' - A logical column \code{P1_check} indicating whether each solution passes the P1 test.
+#' - Updated \code{retained_solution} values for solutions that fail the test.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC}}, \code{\link{seasonder_setSeaSondeRCS_MUSIC}}
+#'
+#' @importFrom dplyr pull
+#' @importFrom purrr map list_c
+#'
+#' @examples
+#' \dontrun{
+#' updated_obj <- seasonder_MUSICCheckEigenValueRatio(seasonder_cs_object)
+#' }
 seasonder_MUSICCheckEigenValueRatio <- function(seasonder_cs_object){
-
+  # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
-
+  # Extract eigenvalues and keep only the first two for each solution
   MUSIC_eigen_values <- MUSIC %>% dplyr::pull("eigen") %>% purrr::map(\(eig) eig$values[1:2])
 
-
+  # Calculate the ratio of the largest to the second largest eigenvalue
   eigen_values_ratio <- MUSIC_eigen_values %>% purrr::map(\(values) values[1]/values[2]) %>% purrr::list_c()
 
+  # Add the eigenvalues ratio to the MUSIC data
   MUSIC$eigen_values_ratio <- eigen_values_ratio
 
+  # Retrieve the threshold parameter for the P1 test
   MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(1)
 
+  # Determine whether each solution passes the P1 test
   P1_check <- eigen_values_ratio < MUSIC_parameter
 
+  # Add the P1 check results to the MUSIC data
   MUSIC$P1_check <- P1_check
 
+  # Mark solutions that fail the P1 check as "single"
   MUSIC$retained_solution[!P1_check] <- "single"
 
+  # Update the MUSIC data in the object
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
+  # Return the modified object
   return(seasonder_cs_object)
 }
 
 
+#' Validate Signal Power Ratios Using MUSIC Algorithm
+#'
+#' This function implements the P2 test for solutions derived using the MUSIC algorithm.
+#' The test evaluates the ratio between the largest and smallest signal powers for dual-bearing solutions.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing the MUSIC solutions and related data.
+#'
+#' @details
+#' The P2 test is based on the ratio of the largest signal power (\(P_{\text{max}}\)) to the smallest signal power (\(P_{\text{min}}\)):
+#' \[
+#' \text{Ratio} = \frac{P_{\text{max}}}{P_{\text{min}}}
+#' \]
+#' This ratio is compared to a threshold defined in the MUSIC parameters. Only solutions that meet the following criteria are retained:
+#' - The solution has two bearings.
+#' - The signal power ratio is below the threshold.
+#'
+#' Solutions failing this test are marked as "single."
+#'
+#' @return The updated SeaSondeRCS object with the following modifications:
+#' - A new column \code{signal_power_ratio} in the MUSIC data.
+#' - A logical column \code{P2_check} indicating whether each solution passes the P2 test.
+#' - Updated \code{retained_solution} values for solutions that fail the test.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC}}, \code{\link{seasonder_setSeaSondeRCS_MUSIC}}
+#'
+#' @importFrom dplyr mutate
+#' @importFrom purrr map_dbl
+#'
+#' @examples
+#' \dontrun{
+#' updated_obj <- seasonder_MUSICCheckSignalPowers(seasonder_cs_object)
+#' }
 seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
-
+  # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
+  # Compute the ratio of signal powers for dual-bearing solutions
   MUSIC %<>% dplyr::mutate(signal_power_ratio = purrr::map_dbl(DOA_solutions,\(DOA_sol){
-
-
     out <- NA_real_
-
-
     if(length(DOA_sol$dual$bearing) == 2){
       P_diag <- pracma::Real(diag(DOA_sol$dual$P))
       out <- max(P_diag)/min(P_diag)
     }
-
-
     return(out)
   }), .after = "P1_check")
 
-
+  # Retrieve the threshold parameter for the P2 test
   MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(2)
 
+  # Determine whether each solution passes the P2 test
   MUSIC %<>% dplyr::mutate(P2_check = purrr::map_lgl(DOA_solutions, \(DOA_sol) length(DOA_sol$dual$bearing) == 2 ) & !is.na(signal_power_ratio) & signal_power_ratio < MUSIC_parameter, .after = "signal_power_ratio")
 
-
+  # Mark solutions that fail the P2 test as "single"
   MUSIC$retained_solution[!MUSIC$P2_check] <- "single"
 
+  # Update the MUSIC data in the object
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
+  # Return the modified object
   return(seasonder_cs_object)
 }
 
 
+#' Validate Signal Matrix Power Ratios Using MUSIC Algorithm
+#'
+#' This function implements the P3 test for solutions derived using the MUSIC algorithm.
+#' The test evaluates the ratio between diagonal and off-diagonal powers in the signal covariance matrix.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing the MUSIC solutions and related data.
+#'
+#' @details
+#' The P3 test evaluates the power ratio between diagonal (\(P_{\text{diag}}\)) and off-diagonal (\(P_{\text{off-diag}}\)) elements of the covariance matrix:
+#' \[
+#' \text{Ratio} = \frac{P_{\text{diag}}}{P_{\text{off-diag}}}
+#' \]
+#' This ratio is compared to a threshold defined in the MUSIC parameters. Only solutions that meet the following criteria are retained:
+#' - The solution has two bearings.
+#' - The power ratio is above the threshold.
+#'
+#' Solutions failing this test are marked as "single."
+#'
+#' @return The updated SeaSondeRCS object with the following modifications:
+#' - A new column \code{diag_off_diag_power_ratio} in the MUSIC data.
+#' - A logical column \code{P3_check} indicating whether each solution passes the P3 test.
+#' - Updated \code{retained_solution} values for solutions that fail the test.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC}}, \code{\link{seasonder_setSeaSondeRCS_MUSIC}}
+#'
+#' @importFrom dplyr mutate
+#' @importFrom purrr map_dbl
+#'
+#' @examples
+#' \dontrun{
+#' updated_obj <- seasonder_MUSICCheckSignalMatrix(seasonder_cs_object)
+#' }
 seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
-
+  # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
-
+  # Compute the ratio of diagonal to off-diagonal power for dual-bearing solutions
   MUSIC %<>% dplyr::mutate(diag_off_diag_power_ratio = purrr::map_dbl(DOA_solutions,\(DOA_sol){
     out <- NA_real_
     if(length(DOA_sol$dual$bearing) == 2){
       P_diag <- pracma::Real(diag(DOA_sol$dual$P)) %>% prod()
       P_off_diag <- DOA_sol$dual$P
       diag(P_off_diag) <- 1
-
       P_off_diag <- pracma::Real(P_off_diag) %>% prod()
-
       out <- P_diag/P_off_diag
     }
     return(out)
   }), .after = "P2_check")
 
-
+  # Retrieve the threshold parameter for the P3 test
   MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(3)
 
+  # Determine whether each solution passes the P3 test
   MUSIC %<>% dplyr::mutate(P3_check = purrr::map_lgl(DOA_solutions, \(DOA_sol) length(DOA_sol$dual$bearing) == 2 ) & !is.na(diag_off_diag_power_ratio) & diag_off_diag_power_ratio > MUSIC_parameter, .after = "diag_off_diag_power_ratio")
 
-
+  # Mark solutions that fail the P3 test as "single"
   MUSIC$retained_solution[!MUSIC$P3_check] <- "single"
 
+  # Update the MUSIC data in the object
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
-
-
+  # Return the modified object
   return(seasonder_cs_object)
 }
 
 
-seasonder_MUSICTestDualSolutions <- function(seasonder_cs_object){
+#' Test Dual-Bearing Solutions Using MUSIC Algorithm
+#'
+#' This function applies a sequence of tests (P1, P2, and P3) to validate dual-bearing solutions
+#' derived using the MUSIC algorithm. The tests evaluate the quality of solutions based on
+#' eigenvalue ratios, signal power ratios, and covariance matrix power ratios.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing MUSIC solutions and related data.
+#'
+#' @details
+#' The function applies the following sequence of tests:
+#' 1. **P1: Eigenvalue Ratio Test**:
+#'    - Evaluates the ratio between the largest and second-largest eigenvalues.
+#' 2. **P2: Signal Power Ratio Test**:
+#'    - Validates the ratio of signal powers for dual-bearing solutions.
+#' 3. **P3: Signal Matrix Power Ratio Test**:
+#'    - Checks the ratio of diagonal to off-diagonal powers in the covariance matrix.
+#'
+#' Each test updates the MUSIC solutions in the input object, marking solutions that fail the tests as "single."
+#' The function also logs the start and end of the testing process as part of the object's processing steps.
+#'
+#' @return The updated SeaSondeRCS object with validated dual-bearing solutions and recorded processing steps.
+#'
+#' @seealso
+#' \code{\link{seasonder_MUSICCheckEigenValueRatio}}, \code{\link{seasonder_MUSICCheckSignalPowers}},
+#' \code{\link{seasonder_MUSICCheckSignalMatrix}}, \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}}
+#'
+#' @examples
+#' \dontrun{
+#' updated_obj <- seasonder_MUSICTestDualSolutions(seasonder_cs_object)
+#' }
+seasonder_MUSICTestDualSolutions <- function(seasonder_cs_object) {
 
-  seasonder_cs_object  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_dual_solutions_testing_start_step_text())
+  # Log the start of the dual solutions testing process
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_dual_solutions_testing_start_step_text())
 
-
-  # P1
+  # Apply the P1 test to validate eigenvalue ratios
   seasonder_cs_object %<>% seasonder_MUSICCheckEigenValueRatio()
 
-  # P2
+  # Apply the P2 test to validate signal power ratios for dual-bearing solutions
   seasonder_cs_object %<>% seasonder_MUSICCheckSignalPowers()
 
-  # P3
+  # Apply the P3 test to validate diagonal to off-diagonal power ratios
   seasonder_cs_object %<>% seasonder_MUSICCheckSignalMatrix()
 
-  seasonder_cs_object  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_dual_solutions_testing_end_step_text())
+  # Log the end of the dual solutions testing process
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_dual_solutions_testing_end_step_text())
 
+  # Return the updated object with validated dual solutions
   return(seasonder_cs_object)
-
 }
+
 
 ##### Doppler interpolation #####
 
