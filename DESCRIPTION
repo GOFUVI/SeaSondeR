@@ -4,10 +4,8 @@ Version: 0.2.3.9002
 Authors@R: 
     person("Juan Luis", "Herrera Cortijo", , "first.last@example.com", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0002-4206-2459"))
-Description: A comprehensive set of tools for processing and analyzing data 
-    from the SeaSonde High-Frequency Radar (HF-Radar) instrument. This package is intended to 
-    facilitate the handling of raw and processed data, including spectral matrices, calibration, 
-    and metadata management.
+Description: A comprehensive set of tools for processing SeaSonde High-Frequency Radar (HF-Radar) spectra. This package is intended to 
+    facilitate the handling of cross-spectra.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
