@@ -1,9 +1,14 @@
 Package: SeaSondeR
 Title: Tools for Processing SeaSonde HF-Radar Data
 Version: 0.2.3.9002
-Authors@R: 
-    person("Juan Luis", "Herrera Cortijo", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "https://orcid.org/0000-0002-4206-2459"))
+Authors@R: c(
+    person("Juan Luis", "Herrera Cortijo", , "juan.luis.herrera.cortijo@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "https://orcid.org/0000-0002-4206-2459")),
+           person("Ramiro A.", "Varela Benvenuto", , "rvarela@uvigo.es", role = c("ctb"),
+           comment = c(ORCID = "https://orcid.org/0000-0002-9212-577X")),
+           person("Adrián", "Fernández Baladrón", , "", role = c("ctb"),
+           comment = c(ORCID = ""))
+           )
 Description: A comprehensive set of tools for processing SeaSonde High-Frequency Radar (HF-Radar) spectra. This package is intended to 
     facilitate the handling of cross-spectra.
 License: GPL (>= 3)
