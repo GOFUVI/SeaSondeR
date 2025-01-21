@@ -1775,109 +1775,196 @@ seasonder_MUSICSelectDOA <- function(seasonder_cs_object) {
 }
 
 
-
+#' Execute the MUSIC Algorithm on a SeaSondeRCS Object
+#'
+#' This function performs the MUSIC (MUltiple SIgnal Classification) algorithm on a given
+#' SeaSondeRCS object, executing a series of processing steps to extract direction-of-arrival (DOA) information
+#' and other related metrics from the radar cross-spectrum data.
+#'
+#' @param seasonder_cs_object A \code{SeaSondeRCS} object that contains the radar cross-spectrum data
+#'        and metadata. This object is modified in place to include the results of the MUSIC algorithm.
+#'
+#' @return A \code{SeaSondeRCS} object with updated MUSIC-related attributes. Specifically:
+#' \itemize{
+#'   \item Processing steps annotated with the MUSIC start and end points.
+#'   \item Updated attributes and fields for covariance matrix computations, DOA estimations, and other MUSIC-related metrics.
+#' }
+#'
+#' @details
+#' The MUSIC algorithm is executed in a series of sequential steps:
+#' \enumerate{
+#'   \item Log the start of the MUSIC algorithm.
+#'   \item Update the processing steps of the \code{SeaSondeRCS} object to include the MUSIC start text.
+#'   \item Perform the following computations:
+#'     \itemize{
+#'       \item Compute the covariance matrix from the cross-spectrum data.
+#'       \item Perform eigen decomposition on the covariance matrix.
+#'       \item Compute the DOA functions using MUSIC-specific methods.
+#'       \item Extract peaks from the DOA functions, corresponding to possible signal directions.
+#'       \item Calculate the signal power matrix.
+#'       \item Test for dual solutions and compute their proportions.
+#'       \item Select the final set of DOAs from the computed data.
+#'       \item Convert the selected DOAs to geographical coordinates (latitude and longitude).
+#'     }
+#'   \item Log the completion of the MUSIC algorithm.
+#' }
+#'
+#' @seealso
+#' \code{\link{seasonder_MUSICComputeCov}}: Compute the covariance matrix.
+#' \code{\link{seasonder_MUSICCovDecomposition}}: Perform eigen decomposition of the covariance matrix.
+#' \code{\link{seasonder_MUSICComputeDOAFunctions}}: Compute the direction-of-arrival functions.
+#' \code{\link{seasonder_MUSICExtractPeaks}}: Extract peaks from the DOA functions.
+#' \code{\link{seasonder_MUSICComputeSignalPowerMatrix}}: Calculate the signal power matrix.
+#' \code{\link{seasonder_MUSICTestDualSolutions}}: Test and analyze dual solutions in the DOA.
+#' \code{\link{seasonder_MUSICComputePropDualSols}}: Compute proportions for dual solutions.
+#' \code{\link{seasonder_MUSICSelectDOA}}: Select final DOA estimations.
+#' \code{\link{seasonder_MUSIC_LonLat}}: Convert DOA estimations to geographical coordinates.
+#'
+#' @examples
+#' \dontrun{
+#' # Create a SeaSondeRCS object (example)
+#' cs_object <- seasonder_createSeaSondeRCS(x = list(header = list(), data = list()))
+#'
+#' # Run the MUSIC algorithm
+#' cs_object <- seasonder_runMUSIC(cs_object)
+#'
+#' # Check the updated processing steps
+#' print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_object))
+#' }
+#'
+#' @export
 seasonder_runMUSIC <- function(seasonder_cs_object){
 
+  # Log the start of the MUSIC algorithm.
   seasonder_logAndMessage("seasonder_runMUSIC: MUSIC algorithm started.", "info")
 
-
+  # Create a copy of the input object to store the results of the processing.
   out <- seasonder_cs_object
 
-  out  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_MUSIC_start_step_text())
+  # Update the processing steps to indicate the start of the MUSIC algorithm.
+  out %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_MUSIC_start_step_text())
 
+  # Compute the covariance matrix from the cross-spectrum data.
   out %<>% seasonder_MUSICComputeCov()
 
+  # Perform eigen decomposition of the covariance matrix.
   out %<>% seasonder_MUSICCovDecomposition()
 
+  # Compute the direction-of-arrival (DOA) functions using the MUSIC algorithm.
   out %<>% seasonder_MUSICComputeDOAFunctions()
 
+  # Extract peaks from the DOA functions, representing potential signal directions.
   out %<>% seasonder_MUSICExtractPeaks()
 
+  # Compute the signal power matrix for the extracted peaks.
   out %<>% seasonder_MUSICComputeSignalPowerMatrix()
 
+  # Test for the presence of dual solutions in the DOA estimations.
   out %<>% seasonder_MUSICTestDualSolutions()
 
+  # Compute the proportion of dual solutions across the data.
   out %<>% seasonder_MUSICComputePropDualSols()
 
+  # Select the final DOAs based on the computed data.
   out %<>% seasonder_MUSICSelectDOA()
 
+  # Convert the selected DOAs into geographical coordinates (longitude and latitude).
   out %<>% seasonder_MUSIC_LonLat()
 
-  out  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_MUSIC_end_step_text(out))
+  # Update the processing steps to indicate the end of the MUSIC algorithm.
+  out %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_MUSIC_end_step_text(out))
 
-  seasonder_logAndMessage("seasonder_runMUSIC: MUSIC algortihm finished.", "info")
+  # Log the completion of the MUSIC algorithm.
+  seasonder_logAndMessage("seasonder_runMUSIC: MUSIC algorithm finished.", "info")
 
-
+  # Return the updated object with the MUSIC results.
   return(out)
-
 }
 
+
+#' Run MUSIC Algorithm on FOR Data
+#'
+#' This function integrates the MUSIC (Multiple Signal Classification) algorithm into a SeaSondeRCS object with First Order Regions (FOR).
+#' It interpolates Doppler bins, extracts First Order Regions from the cross-spectrum data, and initializes MUSIC data for further processing.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing cross-spectrum data and initialized First Order Regions (FOR).
+#' @param doppler_interpolation An integer specifying the level of interpolation to apply to Doppler bins. Default is \code{2L}.
+#'
+#' @return A SeaSondeRCS object with updated MUSIC data after applying the algorithm.
+#'
+#' @details
+#' This function follows these steps:
+#' \enumerate{
+#'   \item Updates the SeaSondeRCS object with the specified Doppler interpolation level using \code{seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation}.
+#'   \item Retrieves the FOR data from the input object using \code{seasonder_getSeaSondeRCS_FOR}.
+#'   \item Iterates over each range cell in the FOR, transforming negative and positive Doppler bins into their respective frequencies and applying the MUSIC algorithm.
+#'   \item Creates a data frame containing range cell and Doppler bin information for the MUSIC algorithm.
+#'   \item Initializes MUSIC data in the SeaSondeRCS object using \code{seasonder_initMUSICData}.
+#'   \item Applies the MUSIC interpolation and runs the MUSIC algorithm on the object.
+#' }
+#'
+#' @importFrom purrr map compact
+#' @importFrom dplyr bind_rows
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid SeaSondeRCS object with FOR initialized
+#' result <- seasonder_runMUSIC_in_FOR(cs_object, doppler_interpolation = 3L)
+#' print(result)
+#' }
 #' @export
 seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation = 2L){
 
+  # Initialize the output as a copy of the input SeaSondeRCS object
   out <- seasonder_cs_object
 
+  # Set the Doppler interpolation level for the MUSIC algorithm
   out %<>% seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation(doppler_interpolation)
 
-
+  # Retrieve the First Order Regions (FOR) from the SeaSondeRCS object
   FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_object)
 
-  FOR <-  1:length(FOR) %>% purrr::map(\(range_cell) {
-
+  # Iterate over each range cell in the FOR data
+  FOR <- 1:length(FOR) %>% purrr::map(\(range_cell) {
     o <- NULL
-
     doppler_bins <- integer(0)
 
+    # Process negative FOR bins
     neg_bins <- FOR[[range_cell]]$negative_FOR
-
-    if(length(neg_bins) > 0){
+    if (length(neg_bins) > 0) {
       neg_range <- range(neg_bins)
-
-      neg_range_freq  <- seasonder_Bins2DopplerFreq(seasonder_cs_object, neg_range)
-
+      neg_range_freq <- seasonder_Bins2DopplerFreq(seasonder_cs_object, neg_range)
       new_neg_range_bins <- seasonder_MUSIC_DopplerFreq2Bins(out, neg_range_freq)
       doppler_bins <- c(doppler_bins, new_neg_range_bins[1]:new_neg_range_bins[2])
-
     }
 
+    # Process positive FOR bins
     pos_bins <- FOR[[range_cell]]$positive_FOR
-
-    if(length(pos_bins) > 0){
+    if (length(pos_bins) > 0) {
       pos_range <- range(pos_bins)
-
-      pos_range_freq  <- seasonder_Bins2DopplerFreq(seasonder_cs_object, pos_range)
-
+      pos_range_freq <- seasonder_Bins2DopplerFreq(seasonder_cs_object, pos_range)
       new_pos_range_bins <- seasonder_MUSIC_DopplerFreq2Bins(out, pos_range_freq)
-
       doppler_bins <- c(doppler_bins, new_pos_range_bins[1]:new_pos_range_bins[2])
     }
 
-
-
-
-
-
-    if(length(doppler_bins) > 0){
+    # Create a data frame if Doppler bins are found
+    if (length(doppler_bins) > 0) {
       o <- data.frame(range_cell = range_cell, doppler_bin = doppler_bins)
     }
 
     return(o)
-
   }) %>% purrr::compact() %>% dplyr::bind_rows()
 
-
-
+  # Initialize MUSIC data for the specified range cells and Doppler bins
   out %<>% seasonder_initMUSICData(range_cells = FOR$range_cell, doppler_bins = FOR$doppler_bin, NULL_MUSIC = nrow(FOR) == 0)
 
-
-
+  # Apply Doppler interpolation
   out %<>% seasonder_SeaSondeRCSMUSICInterpolateDoppler()
 
-
+  # Run the MUSIC algorithm on the updated SeaSondeRCS object
   out %<>% seasonder_runMUSIC()
 
-
-
+  # Return the updated SeaSondeRCS object
   return(out)
 
 

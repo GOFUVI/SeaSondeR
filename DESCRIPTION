@@ -6,8 +6,8 @@ Authors@R: c(
            comment = c(ORCID = "https://orcid.org/0000-0002-4206-2459")),
            person("Ramiro A.", "Varela Benvenuto", , "rvarela@uvigo.es", role = c("ctb"),
            comment = c(ORCID = "https://orcid.org/0000-0002-9212-577X")),
-           person("Adrián", "Fernández Baladrón", , "", role = c("ctb"),
-           comment = c(ORCID = ""))
+           person("Adrián", "Fernández Baladrón", , "afbaladron@uvigo.es", role = c("ctb"),
+           comment = c(ORCID = "https://orcid.org/0000-0001-6795-4261"))
            )
 Description: A comprehensive set of tools for processing SeaSonde High-Frequency Radar (HF-Radar) spectra. This package is intended to 
     facilitate the handling of cross-spectra.
