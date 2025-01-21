@@ -2,6 +2,28 @@
 
 #### Defaults ####
 
+#' Default Parameters for MUSIC Algorithm
+#'
+#' This function returns the default parameters for the MUSIC algorithm used in the SeaSondeR package.
+#'
+#' @details
+#' The default parameters are:
+#' - \(40\): Threshold used in \code{seasonder_MUSICCheckEigenValueRatio}.
+#' - \(20\): Threshold used in \code{seasonder_MUSICCheckSignalPowers}.
+#' - \(2\): Threshold used in \code{seasonder_MUSICCheckSignalMatrix}.
+#'
+#' @return A numeric vector containing the default parameters for the MUSIC algorithm:
+#' \code{c(40, 20, 2)}.
+#'
+#' @seealso
+#' \code{\link{seasonder_MUSICTestDualSolutions}} to understand the parameters in context.
+#'
+#' @examples
+#' \dontrun{
+#' # Retrieve default parameters
+#' params <- seasonder_defaultMUSIC_parameters()
+#' print(params)
+#' }
 seasonder_defaultMUSIC_parameters <- function(){
 
   c(40,20,2)
@@ -9,160 +31,450 @@ seasonder_defaultMUSIC_parameters <- function(){
 }
 
 
+#' Initialize Covariance Matrix for MUSIC Algorithm
+#'
+#' This function initializes a covariance matrix for use in the MUSIC algorithm.
+#'
+#' @details
+#' The covariance matrix is initialized as a \(3 \times 3\) matrix filled with complex \code{NA} values.
+#' This structure is specifically designed for three-channel antenna configurations commonly used
+#' in SeaSondeR applications.
+#'
+#' @return A \(3 \times 3\) matrix of complex values, each initialized to \code{NA_complex_}.
+#'
+#' @seealso
+#' \code{\link{seasonder_defaultMUSIC_parameters}} for default MUSIC parameters.
+#'
+#' @examples
+#' \dontrun{
+#' # Initialize a covariance matrix for MUSIC
+#' cov_matrix <- seasonder_MUSICInitCov()
+#' print(cov_matrix)
+#' }
 seasonder_MUSICInitCov <- function(){
-
-  out <- matrix(rep(NA_complex_,9),nrow = 3)
+  out <- matrix(rep(NA_complex_, 9), nrow = 3)
 
   return(out)
-
 }
 
 
-seasonder_MUSICInitProjections <- function(bearings = 0){
 
+#' Initialize Projection Matrix for MUSIC Algorithm
+#'
+#' This function initializes a projection matrix for use in the MUSIC algorithm.
+#'
+#' @param bearings A numeric vector representing the bearings (in degrees) for which projections are initialized.
+#'   Defaults to \code{0}.
+#'
+#' @details
+#' The function creates a \(2 \times n\) complex matrix, where \(n\) is the number of bearings.
+#' The matrix rows are labeled:
+#' - \code{"single"}: For single projections.
+#' - \code{"dual"}: For dual projections.
+#'
+#' An attribute \code{"bearings"} is attached to the matrix, storing the input bearings vector.
+#'
+#' @return A \(2 \times n\) matrix of complex values, each initialized to \code{NA_complex_}, with row names
+#'   \code{"single"} and \code{"dual"}. The input bearings are stored as an attribute.
+#'
+#' @seealso
+#' \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.
+#'
+#' @examples
+#' \dontrun{
+#' # Initialize projections for default bearings
+#' projections <- seasonder_MUSICInitProjections()
+#' print(projections)
+#'
+#' # Initialize projections for specific bearings
+#' bearings <- seq(0, 360, by = 10)
+#' projections <- seasonder_MUSICInitProjections(bearings)
+#' print(projections)
+#' }
+seasonder_MUSICInitProjections <- function(bearings = 0) {
 
+  # Initialize a 2 x n matrix filled with NA_complex_,
+  # where n is the length of the bearings vector.
+  out <- matrix(rep(NA_complex_, 2 * length(bearings)), nrow = 2)
 
+  # Assign row names to represent projection types.
+  rownames(out) <- c("single", "dual")
 
-  out <- matrix(rep(NA_complex_,2*length(bearings)),nrow=2)
+  # Attach the bearings vector as an attribute.
+  attr(out, "bearings") <- bearings
 
-  rownames(out) <- c("single","dual")
-  attr(out,"bearings") <- bearings
-
-
+  # Return the initialized projection matrix.
   return(out)
-
 }
 
-seasonder_MUSICInitDOASolutions <- function(){
 
-  out <- list(single = list(bearing = NA_real_, a= NA_complex_, P = NA_complex_),
-              dual = list(bearing = NA_real_, a= NA_complex_, P = matrix(rep(NA_complex_,4),nrow = 2)))
+#' Initialize Direction of Arrival (DOA) Solutions for MUSIC Algorithm
+#'
+#' This function initializes the data structure for storing Direction of Arrival (DOA) solutions
+#' calculated by the MUSIC algorithm.
+#'
+#' @details
+#' The function returns a list containing two sub-lists, one for \code{"single"} solutions and another for \code{"dual"} solutions:
+#' - \code{"single"}: Contains placeholders for single DOA solutions:
+#'   - \code{bearing}: The bearing angle (\code{NA_real_} by default).
+#'   - \code{a}: The complex steering vector (\code{NA_complex_} by default).
+#'   - \code{P}: The power spectrum value (\code{NA_complex_} by default).
+#' - \code{"dual"}: Contains placeholders for dual DOA solutions:
+#'   - \code{bearing}: The bearing angle (\code{NA_real_} by default).
+#'   - \code{a}: The complex steering vector (\code{NA_complex_} by default).
+#'   - \code{P}: A \(2 \times 2\) complex matrix initialized to \code{NA_complex_}.
+#'
+#' @return A list with initialized placeholders for \code{"single"} and \code{"dual"} DOA solutions.
+#'
+#' @seealso
+#' \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.
+#' \code{\link{seasonder_MUSICInitProjections}} for initializing projection matrices.
+#'
+#' @examples
+#' \dontrun{
+#' # Initialize DOA solutions
+#' doa_solutions <- seasonder_MUSICInitDOASolutions()
+#' print(doa_solutions)
+#' }
+seasonder_MUSICInitDOASolutions <- function() {
 
+  # Initialize a list with placeholders for single and dual DOA solutions.
+  out <- list(
+    single = list(
+      bearing = NA_real_,  # Placeholder for bearing angle
+      a = NA_complex_,     # Placeholder for complex steering vector
+      P = NA_complex_      # Placeholder for power spectrum value
+    ),
+    dual = list(
+      bearing = NA_real_,  # Placeholder for bearing angle
+      a = NA_complex_,     # Placeholder for complex steering vector
+      P = matrix(rep(NA_complex_, 4), nrow = 2)  # Placeholder for 2x2 complex matrix
+    )
+  )
 
-
+  # Return the initialized list
   return(out)
-
 }
 
-seasonder_MUSICInitEigenDecomp <- function(){
 
-  out <- list(values = rep(NA_complex_,3), vectors =matrix(rep(NA_complex_,9),nrow = 3))
+#' Initialize Eigenvalue Decomposition Structure for MUSIC Algorithm
+#'
+#' This function initializes the data structure for storing the eigenvalue decomposition
+#' results used in the MUSIC algorithm.
+#'
+#' @details
+#' The function returns a list with the following components:
+#' - \code{values}: A vector of length 3, initialized with \code{NA_complex_}, to hold the eigenvalues.
+#' - \code{vectors}: A \(3 \times 3\) matrix, initialized with \code{NA_complex_}, to hold the eigenvectors.
+#'
+#' This structure is designed to support three-channel antenna configurations typical in SeaSondeR applications.
+#'
+#' @return A list with two elements:
+#' - \code{values}: Eigenvalues as a complex vector.
+#' - \code{vectors}: Eigenvectors as a complex matrix.
+#'
+#' @seealso
+#' \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.
+#'
+#' @examples
+#' \dontrun{
+#' # Initialize eigenvalue decomposition structure
+#' eigen_decomp <- seasonder_MUSICInitEigenDecomp()
+#' print(eigen_decomp)
+#' }
+seasonder_MUSICInitEigenDecomp <- function() {
 
+  # Initialize a list with placeholders for eigenvalues and eigenvectors.
+  out <- list(
+    values = rep(NA_complex_, 3),  # Placeholder for eigenvalues
+    vectors = matrix(rep(NA_complex_, 9), nrow = 3)  # Placeholder for eigenvectors
+  )
+
+  # Return the initialized list
   return(out)
-
 }
 
-seasonder_MUSICInitInterpolatedData <- function(seasonder_cs_object){
 
+#' Initialize Interpolated Data for MUSIC Algorithm
+#'
+#' This function initializes the data structure for storing interpolated cross-spectral data
+#' to be used in the MUSIC algorithm.
+#'
+#' @param seasonder_cs_object A SeaSondeR cross-spectral object containing metadata about the number
+#'   of Doppler cells and range cells.
+#'
+#' @details
+#' The function retrieves the number of Doppler cells and range cells from the provided cross-spectral object
+#' and uses this information to initialize the interpolated data structure. The resulting structure is
+#' compatible with the dimensions of the cross-spectral data used in SeaSondeR.
+#'
+#' The data structure is initialized using \code{\link{seasonder_initCSDataStructure}}, ensuring it contains
+#' placeholders for components such as \code{SSA1}, \code{SSA2}, \code{SSA3}, \code{CS12}, \code{CS13},
+#' \code{CS23}, and \code{QC}.
+#'
+#' @return A list containing the initialized interpolated data structure with placeholders for cross-spectral components.
+#'
+#' @seealso
+#' \code{\link{seasonder_initCSDataStructure}} for details on the cross-spectral data structure.
+#'
+#' @examples
+#' \dontrun{
+#' # Create a SeaSondeR cross-spectral object
+#' seasonder_cs_object <- seasonder_createSeaSondeRCS(...)
+#'
+#' # Initialize interpolated data
+#' interpolated_data <- seasonder_MUSICInitInterpolatedData(seasonder_cs_object)
+#' print(interpolated_data)
+#' }
+seasonder_MUSICInitInterpolatedData <- function(seasonder_cs_object) {
 
+  # Get the number of Doppler cells for MUSIC interpolation
   nDoppler <- seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(seasonder_cs_object)
+
+  # Get the number of range cells
   nRanges <- seasonder_getnRangeCells(seasonder_cs_object)
 
+  # Initialize the cross-spectral data structure for interpolation
   interpolated_data <- seasonder_initCSDataStructure(nRanges = nRanges, nDoppler = nDoppler)
 
-
+  # Return the initialized interpolated data structure
   return(interpolated_data)
-
 }
 
 
-seasonder_NULLSeaSondeRCS_MUSIC <- function(){
 
+#' Initialize NULL Data Structure for SeaSondeR MUSIC Analysis
+#'
+#' This function initializes a NULL data structure for storing results of the MUSIC analysis in
+#' SeaSondeR. The structure is designed as a tibble with pre-defined columns for range cells,
+#' Doppler bins, and various MUSIC-related parameters.
+#'
+#' @details
+#' The initialized tibble contains the following columns:
+#' - \code{range_cell}: Numeric vector representing range cell indices.
+#' - \code{doppler_bin}: Numeric vector for Doppler bin indices.
+#' - \code{range}: Numeric vector for range values.
+#' - \code{freq}: Numeric vector for frequencies.
+#' - \code{radial_v}: Numeric vector for radial velocities.
+#' - \code{cov}: A list to store covariance matrices.
+#' - \code{eigen}: A list to store eigenvalue decompositions.
+#' - \code{projections}: A list to store projection matrices.
+#' - \code{DOA_solutions}: A list to store Direction of Arrival (DOA) solutions.
+#' - \code{eigen_values_ratio}: Numeric vector for the ratio of eigenvalues.
+#' - \code{P1_check}: Logical vector indicating if the P1 criterion is satisfied.
+#' - \code{retained_solution}: Character vector for the type of retained solution (\code{"single"} or \code{"dual"}).
+#' - \code{DOA}: A list to store final DOA results.
+#' - \code{lonlat}: A list containing a data frame with longitude (\code{lon}) and latitude (\code{lat}) values.
+#'
+#' @return A tibble with pre-defined columns and empty values, ready to be populated with MUSIC analysis results.
+#'
+#' @seealso
+#' \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.
+#' \code{\link{seasonder_MUSICInitEigenDecomp}} for initializing eigenvalue decompositions.
+#' \code{\link{seasonder_MUSICInitProjections}} for initializing projection matrices.
+#' \code{\link{seasonder_MUSICInitDOASolutions}} for initializing DOA solutions.
+#'
+#' @examples
+#' \dontrun{
+#' # Initialize a NULL structure for MUSIC analysis
+#' music_results <- seasonder_NULLSeaSondeRCS_MUSIC()
+#' print(music_results)
+#' }
+seasonder_NULLSeaSondeRCS_MUSIC <- function() {
+
+  # Initialize an empty data frame with predefined columns for MUSIC analysis results
   out <- data.frame(
-    range_cell = numeric(0),
-    doppler_bin = numeric(0),
-    range= numeric(0),
-    freq =  numeric(0),
-    radial_v =  numeric(0),
-    cov = list(),
-    eigen = list(),
-    projections = list(),
-    DOA_solutions = list(),
-    eigen_values_ratio= numeric(0),
-    P1_check = logical(0),
-    retained_solution = character(0),
-    DOA = list(),
-    lonlat = list(data.frame(lon = numeric(0) , lat = numeric(0)) ))
+    range_cell = numeric(0),              # Range cell indices
+    doppler_bin = numeric(0),             # Doppler bin indices
+    range = numeric(0),                   # Range values
+    freq = numeric(0),                    # Frequency values
+    radial_v = numeric(0),                # Radial velocity values
+    cov = list(),                         # List of covariance matrices
+    eigen = list(),                       # List of eigenvalue decompositions
+    projections = list(),                 # List of projection matrices
+    DOA_solutions = list(),               # List of DOA solutions
+    eigen_values_ratio = numeric(0),      # Ratio of eigenvalues
+    P1_check = logical(0),                # Logical check for P1 criterion
+    retained_solution = character(0),     # Type of retained solution
+    DOA = list(),                         # List of DOA results
+    lonlat = list(data.frame(             # Data frame for longitude and latitude
+      lon = numeric(0),
+      lat = numeric(0)
+    ))
+  )
 
+  # Convert the data frame to a tibble
   out <- tibble::as_tibble(out)
 
-
-
-
+  # Return the initialized tibble
   return(out)
 }
 
-seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL){
 
+#' Initialize SeaSondeR MUSIC Data Structure
+#'
+#' This function initializes a data structure for storing MUSIC analysis results
+#' for a given SeaSondeR cross-spectral object.
+#'
+#' @param seasonder_cs_object A SeaSondeR cross-spectral object containing metadata about the radar system.
+#' @param range_cells An optional vector specifying the range cells to include. Defaults to all range cells in the object.
+#' @param doppler_bins An optional vector specifying the Doppler bins to include. Defaults to all Doppler bins in the object.
+#'
+#' @details
+#' The function creates a tibble with pre-computed range, frequency, and radial velocity values
+#' for the specified range cells and Doppler bins. It also initializes placeholders for MUSIC-related
+#' parameters such as covariance matrices, eigen decompositions, projections, DOA solutions, and more.
+#'
+#' Columns in the resulting tibble include:
+#' - \code{range_cell}: Range cell indices.
+#' - \code{doppler_bin}: Doppler bin indices.
+#' - \code{range}: Computed range values for the specified range cells.
+#' - \code{freq}: Computed frequency values for the specified Doppler bins.
+#' - \code{radial_v}: Computed radial velocities for the specified Doppler bins.
+#' - \code{cov}: Initialized covariance matrices (see \code{\link{seasonder_MUSICInitCov}}).
+#' - \code{eigen}: Initialized eigen decompositions (see \code{\link{seasonder_MUSICInitEigenDecomp}}).
+#' - \code{projections}: Initialized projection matrices (see \code{\link{seasonder_MUSICInitProjections}}).
+#' - \code{DOA_solutions}: Initialized DOA solutions (see \code{\link{seasonder_MUSICInitDOASolutions}}).
+#' - \code{eigen_values_ratio}: Placeholder for the ratio of eigenvalues.
+#' - \code{P1_check}: Logical placeholder for the P1 criterion (default is \code{TRUE}).
+#' - \code{retained_solution}: Placeholder for the type of retained solution (\code{"dual"} by default).
+#' - \code{DOA}: Placeholder for final DOA results.
+#' - \code{lonlat}: Placeholder for longitude and latitude data as a data frame.
+#'
+#' @return A tibble with initialized MUSIC analysis data for the specified range cells and Doppler bins.
+#'
+#' @seealso
+#' \code{\link{seasonder_NULLSeaSondeRCS_MUSIC}} for a NULL initialized structure.
+#' \code{\link{seasonder_MUSICInitCov}}, \code{\link{seasonder_MUSICInitEigenDecomp}},
+#' \code{\link{seasonder_MUSICInitProjections}}, \code{\link{seasonder_MUSICInitDOASolutions}} for initializing individual components.
+#'
+#' @examples
+#' \dontrun{
+#' # Initialize MUSIC data structure for all range cells and Doppler bins
+#' music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object)
+#'
+#' # Initialize for specific range cells and Doppler bins
+#' music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object, range_cells = c(1, 2), doppler_bins = c(5, 10))
+#' print(music_data)
+#' }
+seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL) {
 
-  if(is.null(range_cells) || is.null(doppler_bins)){
+  # Default to all range cells and Doppler bins if not specified
+  if (is.null(range_cells) || is.null(doppler_bins)) {
 
     if (is.null(range_cells)) {
-
       range_cells <- 1:seasonder_getnRangeCells(seasonder_obj = seasonder_cs_object)
     }
 
-
     if (is.null(doppler_bins)) {
-
       doppler_bins <- 1:seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(seasonder_cs_object = seasonder_cs_object)
     }
 
+    # Create a data frame of all combinations of range cells and Doppler bins
     out <- expand.grid(range_cell = range_cells, doppler_bin = doppler_bins)
 
-  }else{
+  } else {
+    # Create a data frame from the specified range cells and Doppler bins
     out <- data.frame(range_cell = range_cells, doppler_bin = doppler_bins)
   }
+
+  # Convert to a tibble
   out <- tibble::as_tibble(out)
 
+  # Add computed columns and initialize MUSIC-related placeholders
+  out <- out %>%
+    dplyr::mutate(
+      range = seasonder_getCellsDistKm(seasonder_cs_object)[range_cell],
+      freq = seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_object)[doppler_bin],
+      radial_v = seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(seasonder_cs_object)[doppler_bin],
+      cov = list(seasonder_MUSICInitCov()),
+      eigen = list(seasonder_MUSICInitEigenDecomp()),
+      projections = list(seasonder_MUSICInitProjections()),
+      DOA_solutions = list(seasonder_MUSICInitDOASolutions()),
+      eigen_values_ratio = NA_real_,
+      P1_check = TRUE,
+      retained_solution = "dual",
+      DOA = list(c(NA_real_, NA_real_)),
+      lonlat = list(data.frame(lon = NA_real_, lat = NA_real_))
+    )
 
-  out %<>% dplyr::mutate(range= seasonder_getCellsDistKm(seasonder_cs_object)[range_cell],
-                         freq = seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_object)[doppler_bin],
-                         radial_v = seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(seasonder_cs_object)[doppler_bin],
-                         cov = list(seasonder_MUSICInitCov()),
-                         eigen = list(seasonder_MUSICInitEigenDecomp()),
-                         projections = list(seasonder_MUSICInitProjections()),
-                         DOA_solutions = list(seasonder_MUSICInitDOASolutions()),
-                         eigen_values_ratio=NA_real_,
-                         P1_check = TRUE,
-                         retained_solution = "dual",
-                         DOA = list(c(NA_real_, NA_real_)),
-                         lonlat = list(data.frame(lon = NA_real_, lat = NA_real_))
-  )
-
-
-
+  # Return the initialized tibble
   return(out)
 }
 
-seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL, NULL_MUSIC = FALSE){
 
+#' Initialize MUSIC Data for SeaSondeR
+#'
+#' This function initializes the MUSIC data structure for a SeaSondeR cross-spectral object, including
+#' optional interpolation, parameter setup, and pre-computed placeholders for MUSIC analysis.
+#'
+#' @param seasonder_cs_object A SeaSondeR cross-spectral object containing metadata about the radar system.
+#' @param range_cells An optional vector specifying the range cells to include. Defaults to all range cells in the object.
+#' @param doppler_bins An optional vector specifying the Doppler bins to include. Defaults to all Doppler bins in the object.
+#' @param NULL_MUSIC Logical. If \code{TRUE}, initializes the MUSIC structure with a NULL placeholder
+#'   (see \code{\link{seasonder_NULLSeaSondeRCS_MUSIC}}). Defaults to \code{FALSE}.
+#'
+#' @details
+#' The function performs the following steps:
+#' 1. Ensures the SeaSondeR object has valid interpolation and parameter settings for MUSIC analysis.
+#' 2. Initializes the MUSIC data structure. If \code{NULL_MUSIC} is \code{FALSE}, the structure is
+#'    populated with range cell and Doppler bin combinations.
+#' 3. Computes proportion of dual solutions for MUSIC using \code{\link{seasonder_MUSICComputePropDualSols}}.
+#' 4. Initializes interpolated data for cross-spectral analysis using \code{\link{seasonder_MUSICInitInterpolatedData}}.
+#'
+#' The final object is ready for further MUSIC analysis steps, such as computing Direction of Arrival (DOA).
+#'
+#' @return The updated SeaSondeR cross-spectral object with initialized MUSIC-related attributes.
+#'
+#' @seealso
+#' \code{\link{seasonder_NULLSeaSondeRCS_MUSIC}} for initializing a NULL structure.
+#' \code{\link{seasonder_initSeaSondeRCS_MUSIC}} for range and Doppler-based initialization.
+#' \code{\link{seasonder_MUSICInitInterpolatedData}} for interpolated data initialization.
+#'
+#' @examples
+#' \dontrun{
+#' # Initialize MUSIC data for all range cells and Doppler bins
+#' cs_object <- seasonder_createSeaSondeRCS(...)
+#' cs_object <- seasonder_initMUSICData(cs_object)
+#'
+#' # Initialize MUSIC data for specific range cells and Doppler bins
+#' cs_object <- seasonder_initMUSICData(cs_object, range_cells = c(1, 2), doppler_bins = c(5, 10))
+#' }
+seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL, NULL_MUSIC = FALSE) {
+
+  # Copy the input SeaSondeR object
   out <- seasonder_cs_object
 
+  # Set interpolation and parameter settings for MUSIC
+  out %<>% seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation(
+    seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(out)
+  )
+  out %<>% seasonder_setSeaSondeRCS_MUSIC_parameters(
+    seasonder_getSeaSondeRCS_MUSIC_parameters(out)
+  )
 
-
-
-
-
-  out %<>% seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(out))
-
-  out %<>% seasonder_setSeaSondeRCS_MUSIC_parameters(seasonder_getSeaSondeRCS_MUSIC_parameters(out))
-
+  # Initialize MUSIC data structure
   MUSIC <- seasonder_NULLSeaSondeRCS_MUSIC()
 
-  if(!NULL_MUSIC){
-
-    MUSIC <- seasonder_initSeaSondeRCS_MUSIC(out, range_cells = range_cells, doppler_bins = doppler_bins)
-
+  if (!NULL_MUSIC) {
+    MUSIC <- seasonder_initSeaSondeRCS_MUSIC(
+      out, range_cells = range_cells, doppler_bins = doppler_bins
+    )
   }
   out %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
+  # Compute properties of dual solutions for MUSIC
   out %<>% seasonder_MUSICComputePropDualSols()
 
-  out %<>% seasonder_setSeaSondeRCS_MUSIC_interpolated_data(seasonder_MUSICInitInterpolatedData(out))
+  # Initialize interpolated data
+  out %<>% seasonder_setSeaSondeRCS_MUSIC_interpolated_data(
+    seasonder_MUSICInitInterpolatedData(out)
+  )
 
+  # Return the updated object
   return(out)
 }
+
 
 #### Validation ####
 
