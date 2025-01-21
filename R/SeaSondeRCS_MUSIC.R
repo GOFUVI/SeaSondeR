@@ -1886,50 +1886,150 @@ seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation
 
 #### Utils ####
 
-seasonder_MUSICBearing2GeographicalBearing <- function(bearings, seasonder_apm_object){
+#' Convert MUSIC Bearings to Geographic Bearings
+#'
+#' This function converts MUSIC bearings (relative to the antenna) into geographic bearings using the antenna's bearing information from a `SeaSondeRAPM` object.
+#'
+#' @param bearings A list of numeric vectors containing MUSIC bearings in degrees. Each vector corresponds to a set of bearings relative to the antenna.
+#' @param seasonder_apm_object A `SeaSondeRAPM` object containing the antenna's metadata, including the antenna's bearing.
+#'
+#' @details
+#' The geographic bearing is calculated by:
+#' 1. Multiplying the MUSIC bearings by -1 to invert their direction.
+#' 2. Adjusting the angles to the range [0, 360) using modulo 360.
+#' 3. Adding the antenna bearing to each value and wrapping the result to the range [0, 360) again using modulo 360.
+#'
+#' The formula for each bearing is:
+#' \[
+#' \text{geo\_bearing} = ((-1 \times \text{music\_bearing} \mod 360) + \text{antenna\_bearing}) \mod 360
+#' \]
+#'
+#' @return A list of numeric vectors containing the geographic bearings in degrees. Each vector corresponds to a set of geographic bearings derived from the input.
+#'
+#' @seealso
+#' - \code{\link{seasonder_getSeaSondeRAPM_AntennaBearing}}
+#' - \code{\link[magrittr]{\%>\%}}
+#' - \code{\link[purrr]{map}}
+#'
+#' @importFrom purrr map
+#'
+#' @examples
+#' \dontrun{
+#' # Example conversion
+#' music_bearings <- list(c(45, 90, 135), c(270, 315, 360))
+#' antenna_apm <- seasonder_createSeaSondeRAPM()  # Assuming a valid SeaSondeRAPM object
+#' geo_bearings <- seasonder_MUSICBearing2GeographicalBearing(music_bearings, antenna_apm)
+#' print(geo_bearings)
+#' }
+seasonder_MUSICBearing2GeographicalBearing <- function(bearings, seasonder_apm_object) {
 
-  antennaBearing <-
-    seasonder_apm_object %>%
+  # Retrieve the antenna's bearing from the SeaSondeRAPM object
+  antennaBearing <- seasonder_apm_object %>%
     seasonder_getSeaSondeRAPM_AntennaBearing()
+
+  # Convert MUSIC bearings to geographic bearings
+  # 1. Multiply bearings by -1 to invert their direction
+  # 2. Normalize to [0, 360) using modulo 360
+  # 3. Add the antenna bearing and normalize to [0, 360) again
   bearings %<>% purrr::map(\(angles) ((-1 * angles %% 360) + antennaBearing) %% 360)
 
+  # Return the converted geographic bearings
   return(bearings)
-
 }
 
-#' @export
-seasonder_computeLonLatFromOriginDistBearing <- function(origin_lon, origin_lat, dist, bearing){
 
+#' Compute Geographic Coordinates from Origin, Distance, and Bearing
+#'
+#' This function calculates the geographic coordinates (latitude and longitude) for a given distance and bearing from a specified origin.
+#'
+#' @param origin_lon A numeric value representing the longitude of the origin point in decimal degrees.
+#' @param origin_lat A numeric value representing the latitude of the origin point in decimal degrees.
+#' @param dist A numeric value representing the distance from the origin in kilometers.
+#' @param bearing A numeric vector of bearings (in degrees) indicating the direction from the origin.
+#'
+#' @details
+#' The function uses the geodetic formulas provided by the `geosphere` package to compute the destination point based on:
+#' - Origin longitude and latitude
+#' - Distance in meters (converted from kilometers)
+#' - Bearing in degrees
+#'
+#' The calculation employs the `geosphere::destPoint` function, which handles the spherical geometry of the Earth.
+#'
+#' @return A data frame with two columns:
+#' \itemize{
+#'   \item `lon`: The longitude of the computed geographic coordinates.
+#'   \item `lat`: The latitude of the computed geographic coordinates.
+#' }
+#'
+#' @seealso
+#' \code{\link[geosphere]{destPoint}}
+#'
+#' @importFrom geosphere destPoint
+#' @importFrom magrittr %>%
+#'
+#' @examples
+#' \dontrun{
+#' # Example with a point at 100 km to the north of the origin
+#' result <- seasonder_computeLonLatFromOriginDistBearing(-123.3656, 48.4284, 100, 0)
+#' print(result)
+#' }
+#' @export
+seasonder_computeLonLatFromOriginDistBearing <- function(origin_lon, origin_lat, dist, bearing) {
+
+  # Calculate the geographic destination point
+  # - Converts distance from kilometers to meters
+  # - Uses geosphere::destPoint for spherical geometry calculations
   geosphere::destPoint(c(origin_lon, origin_lat), bearing, dist * 1000) %>%
+    # Convert the result to a data frame for easier handling
     as.data.frame()
 
-
 }
 
 
-#' Convert MUSIC Algorithm Output to Geolocated Coordinates
+
+
+#' Map MUSIC Bearings to Geographic Coordinates
 #'
-#' This function takes the output from the MUSIC algorithm, typically used in direction finding
-#' within the SeaSonde remote sensing system, and converts the directional data (range and bearings)
-#' into geographic coordinates based on the originating radar site.
+#' This function calculates geographic coordinates (latitude and longitude) for each MUSIC detection based on the range and direction of arrival (DOA) bearings from a `SeaSondeRCS` object.
 #'
-#' @param seasonder_cs_object A complex SeaSondeR data object that includes both the MUSIC data
-#'        and the Antenna Pattern Matching (APM) data necessary for locating the source of the signals.
+#' @param seasonder_cs_object A `SeaSondeRCS` object containing MUSIC detection data.
 #'
-#' @return Returns the modified `seasonder_cs_object` with MUSIC data updated to include longitude
-#'         and latitude coordinates for each detected signal.
+#' @details
+#' This function performs the following operations:
+#' 1. Retrieves MUSIC data and original geographic coordinates (latitude and longitude) from the `seasonder_cs_object`. If these coordinates are not available, the origin is derived from the associated Antenna Pattern (APM) data.
+#' 2. Converts DOA bearings from MUSIC detections into geographic bearings using the APM object.
+#' 3. Computes latitude and longitude for each MUSIC detection based on the range and geographic bearings using \code{\link{seasonder_computeLonLatFromOriginDistBearing}}
+#' 4. Updates the `seasonder_cs_object` with the newly computed coordinates.
+#'
+#' @return A `SeaSondeRCS` object with updated MUSIC data, including geographic coordinates for each detection.
+#'
+#' @seealso
+#' - \code{\link{seasonder_getSeaSondeRCS_MUSIC}}
+#' - \code{\link{seasonder_getSeaSondeRCS_APM}}
+#' - \code{\link{seasonder_MUSICBearing2GeographicalBearing}}
+#' - \code{\link{seasonder_computeLonLatFromOriginDistBearing}}
+#'
+
+#' @importFrom purrr map map2
 #'
 #' @export
-#' @importFrom geosphere destPoint
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `seasonder_cs_obj` is a valid `SeaSondeRCS` object
+#' updated_obj <- seasonder_MUSIC_LonLat(seasonder_cs_obj)
+#' }
 seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
 
+  # Retrieve MUSIC data from the SeaSondeRCS object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
-  # Retrieve original longitude and latitude, or fallback to APM data if unavailable
+  # Retrieve original longitude and latitude; fallback to APM origin if unavailable
   longitude <- seasonder_getfLongitude(seasonder_cs_object)
   latitude <- seasonder_getfLatitude(seasonder_cs_object)
 
   if (is.null(longitude) || is.null(latitude)) {
+    # Extract the origin from the APM data
     origin <- seasonder_cs_object %>%
       seasonder_getSeaSondeRCS_APM() %>%
       seasonder_getSeaSondeRAPM_SiteOrigin()
@@ -1937,101 +2037,100 @@ seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
     longitude <- origin[2]
   }
 
-  # Calculate geographic coordinates for each MUSIC detection
+  # Extract range and DOA bearings from MUSIC data
   range <- MUSIC$range
   bearings <- MUSIC$DOA %>% purrr::map("bearing")
 
+  # Retrieve the APM object from the SeaSondeRCS object
   seasonder_apm_object <- seasonder_cs_object %>%
     seasonder_getSeaSondeRCS_APM()
 
+  # Convert MUSIC bearings to geographic bearings using the APM object
   bearings %<>% seasonder_MUSICBearing2GeographicalBearing(seasonder_apm_object)
 
+  # Compute geographic coordinates for each MUSIC detection
   MUSIC$lonlat <- purrr::map2(range, bearings, \(dist, bear) {
-
-    if(length(bear ) > 0){
+    if (length(bear) > 0) {
+      # Calculate geographic coordinates for valid detections
       seasonder_computeLonLatFromOriginDistBearing(longitude, latitude, dist = dist, bearing = bear)
-    }else{
+    } else {
+      # Return NA for invalid detections
       data.frame(lon = NA_real_, lat = NA_real_)
     }
-
-
   })
 
-  # Update the seasonder_cs_object with new lon-lat data
+  # Update the SeaSondeRCS object with updated MUSIC data
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
+  # Return the updated SeaSondeRCS object
   return(seasonder_cs_object)
 }
 
-#' Export a MUSIC Table from a SeaSondeRCS Object
+
+
+
+#' Export MUSIC Table from SeaSondeRCS Object
 #'
-#' This function extracts and exports a MUSIC (Multiple Signal Classification) table from a
-#' SeaSondeRCS (Compact System) object. The MUSIC algorithm is used to estimate the direction of
-#' arrival (DOA) of signals, and this function processes the results to produce a data frame
-#' containing relevant information such as longitude, latitude, range, doppler frequency, radial
-#' velocity, signal power, and bearing.
+#' This function generates a table containing detailed MUSIC detection data from a `SeaSondeRCS` object. The output table includes geographic coordinates, signal parameters, and other metadata for each MUSIC detection.
 #'
-#' @param seasonder_cs_object A SeaSondeRCS object from which the MUSIC table will be extracted.
+#' @param seasonder_cs_object A `SeaSondeRCS` object containing MUSIC detection data and related metadata.
 #'
-#' @return A data frame containing the following columns:
-#' \itemize{
-#'   \item \code{longitude} - Longitude of the detected signal.
-#'   \item \code{latitude} - Latitude of the detected signal.
-#'   \item \code{range_cell} - Range cell number.
-#'   \item \code{range} - Range of the detected signal.
-#'   \item \code{doppler_bin} - Doppler cell number.
-#'   \item \code{doppler_freq} - Doppler frequency of the detected signal.
-#'   \item \code{radial_velocity} - Radial velocity of the detected signal.
-#'   \item \code{signal_power} - Signal power.
-#'   \item \code{bearing} - Geographical bearing of the detected signal.
-#' }
+#' @details
+#' This function performs the following operations:
+#' 1. Retrieves the timestamp (`nDateTime`) from the header of the `SeaSondeRCS` object. Defaults to `as.POSIXct(0)` if unavailable.
+#' 2. Initializes an empty data frame with predefined columns.
+#' 3. Retrieves MUSIC detection data, processes the Direction of Arrival (DOA) and geographic coordinates (`lonlat`), and unnests these fields.
+#' 4. Converts MUSIC bearings to geographic bearings using the associated Antenna Pattern Matrix (APM) object.
+#' 5. Computes additional metrics such as signal power in dB, signal-to-noise ratio (SNR), and DOA peak response in dB.
+#' 6. Appends the timestamp to the table and reorders columns for clarity.
+#'
+#' @return A data frame with the following columns:
+#' - `datetime`: Timestamp of the data.
+#' - `longitude`: Geographic longitude of the detection.
+#' - `latitude`: Geographic latitude of the detection.
+#' - `range_cell`: Range cell number.
+#' - `range`: Range in kilometers.
+#' - `doppler_bin`: Doppler bin number.
+#' - `doppler_freq`: Doppler frequency.
+#' - `radial_velocity`: Radial velocity in m/s.
+#' - `signal_power`: Signal power.
+#' - `bearing`: Geographic bearing in degrees.
+#' - `bearing_raw`: Original MUSIC bearing in degrees.
+#' - `noise_level`: Noise level in dB.
+#' - `signal_power_db`: Signal power in dB.
+#' - `SNR`: Signal-to-noise ratio in dB.
+#' - `DOA_peak_resp_db`: DOA peak response in dB.
+#'
+#' @seealso
+#' - \code{\link{seasonder_getSeaSondeRCS_MUSIC}}
+#' - \code{\link{seasonder_MUSICBearing2GeographicalBearing}}
+#' - \code{\link{seasonder_getSeaSondeRAPM_AntennaBearing}}
+#'
+#' @importFrom dplyr select mutate
+#' @importFrom tidyr unnest
+#' @importFrom purrr map
+#' @importFrom pracma Real
 #'
 #' @export
-seasonder_exportMUSICTable <- function(seasonder_cs_object){
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `seasonder_cs_obj` is a valid `SeaSondeRCS` object
+#' music_table <- seasonder_exportMUSICTable(seasonder_cs_obj)
+#' print(music_table)
+#' }
+seasonder_exportMUSICTable <- function(seasonder_cs_object) {
 
+  # Retrieve timestamp from the header; default to POSIXct(0) if unavailable
+  datetime <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nDateTime") %||% as.POSIXct(0)
 
-  datetime <-  seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nDateTime") %||% as.POSIXct(0)
-  # Initialize an empty data frame with the required columns
-  longitude <- numeric(0)
-  latitude <- numeric(0)
-  cell_number <- integer(0)
-  range <- numeric(0)
-  doppler_cell <- integer(0)
-  freq <- numeric(0)
-  velocity <- numeric(0)
-  power <- numeric(0)
-  bearing <- numeric(0)
-  noise_level <- numeric(0)
-  signal_power_db  <- numeric(0)
-  SNR <- numeric(0)
-  DOA_peak_resp_db <- numeric(0)
-
-  out <- data.frame(
-    longitude = longitude,
-    latitude = latitude,
-    range_cell = cell_number,
-    range = range,
-    doppler_bin = doppler_cell,
-    doppler_freq = freq,
-    radial_velocity = velocity,
-    signal_power = power,
-    bearing = bearing,
-    noise_level = noise_level,
-    signal_power_db = signal_power_db,
-    SNR = SNR,
-    DOA_peak_resp_db = DOA_peak_resp_db
-  )
-
-  # Retrieve MUSIC data from the SeaSondeRCS object
-  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
-
-
+  # Initialize an empty data frame with predefined columns
   out <- data.frame(
     longitude = numeric(0),
     latitude = numeric(0),
-    range_cell = numeric(0),
+    range_cell = integer(0),
     range = numeric(0),
-    doppler_bin = numeric(0),
+    doppler_bin = integer(0),
     doppler_freq = numeric(0),
     radial_velocity = numeric(0),
     signal_power = numeric(0),
@@ -2039,116 +2138,116 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object){
     noise_level = numeric(0),
     signal_power_db = numeric(0),
     SNR = numeric(0),
-    DOA_peak_resp_db = numeric(0))
-  # Select relevant columns from MUSIC data
+    DOA_peak_resp_db = numeric(0)
+  )
 
-  if(nrow(MUSIC) > 0 ){
+  # Retrieve MUSIC data from the SeaSondeRCS object
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
+  # If MUSIC data is non-empty, process it
+  if (nrow(MUSIC) > 0) {
 
-    out <- MUSIC %>% dplyr::select(range_cell, doppler_bin, range, doppler_freq = freq, radial_velocity = radial_v, DOA, lonlat)
+    # Select and rename relevant columns from MUSIC data
+    out <- MUSIC %>% dplyr::select(
+      range_cell, doppler_bin, range,
+      doppler_freq = freq, radial_velocity = radial_v, DOA, lonlat
+    )
 
-    # Process the DOA and lonlat columns and unnest them
-    out %<>% dplyr::mutate(DOA = purrr::map(DOA, \(DOA_sol) {
-      if(length(DOA_sol$bearing)>0){
-        data.frame(bearing = DOA_sol$bearing, signal_power = pracma::Real(diag(DOA_sol$P)), DOA_peak_resp_db = DOA_sol$peak_resp)
-      }else{
-        data.frame(bearing = NA_real_, signal_power = NA_real_, DOA_peak_resp_db = NA_real_)
-      }
-    })) %>%
+    # Process and unnest DOA and lonlat columns
+    out %<>% dplyr::mutate(
+      DOA = purrr::map(DOA, \(DOA_sol) {
+        if (length(DOA_sol$bearing) > 0) {
+          data.frame(
+            bearing = DOA_sol$bearing,
+            signal_power = pracma::Real(diag(DOA_sol$P)),
+            DOA_peak_resp_db = DOA_sol$peak_resp
+          )
+        } else {
+          data.frame(
+            bearing = NA_real_,
+            signal_power = NA_real_,
+            DOA_peak_resp_db = NA_real_
+          )
+        }
+      })
+    ) %>%
       tidyr::unnest(c(DOA, lonlat))
 
-    # Get APM object from the SeaSondeRCS object
-    seasonder_apm_object <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_APM()
+    # Retrieve APM object for bearing conversion
+    seasonder_apm_object <- seasonder_cs_object %>%
+      seasonder_getSeaSondeRCS_APM()
 
+    # Preserve raw MUSIC bearing values
     out$bearing_raw <- out$bearing
 
-    # Convert MUSIC bearing to geographical bearing
+    # Convert MUSIC bearings to geographic bearings
     out$bearing %<>% seasonder_MUSICBearing2GeographicalBearing(seasonder_apm_object) %>% unlist()
 
-    FOR_config <- SeaSondeR::seasonder_getSeaSondeRCS_FORConfig(seasonder_cs_object)
-
+    # Retrieve noise level and compute additional metrics
+    FOR_config <- seasonder_getSeaSondeRCS_FORConfig(seasonder_cs_object)
     out$noise_level <- FOR_config$NoiseLevel[out$range_cell] %>% magrittr::set_names(NULL)
 
-    out %<>% dplyr::mutate(signal_power_db = self_spectra_to_dB(signal_power, seasonder_getReceiverGain_dB(seasonder_cs_object)),
-                           SNR = signal_power_db - noise_level)
+    out %<>% dplyr::mutate(
+      signal_power_db = self_spectra_to_dB(signal_power, seasonder_getReceiverGain_dB(seasonder_cs_object)),
+      SNR = signal_power_db - noise_level
+    )
 
-    # Reorder columns to match the final output structure
-    out %<>% dplyr::select(longitude = lon,
-                           latitude = lat,
-                           range_cell,
-                           range,
-                           doppler_bin,
-                           doppler_freq,
-                           radial_velocity,
-                           signal_power,
-                           bearing,
-                           bearing_raw,
-                           noise_level,
-                           signal_power_db,
-                           SNR,
-                           DOA_peak_resp_db)
+    # Reorder and rename columns for final output
+    out %<>% dplyr::select(
+      longitude = lon, latitude = lat, range_cell, range,
+      doppler_bin, doppler_freq, radial_velocity, signal_power,
+      bearing, bearing_raw, noise_level, signal_power_db, SNR,
+      DOA_peak_resp_db
+    )
   }
 
+  # Add timestamp as the first column
   out %<>% dplyr::mutate(datetime = datetime, .before = 1)
 
+  # Return the processed table
   return(out)
 }
 
+#' Export MUSIC Table to CSV
+#'
+#' This function exports the MUSIC detection table from a `SeaSondeRCS` object to a CSV file.
+#'
+#' @param seasonder_cs_object A `SeaSondeRCS` object containing MUSIC detection data.
+#' @param filepath A character string specifying the path to the output CSV file.
+#'
+#' @details
+#' This function performs the following steps:
+#' 1. Generates a MUSIC table using \code{seasonder_exportMUSICTable}.
+#' 2. Converts the resulting table to a data frame.
+#' 3. Writes the data frame to the specified CSV file using \code{data.table::fwrite}.
+#'
+#' @return The function returns \code{NULL} invisibly. The output is saved to the specified file.
+#'
+#' @seealso
+#' - \code{\link{seasonder_exportMUSICTable}}
+#' - \code{\link[data.table]{fwrite}}
+#'
+#' @importFrom data.table fwrite
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `seasonder_cs_obj` is a valid `SeaSondeRCS` object
+#' seasonder_exportCSVMUSICTable(seasonder_cs_obj, "output/music_table.csv")
+#' }
+#'
 #' @export
-seasonder_exportCSVMUSICTable <- function(seasonder_cs_object, filepath){
+seasonder_exportCSVMUSICTable <- function(seasonder_cs_object, filepath) {
 
-  table <- seasonder_exportMUSICTable(seasonder_cs_object) %>% as.data.frame()
+  # Generate the MUSIC table from the SeaSondeRCS object
+  table <- seasonder_exportMUSICTable(seasonder_cs_object) %>%
+    # Convert the resulting table to a data frame
+    as.data.frame()
 
+  # Write the data frame to the specified CSV file
+  data.table::fwrite(table, file = filepath)
 
-
-  data.table::fwrite(table,file = filepath)
-
-
+  # Return NULL invisibly to indicate successful execution
   invisible(NULL)
-
-
-}
-
-# Start SEAS-104
-
-#' @export
-seasonder_computeSignalSNR <- function(object, ...){
-  UseMethod("seasonder_computeSignalSNR")
 }
 
 
-# Start SEAS-108
-
-#' @export
-seasonder_computeSignalSNR.data.frame <- function(object, SNR, receiver_gain_dB){
-
-  # receiver_gain must be in dB
-
-  range_cell <- noise_level <- signal_power <- rlang::zap()
-
-  # Assume SNR has a range_cell column and a noise_level column in dB
-  SNR %<>% dplyr::select(range_cell, noise_level)
-
-  out <- object
-
-  # transform noise level to self spectra
-  SNR %<>% dplyr::mutate(noise_level = dB_to_self_spectra(dB_values = noise_level, receiver_gain = receiver_gain_dB))
-
-
-  out %<>% dplyr::left_join(SNR, by = "range_cell")
-
-
-
-  # TODO: compute noise level for each signal using signal_power
-  # Assume each row in object is a signal with an signal_power column (in self spectra units) and a range_cell column
-
-  out %<>% dplyr::mutate(SNR = signal_power / noise_level)
-
-
-
-  return(out)
-}
-
-# End SEAS-108
-
-# End SEAS-104

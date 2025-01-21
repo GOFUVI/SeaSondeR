@@ -2,31 +2,58 @@
 % Please edit documentation in R/SeaSondeRCS_MUSIC.R
 \name{seasonder_exportMUSICTable}
 \alias{seasonder_exportMUSICTable}
-\title{Export a MUSIC Table from a SeaSondeRCS Object}
+\title{Export MUSIC Table from SeaSondeRCS Object}
 \usage{
 seasonder_exportMUSICTable(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_object}{A SeaSondeRCS object from which the MUSIC table will be extracted.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing MUSIC detection data and related metadata.}
 }
 \value{
-A data frame containing the following columns:
+A data frame with the following columns:
 \itemize{
-\item \code{longitude} - Longitude of the detected signal.
-\item \code{latitude} - Latitude of the detected signal.
-\item \code{range_cell} - Range cell number.
-\item \code{range} - Range of the detected signal.
-\item \code{doppler_bin} - Doppler cell number.
-\item \code{doppler_freq} - Doppler frequency of the detected signal.
-\item \code{radial_velocity} - Radial velocity of the detected signal.
-\item \code{signal_power} - Signal power.
-\item \code{bearing} - Geographical bearing of the detected signal.
+\item \code{datetime}: Timestamp of the data.
+\item \code{longitude}: Geographic longitude of the detection.
+\item \code{latitude}: Geographic latitude of the detection.
+\item \code{range_cell}: Range cell number.
+\item \code{range}: Range in kilometers.
+\item \code{doppler_bin}: Doppler bin number.
+\item \code{doppler_freq}: Doppler frequency.
+\item \code{radial_velocity}: Radial velocity in m/s.
+\item \code{signal_power}: Signal power.
+\item \code{bearing}: Geographic bearing in degrees.
+\item \code{bearing_raw}: Original MUSIC bearing in degrees.
+\item \code{noise_level}: Noise level in dB.
+\item \code{signal_power_db}: Signal power in dB.
+\item \code{SNR}: Signal-to-noise ratio in dB.
+\item \code{DOA_peak_resp_db}: DOA peak response in dB.
 }
 }
 \description{
-This function extracts and exports a MUSIC (Multiple Signal Classification) table from a
-SeaSondeRCS (Compact System) object. The MUSIC algorithm is used to estimate the direction of
-arrival (DOA) of signals, and this function processes the results to produce a data frame
-containing relevant information such as longitude, latitude, range, doppler frequency, radial
-velocity, signal power, and bearing.
+This function generates a table containing detailed MUSIC detection data from a \code{SeaSondeRCS} object. The output table includes geographic coordinates, signal parameters, and other metadata for each MUSIC detection.
+}
+\details{
+This function performs the following operations:
+\enumerate{
+\item Retrieves the timestamp (\code{nDateTime}) from the header of the \code{SeaSondeRCS} object. Defaults to \code{as.POSIXct(0)} if unavailable.
+\item Initializes an empty data frame with predefined columns.
+\item Retrieves MUSIC detection data, processes the Direction of Arrival (DOA) and geographic coordinates (\code{lonlat}), and unnests these fields.
+\item Converts MUSIC bearings to geographic bearings using the associated Antenna Pattern Matrix (APM) object.
+\item Computes additional metrics such as signal power in dB, signal-to-noise ratio (SNR), and DOA peak response in dB.
+\item Appends the timestamp to the table and reorders columns for clarity.
+}
+}
+\examples{
+\dontrun{
+# Assuming `seasonder_cs_obj` is a valid `SeaSondeRCS` object
+music_table <- seasonder_exportMUSICTable(seasonder_cs_obj)
+print(music_table)
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{seasonder_getSeaSondeRCS_MUSIC}}
+\item \code{\link{seasonder_MUSICBearing2GeographicalBearing}}
+\item \code{\link{seasonder_getSeaSondeRAPM_AntennaBearing}}
+}
 }
