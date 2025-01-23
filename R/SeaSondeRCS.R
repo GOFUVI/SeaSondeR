@@ -912,24 +912,95 @@ seasonder_getfLatitude <- function(seasonder_cs_object){
 }
 ###### + Derived parameters ######
 
+
+#' Retrieve Receiver Gain in Decibels
+#'
+#' This function retrieves the receiver gain value (in decibels) from the header
+#' of a given `SeaSondeRCS` object. If the receiver gain field is missing or NULL,
+#' a default value of -34.2 dB is returned.
+#'
+#' @param seasonder_cs_obj A `SeaSondeRCS` object containing header information
+#'        about the radar system.
+#'
+#' @return A numeric value representing the receiver gain in decibels (dB).
+#'
+#' @details
+#' The function extracts the value of the header field \code{fReferenceGainDB}
+#' using \code{\link{seasonder_getSeaSondeRCS_headerField}}. If the field is not
+#' present or has a NULL value, the function defaults to a receiver gain of -34.2 dB (CODAR, 2016).
+#'
+#' @references
+#' Cross Spectra File Format Version 6, CODAR. (2016).
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_headerField}} to retrieve specific fields from
+#' the `SeaSondeRCS` header.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object
+#' receiver_gain <- seasonder_getReceiverGain_dB(cs_object)
+#' print(receiver_gain)
+#' }
 seasonder_getReceiverGain_dB <- function(seasonder_cs_obj) {
 
+  # Retrieve the receiver gain from the SeaSondeRCS object's header field "fReferenceGainDB".
+  # If the field is missing or NULL, a default value of -34.2 dB is used.
+  receiver_gain <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fReferenceGainDB") %||% -34.2
 
-
-  receiver_gain <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fReferenceGainDB") %||% -34.2 # dB
-
-
+  # Return the receiver gain in decibels.
   return(receiver_gain)
-
 }
 
-seasonder_computeCenterDopplerBin <- function(seasonder_cs_obj, nDoppler){
 
+#' Compute the Center Doppler Bin
+#'
+#' This function calculates the center Doppler bin for a SeaSondeRCS object
+#' based on the total number of Doppler bins. The center bin corresponds to
+#' the bin representing zero Doppler frequency.
+#'
+#' @param seasonder_cs_obj A `SeaSondeRCS` object containing metadata about
+#'        Doppler bins and other radar parameters.
+#' @param nDoppler An integer representing the total number of Doppler bins.
+#'
+#' @return A numeric value representing the center Doppler bin. The calculation
+#'         assumes zero-based indexing from CODAR data files, but note that R
+#'         uses one-based indexing, which may result in differences compared to
+#'         CODAR's Radia Suite outputs.
+#'
+#' @details
+#' The center Doppler bin is computed as:
+#' \[
+#' \text{center\_bin} = \frac{\text{nDoppler}}{2}
+#' \]
+#' where \(\text{nDoppler}\) is the total number of Doppler bins. This represents
+#' the bin at zero Doppler frequency in a zero-indexed system. Since R uses
+#' one-based indexing, users might observe an offset when comparing the output
+#' of this function to CODAR's Radia Suite programs.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}} to retrieve the number
+#' of Doppler cells from a SeaSondeRCS object.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object
+#' nDoppler <- seasonder_getnDopplerCells(cs_object)
+#' center_bin <- seasonder_computeCenterDopplerBin(cs_object, nDoppler)
+#' print(center_bin)
+#' }
+seasonder_computeCenterDopplerBin <- function(seasonder_cs_obj, nDoppler) {
+
+  # Calculate the center Doppler bin. This assumes that the Doppler cells are zero-indexed
+  # in the original CODAR data files, but R indexing starts at one. Therefore, this result
+  # might differ from the outputs of Radia Suite programs by CODAR.
   center_bin <- nDoppler / 2
 
+  # Return the computed center bin.
   return(center_bin)
-
 }
+
+
 
 seasonder_getCenterDopplerBin <- function(seasonder_cs_obj) {
 
@@ -944,96 +1015,372 @@ seasonder_getCenterDopplerBin <- function(seasonder_cs_obj) {
 
 }
 
+#' Calculate the Radar Wavelength
+#'
+#' This function computes the radar wavelength based on the center frequency
+#' of the SeaSonde radar system. The wavelength is derived using the speed of
+#' light and the radar's center frequency.
+#'
+#' @param seasonder_cs_obj A `SeaSondeRCS` object containing metadata about
+#'        the radar system, including its center frequency.
+#'
+#' @return A numeric value representing the radar wavelength in meters (m).
+#'
+#' @details
+#' The radar wavelength (\( \lambda \)) is calculated using the formula:
+#' \[
+#' \lambda = \frac{c}{f}
+#' \]
+#' where:
+#' - \( c \) is the speed of light (approximately \( 3 \times 10^8 \, \text{m/s} \)),
+#' - \( f \) is the radar's center frequency in Hz, retrieved from the SeaSondeRCS object.
+#'
+#' The center frequency is initially stored in MHz and is converted to Hz by multiplying
+#' it by \( 10^6 \).
+#'
+#' @seealso
+#' \code{\link{seasonder_getCenterFreqMHz}} to retrieve the radar's center frequency.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object
+#' wavelength <- seasonder_getRadarWaveLength(cs_object)
+#' print(wavelength)
+#' }
 seasonder_getRadarWaveLength <- function(seasonder_cs_obj) {
 
-  CenterFreq <- seasonder_getCenterFreqMHz(seasonder_cs_obj)*1000000
+  # Retrieve the radar's center frequency in MHz from the SeaSondeRCS object
+  # and convert it to Hz by multiplying by 1,000,000.
+  CenterFreq <- seasonder_getCenterFreqMHz(seasonder_cs_obj) * 1000000
 
+  # Retrieve the speed of light constant (c0) from the constants package.
   c <- constants::syms$c0
 
-  l <- c/(CenterFreq) # (m/s)/(Hz) = m
+  # Calculate the radar wavelength using the formula wavelength = c / CenterFreq,
+  # where c is the speed of light (m/s) and CenterFreq is the radar frequency (Hz).
+  l <- c / CenterFreq
 
+  # Return the calculated wavelength in meters.
   return(l)
-
-
 }
 
+
+#' Calculate the Radar Wave Number
+#'
+#' This function computes the radar wave number (\( k \)) for a SeaSonde radar
+#' system based on its wavelength. The wave number represents the spatial frequency
+#' of the radar wave.
+#'
+#' @param seasonder_cs_obj A `SeaSondeRCS` object containing the necessary data
+#'        to compute the radar wavelength.
+#'
+#' @return A numeric value representing the radar wave number (\( k \)) in
+#'         radians per meter (\( \text{rad/m} \)).
+#'
+#' @details
+#' The radar wave number (\( k \)) is calculated using the formula:
+#' \[
+#' k = \frac{2 \pi}{\lambda}
+#' \]
+#' where:
+#' - \( \lambda \) is the radar wavelength in meters, calculated using
+#'   \code{\link{seasonder_getRadarWaveLength}}.
+#' - \( 2 \pi \) represents the relationship between the wavelength and wave number.
+#'
+#' The wave number is an essential parameter for analyzing radar signals and
+#' their interaction with the medium being measured.
+#'
+#' @seealso
+#' \code{\link{seasonder_getRadarWaveLength}} to compute the radar wavelength.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object
+#' wave_number <- seasonder_getRadarWaveNumber(cs_object)
+#' print(wave_number)
+#' }
 seasonder_getRadarWaveNumber <- function(seasonder_cs_obj) {
 
-
+  # Retrieve the radar wavelength in meters from the SeaSondeRCS object
   l <- seasonder_getRadarWaveLength(seasonder_cs_obj)
 
-  k <- 2*pi/l
+  # Calculate the radar wave number using the formula k = 2 * pi / wavelength
+  k <- 2 * pi / l
 
+  # Return the calculated wave number
   return(k)
 }
 
 
 
 
+#' Calculate the Bragg Wavelength
+#'
+#' This function computes the Bragg wavelength (\( \lambda_B \)) for a SeaSonde radar
+#' system. The Bragg wavelength is defined as half the radar wavelength and is used
+#' to identify the fundamental scattering mechanisms in oceanographic radar measurements.
+#'
+#' @param seasonder_cs_obj A `SeaSondeRCS` object containing the necessary data
+#'        to compute the radar wavelength.
+#'
+#' @return A numeric value representing the Bragg wavelength (\( \lambda_B \)) in meters.
+#'
+#' @details
+#' The Bragg wavelength (\( \lambda_B \)) is calculated as:
+#' \[
+#' \lambda_B = \frac{\lambda}{2}
+#' \]
+#' where:
+#' - \( \lambda \) is the radar wavelength in meters, obtained using
+#'   \code{\link{seasonder_getRadarWaveLength}}.
+#'
+#' The Bragg wavelength is a critical parameter in interpreting the resonance
+#' scattering from the sea surface, which is fundamental to the operation of
+#' HF radar systems.
+#'
+#' @seealso
+#' \code{\link{seasonder_getRadarWaveLength}} to compute the radar wavelength.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object
+#' bragg_wavelength <- seasonder_getBraggWaveLength(cs_object)
+#' print(bragg_wavelength)
+#' }
 seasonder_getBraggWaveLength <- function(seasonder_cs_obj) {
 
+  # Retrieve the radar wavelength in meters from the SeaSondeRCS object
   l <- seasonder_getRadarWaveLength(seasonder_cs_obj)
 
-  lB <- l/2
+  # Calculate the Bragg wavelength as half of the radar wavelength
+  lB <- l / 2
 
+  # Return the calculated Bragg wavelength
   return(lB)
-
-
 }
 
+
+#' Calculate the Bragg Doppler Angular Frequency
+#'
+#' This function computes the Bragg Doppler angular frequencies for a SeaSonde radar
+#' system. These frequencies represent the characteristic Doppler shifts due to
+#' wave resonance at the Bragg wavelength.
+#'
+#' @param seasonder_cs_obj A `SeaSondeRCS` object containing the necessary data
+#'        to compute the radar wave number.
+#'
+#' @return A numeric vector of length two, containing the negative and positive
+#'         Bragg Doppler angular frequencies (\( \omega_B \)), in radians per second.
+#'
+#' @details
+#' The Bragg Doppler angular frequency (\( \omega_B \)) is calculated using the formula:
+#' \[
+#' \omega_B = \pm \frac{\sqrt{2 \cdot g \cdot k}}{2 \pi}
+#' \]
+#' where:
+#' - \( g \) is the gravitational acceleration (approximately \( 9.8 \, \text{m/s}^2 \)),
+#' - \( k \) is the radar wave number in radians per meter,
+#' - \( \pm \) represents the negative and positive directions of wave propagation.
+#'
+#' The returned vector contains the negative (\( -\omega_B \)) and positive (\( +\omega_B \)) angular frequencies.
+#'
+#' @seealso
+#' \code{\link{seasonder_getRadarWaveNumber}} to compute the radar wave number.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object
+#' bragg_angular_freq <- seasonder_getBraggDopplerAngularFrequency(cs_object)
+#' print(bragg_angular_freq)
+#' }
 seasonder_getBraggDopplerAngularFrequency <- function(seasonder_cs_obj) {
-  if(seasonder_is_debug_point_enabled("seasonder_getBraggDopplerAngularFrequency")){
-    browser() # Debug point, do not remove
+  # Debugging: Check if a debug point for this function is enabled
+  if (seasonder_is_debug_point_enabled("seasonder_getBraggDopplerAngularFrequency")) {
+    browser() # Enable debugging at this point
   }
+
+  # Retrieve the radar wave number from the SeaSondeRCS object
   k <- seasonder_getRadarWaveNumber(seasonder_cs_obj = seasonder_cs_obj)
 
-  wb <- sqrt(2*constants::syms$gn*k) / (2*pi) * c(-1,1)
+  # Calculate the Bragg Doppler angular frequency using the formula
+  # wb = sqrt(2 * g * k) / (2 * pi) * [-1, 1]
+  # where g is the gravitational acceleration and k is the radar wave number
+  wb <- sqrt(2 * constants::syms$gn * k) / (2 * pi) * c(-1, 1)
 
+  # Return the Bragg Doppler angular frequencies as a vector
   return(wb)
-
 }
 
+#' Calculate the Doppler Spectrum Resolution
+#'
+#' This function computes the Doppler spectrum resolution for a given SeaSondeRCS
+#' object. The resolution reflects the frequency difference between consecutive
+#' Doppler bins in the spectrum.
+#'
+#' @param seasonder_cs_obj A `SeaSondeRCS` object containing the necessary data
+#'        and metadata for Doppler spectrum analysis.
+#'
+#' @return A numeric value representing the Doppler spectrum resolution in Hertz (Hz).
+#'
+#' @details
+#' The Doppler spectrum resolution is calculated using the formula:
+#' \[
+#' \text{Spectral Resolution} = \frac{\text{Sweep Rate}}{\text{Number of Doppler Cells}}
+#' \]
+#' where:
+#' - \(\text{Sweep Rate}\) is the frequency repetition rate of the radar, obtained
+#'   from the field \code{fRepFreqHz} in the object's header.
+#' - \(\text{Number of Doppler Cells}\) is the total number of Doppler bins in the spectrum.
+#'
+#' This calculation is fundamental for understanding the frequency spacing between
+#' adjacent Doppler bins in the radar spectrum.
+#'
+#'
+#'
+#' @seealso
+#' \code{\link{seasonder_getnDopplerCells}} to retrieve the number of Doppler cells.
+#' \code{\link{seasonder_getSeaSondeRCS_headerField}} to access specific header fields.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object
+#' spectral_res <- seasonder_getDopplerSpectrumResolution(cs_object)
+#' print(spectral_res)
+#' }
 seasonder_getDopplerSpectrumResolution <- function(seasonder_cs_obj) {
-  if(seasonder_is_debug_point_enabled("seasonder_getDopplerSpectrumResolution")){
-    browser() # Debug point, do not remove
+  # Verifica si el punto de depuración para esta función está habilitado y, si es así, inicia una sesión de depuración
+  if (seasonder_is_debug_point_enabled("seasonder_getDopplerSpectrumResolution")) {
+    browser() # Punto de depuración, no eliminar
   }
+
+  # Obtiene el número total de celdas Doppler desde el objeto SeaSondeRCS
   nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
 
+  # Obtiene la tasa de barrido (Sweep Rate) en Hz desde los campos del encabezado
   SweepRate <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")
 
-  spectral_resolution <- SweepRate/nDoppler
+  # Calcula la resolución espectral como la relación entre la tasa de barrido y el número de celdas Doppler
+  spectral_resolution <- SweepRate / nDoppler
 
+  # Retorna la resolución espectral calculada
   return(spectral_resolution)
-
 }
 
+
+#' Get Bragg Line Doppler Bins
+#'
+#' This function calculates the Doppler bin indices corresponding to the first-order
+#' Bragg frequencies (-1 and 1) for a SeaSonde Cross Spectra (CS) object.
+#'
+#' @param seasonder_cs_obj A SeaSonde Cross Spectra (CS) object created by \code{seasonder_createSeaSondeRCS()}.
+#'        This object contains the metadata required for the computation, including
+#'        the normalized Doppler frequencies and their mapping to Doppler bins.
+#'
+#' @return A numeric vector of length 2, where:
+#' \itemize{
+#'   \item The first value is the Doppler bin corresponding to the -1 Bragg frequency.
+#'   \item The second value is the Doppler bin corresponding to the 1 Bragg frequency.
+#' }
+#'
+#' @details
+#' This function uses the normalized Doppler frequencies for the first-order Bragg peaks
+#' (\eqn{-1} and \eqn{1}) and maps them to their corresponding Doppler bin indices.
+#' The mapping is performed using the helper function \code{seasonder_NormalizedDopplerFreq2Bins()},
+#' which converts normalized frequencies to bin indices based on the spectral resolution
+#' and the Doppler range of the radar system.
+#'
+#' The bins are critical for identifying the Doppler shifts associated with the first-order
+#' Bragg scattering in HF radar systems, which correspond to surface waves with wavelengths
+#' half that of the transmitted radar signal.
+#'
+#' @seealso
+#' \code{\link{seasonder_NormalizedDopplerFreq2Bins}} for the frequency-to-bin mapping logic.
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage of seasonder_getBraggLineBins
+#' bragg_bins <- seasonder_getBraggLineBins(cs_obj)
+#' print(bragg_bins)
+#' }
 seasonder_getBraggLineBins <- function(seasonder_cs_obj) {
+  # Convert the normalized Doppler frequencies for the first-order Bragg peaks (-1 and 1)
+  # into their corresponding Doppler bin indices.
+  bins <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, c(-1, 1))
 
-  bins <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, c(-1,1))
+  # Return the computed Doppler bin indices corresponding to the first-order Bragg peaks.
   return(bins)
-
 }
 
-seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_obj,nDoppler,center_bin,spectra_res, normalized = FALSE) {
-  if(seasonder_is_debug_point_enabled("seasonder_computeDopplerBinsFrequency")){
-    browser() # Debug point, do not remove
+
+#' Compute Doppler Bins Frequencies
+#'
+#' This function computes the Doppler frequencies associated with each Doppler bin
+#' in a SeaSonde Cross Spectra (CS) object. The output can be normalized by the positive
+#' Bragg frequency if specified.
+#'
+#' @param seasonder_cs_obj A SeaSonde CS object created by \code{seasonder_createSeaSondeRCS()}.
+#'        This object contains the necessary metadata, such as Doppler resolution and
+#'        center bin, for frequency computation.
+#' @param nDoppler Integer. The total number of Doppler bins.
+#' @param center_bin Numeric. The index of the central Doppler bin corresponding to 0 Hz.
+#' @param spectra_res Numeric. The spectral resolution in Hz for each Doppler bin.
+#' @param normalized Logical. If \code{TRUE}, the frequencies are normalized by dividing
+#'        them by the positive Bragg frequency. Default is \code{FALSE}.
+#'
+#' @return A numeric vector representing the Doppler frequencies for each bin. If
+#'         \code{normalized = TRUE}, the values are dimensionless and relative to the
+#'         positive Bragg frequency. Otherwise, they are in Hz.
+#'
+#' @details
+#' Doppler frequencies are calculated using the formula:
+#' \deqn{\text{frequency}_i = (\text{bin index}_i - \text{center bin}) \times \text{resolution}}
+#' For normalized frequencies:
+#' \deqn{\text{frequency}_i = \frac{\text{frequency}_i}{\text{positive Bragg frequency}}}
+#'
+#' The center bin is typically determined using \code{seasonder_getCenterDopplerBin()},
+#' and the resolution is obtained from \code{seasonder_getDopplerSpectrumResolution()}.
+#' Normalization is based on the positive Bragg frequency calculated by
+#' \code{seasonder_getBraggDopplerAngularFrequency()}.
+#'
+#' @seealso \code{\link{seasonder_getCenterDopplerBin}},
+#'          \code{\link{seasonder_getDopplerSpectrumResolution}},
+#'          \code{\link{seasonder_getBraggDopplerAngularFrequency}}
+#'
+#' @examples
+#' \dontrun{
+#' # Example of computing Doppler frequencies
+#' nDoppler <- 512
+#' center_bin <- seasonder_getCenterDopplerBin(cs_obj)
+#' spectra_res <- seasonder_getDopplerSpectrumResolution(cs_obj)
+#' freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, center_bin, spectra_res)
+#'
+#' # Compute normalized frequencies
+#' norm_freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, center_bin, spectra_res, normalized = TRUE)
+#' }
+#'
+seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_obj, nDoppler, center_bin, spectra_res, normalized = FALSE) {
+  # Check if debugging is enabled for this function
+  if (seasonder_is_debug_point_enabled("seasonder_computeDopplerBinsFrequency")) {
+    browser() # Pause execution here for debugging if enabled
   }
-  frequencies <- (seq(1,nDoppler) - center_bin) * spectra_res
 
+  # Calculate Doppler frequencies for each bin
+  # This uses the formula: (bin index - center bin) * resolution
+  frequencies <- (seq(1, nDoppler) - center_bin) * spectra_res
 
+  # If normalization is requested, adjust frequencies
   if (normalized) {
-
+    # Obtain the second Bragg frequency
     bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)[2]
 
-
+    # Normalize frequencies by dividing by the second Bragg frequency
     frequencies <- frequencies / bragg_freq
-
-
   }
 
+  # Return the calculated frequencies
   return(frequencies)
-
 }
+
 
 #' Get Doppler Bins Frequency
 #'
@@ -1064,17 +1411,60 @@ seasonder_getDopplerBinsFrequency <- function(seasonder_cs_obj, normalized = FAL
 
 }
 
-seasonder_computeBinsRadialVelocity <- function(seasonder_cs_obj, freq){
+#' Compute Radial Velocities for Doppler Bins
+#'
+#' This function calculates the radial velocities corresponding to the Doppler bins
+#' in a SeaSondeRCS object, based on the provided Doppler frequencies. The calculation
+#' uses the radar's wave number and Bragg angular frequencies.
+#'
+#' @param seasonder_cs_obj A `SeaSondeRCS` object containing data and metadata
+#'        necessary for the calculation of Doppler bin frequencies and velocities.
+#' @param freq A numeric vector representing the Doppler frequencies for which
+#'        the radial velocities are to be calculated.
+#'
+#' @return A numeric vector containing the radial velocities (in meters per second, m/s)
+#'         corresponding to the provided Doppler frequencies.
+#'
+#' @details
+#' The radial velocity \( v \) for each Doppler bin is computed using the formula:
+#' \[
+#' v = \frac{\text{Freq} - \text{BraggFreq}}{2 \cdot k_0}
+#' \]
+#' where:
+#' - \( \text{Freq} \) is the Doppler frequency of the bin.
+#' - \( \text{BraggFreq} \) is the Bragg Doppler angular frequency for the bin.
+#' - \( k_0 \) is the radar wave number divided by \( 2\pi \).
+#'
+#' The Bragg frequency is negative for bins with frequencies below zero and positive
+#' for bins with frequencies above zero.
+#'
+#' @seealso
+#' \code{\link{seasonder_getBraggDopplerAngularFrequency}} to retrieve the Bragg angular frequencies.
+#' \code{\link{seasonder_getRadarWaveNumber}} to obtain the radar wave number.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object and `freq` contains Doppler frequencies
+#' radial_velocities <- seasonder_computeBinsRadialVelocity(cs_object, freq)
+#' print(radial_velocities)
+#' }
+seasonder_computeBinsRadialVelocity <- function(seasonder_cs_obj, freq) {
 
+  # Retrieve the Bragg Doppler angular frequencies from the SeaSondeRCS object
   bragg_freq <- seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
 
-  k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj)/(2*pi)
+  # Retrieve the radar wave number and convert it to k0 by dividing by 2*pi
+  k0 <- seasonder_getRadarWaveNumber(seasonder_cs_obj) / (2 * pi)
 
-  v <- c((freq[freq <= 0]  - bragg_freq[1])/(2*k0),(freq[freq > 0]  - bragg_freq[2])/(2*k0))
+  # Calculate radial velocities for negative and positive frequency components
+  # For frequencies <= 0, subtract the first Bragg frequency; for > 0, subtract the second
+  v <- c((freq[freq <= 0] - bragg_freq[1]) / (2 * k0),
+         (freq[freq > 0] - bragg_freq[2]) / (2 * k0))
 
-
+  # Return the computed radial velocities
   return(v)
 }
+
 
 #' Calculate Radial Velocities for Each Doppler Bin
 #'

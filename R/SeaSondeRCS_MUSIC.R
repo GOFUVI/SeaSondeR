@@ -752,17 +752,51 @@ seasonder_getSeaSondeRCS_MUSICConfig <- function(seasonder_cs_object){
 
 #### Derived quantities ####
 
-seasonder_MUSICComputePropDualSols <- function(seasonder_cs_object){
+#' Compute the Proportion of Dual Solutions in MUSIC Data
+#'
+#' This function calculates the proportion of "dual" solutions in the MUSIC data
+#' associated with a given `SeaSondeRCS` object. It updates the object with the computed
+#' proportion as a new attribute.
+#'
+#' @param seasonder_cs_object A `SeaSondeRCS` object containing MUSIC data and other related attributes.
+#'
+#' @return A `SeaSondeRCS` object with the calculated proportion of "dual" solutions stored as
+#' an attribute. This attribute can be accessed using a relevant getter function.
+#'
+#' @details
+#' The function performs the following steps:
+#' 1. Extracts the MUSIC data from the provided `SeaSondeRCS` object.
+#' 2. Computes the proportion of entries in the `retained_solution` column of the MUSIC data
+#'    that are labeled as "dual".
+#' 3. Updates the `SeaSondeRCS` object by adding the computed proportion as an attribute
+#'    using `seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion`.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC}} to retrieve the MUSIC data.
+#' \code{\link{seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion}} to set the computed proportion.
+#'
+#' @importFrom magrittr %<>%
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object with MUSIC data
+#' updated_object <- seasonder_MUSICComputePropDualSols(cs_object)
+#' }
+seasonder_MUSICComputePropDualSols <- function(seasonder_cs_object) {
 
+  # Retrieve the MUSIC data associated with the SeaSondeRCS object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
+  # Calculate the proportion of "dual" solutions in the MUSIC data
   proportion <- sum(as.integer(MUSIC$retained_solution == "dual")) / nrow(MUSIC)
 
+  # Update the SeaSondeRCS object with the calculated proportion of "dual" solutions
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion(proportion)
 
+  # Return the updated SeaSondeRCS object
   return(seasonder_cs_object)
-
 }
+
 
 
 #' Compute Power Matrix
@@ -964,60 +998,203 @@ seasonder_getSeaSondeRCS_MUSIC_interpolated_dataMatrix <- function(seasonder_cs_
 
 }
 
-seasonder_getSeaSondeRCS_MUSIC_nDopplerCells <- function(seasonder_cs_object){
+#' Retrieve the Interpolated Number of Doppler Cells for MUSIC
+#'
+#' This function calculates the interpolated number of Doppler cells for the MUSIC
+#' data in a given `SeaSondeRCS` object. It applies a Doppler interpolation factor
+#' to the original number of Doppler cells.
+#'
+#' @param seasonder_cs_object A `SeaSondeRCS` object containing metadata and configurations
+#'        related to MUSIC data processing.
+#'
+#' @return An integer representing the number of Doppler cells adjusted by the
+#'         Doppler interpolation factor.
+#'
+#' @details
+#' The function performs the following steps:
+#' 1. Retrieves the total number of Doppler cells using `seasonder_getnDopplerCells`.
+#' 2. Retrieves the Doppler interpolation factor using `seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation`.
+#' 3. Multiplies the number of Doppler cells by the interpolation factor to compute
+#'    the interpolated number of Doppler cells.
+#'
+#' @seealso
+#' \code{\link{seasonder_getnDopplerCells}} to obtain the base number of Doppler cells.
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation}} to retrieve the Doppler interpolation factor.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object with MUSIC data
+#' n_doppler_cells <- seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(cs_object)
+#' print(n_doppler_cells)
+#' }
+seasonder_getSeaSondeRCS_MUSIC_nDopplerCells <- function(seasonder_cs_object) {
 
+  # Retrieve the number of Doppler cells from the SeaSondeRCS object
   out <- seasonder_getnDopplerCells(seasonder_cs_object)
 
+  # Retrieve the Doppler interpolation factor for MUSIC data
   doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_cs_object)
 
-
+  # Adjust the number of Doppler cells by multiplying with the Doppler interpolation factor
   out <- out * doppler_interpolation
 
+  # Return the adjusted number of Doppler cells
   return(out)
-
 }
 
 
-seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution <- function(seasonder_cs_object){
+#' Retrieve the Adjusted Doppler Spectrum Resolution for MUSIC Analysis
+#'
+#' This function calculates the Doppler spectrum resolution adjusted by the Doppler
+#' interpolation factor for a given `SeaSondeRCS` object. The adjustment ensures
+#' that the spectrum resolution reflects the impact of interpolation applied in the
+#' MUSIC analysis.
+#'
+#' @param seasonder_cs_object A `SeaSondeRCS` object containing the data and parameters
+#'        for MUSIC analysis.
+#'
+#' @return A numeric value representing the adjusted Doppler spectrum resolution.
+#'
+#' @details
+#' The function performs the following steps:
+#' 1. Retrieves the base Doppler spectrum resolution using \code{\link{seasonder_getDopplerSpectrumResolution}}.
+#' 2. Obtains the Doppler interpolation factor using \code{\link{seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation}}.
+#' 3. Divides the base resolution by the interpolation factor to compute the adjusted resolution.
+#'
+#' This adjustment is critical for accurately interpreting MUSIC data in cases where
+#' Doppler interpolation has been applied.
+#'
+#' @seealso
+#' \code{\link{seasonder_getDopplerSpectrumResolution}} to retrieve the base Doppler spectrum resolution.
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation}} to retrieve the Doppler interpolation factor.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object
+#' spectrum_resolution <- seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution(cs_object)
+#' print(spectrum_resolution)
+#' }
+seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution <- function(seasonder_cs_object) {
 
+  # Retrieve the Doppler spectrum resolution from the SeaSondeRCS object
   res <- seasonder_getDopplerSpectrumResolution(seasonder_cs_object)
 
+  # Retrieve the Doppler interpolation factor specific to the MUSIC analysis
   doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_cs_object)
 
-  out <- res/doppler_interpolation
+  # Adjust the spectrum resolution by dividing it by the Doppler interpolation factor
+  out <- res / doppler_interpolation
 
+  # Return the adjusted Doppler spectrum resolution
   return(out)
-
-
 }
 
+
+#' Calculate Doppler Bins Frequencies for MUSIC Analysis
+#'
+#' This function computes the Doppler bin frequencies for a given `SeaSondeRCS` object,
+#' incorporating adjustments from the MUSIC analysis. The computation accounts for
+#' Doppler interpolation and the spectrum resolution.
+#'
+#' @param seasonder_cs_obj A `SeaSondeRCS` object containing the data and parameters
+#'        for MUSIC analysis.
+#' @param normalized Logical. If `TRUE`, the returned frequencies are normalized by the
+#'        positive Bragg frequency. Default is `FALSE`, returning frequencies in Hz.
+#'
+#' @return A numeric vector representing the frequency values for each Doppler bin.
+#'         If `normalized = TRUE`, these values are dimensionless, relative to the
+#'         positive Bragg frequency. Otherwise, they are in Hz.
+#'
+#' @details
+#' The function performs the following steps:
+#' 1. Retrieves the central Doppler bin corresponding to 0 frequency using
+#'    \code{\link{seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin}}.
+#' 2. Retrieves the total number of Doppler cells (adjusted for interpolation)
+#'    using \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}}.
+#' 3. Retrieves the Doppler spectrum resolution using
+#'    \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution}}.
+#' 4. Computes the Doppler bin frequencies using
+#'    \code{\link{seasonder_computeDopplerBinsFrequency}}.
+#'
+#' The resulting Doppler bins frequencies are crucial for analyzing the spectral
+#' properties of the MUSIC output.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin}} to retrieve the central bin.
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}} for the number of Doppler cells.
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution}} for the adjusted spectrum resolution.
+#' \code{\link{seasonder_computeDopplerBinsFrequency}} for the frequency calculation.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object
+#' doppler_bins <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(cs_object, normalized = FALSE)
+#' print(doppler_bins)
+#' }
 seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency <- function(seasonder_cs_obj, normalized = FALSE) {
 
-  center_bin <- seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin(seasonder_cs_obj) # Freq 0
+  # Retrieve the central Doppler bin, which corresponds to the frequency 0
+  center_bin <- seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin(seasonder_cs_obj)
 
+  # Retrieve the total number of Doppler cells, including interpolation adjustments
   nDoppler <- seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(seasonder_cs_obj)
 
+  # Retrieve the Doppler spectrum resolution, adjusted for interpolation
   spectra_res <- seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution(seasonder_cs_obj)
 
+  # Compute the Doppler bins frequency based on the total Doppler cells, central bin, and resolution
+  out <- seasonder_computeDopplerBinsFrequency(seasonder_cs_obj, nDoppler, center_bin, spectra_res, normalized = normalized)
 
-  out <- seasonder_computeDopplerBinsFrequency(seasonder_cs_obj, nDoppler, center_bin, spectra_res)
-
+  # Return the calculated frequencies for each Doppler bin
   return(out)
-
 }
 
 
-seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin <- function(seasonder_cs_object){
-
-  nDoppler <-seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(seasonder_cs_object)
-
-  out <- out <- seasonder_computeCenterDopplerBin(seasonder_cs_object, nDoppler)
 
 
+#' Retrieve the Center Doppler Bin for MUSIC Analysis
+#'
+#' This function calculates the center Doppler bin for a `SeaSondeRCS` object.
+#' The center bin corresponds to the Doppler bin representing zero frequency,
+#' and the computation accounts for adjustments from the MUSIC Doppler interpolation.
+#'
+#' @param seasonder_cs_object A `SeaSondeRCS` object containing data and parameters
+#'        for MUSIC analysis.
+#'
+#' @return An integer representing the center Doppler bin.
+#'
+#' @details
+#' The function performs the following steps:
+#' 1. Retrieves the total number of Doppler cells, including adjustments for MUSIC
+#'    interpolation, using \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}}.
+#' 2. Computes the center Doppler bin using \code{\link{seasonder_computeCenterDopplerBin}},
+#'    which determines the bin corresponding to zero frequency.
+#'
+#' The center Doppler bin is a key parameter for organizing Doppler frequency data
+#' around zero and is critical for spectral analysis.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}} to retrieve the adjusted number of Doppler cells.
+#' \code{\link{seasonder_computeCenterDopplerBin}} for the center bin calculation.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object
+#' center_bin <- seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin(cs_object)
+#' print(center_bin)
+#' }
+seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin <- function(seasonder_cs_object) {
+
+  # Retrieve the total number of Doppler cells, including adjustments from MUSIC interpolation
+  nDoppler <- seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(seasonder_cs_object)
+
+  # Compute the center Doppler bin based on the total number of Doppler cells
+  out <- seasonder_computeCenterDopplerBin(seasonder_cs_object, nDoppler)
+
+  # Return the computed center Doppler bin
   return(out)
-
-
 }
+
 
 seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity <- function(seasonder_cs_obj) {
 
