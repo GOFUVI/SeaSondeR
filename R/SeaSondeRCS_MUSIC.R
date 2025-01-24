@@ -1196,41 +1196,136 @@ seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin <- function(seasonder_cs_object)
 }
 
 
+#' Retrieve Radial Velocities for MUSIC Doppler Bins
+#'
+#' This function calculates the radial velocities for MUSIC Doppler bins based on the given
+#' SeaSonde cross-spectral object.
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object representing the cross-spectral data structure.
+#'                         It contains necessary metadata and Doppler frequency information.
+#'
+#' @return A numeric vector containing the radial velocities corresponding to each MUSIC Doppler bin.
+#'
+#' @details
+#' The function uses the following process:
+#' - It retrieves the Doppler bin frequencies using \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency}}.
+#' - It computes the radial velocities associated with the bins using \code{\link{seasonder_computeBinsRadialVelocity}}.
+#'
+#' The computed velocities are returned as a numeric vector, which can be used in subsequent
+#' analyses or visualizations.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency}},
+#' \code{\link{seasonder_computeBinsRadialVelocity}}
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `seasonder_cs_obj` is a valid SeaSondeRCS object
+#' radial_velocities <- seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(seasonder_cs_obj)
+#' print(radial_velocities)
+#' }
 seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity <- function(seasonder_cs_obj) {
-
+  # Retrieve Doppler bin frequencies for the given cross-spectral object.
   freq <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_obj)
 
+  # Compute the radial velocities corresponding to these Doppler bins.
   out <- seasonder_computeBinsRadialVelocity(seasonder_cs_obj, freq)
 
+  # Return the computed radial velocities.
   return(out)
-
 }
 
 
+#' Map Doppler Frequencies to Doppler Bins
+#'
+#' This function maps specified Doppler frequency values to the corresponding Doppler bins
+#' for a given SeaSonde cross-spectral object.
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object representing the cross-spectral data structure.
+#'                         It contains metadata and configuration for Doppler frequency and bin mapping.
+#' @param doppler_values A numeric vector of Doppler frequency values to be mapped to Doppler bins.
+#'
+#' @return A numeric vector of Doppler bins corresponding to the input Doppler frequency values.
+#'
+#' @details
+#' The function performs the following steps:
+#' - Retrieves the unnormalized Doppler bin frequencies using \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency}}.
+#' - Retrieves the Doppler spectrum resolution using \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution}}.
+#' - Retrieves the total number of Doppler cells using \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}}.
+#' - Computes the Doppler bin indices corresponding to the input Doppler frequency values using
+#'   \code{\link{seasonder_computeDopplerFreq2Bins}}.
+#'
+#' This mapping is essential for translating frequency-domain values into bin indices used
+#' in further data processing or visualization.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency}},
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution}},
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}},
+#' \code{\link{seasonder_computeDopplerFreq2Bins}}
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `seasonder_cs_obj` is a valid SeaSondeRCS object
+#' doppler_freqs <- c(0.1, 0.2, 0.3)
+#' doppler_bins <- seasonder_MUSIC_DopplerFreq2Bins(seasonder_cs_obj, doppler_freqs)
+#' print(doppler_bins)
+#' }
+#'
 seasonder_MUSIC_DopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values) {
-
+  # Retrieve the Doppler bin frequencies for the given cross-spectral object without normalization.
   doppler_freqs <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_obj, normalized = FALSE)
 
+  # Get the resolution of the Doppler spectrum.
   delta_freq <- seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution(seasonder_cs_obj)
 
+  # Retrieve the total number of Doppler cells.
   nDoppler <- seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(seasonder_cs_obj)
 
-  out <- seasonder_computeDopplerFreq2Bins(seasonder_cs_obj, doppler_values,  doppler_freqs, delta_freq, nDoppler)
+  # Map the given Doppler frequency values to the corresponding Doppler bins.
+  out <- seasonder_computeDopplerFreq2Bins(seasonder_cs_obj, doppler_values, doppler_freqs, delta_freq, nDoppler)
 
+  # Return the mapped Doppler bins.
   return(out)
-
 }
 
 
+#' Map Doppler Bins to Doppler Frequencies
+#'
+#' This function retrieves the Doppler frequencies corresponding to specified Doppler bins
+#' for a given SeaSonde cross-spectral object.
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object representing the cross-spectral data structure.
+#'                         It contains metadata and configuration for Doppler frequency and bin mapping.
+#' @param bins A numeric or integer vector of bin indices for which Doppler frequencies are needed.
+#'
+#' @return A numeric vector of Doppler frequencies corresponding to the input bin indices.
+#'
+#' @details
+#' The function retrieves the full set of unnormalized Doppler bin frequencies using
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency}} and returns the frequencies
+#' corresponding to the provided bin indices. This is useful for translating bin-domain indices
+#' into physical Doppler frequency values for analysis or visualization.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency}}
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `seasonder_cs_obj` is a valid SeaSondeRCS object
+#' bins <- c(1, 5, 10)
+#' doppler_freqs <- seasonder_MUSIC_Bins2DopplerFreq(seasonder_cs_obj, bins)
+#' print(doppler_freqs)
+#' }
+#'
 seasonder_MUSIC_Bins2DopplerFreq <- function(seasonder_cs_obj, bins) {
-
+  # Retrieve the Doppler bin frequencies for the given cross-spectral object without normalization.
   doppler_freqs <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_obj, normalized = FALSE)
 
+  # Return the Doppler frequencies corresponding to the specified bins.
   return(doppler_freqs[bins])
-
-
-
 }
+
 
 #### Dual solution tests ####
 
