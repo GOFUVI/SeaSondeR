@@ -57,7 +57,7 @@ print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_object))
 \seealso{
 \code{\link{seasonder_MUSICComputeCov}}: Compute the covariance matrix.
 \code{\link{seasonder_MUSICCovDecomposition}}: Perform eigen decomposition of the covariance matrix.
-\code{\link{seasonder_MUSICComputeDOAFunctions}}: Compute the direction-of-arrival functions.
+\code{\link{seasonder_MUSICComputeDOAProjections}}: Compute the direction-of-arrival functions.
 \code{\link{seasonder_MUSICExtractPeaks}}: Extract peaks from the DOA functions.
 \code{\link{seasonder_MUSICComputeSignalPowerMatrix}}: Calculate the signal power matrix.
 \code{\link{seasonder_MUSICTestDualSolutions}}: Test and analyze dual solutions in the DOA.

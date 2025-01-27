@@ -2009,9 +2009,9 @@ seasonder_compute_antenna_pattern_proyections <- function(En, a){
 #'
 #' @examples
 #' \dontrun{
-#' cs_object <- seasonder_MUSICComputeDOAFunctions(cs_object)
+#' cs_object <- seasonder_MUSICComputeDOAProjections(cs_object)
 #' }
-seasonder_MUSICComputeDOAFunctions <- function(seasonder_cs_object){
+seasonder_MUSICComputeDOAProjections <- function(seasonder_cs_object){
   # Sets a processing step message indicating the start of distance computation.
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_compute_DOA_functions_start_step_text())
 
@@ -2396,7 +2396,7 @@ seasonder_MUSICSelectDOA <- function(seasonder_cs_object) {
 #' @seealso
 #' \code{\link{seasonder_MUSICComputeCov}}: Compute the covariance matrix.
 #' \code{\link{seasonder_MUSICCovDecomposition}}: Perform eigen decomposition of the covariance matrix.
-#' \code{\link{seasonder_MUSICComputeDOAFunctions}}: Compute the direction-of-arrival functions.
+#' \code{\link{seasonder_MUSICComputeDOAProjections}}: Compute the direction-of-arrival functions.
 #' \code{\link{seasonder_MUSICExtractPeaks}}: Extract peaks from the DOA functions.
 #' \code{\link{seasonder_MUSICComputeSignalPowerMatrix}}: Calculate the signal power matrix.
 #' \code{\link{seasonder_MUSICTestDualSolutions}}: Test and analyze dual solutions in the DOA.
@@ -2435,7 +2435,7 @@ seasonder_runMUSIC <- function(seasonder_cs_object){
   out %<>% seasonder_MUSICCovDecomposition()
 
   # Compute the direction-of-arrival (DOA) functions using the MUSIC algorithm.
-  out %<>% seasonder_MUSICComputeDOAFunctions()
+  out %<>% seasonder_MUSICComputeDOAProjections()
 
   # Extract peaks from the DOA functions, representing potential signal directions.
   out %<>% seasonder_MUSICExtractPeaks()

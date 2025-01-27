@@ -4,7 +4,7 @@ test_that("SeaSondeRCS_MUSIC Related functions are defined",{
 
   expect_true(is.function(seasonder_MUSICComputeCov))
   expect_true(is.function(seasonder_MUSICCovDecomposition))
-  expect_true(is.function(seasonder_MUSICComputeDOAFunctions))
+  expect_true(is.function(seasonder_MUSICComputeDOAProjections))
 
 
 
@@ -89,7 +89,7 @@ target <- matrix(rep(NA_complex_,9),ncol=3)
   })
 
 
-  describe("seasonder_MUSICComputeDOAFunctions",{
+  describe("seasonder_MUSICComputeDOAProjections",{
 
     it("should return the euclidean distances",{
 
@@ -114,7 +114,7 @@ target <- matrix(rep(NA_complex_,9),ncol=3)
 
       test_obj <- seasonder_MUSICCheckEigenValueRatio(test_obj)
 
-      test_obj <- seasonder_MUSICComputeDOAFunctions(test_obj)
+      test_obj <- seasonder_MUSICComputeDOAProjections(test_obj)
 
       MUSIC <- seasonder_getSeaSondeRCS_MUSIC(test_obj)
 
@@ -190,7 +190,7 @@ target <- matrix(rep(NA_complex_,9),ncol=3)
 
       test_obj <- seasonder_MUSICCovDecomposition(test_obj)
 
-      test_obj <- seasonder_MUSICComputeDOAFunctions(test_obj)
+      test_obj <- seasonder_MUSICComputeDOAProjections(test_obj)
 
       test_obj <- seasonder_MUSICExtractPeaks(test_obj)
 
@@ -251,7 +251,7 @@ describe("seasonder_MUSICComputeSignalPowerMatrix",{
 
     test_obj <- seasonder_MUSICCovDecomposition(test_obj)
 
-    test_obj <- seasonder_MUSICComputeDOAFunctions(test_obj)
+    test_obj <- seasonder_MUSICComputeDOAProjections(test_obj)
 
     test_obj <- seasonder_MUSICExtractPeaks(test_obj)
 
@@ -304,7 +304,7 @@ describe("seasonder_MUSICCheckSignalMatrix",{
 
     test_obj <- seasonder_MUSICCovDecomposition(test_obj)
 
-    test_obj <- seasonder_MUSICComputeDOAFunctions(test_obj)
+    test_obj <- seasonder_MUSICComputeDOAProjections(test_obj)
 
     test_obj <- seasonder_MUSICExtractPeaks(test_obj)
 
@@ -1028,7 +1028,7 @@ APM <- cbind(A_190, A_205, A_225, A_255,A_330, A_340)
   seasonder_cs_obj %<>% seasonder_MUSICCovDecomposition()
 
 
-  seasonder_cs_obj %<>% seasonder_MUSICComputeDOAFunctions()
+  seasonder_cs_obj %<>% seasonder_MUSICComputeDOAProjections()
 
   seasonder_cs_obj %<>% seasonder_MUSICExtractPeaks()
 
@@ -1056,7 +1056,7 @@ APM <- cbind(A_190, A_205, A_225, A_255,A_330, A_340)
 
 
 
-  describe("seasonder_MUSICComputeDOAFunctions",{
+  describe("seasonder_MUSICComputeDOAProjections",{
 
     it("should work",{
 
