@@ -10,22 +10,132 @@ seasonder_validateFORMethod <- function(method) {
 
 }
 
+#' Default First-Order Radial Processing Parameters
+#'
+#' This function returns a list of default parameters (R7 version) for first-order
+#' radial processing in CODAR's Radial Suite. Each parameter has an equivalent
+#' R8 version, where applicable, often expressed in decibels (dB).
+#'
+#' @details
+#' **Parameter Descriptions:**
+#'
+#' 1. **nsm (R8: Doppler Smoothing)**
+#'
+#'    - **Default value:** 2
+#'    - **Usage:** Sets how many Doppler bins (points) are smoothed. Smoothing helps
+#'      remove jagged edges in the sea echo spectrum, aiding in locating the null
+#'      between the first and second order (or noise floor).
+#'    - **Recommended values:** Typically 2 to 6. Default in Radial Suite R8 is 2
+#'    - **Effects of over-/under-smoothing:**
+#'      - Too high: May smear out the real null, causing the first order to appear
+#'        wider.
+#'      - Too low: Jagged minima may cause the null to be detected inside the
+#'        first-order region, making it appear too narrow.
+#'
+#' 2. **fdown (R8: Null Below Peak Power)**
+#'
+#'    - **Default value (R7):** 10
+#'    - **Equivalent in dB (R8):** 10 dB
+#'    - **Usage:** Defines how far below the peak power the algorithm must descend
+#'      (in dB) before searching for the null that separates the first and second
+#'      order. This helps avoid including second-order energy as part of the
+#'      first-order.
+#'    - **Recommended range:** 6 to 15 dB. Default in Radial Suite R8 is 10 dB
+#'    - **Effects of misconfiguration:**
+#'      - Too large: The null search may be bypassed entirely, causing
+#'        second-order content to be included in the first order.
+#'      - Too small: The null may be found inside the first-order region,
+#'        excluding valid Bragg energy.
+#'
+#' 3. **flim (R8: Peak Power Dropoff)**
+#'
+#'    - **Default value (R7):** 100
+#'    - **Equivalent in dB (R8):** 20 dB
+#'    - **Usage:** Once a peak is located, any spectral bins that are more than
+#'      `flim` below the peak (in linear scale) or `20 dB` below the peak (in dB
+#'      scale) are excluded from the first-order region.
+#'    - **Recommended range:** 12 to 25 dB.Default in Radial Suite R8 is
+#'    - **Effects of misconfiguration:**
+#'      - Too high: May include non-Bragg signal and yield spurious high
+#'        velocity estimates.
+#'      - Too low: May cut out part of the actual Bragg signal, underestimating
+#'        maximum velocities.
+#'
+#' 4. **noisefact (R8: Signal to Noise)**
+#'
+#'    - **Default value (R7):** 3.981072
+#'    - **Equivalent in dB (R8):** 6 dB
+#'    - **Usage:** Sets the threshold above the noise floor that must be exceeded
+#'      for the algorithm to accept Doppler bins as potential first-order.
+#'    - **Recommended range:** Typically 6 to 9 dB. Default in Radial Suite R8 is 6 dB
+#'    - **Effects of misconfiguration:**
+#'      - Too high: Useful Bragg data could be excluded.
+#'      - Too low: Noise or spurious signals may be included as Bragg.
+#'
+#' 5. **currmax (R8: Maximum Velocity)**
+#'
+#'    - **Default value (R7):** 2 m/s
+#'    - **Usage:** Sets a maximum radial velocity,
+#'      preventing first-order limits from extending beyond realistic current
+#'      speeds for the site.
+#'    - **Effects of misconfiguration:**
+#'      - Too high: May include non-Bragg data, producing overestimated
+#'        velocities.
+#'      - Too low: May exclude valid Bragg data, underestimating velocities.
+#'
+#' 6. **reject_distant_bragg (R8: Reject Distant Bragg)**
+#'
+#'    - **Default value:** TRUE
+#'    - **Usage:** Rejects a first-order region if its limits are farther from
+#'      the Bragg index (central Doppler bin for zero current) than the width of
+#'      the region itself. Helps avoid misclassifying strong but isolated signals
+#'      (e.g., ships) as Bragg.
+#'    - **Recommendation:** Usually keep this enabled unless operating at a site
+#'      where only strongly biased positive or negative currents are expected.
+#'
+#' 7. **reject_noise_ionospheric (R8: Reject Noise/Ionospheric)**
+#'
+#'    - **Default value:** TRUE
+#'    - **Usage:** Rejects Bragg if the total non-Bragg power in a range cell
+#'      exceeds the Bragg power by at least the threshold set in
+#'      `reject_noise_ionospheric_threshold`. Recommended to set as FALSE for 42 MHz systems.
+#'    - **Recommendation:** Enable if the site experiences significant noise.
+#'
+#' 8. **reject_noise_ionospheric_threshold (R8: Reject Noise/Ionospheric Threshold)**
+#'
+#'    - **Default value:** 0
+#'    - **Equivalent in dB:** 0 dB
+#'    - **Usage:** Difference threshold (in dB) for comparing non-Bragg power to
+#'      Bragg power. If non-Bragg power is higher by this threshold, the Bragg is
+#'      rejected.
+#'    - **Recommended setting:** Typically 0 dB. Increase only if needed to be
+#'      less sensitive to noise contamination.
+#'
+#' @return A named list containing the default R7 parameter values (and their
+#'   corresponding implications in R8).
+#'
+#' @examples
+#' params <- seasonder_defaultFOR_parameters()
+#' print(params)
+#'
+#' @export
 seasonder_defaultFOR_parameters <- function() {
 
-  out <- list(nsm = 11,
-              fdown = 7.5,
-              flim = 4,
-              noisefact = 15,
-              currmax = 2,
-              reject_distant_bragg = TRUE, #  Default is to apply this test
-              reject_noise_ionospheric = TRUE, #  Default is to apply this test (except for 42 MHz)
-              # TODO: implement default reject_noise_ionospheric = FALSE for 42 MHz
-              reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
+  out <- list(
+    nsm = 2,    # R8: Doppler Smoothing
+    fdown = 10, # R8: Null Below Peak Power (10 dB)
+    flim = 100, # R8: Peak Power Dropoff (20 dB)
+    noisefact = 3.981072, # R8: Signal to Noise (6 dB)
+    currmax = 2,          # R8: Maximum Velocity
+    reject_distant_bragg = TRUE,    # R8: Reject Distant Bragg
+    reject_noise_ionospheric = TRUE, # R8: Reject Noise/Ionospheric
+    # TODO: implement default reject_noise_ionospheric = FALSE for 42 MHz
+    reject_noise_ionospheric_threshold = 0 # R8: 0 dB threshold
   )
-
 
   return(out)
 }
+
 
 seasonder_validateFOR_parameters <- function(seasonder_cs_obj, FOR_parameters, method = "SeaSonde") {
 
