@@ -2,10 +2,35 @@
 % Please edit documentation in R/SeaSondeRCS.R
 \name{seasonder_getSeaSondeRCS_antenna_SSdata}
 \alias{seasonder_getSeaSondeRCS_antenna_SSdata}
-\title{returns the power spectrum of an antenna}
+\title{Retrieve Self-Spectra Data for a Specific Antenna from a SeaSondeRCS Object}
 \usage{
 seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_obj, antenna)
 }
+\arguments{
+\item{seasonder_cs_obj}{A SeaSondeRCS object containing spectral data.}
+
+\item{antenna}{An integer specifying the antenna number (1, 2, or 3).}
+}
+\value{
+A matrix containing the self-spectra data for the specified antenna. If the antenna number
+is invalid, an error is thrown.
+}
 \description{
-returns the power spectrum of an antenna
+This function extracts the self-spectra (SSA) data matrix for a given antenna from a SeaSondeRCS object.
+}
+\details{
+The function constructs the matrix name dynamically by appending the antenna number to the prefix
+\code{"SSA"} (e.g., \code{"SSA1"}, \code{"SSA2"}, or \code{"SSA3"}). It then retrieves the corresponding
+matrix from the SeaSondeRCS data using \code{\link{seasonder_getSeaSondeRCS_dataMatrix}}.
+}
+\examples{
+\dontrun{
+# Assuming `cs_object` is a valid SeaSondeRCS object
+ssa1_data <- seasonder_getSeaSondeRCS_antenna_SSdata(cs_object, 1)
+print(ssa1_data)
+}
+}
+\seealso{
+\code{\link{seasonder_getSeaSondeRCS_dataMatrix}} for extracting specific data matrices.
+\code{\link{seasonder_getSeaSondeRCS_data}} for retrieving the complete data structure.
 }

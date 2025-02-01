@@ -7,12 +7,11 @@
 seasonder_defaultFOR_parameters()
 }
 \value{
-A named list containing the default R7 parameter values (and their
-corresponding implications in R8).
+A named list containing the default parameter values.
 }
 \description{
-This function returns a list of default parameters (R7 version) for first-order
-radial processing in CODAR's Radial Suite. Each parameter has an equivalent
+This function returns a list of default parameters for first-order
+radial processing in CODAR's Radial Suite R7. Each parameter has an equivalent
 R8 version, where applicable, often expressed in decibels (dB).
 }
 \details{
@@ -41,7 +40,7 @@ first-order region, making it appear too narrow.
 (in dB) before searching for the null that separates the first and second
 order. This helps avoid including second-order energy as part of the
 first-order.
-\item \strong{Recommended range:} 6 to 15 dB. Default in Radial Suite R8 is 10 dB
+\item \strong{Recommended range:} 3.981072 to 31.62278 (6 to 15 dB in R8). Default in Radial Suite R8 is 10 dB
 \item \strong{Effects of misconfiguration:}
 \itemize{
 \item Too large: The null search may be bypassed entirely, causing
@@ -57,7 +56,7 @@ excluding valid Bragg energy.
 \item \strong{Usage:} Once a peak is located, any spectral bins that are more than
 \code{flim} below the peak (in linear scale) or \verb{20 dB} below the peak (in dB
 scale) are excluded from the first-order region.
-\item \strong{Recommended range:} 12 to 25 dB.Default in Radial Suite R8 is
+\item \strong{Recommended range:} 15.84893 to 316.2278 (12 to 25 dB in R8). Default in Radial Suite R8 is 20 dB.
 \item \strong{Effects of misconfiguration:}
 \itemize{
 \item Too high: May include non-Bragg signal and yield spurious high
@@ -72,7 +71,7 @@ maximum velocities.
 \item \strong{Equivalent in dB (R8):} 6 dB
 \item \strong{Usage:} Sets the threshold above the noise floor that must be exceeded
 for the algorithm to accept Doppler bins as potential first-order.
-\item \strong{Recommended range:} Typically 6 to 9 dB. Default in Radial Suite R8 is 6 dB
+\item \strong{Recommended range:} 3.981072 to 7.943282 (6 to 9 dB in R8). Default in Radial Suite R8 is 6 dB
 \item \strong{Effects of misconfiguration:}
 \itemize{
 \item Too high: Useful Bragg data could be excluded.
@@ -81,7 +80,7 @@ for the algorithm to accept Doppler bins as potential first-order.
 }
 \item \strong{currmax (R8: Maximum Velocity)}
 \itemize{
-\item \strong{Default value (R7):} 2 m/s
+\item \strong{Default value:} 2 m/s
 \item \strong{Usage:} Sets a maximum radial velocity,
 preventing first-order limits from extending beyond realistic current
 speeds for the site.
@@ -92,7 +91,7 @@ velocities.
 \item Too low: May exclude valid Bragg data, underestimating velocities.
 }
 }
-\item \strong{reject_distant_bragg (R8: Reject Distant Bragg)}
+\item \strong{reject_distant_bragg (Reject Distant Bragg)}
 \itemize{
 \item \strong{Default value:} TRUE
 \item \strong{Usage:} Rejects a first-order region if its limits are farther from
@@ -102,7 +101,7 @@ the region itself. Helps avoid misclassifying strong but isolated signals
 \item \strong{Recommendation:} Usually keep this enabled unless operating at a site
 where only strongly biased positive or negative currents are expected.
 }
-\item \strong{reject_noise_ionospheric (R8: Reject Noise/Ionospheric)}
+\item \strong{reject_noise_ionospheric (Reject Noise/Ionospheric)}
 \itemize{
 \item \strong{Default value:} TRUE
 \item \strong{Usage:} Rejects Bragg if the total non-Bragg power in a range cell
@@ -110,7 +109,7 @@ exceeds the Bragg power by at least the threshold set in
 \code{reject_noise_ionospheric_threshold}. Recommended to set as FALSE for 42 MHz systems.
 \item \strong{Recommendation:} Enable if the site experiences significant noise.
 }
-\item \strong{reject_noise_ionospheric_threshold (R8: Reject Noise/Ionospheric Threshold)}
+\item \strong{reject_noise_ionospheric_threshold (Reject Noise/Ionospheric Threshold)}
 \itemize{
 \item \strong{Default value:} 0
 \item \strong{Equivalent in dB:} 0 dB
@@ -126,4 +125,8 @@ less sensitive to noise contamination.
 params <- seasonder_defaultFOR_parameters()
 print(params)
 
+}
+\references{
+COS. SeaSonde Radial Suite Release 7; CODAR Ocean Sensors (COS): Mountain View, CA, USA, 2013.
+COS. SeaSonde Radial Suite Release 8; CODAR Ocean Sensors (COS): Mountain View, CA, USA, 2016.
 }

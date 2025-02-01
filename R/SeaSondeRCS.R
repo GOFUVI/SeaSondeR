@@ -636,26 +636,106 @@ seasonder_getSeaSondeRCS_data <- function(seasonder_cs_obj) {
 }
 
 
+#' Retrieve a Specific Data Matrix from a SeaSondeRCS Object
+#'
+#' This function extracts a specific data matrix from a SeaSondeRCS object. The available matrices
+#' correspond to self-spectra and cross-spectra components used in SeaSonde radar processing.
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object containing the spectral data.
+#' @param matrix_name A string specifying the name of the matrix to retrieve. Must be one of:
+#'   \itemize{
+#'     \item \code{"SSA1"}: Self-spectra for antenna 1.
+#'     \item \code{"SSA2"}: Self-spectra for antenna 2.
+#'     \item \code{"SSA3"}: Self-spectra for antenna 3.
+#'     \item \code{"CS12"}: Cross-spectra between antennas 1 and 2.
+#'     \item \code{"CS13"}: Cross-spectra between antennas 1 and 3.
+#'     \item \code{"CS23"}: Cross-spectra between antennas 2 and 3.
+#'     \item \code{"QC"}: Quality control matrix.
+#'   }
+#'
+#' @return A matrix containing the requested spectral data. If the matrix name is invalid, an error is thrown.
+#'
+#' @details
+#' The function first verifies that the provided \code{matrix_name} is valid. If the name is not
+#' in the list of accepted values, it logs an error and aborts execution using \code{\link{seasonder_logAndAbort}}.
+#' Once validated, the function extracts the requested matrix from the \code{data} component of the
+#' SeaSondeRCS object.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_data}} for retrieving the complete data structure.
+#' \code{\link{seasonder_logAndAbort}} for error handling.
+#'
+#' @importFrom glue glue
+#' @importFrom rlang %||%
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid SeaSondeRCS object
+#' ssa1_matrix <- seasonder_getSeaSondeRCS_dataMatrix(cs_object, "SSA1")
+#' print(ssa1_matrix)
+#' }
 seasonder_getSeaSondeRCS_dataMatrix <- function(seasonder_cs_obj, matrix_name) {
 
-  matrix_name %in% c("SSA1","SSA2","SSA3","CS12","CS13","CS23","QC") || seasonder_logAndAbort(glue::glue("Unknown data matrix name '{matrix_name}'"),calling_function = "matrix_name", class = "seasonder_unknown_data_matrix_name", seasonder_matrix_name = matrix_name)
+  # Validate that the matrix_name is one of the expected values
+  matrix_name %in% c("SSA1", "SSA2", "SSA3", "CS12", "CS13", "CS23", "QC") ||
+    seasonder_logAndAbort(
+      glue::glue("Unknown data matrix name '{matrix_name}'"),
+      calling_function = "seasonder_getSeaSondeRCS_dataMatrix",
+      class = "seasonder_unknown_data_matrix_name",
+      seasonder_matrix_name = matrix_name
+    )
 
-  matrix <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj = seasonder_cs_obj)[[matrix_name]]
+  # Retrieve the full data list from the SeaSondeRCS object
+  data_list <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj = seasonder_cs_obj)
+
+  # Extract the requested matrix
+  matrix <- data_list[[matrix_name]]
 
   return(matrix)
-
 }
 
-#' returns the power spectrum of an antenna
+##' Retrieve Self-Spectra Data for a Specific Antenna from a SeaSondeRCS Object
+#'
+#' This function extracts the self-spectra (SSA) data matrix for a given antenna from a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object containing spectral data.
+#' @param antenna An integer specifying the antenna number (1, 2, or 3).
+#'
+#' @return A matrix containing the self-spectra data for the specified antenna. If the antenna number
+#' is invalid, an error is thrown.
+#'
+#' @details
+#' The function constructs the matrix name dynamically by appending the antenna number to the prefix
+#' \code{"SSA"} (e.g., \code{"SSA1"}, \code{"SSA2"}, or \code{"SSA3"}). It then retrieves the corresponding
+#' matrix from the SeaSondeRCS data using \code{\link{seasonder_getSeaSondeRCS_dataMatrix}}.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_dataMatrix}} for extracting specific data matrices.
+#' \code{\link{seasonder_getSeaSondeRCS_data}} for retrieving the complete data structure.
+#'
+#' @importFrom glue glue
+#' @importFrom rlang %||%
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid SeaSondeRCS object
+#' ssa1_data <- seasonder_getSeaSondeRCS_antenna_SSdata(cs_object, 1)
+#' print(ssa1_data)
+#' }
 seasonder_getSeaSondeRCS_antenna_SSdata <- function(seasonder_cs_obj, antenna) {
 
-  matrix_name <- paste0("SSA",antenna)
+  # Construct the matrix name dynamically using the antenna number
+  matrix_name <- paste0("SSA", antenna)
 
-  matrix <- seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_obj = seasonder_cs_obj, matrix_name = matrix_name)
+  # Retrieve the self-spectra matrix for the specified antenna
+  matrix <- seasonder_getSeaSondeRCS_dataMatrix(
+    seasonder_cs_obj = seasonder_cs_obj,
+    matrix_name = matrix_name
+  )
 
   return(matrix)
-
 }
+
 
 seasonder_extractSeaSondeRCS_distRanges_from_SSdata <- function(SSmatrix, dist_ranges) {
 
@@ -843,15 +923,46 @@ seasonder_getCSHeaderByPath <- function(seasonder_obj, path) {
   return(result)
 }
 
-seasonder_getSeaSondeRCS_headerField <- function(seasonder_cs_obj,field) {
+#' Retrieve a Specific Field from a SeaSondeRCS Header
+#'
+#' This function extracts a specific field from the header of a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object.
+#' @param field A string specifying the field name to retrieve from the header.
+#'
+#' @return The value of the specified field from the header. If the field is not found, NULL is returned.
+#'
+#' @details
+#' This function first retrieves the full header using \code{\link{seasonder_getSeaSondeRCS_header}}
+#' and then attempts to extract the requested field using \code{\link[purrr]{pluck}}. The header is
+#' flattened before extraction to accommodate nested structures.
+#'
+#' @seealso
+#' \code{\link{seasonder_getSeaSondeRCS_header}} for retrieving the full header.
+#' \code{\link[purrr]{pluck}} for selective element extraction.
+#'
+#' @importFrom purrr pluck list_flatten
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid SeaSondeRCS object
+#' field_value <- seasonder_getSeaSondeRCS_headerField(cs_object, "nDopplerCells")
+#' print(field_value)
+#' }
+seasonder_getSeaSondeRCS_headerField <- function(seasonder_cs_obj, field) {
 
+  # Retrieve the header from the SeaSondeRCS object
   header <- seasonder_getSeaSondeRCS_header(seasonder_cs_obj)
 
-  value <- purrr::list_flatten(header,name_spec = "{inner}") %>% purrr::pluck(field)
+  # Flatten the header structure to allow direct access to nested fields
+  header_flattened <- purrr::list_flatten(header, name_spec = "{inner}")
+
+  # Extract the requested field using purrr::pluck
+  value <- purrr::pluck(header_flattened, field)
 
   return(value)
-
 }
+
 
 #' Get the nRangeCells value from a SeaSondeRCS object
 #'
