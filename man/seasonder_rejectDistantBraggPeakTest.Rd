@@ -2,7 +2,7 @@
 % Please edit documentation in R/SeaSondeRCS_FOR.R
 \name{seasonder_rejectDistantBraggPeakTest}
 \alias{seasonder_rejectDistantBraggPeakTest}
-\title{Reject Distant Bragg Peaks}
+\title{Reject Bragg Peaks Far from Expected Bragg Index}
 \usage{
 seasonder_rejectDistantBraggPeakTest(
   seasonder_cs_obj,
@@ -12,28 +12,66 @@ seasonder_rejectDistantBraggPeakTest(
 )
 }
 \arguments{
-\item{seasonder_cs_obj}{An object representing the current state of the radar cross section analysis,
-expected to contain methods or properties needed to determine Bragg lines.}
+\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the spectral data and Bragg indices.}
 
-\item{peak}{A numeric vector indicating the positions of the peak under consideration.}
+\item{peak}{A numeric vector indicating the Doppler bin positions of the peak under evaluation.}
 
-\item{range}{Optional; A numeric or integer NA indicating the range over which to consider the peak.
-Defaults to NA if not specified.}
+\item{range}{Optional; A numeric or integer value representing the range cell corresponding to the peak.
+Defaults to \code{NA}.}
 
-\item{peak_name}{Optional; A character string representing the name or identifier of the peak.
-Defaults to an empty string if not specified.}
+\item{peak_name}{Optional; A character string representing the name or identifier of the peak
+(e.g., \code{"positive_FOR"} or \code{"negative_FOR"}). Defaults to an empty string.}
 }
 \value{
-Returns a possibly modified version of the \code{peak} argument, where a rejected peak
-is returned as \code{integer(0)}, indicating that no valid peak is present.
+A possibly modified version of the \code{peak} argument, where a rejected peak
+is returned as \code{integer(0)}, indicating that it does not pass the proximity test.
 }
 \description{
-This function evaluates Bragg peaks based on their proximity to expected Bragg line bins.
-If the boundaries of a peak are farther from all Bragg lines than the width of the peak itself,
-the peak is rejected by setting it to an empty integer vector.
+This function evaluates Bragg peaks based on their proximity to expected Bragg index bins.
+If the boundaries of a peak are farther from all Bragg indices than the width of the peak itself,
+the peak is rejected by returning an empty integer vector.
 }
 \details{
-The function computes the left and right limits of the given peak and checks if the distance
-from these limits to the nearest Bragg lines exceeds the width of the peak. If both boundaries
-exceed this threshold, the peak is rejected.
+\strong{Reason for the Test:}
+The test ensures that peaks identified as part of the first-order Bragg region are reasonably close
+to the expected Bragg index. Peaks that are distant from the Bragg index are likely caused by
+noise, interference, or other sources unrelated to first-order Bragg scatter. These invalid peaks,
+if included, can lead to erroneous current velocity vectors and degrade the quality of radar-derived
+measurements.
+
+Specifically, the test rejects peaks when:
+\itemize{
+\item The distance from the left or right boundary of the peak to the nearest Bragg index exceeds
+the width of the peak.
+\item This condition ensures that peaks with excessively large offsets from the Bragg index are excluded.
+}
+
+\strong{Steps:}
+\enumerate{
+\item If the peak is empty, the function does nothing.
+\item Calculates the width of the peak as the difference between its maximum and minimum Doppler bin indices.
+\item Computes the left and right boundaries of the peak.
+\item Calculates the distance from each boundary to all Bragg indices.
+\item Rejects the peak if both boundary distances exceed the peak width.
+\item Logs the rejection information if applicable.
+}
+
+This test is particularly important in scenarios where strong non-Bragg signals, such as those from
+ships or other high-intensity noise sources, might otherwise be misclassified as first-order Bragg.
+}
+\examples{
+\dontrun{
+# Evaluate a single peak for rejection
+peak <- c(100, 101, 102)
+cs_obj <- seasonder_rejectDistantBraggPeakTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")
+}
+}
+\references{
+COS. SpectraPlotterMap 12 User Guide. CODAR Ocean Sensors (COS), Mountain View, CA, USA, 2016.
+}
+\seealso{
+\itemize{
+\item \code{\link{seasonder_rejectDistantBragg}} for applying this test to all range cells and Bragg regions.
+\item \code{\link{seasonder_getBraggLineBins}} for retrieving Bragg index bins.
+}
 }

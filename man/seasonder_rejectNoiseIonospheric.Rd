@@ -2,24 +2,59 @@
 % Please edit documentation in R/SeaSondeRCS_FOR.R
 \name{seasonder_rejectNoiseIonospheric}
 \alias{seasonder_rejectNoiseIonospheric}
-\title{Reject Ionospheric Noise in SeaSonde Data}
+\title{Apply Noise/Ionospheric Contamination Test to All Bragg Peaks}
 \usage{
 seasonder_rejectNoiseIonospheric(seasonder_cs_obj)
 }
 \arguments{
-\item{seasonder_cs_obj}{a SeaSonde cross-section object, which contains data for various ranges
-and peaks that need processing.}
+\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the spectral data and FOR parameters.}
 }
 \value{
-Returns the modified SeaSonde cross-section object with appropriate Bragg peaks rejected.
+The updated \code{SeaSondeRCS} object with the filtered FOR bins.
 }
 \description{
-This function rejects negative and positive Bragg peaks when the total external (non-Bragg)
-power is greater than the Bragg power by a specified dB amount. This is applied across each
-range for both negative and positive Bragg peaks.
+This function evaluates and filters the First Order Region (FOR) detections across all range cells
+by applying the noise/ionospheric contamination rejection test to both positive and negative Bragg regions.
 }
 \details{
-The function iterates over each range and applies a test to each negative and positive Bragg peak.
-It uses the \code{seasonder_rejectNoiseIonosphericTest} function to evaluate whether the Bragg peak should
-be rejected based on the comparison of Bragg and non-Bragg power levels.
+\strong{Reason for the Test:}
+This function ensures that Bragg peaks contaminated by excessive noise or ionospheric interference
+are removed from the detected First Order Region (FOR). Peaks where the power in the surrounding
+non-Bragg region exceeds the power in the Bragg region by a specified threshold are deemed invalid
+and are rejected. This step is critical for maintaining the accuracy of radar-derived measurements.
+
+\strong{Steps:}
+\enumerate{
+\item \strong{Retrieve Current FOR Data:}
+\itemize{
+\item Retrieves the detected FOR Doppler bin indices for all range cells using \code{\link{seasonder_getSeaSondeRCS_FOR}}.
+}
+\item \strong{Apply Noise/Ionospheric Rejection Test:}
+\itemize{
+\item Iterates over each range cell and evaluates both positive and negative Bragg regions.
+\item Calls \code{\link{seasonder_rejectNoiseIonosphericTest}} to check each peak against the noise/ionospheric criterion.
+\item Peaks that fail the test are removed (replaced with an empty vector).
+}
+\item \strong{Store Updated FOR Data:}
+\itemize{
+\item Updates the \code{SeaSondeRCS} object with the filtered FOR results using \code{\link{seasonder_setSeaSondeRCS_FOR}}.
+}
+}
+
+\strong{Use Case:}
+This function is particularly useful in environments where noise or ionospheric effects are prevalent,
+ensuring that only valid first-order Bragg peaks are retained for further processing.
+}
+\examples{
+\dontrun{
+# Apply noise/ionospheric rejection to a SeaSondeRCS object
+cs_obj <- seasonder_rejectNoiseIonospheric(cs_obj)
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{seasonder_rejectNoiseIonosphericTest}} for the noise/ionospheric rejection logic.
+\item \code{\link{seasonder_getSeaSondeRCS_FOR}} for retrieving detected FOR bins.
+\item \code{\link{seasonder_setSeaSondeRCS_FOR}} for updating FOR data.
+}
 }

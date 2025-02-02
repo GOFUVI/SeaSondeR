@@ -2,14 +2,61 @@
 % Please edit documentation in R/SeaSondeRCS_FOR.R
 \name{seasonder_rejectDistantBragg}
 \alias{seasonder_rejectDistantBragg}
-\title{Implements SpectraPlotterMap First Order Setting: Reject Bragg when First Order is far from index}
+\title{Apply Distant Bragg Peak Rejection to All Range Cells}
 \usage{
 seasonder_rejectDistantBragg(seasonder_cs_obj)
 }
+\arguments{
+\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the spectral data and FOR parameters.}
+}
+\value{
+The updated \code{SeaSondeRCS} object with the filtered FOR bins.
+}
 \description{
-Implements SpectraPlotterMap First Order Setting: Reject Bragg when First Order is far from index
+This function applies a proximity-based rejection test to all detected First Order Region (FOR) peaks
+in a SeaSondeRCS object. Peaks that are too far from their corresponding Bragg indices are removed,
+ensuring that only valid Bragg signals are retained.
 }
 \details{
-When applied, reject the First Order when the limits are farther away from the Bragg index than the width of the first order.
-This should be turned off only when the site’s field of view over water is limited such that it sees only string positive current for any given time.
+\strong{Reason for the Test:}
+The function filters out peaks in the FOR that are not closely associated with expected Bragg indices.
+These distant peaks could result from interference, noise, or other non-Bragg sources, potentially leading
+to erroneous current velocity vectors. This ensures that only physically valid Bragg signals are used
+in the processing pipeline.
+
+\strong{Steps:}
+\enumerate{
+\item \strong{Retrieve Current FOR Data:}
+\itemize{
+\item Retrieves the detected FOR Doppler bin indices for all range cells using \code{\link{seasonder_getSeaSondeRCS_FOR}}.
+}
+\item \strong{Apply Rejection Test:}
+\itemize{
+\item Iterates over each range cell and each Bragg region (\code{positive_FOR} and \code{negative_FOR}).
+\item Calls \code{\link{seasonder_rejectDistantBraggPeakTest}} for each peak to evaluate its proximity to the Bragg indices.
+\item Peaks that fail the test are removed (replaced with an empty vector).
+}
+\item \strong{Store Updated FOR Data:}
+\itemize{
+\item Updates the \code{SeaSondeRCS} object with the filtered FOR results using \code{\link{seasonder_setSeaSondeRCS_FOR}}.
+}
+}
+
+This function is part of the FOR processing workflow and should be applied after the initial detection of Bragg peaks.
+}
+\examples{
+\dontrun{
+# Apply distant Bragg peak rejection to a SeaSondeRCS object
+cs_obj <- seasonder_rejectDistantBragg(cs_obj)
+}
+}
+\references{
+COS. SpectraPlotterMap 12 User Guide. CODAR Ocean Sensors (COS), Mountain View, CA, USA, 2016.
+}
+\seealso{
+\itemize{
+\item \code{\link{seasonder_rejectDistantBraggPeakTest}} for the peak rejection logic.
+\item \code{\link{seasonder_getSeaSondeRCS_FOR}} for retrieving detected FOR bins.
+\item \code{\link{seasonder_setSeaSondeRCS_FOR}} for updating FOR data.
+}
 }
