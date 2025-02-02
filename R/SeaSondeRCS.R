@@ -1687,167 +1687,609 @@ seasonder_rangeCellsDists2RangeNumber <- function(seasonder_cs_obj,cells_dists) 
 
 # Start SEAS-109
 
+#' Convert dB Values to Self-Spectra Power
+#'
+#' This function converts power values expressed in decibels (dB) to linear self-spectra power values. The conversion is based on the given receiver gain, which accounts for the radar system's amplification effects.
+#'
+#' @param dB_values A numeric vector. The power values in decibels (dB).
+#' @param receiver_gain A numeric scalar. The receiver gain in decibels (dB).
+#'
+#' @return A numeric vector of self-spectra power values in linear scale.
+#'
+#' @details
+#' The conversion from decibels to linear power follows the equation:
+#' \deqn{P = 10^{(dB + G)/10}}
+#' where:
+#' \itemize{
+#'   \item \( P \) is the self-spectra power in linear scale,
+#'   \item \( dB \) represents the power values in decibels,
+#'   \item \( G \) is the receiver gain in decibels.
+#' }
+#'
+#' @seealso
+#' \code{\link{self_spectra_to_dB}} for the inverse operation.
+#'
+#'
+#' @examples
+#' \dontrun{
+#' # Convert dB values to self-spectra power
+#' dB_vals <- c(-100, -80, -60)
+#' receiver_gain <- -34.2
+#' spectrum_vals <- dB_to_self_spectra(dB_vals, receiver_gain)
+#' print(spectrum_vals)
+#' }
 dB_to_self_spectra <- function(dB_values, receiver_gain){
 
+  # Convert decibels to linear self-spectra power
   spectrum_values <- 10 ^ ((dB_values + receiver_gain)/10)
 
   return(spectrum_values)
 
 }
 
+#' Convert Self-Spectra Power to dB
+#'
+#' This function converts self-spectra power values from a linear scale to decibels (dB). The transformation considers the receiver gain to adjust the power measurements accordingly.
+#'
+#' @param spectrum_values A numeric vector. The power values in linear scale.
+#' @param receiver_gain A numeric scalar. The receiver gain in decibels (dB).
+#'
+#' @return A numeric vector of power values in decibels (dB).
+#'
+#' @details
+#' The conversion follows the equation:
+#' \deqn{dB = 10 \log_{10}(|P|) - G}
+#' where:
+#' \itemize{
+#'   \item \( dB \) is the power in decibels,
+#'   \item \( P \) is the self-spectra power in linear scale,
+#'   \item \( G \) is the receiver gain in decibels.
+#' }
+#'
+#' Absolute values of power are used to ensure valid logarithmic calculations.
+#'
+#' @seealso
+#' \code{\link{dB_to_self_spectra}} for the reverse conversion.
+#'
+#'
+#' @examples
+#' \dontrun{
+#' # Convert self-spectra power to dB
+#' spectrum_vals <- c(1e-10, 1e-8, 1e-6)
+#' receiver_gain <- -34.2
+#' dB_vals <- self_spectra_to_dB(spectrum_vals, receiver_gain)
+#' print(dB_vals)
+#' }
 self_spectra_to_dB <- function(spectrum_values, receiver_gain){
 
+  # Convert linear self-spectra power to decibels
   spectrum_dB <- 10 * log10(abs(spectrum_values)) - receiver_gain
 
   return(spectrum_dB)
 
 }
 
+
 # End SEAS-109
 
+#' Convert Self-Spectra to dB Using a SeaSondeR Object
+#'
+#' This function transforms self-spectra power values into decibels (dB) by retrieving the receiver gain from a given \code{SeaSondeR} object.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeR} cross-spectral object.
+#' @param spectrum_values A numeric vector. The power values in linear scale.
+#'
+#' @return A numeric vector of power values in decibels (dB).
+#'
+#' @details
+#' This function first extracts the receiver gain in decibels from the \code{seasonder_cs_obj} using \code{\link{seasonder_getReceiverGain_dB}} and then applies the conversion using:
+#' \deqn{dB = 10 \log_{10}(|P|) - G}
+#' where:
+#' \itemize{
+#'   \item \( dB \) is the power in decibels,
+#'   \item \( P \) is the self-spectra power in linear scale,
+#'   \item \( G \) is the receiver gain in decibels.
+#' }
+#'
+#' This function ensures consistency by obtaining the receiver gain directly from the \code{SeaSondeR} object.
+#'
+#' @seealso
+#' \code{\link{self_spectra_to_dB}} for a generic power-to-dB transformation.
+#'
+#'
+#' @examples
+#' \dontrun{
+#' # Convert self-spectra to dB using a SeaSondeR object
+#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' spectrum_vals <- c(1e-10, 1e-8, 1e-6)
+#' dB_vals <- seasonder_SelfSpectra2dB(cs_obj, spectrum_vals)
+#' print(dB_vals)
+#' }
 seasonder_SelfSpectra2dB <- function(seasonder_cs_obj, spectrum_values) {
 
+  # Retrieve the receiver gain from the SeaSondeR object
   receiver_gain <- seasonder_getReceiverGain_dB(seasonder_cs_obj)
-# Start SEAS-109
-  # spectrum_dB <- 10 * log10(abs(spectrum_values)) - receiver_gain
+
+  # Convert self-spectra power to decibels
   spectrum_dB <- self_spectra_to_dB(spectrum_values, receiver_gain)
-# End SEAS-109
+
   return(spectrum_dB)
 
 }
 
 
+
+#' Convert Doppler Bins to Normalized Doppler Frequency
+#'
+#' This function retrieves the normalized Doppler frequencies corresponding to the specified bins in a given \code{SeaSondeR} object.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeR} cross-spectral object containing Doppler bin metadata.
+#' @param bins A numeric vector specifying the Doppler bin indices.
+#'
+#' @return A numeric vector of normalized Doppler frequencies corresponding to the specified bins.
+#'
+#' @details
+#' This function first retrieves the Doppler bin frequencies in normalized form using \code{\link{seasonder_getDopplerBinsFrequency}}. It then selects the normalized Doppler frequencies corresponding to the specified bin indices.
+#'
+#' **Normalized Doppler Frequency Calculation:**
+#' The normalized Doppler frequency is typically defined as:
+#' \deqn{f_{norm} = \frac{f_{doppler}}{f_{bragg}}}
+#' where:
+#' \itemize{
+#'   \item \( f_{norm} \) is the normalized Doppler frequency,
+#'   \item \( f_{doppler} \) is the Doppler frequency of a given bin,
+#'   \item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
+#' }
+#'
+#' @seealso
+#' \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving Doppler bin frequencies.
+#'
+#' @examples
+#' \dontrun{
+#' # Convert specific Doppler bins to normalized Doppler frequency
+#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' bins <- c(10, 20, 30)
+#' normalized_freqs <- seasonder_Bins2NormalizedDopplerFreq(cs_obj, bins)
+#' print(normalized_freqs)
+#' }
 seasonder_Bins2NormalizedDopplerFreq <- function(seasonder_cs_obj, bins) {
 
+  # Retrieve normalized Doppler frequencies from the SeaSondeR object
   normalized_doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = TRUE)
 
+  # Return the normalized frequencies for the specified bins
   return(normalized_doppler_freqs[bins])
-
 
 }
 
+
+#' Convert Normalized Doppler Frequencies to Doppler Bins
+#'
+#' This function converts a set of normalized Doppler frequencies into their corresponding Doppler bin indices within a \code{SeaSondeR} object.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.
+#' @param doppler_values A numeric vector specifying the normalized Doppler frequencies to be converted into bin indices.
+#'
+#' @return An integer vector indicating the Doppler bin indices corresponding to the input normalized Doppler frequencies. Values that fall outside the valid bin range are assigned \code{NA}.
+#'
+#' @details
+#' This function first retrieves the list of normalized Doppler frequencies from the given \code{SeaSondeR} object using \code{\link{seasonder_getDopplerBinsFrequency}}.
+#' The bin boundaries are computed using the first-order difference of these frequencies.
+#'
+#' The function then applies \code{\link{findInterval}} to determine the corresponding bin index for each input Doppler frequency. The search process is affected by the following options:
+#' \itemize{
+#'   \item \code{rightmost.closed = TRUE}: The last bin interval is closed on the right, ensuring that the maximum normalized frequency is included in the last bin.
+#'   \item \code{all.inside = FALSE}: Values that fall outside the range of the computed boundaries are assigned values below 1 or above the maximum bin index.
+#'   \item \code{left.open = TRUE}: The left interval is open, meaning that values exactly equal to a boundary are assigned to the higher bin.
+#' }
+#'
+#' After \code{findInterval} determines the bin indices, values that are out of range (\code{bins < 1} or \code{bins > nDoppler}) are set to \code{NA}.
+#'
+#' @seealso
+#' \code{\link{seasonder_Bins2NormalizedDopplerFreq}} for the inverse operation.
+#'
+#' @importFrom magrittr %>%
+#'
+#' @examples
+#' \dontrun{
+#' # Convert normalized Doppler frequencies to bin indices
+#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' doppler_values <- c(-0.5, 0, 0.8)
+#' bins <- seasonder_NormalizedDopplerFreq2Bins(cs_obj, doppler_values)
+#' print(bins)
+#' }
 seasonder_NormalizedDopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values) {
+
+  # Check if debug mode is enabled and trigger a browser session if true
   if(seasonder_is_debug_point_enabled("seasonder_NormalizedDopplerFreq2Bins")){
     browser() # Debug point, do not remove
   }
+
+  # Retrieve the normalized Doppler frequencies associated with the Doppler bins
   normalized_doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = TRUE)
 
+  # Compute the step size (delta) between consecutive Doppler frequencies
   delta_freq <- normalized_doppler_freqs %>% diff()
 
+  # Construct the bin boundaries by extending the range of Doppler frequencies
+  # The leftmost boundary is adjusted by subtracting the first delta value
   boundaries <- c(normalized_doppler_freqs[1] - delta_freq[1], normalized_doppler_freqs)
 
-  bins <- findInterval(doppler_values,boundaries, rightmost.closed = T, all.inside = F, left.open = T)
+  # Find the bin index for each input Doppler frequency
+  # rightmost.closed = TRUE ensures that the last interval includes its upper boundary
+  # all.inside = FALSE allows values outside the range to be assigned values < 1 or > max bin index
+  # left.open = TRUE ensures that values exactly equal to a boundary go to the higher bin
+  bins <- findInterval(doppler_values, boundaries, rightmost.closed = TRUE, all.inside = FALSE, left.open = TRUE)
 
+  # Retrieve the number of Doppler bins in the SeaSondeR object
   nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
 
+  # Set bins that fall outside the valid range to NA
   bins[bins < 1 | bins > nDoppler] <- NA_integer_
 
-
-
   return(bins)
-
 }
 
-seasonder_computeDopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values,doppler_freqs, delta_freq, nDoppler){
 
+
+#' Convert Doppler Frequencies to Doppler Bins
+#'
+#' This function converts a set of Doppler frequency values into their corresponding Doppler bin indices using predefined Doppler frequency bins and frequency step size.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeR} cross-spectral object.
+#' @param doppler_values A numeric vector specifying the Doppler frequencies to be converted into bin indices.
+#' @param doppler_freqs A numeric vector containing the Doppler frequencies corresponding to each bin.
+#' @param delta_freq A numeric scalar specifying the frequency step size (difference between consecutive Doppler bins).
+#' @param nDoppler An integer indicating the total number of Doppler bins.
+#'
+#' @return An integer vector of Doppler bin indices corresponding to the input Doppler frequencies. Values that fall outside the valid bin range are assigned \code{NA}.
+#'
+#' @details
+#' The function constructs a set of bin boundaries using the Doppler frequencies. The leftmost boundary is adjusted by subtracting \code{delta_freq} from the first Doppler frequency to extend the range.
+#'
+#' The function then applies \code{\link{findInterval}} to determine the corresponding bin index for each input Doppler frequency. The bin assignment process follows these rules:
+#' \itemize{
+#'   \item \code{rightmost.closed = TRUE}: The last bin interval includes its upper boundary.
+#'   \item \code{all.inside = FALSE}: Values outside the defined frequency range are assigned indices below 1 or above \code{nDoppler}.
+#'   \item \code{left.open = TRUE}: The left interval is open, meaning values exactly equal to a boundary are assigned to the higher bin.
+#' }
+#'
+#' After determining the bin indices, values that are out of range (\code{bins < 1} or \code{bins > nDoppler}) are set to \code{NA}.
+#'
+#' @seealso
+#' \code{\link{seasonder_Bins2NormalizedDopplerFreq}} for converting bins back to normalized Doppler frequencies.
+#' \code{\link{findInterval}} for details on interval-based bin selection.
+#'
+#' @importFrom magrittr %>%
+#'
+#' @examples
+#' \dontrun{
+#' # Convert Doppler frequencies to bin indices
+#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' doppler_values <- c(-0.2, 0, 0.5)
+#' doppler_freqs <- seq(-1, 1, length.out = 101) # Example Doppler bin frequencies
+#' delta_freq <- diff(doppler_freqs)[1]
+#' nDoppler <- length(doppler_freqs)
+#' bins <- seasonder_computeDopplerFreq2Bins(cs_obj, doppler_values, doppler_freqs, delta_freq, nDoppler)
+#' print(bins)
+#' }
+seasonder_computeDopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values, doppler_freqs, delta_freq, nDoppler){
+
+  # Construct bin boundaries by extending the range with delta_freq
   boundaries <- c(doppler_freqs[1] - delta_freq, doppler_freqs)
 
-  bins <- findInterval(doppler_values,boundaries, rightmost.closed = T, all.inside = F,left.open = T)
+  # Find the bin index for each Doppler frequency
+  # rightmost.closed = TRUE ensures the last bin interval includes its upper boundary
+  # all.inside = FALSE allows values outside the boundaries to be assigned indices below 1 or above nDoppler
+  # left.open = TRUE ensures values exactly at a boundary are assigned to the higher bin
+  bins <- findInterval(doppler_values, boundaries, rightmost.closed = TRUE, all.inside = FALSE, left.open = TRUE)
 
-
-
+  # Set bins that fall outside the valid range to NA
   bins[bins < 1 | bins > nDoppler] <- NA_integer_
 
-
-
   return(bins)
-
-
 }
 
+
+#' Convert Doppler Frequencies to Doppler Bins
+#'
+#' This function converts a set of Doppler frequency values into their corresponding Doppler bin indices within a \code{SeaSondeR} object.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.
+#' @param doppler_values A numeric vector specifying the Doppler frequencies to be converted into bin indices.
+#'
+#' @return An integer vector of Doppler bin indices corresponding to the input Doppler frequencies. Values that fall outside the valid bin range are assigned \code{NA}.
+#'
+#' @details
+#' This function first retrieves the Doppler frequency bins from the given \code{SeaSondeR} object using \code{\link{seasonder_getDopplerBinsFrequency}} in non-normalized form.
+#' The spectral resolution, which defines the frequency step size (\(\Delta f\)), is obtained using \code{\link{seasonder_getDopplerSpectrumResolution}}.
+#'
+#' The number of Doppler bins is then determined using \code{\link{seasonder_getnDopplerCells}}.
+#'
+#' With this information, the function calls \code{\link{seasonder_computeDopplerFreq2Bins}} to determine the corresponding bin indices for each input Doppler frequency.
+#'
+#'
+#' @seealso
+#' \code{\link{seasonder_Bins2NormalizedDopplerFreq}} for the reverse operation.
+#' \code{\link{seasonder_computeDopplerFreq2Bins}} for the core computation logic.
+#'
+#'
+#' @examples
+#' \dontrun{
+#' # Convert Doppler frequencies to bin indices
+#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' doppler_values <- c(-0.2, 0, 0.5)  # Example Doppler frequencies in Hz
+#' bins <- seasonder_DopplerFreq2Bins(cs_obj, doppler_values)
+#' print(bins)
+#' }
 seasonder_DopplerFreq2Bins <- function(seasonder_cs_obj, doppler_values) {
 
+  # Retrieve the Doppler frequency bins in non-normalized form
   doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = FALSE)
 
+  # Get the spectral resolution (frequency step size in Hz)
   delta_freq <- seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
 
+  # Retrieve the number of Doppler bins
   nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
 
- out <- seasonder_computeDopplerFreq2Bins(seasonder_cs_obj, doppler_values,  doppler_freqs, delta_freq, nDoppler)
+  # Compute the corresponding Doppler bin indices
+  out <- seasonder_computeDopplerFreq2Bins(seasonder_cs_obj, doppler_values, doppler_freqs, delta_freq, nDoppler)
 
- return(out)
-
+  return(out)
 }
 
 
+
+#' Convert Doppler Bins to Doppler Frequencies
+#'
+#' This function retrieves the Doppler frequency values corresponding to the specified bin indices in a given \code{SeaSondeR} object.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeR} cross-spectral object containing Doppler bin metadata.
+#' @param bins A numeric vector specifying the Doppler bin indices.
+#'
+#' @return A numeric vector of Doppler frequencies (in Hz) corresponding to the specified bins.
+#'
+#' @details
+#' This function retrieves the full set of Doppler bin frequencies using \code{\link{seasonder_getDopplerBinsFrequency}} in non-normalized form.
+#' It then selects the Doppler frequencies corresponding to the specified bin indices.
+#'
+#'
+#' @seealso
+#' \code{\link{seasonder_DopplerFreq2Bins}} for the reverse operation.
+#' \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving the full set of Doppler frequencies.
+#'
+#'
+#' @examples
+#' \dontrun{
+#' # Convert specific Doppler bins to Doppler frequencies
+#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' bins <- c(10, 20, 30)  # Example bin indices
+#' freqs <- seasonder_Bins2DopplerFreq(cs_obj, bins)
+#' print(freqs)
+#' }
 seasonder_Bins2DopplerFreq <- function(seasonder_cs_obj, bins) {
 
+  # Retrieve the Doppler bin frequencies in non-normalized form (Hz)
   doppler_freqs <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = FALSE)
 
+  # Return the Doppler frequencies corresponding to the specified bins
   return(doppler_freqs[bins])
 
-
-
 }
 
+
+#' Convert Doppler Frequencies to Normalized Doppler Frequencies
+#'
+#' This function converts Doppler frequencies (in Hz) into their corresponding normalized Doppler frequencies within a \code{SeaSondeR} object.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.
+#' @param doppler_values A numeric vector specifying the Doppler frequencies (in Hz) to be converted into normalized Doppler frequencies.
+#'
+#' @return A numeric vector of normalized Doppler frequencies corresponding to the input Doppler values.
+#'
+#' @details
+#' The function follows these steps:
+#' \enumerate{
+#'   \item Calls \code{\link{seasonder_DopplerFreq2Bins}} to convert the input Doppler frequencies into Doppler bin indices.
+#'   \item Calls \code{\link{seasonder_Bins2NormalizedDopplerFreq}} to obtain the corresponding normalized Doppler frequencies.
+#' }
+#'
+#' The normalized Doppler frequency is computed as:
+#' \deqn{f_{norm} = \frac{f_{doppler}}{f_{bragg}}}
+#' where:
+#' \itemize{
+#'   \item \( f_{norm} \) is the normalized Doppler frequency,
+#'   \item \( f_{doppler} \) is the Doppler frequency of a given bin,
+#'   \item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
+#' }
+#'
+#' This function ensures consistency by mapping input frequencies to their closest bin representation before normalization.
+#'
+#' @seealso
+#' \code{\link{seasonder_DopplerFreq2Bins}} for converting Doppler frequencies to bin indices.
+#' \code{\link{seasonder_Bins2NormalizedDopplerFreq}} for converting bin indices to normalized frequencies.
+#'
+#'
+#' @examples
+#' \dontrun{
+#' # Convert Doppler frequencies to normalized Doppler frequencies
+#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' doppler_values <- c(-0.3, 0, 0.6)  # Example Doppler frequencies in Hz
+#' normalized_freqs <- seasonder_DopplerFreq2NormalizedDopplerFreq(cs_obj, doppler_values)
+#' print(normalized_freqs)
+#' }
 seasonder_DopplerFreq2NormalizedDopplerFreq <- function(seasonder_cs_obj, doppler_values) {
 
+  # Convert Doppler frequencies to Doppler bin indices
   bins <- seasonder_DopplerFreq2Bins(seasonder_cs_obj, doppler_values)
 
+  # Convert Doppler bin indices to normalized Doppler frequencies
   normalized_doppler_freq <- seasonder_Bins2NormalizedDopplerFreq(seasonder_cs_obj, bins)
 
-
   return(normalized_doppler_freq)
-
-
-
 }
 
 
+
+#' Convert Normalized Doppler Frequencies to Doppler Frequencies
+#'
+#' This function converts normalized Doppler frequencies into their corresponding Doppler frequencies (in Hz) within a \code{SeaSondeR} object.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.
+#' @param doppler_values A numeric vector specifying the normalized Doppler frequencies to be converted into Doppler frequencies (Hz).
+#'
+#' @return A numeric vector of Doppler frequencies (in Hz) corresponding to the input normalized Doppler frequencies.
+#'
+#' @details
+#' The function follows these steps:
+#' \enumerate{
+#'   \item Calls \code{\link{seasonder_NormalizedDopplerFreq2Bins}} to convert the input normalized Doppler frequencies into Doppler bin indices.
+#'   \item Calls \code{\link{seasonder_Bins2DopplerFreq}} to obtain the corresponding Doppler frequencies in Hz.
+#' }
+#'
+#' The relationship between the normalized and absolute Doppler frequencies is defined as:
+#' \deqn{f_{doppler} = f_{norm} \times f_{bragg}}
+#' where:
+#' \itemize{
+#'   \item \( f_{doppler} \) is the Doppler frequency in Hz,
+#'   \item \( f_{norm} \) is the normalized Doppler frequency,
+#'   \item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
+#' }
+#'
+#' @seealso
+#' \code{\link{seasonder_NormalizedDopplerFreq2Bins}} for converting normalized Doppler frequencies to bin indices.
+#' \code{\link{seasonder_Bins2DopplerFreq}} for converting bin indices to Doppler frequencies in Hz.
+#'
+#'
+#' @examples
+#' \dontrun{
+#' # Convert normalized Doppler frequencies to Doppler frequencies
+#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' normalized_values <- c(-0.3, 0, 0.6)  # Example normalized Doppler frequencies
+#' doppler_freqs <- seasonder_NormalizedDopplerFreq2DopplerFreq(cs_obj, normalized_values)
+#' print(doppler_freqs)
+#' }
 seasonder_NormalizedDopplerFreq2DopplerFreq <- function(seasonder_cs_obj, doppler_values) {
 
+  # Convert normalized Doppler frequencies to Doppler bin indices
   bins <- seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, doppler_values)
 
+  # Convert Doppler bin indices to absolute Doppler frequencies (Hz)
   doppler_freq <- seasonder_Bins2DopplerFreq(seasonder_cs_obj, bins)
 
-
   return(doppler_freq)
-
-
-
 }
 
+
+#' Convert Between Different Doppler Frequency Units
+#'
+#' This function converts Doppler-related values between different units, including normalized Doppler frequency, Doppler bins, and absolute Doppler frequency (Hz), within a \code{SeaSondeR} object.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeR} cross-spectral object containing Doppler bin metadata.
+#' @param values A numeric vector specifying the Doppler values to be converted.
+#' @param in_units A character string specifying the current unit of \code{values}. Must be one of:
+#'   \itemize{
+#'     \item \code{"normalized doppler frequency"}: Values are normalized by the Bragg frequency.
+#'     \item \code{"bins"}: Values represent Doppler bin indices.
+#'     \item \code{"doppler frequency"}: Values are in Hz.
+#'   }
+#' @param out_units A character string specifying the target unit for conversion. Must be one of the same three options as \code{in_units}.
+#'
+#' @return A numeric vector with the converted Doppler values in the specified output unit.
+#'
+#' @details
+#' The function first validates that the input and output units are among the allowed options.
+#' If \code{in_units} and \code{out_units} are the same, the function returns the original values without modification.
+#'
+#' The unit conversions follow this logic:
+#' \enumerate{
+#'   \item If converting from \code{"normalized doppler frequency"}:
+#'     \itemize{
+#'       \item To \code{"bins"}: Uses \code{\link{seasonder_NormalizedDopplerFreq2Bins}}.
+#'       \item To \code{"doppler frequency"}: Uses \code{\link{seasonder_NormalizedDopplerFreq2DopplerFreq}}.
+#'     }
+#'   \item If converting from \code{"bins"}:
+#'     \itemize{
+#'       \item To \code{"normalized doppler frequency"}: Uses \code{\link{seasonder_Bins2NormalizedDopplerFreq}}.
+#'       \item To \code{"doppler frequency"}: Uses \code{\link{seasonder_Bins2DopplerFreq}}.
+#'     }
+#'   \item If converting from \code{"doppler frequency"}:
+#'     \itemize{
+#'       \item To \code{"bins"}: Uses \code{\link{seasonder_DopplerFreq2Bins}}.
+#'       \item To \code{"normalized doppler frequency"}: Uses \code{\link{seasonder_DopplerFreq2NormalizedDopplerFreq}}.
+#'     }
+#' }
+#'
+#' Overall, the functions used for Doppler units conversion mimic the implementation of Doppler units displayed in  SpectraPlotterMap 12 in Radial Suite R8
+#'
+#' @seealso
+#' \code{\link{seasonder_NormalizedDopplerFreq2Bins}}, \code{\link{seasonder_Bins2NormalizedDopplerFreq}}, \code{\link{seasonder_DopplerFreq2Bins}}, and related functions for unit-specific conversions.
+#'
+#' @references
+#'
+#' COS. SeaSonde Radial Suite Release 8; CODAR Ocean Sensors (COS): Mountain View, CA, USA, 2016.
+#'
+#' @importFrom glue glue
+#'
+#' @examples
+#' \dontrun{
+#' # Convert Doppler frequencies (Hz) to normalized Doppler frequency
+#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' doppler_values <- c(-0.3, 0, 0.6)  # Doppler values in Hz
+#' normalized_freqs <- seasonder_SwapDopplerUnits(cs_obj, doppler_values, "doppler frequency", "normalized doppler frequency")
+#' print(normalized_freqs)
+#'
+#' # Convert Doppler bins to Doppler frequency (Hz)
+#' bins <- c(10, 20, 30)
+#' freqs <- seasonder_SwapDopplerUnits(cs_obj, bins, "bins", "doppler frequency")
+#' print(freqs)
+#' }
 seasonder_SwapDopplerUnits <- function(seasonder_cs_obj, values, in_units, out_units) {
 
+  # Define allowed Doppler unit options
+  doppler_units_options <- c("normalized doppler frequency", "bins", "doppler frequency")
 
+  # Validate input unit
+  in_units %in% doppler_units_options ||
+    seasonder_logAndAbort(glue::glue("in_units is '{in_units}', but should be one of {paste0(doppler_units_options, collapse=', ')}"),
+                          calling_function = "seasonder_SwapDopplerUnits")
 
-  doppler_units_options <- c("normalized doppler frequency","bins","doppler frequency")
+  # Validate output unit
+  out_units %in% doppler_units_options ||
+    seasonder_logAndAbort(glue::glue("out_units is '{out_units}', but should be one of {paste0(doppler_units_options, collapse=', ')}"),
+                          calling_function = "seasonder_SwapDopplerUnits")
 
-  in_units %in% doppler_units_options || seasonder_logAndAbort(glue::glue("in_units is '{in_units}', but should be one of {paste0(doppler_units_options, collapse=', ')}"),calling_function = "seasonder_SwapDopplerUnits")
-
-  out_units %in% doppler_units_options || seasonder_logAndAbort(glue::glue("out_units is '{out_units}', but should be one of {paste0(doppler_units_options, collapse=', ')}"),calling_function = "seasonder_SwapDopplerUnits")
-
+  # If the input and output units are the same, return values unchanged
   if (in_units == out_units) {
-
     return(values)
   }
 
-  swap_functions <- list("normalized doppler frequency" = list("bins" = seasonder_NormalizedDopplerFreq2Bins,
-                                                               "doppler frequency" = seasonder_NormalizedDopplerFreq2DopplerFreq),
-                         "bins" = list("normalized doppler frequency" = seasonder_Bins2NormalizedDopplerFreq,
-                                       "doppler frequency" = seasonder_Bins2DopplerFreq),
-                         "doppler frequency" = list("bins" = seasonder_DopplerFreq2Bins,
-                                                    "normalized doppler frequency" = seasonder_DopplerFreq2NormalizedDopplerFreq)
+  # Define conversion functions for different Doppler unit transformations
+  swap_functions <- list(
+    "normalized doppler frequency" = list(
+      "bins" = seasonder_NormalizedDopplerFreq2Bins,
+      "doppler frequency" = seasonder_NormalizedDopplerFreq2DopplerFreq
+    ),
+    "bins" = list(
+      "normalized doppler frequency" = seasonder_Bins2NormalizedDopplerFreq,
+      "doppler frequency" = seasonder_Bins2DopplerFreq
+    ),
+    "doppler frequency" = list(
+      "bins" = seasonder_DopplerFreq2Bins,
+      "normalized doppler frequency" = seasonder_DopplerFreq2NormalizedDopplerFreq
+    )
   )
 
+  # Select the appropriate conversion function based on input and output units
   swap_fun <- swap_functions[[in_units]][[out_units]]
 
+  # Perform the conversion
   out <- swap_fun(seasonder_cs_obj, values)
 
   return(out)
-
-
 }
+
 
 
 
