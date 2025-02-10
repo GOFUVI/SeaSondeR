@@ -2,8 +2,7 @@
 % Please edit documentation in R/SeaSondeRAPM.R
 \name{seasonder_getVersion.SeaSondeRAPM}
 \alias{seasonder_getVersion.SeaSondeRAPM}
-\title{Getters y Setters ####
-Get the version value from a SeaSondeRAPM object}
+\title{Get the version value from a SeaSondeRAPM object}
 \usage{
 \method{seasonder_getVersion}{SeaSondeRAPM}(seasonder_obj)
 }
@@ -14,6 +13,5 @@ Get the version value from a SeaSondeRAPM object}
 The version value.
 }
 \description{
-Getters y Setters ####
 Get the version value from a SeaSondeRAPM object
 }

@@ -20,7 +20,7 @@ This function initializes attributes for a SeaSondeRAPM object, including metada
 \details{
 The function initializes the following attributes:
 \itemize{
-\item \code{quality_matrix}: A 2 x b complex matrix for quality data, where b is the number of bearings.
+\item \code{quality_matrix}: A 3 x b complex matrix for quality data, where b is the number of bearings.
 \item \code{BEAR}: A numeric vector for bearings (degrees).
 \item \code{Type}: Character string for antenna pattern type.
 \item \code{Creator}: Object creator name. Default is an empty character vector.
@@ -38,10 +38,6 @@ The function initializes the following attributes:
 \item \code{FileID}: File's UUID. Default is an empty character vector.
 \item \code{PhaseCorrections}: Numeric vector with two elements for phase corrections. Default is \code{c(0,0)}.
 }
-
-Each attribute has a corresponding setter and getter function, following the naming pattern \code{seasonder_set/getSeaSondeRAPM_*}, where * is the name of the attribute. For example, to set the 'Type' attribute, you would use \code{seasonder_setSeaSondeRAPM_Type(seasonde_apm_obj,new_value)}. To get the same, you would use \code{seasonder_getSeaSondeRAPM_Type(seasonde_apm_obj,new_value)}.
-
-Please see \code{\link{seasonder_validateAttributesSeaSondeRAPM}} for details in attributes validation.
 }
 \seealso{
 \code{\link{seasonder_createSeaSondeRAPM}},

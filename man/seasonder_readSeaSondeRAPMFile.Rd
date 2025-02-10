@@ -16,12 +16,18 @@ seasonder_readSeaSondeRAPMFile(
 \arguments{
 \item{file_path}{The path to the SeaSonde APM file to read.}
 
-\item{override_antenna_bearing}{If not NULL, overrides the Antenna Bearing data in the file}
+\item{override_antenna_bearing}{If not NULL, overrides the Antenna Bearing data in the file.}
 
-\item{...}{Additional arguments passed to the object creation function (See \code{\link{seasonder_createSeaSondeRAPM}} for more details).}
+\item{override_phase_corrections}{If not NULL, overrides the phase corrections in the file.}
+
+\item{override_amplitude_factors}{If not NULL, overrides the amplitude factors in the file.}
+
+\item{override_SiteOrigin}{If not NULL, overrides the SiteOrigin attribute.}
+
+\item{...}{Additional arguments passed to the object creation function.}
 }
 \value{
-Returns a SeaSondeRAPM object containing the parsed data.
+A SeaSondeRAPM object containing the parsed data.
 }
 \description{
 This function reads a SeaSonde APM file and returns a SeaSondeRAPM object containing

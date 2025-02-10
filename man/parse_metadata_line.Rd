@@ -10,7 +10,7 @@ parse_metadata_line(line)
 \item{line}{The line of text to parse.}
 }
 \value{
-Returns a list containing the attribute name and its value.
+A list containing the attribute name and its value.
 }
 \description{
 This function takes a single line from a SeaSonde APM file and parses it into

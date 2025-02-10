@@ -2,10 +2,19 @@
 % Please edit documentation in R/SeaSondeRAPM.R
 \name{seasonder_smoothAPM}
 \alias{seasonder_smoothAPM}
-\title{smoothing is the number of points, not degrees}
+\title{Smooth APM Data}
 \usage{
 seasonder_smoothAPM(seasonder_apm_object, smoothing)
 }
+\arguments{
+\item{seasonder_apm_object}{A SeaSonde RAPM object containing raw antenna pattern data.}
+
+\item{smoothing}{The number of points to use for the moving average smoothing.}
+}
+\value{
+The SeaSonde RAPM object with smoothed antenna pattern data and an updated processing step.
+}
 \description{
-smoothing is the number of points, not degrees
+This function smooths the antenna pattern data for each channel of a SeaSonde RAPM object
+by applying a moving average with a specified number of points.
 }

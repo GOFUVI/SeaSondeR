@@ -2,7 +2,7 @@
 #'
 #' This function creates a SeaSondeRAPM object to store antenna pattern calibration data.
 #'
-#' @param calibration_matrix A 2 x b complex matrix, where b is the number of bearings for calibration.
+#' @param calibration_matrix A 3 x b complex matrix, where b is the number of bearings for calibration.
 #' @param ... Additional named attributes that will be passed to \code{\link{seasonder_initializeAttributesSeaSondeRAPM}}.
 #'
 #' @return A SeaSondeRAPM object containing a complex matrix with class attribute 'SeaSondeRAPM' and
@@ -25,7 +25,7 @@
 #' @importFrom magrittr %>% %<>%
 #' @export
 seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(real = NA_real_, imaginary = NA_real_),
-                                                                     nrow = 2, ncol = 0), ...) {
+                                                                     nrow = 3, ncol = 0), ...) {
 
   # Validate the calibration matrix to ensure it meets required criteria
   seasonder_validateCalibrationMatrixSeaSondeRAPM(calibration_matrix)
