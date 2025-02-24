@@ -78,7 +78,7 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
 #' @details
 #' The function initializes the following attributes:
 #' - \code{quality_matrix}: A 3 x b complex matrix for quality data, where b is the number of bearings.
-#' - \code{BEAR}: A numeric vector for bearings (degrees).
+#' - \code{BEAR}: A numeric vector for bearings (degrees CCW from the site bearing).
 #' - \code{Type}: Character string for antenna pattern type.
 #' - \code{Creator}: Object creator name. Default is an empty character vector.
 #' - \code{SiteName}: Site name (not the same as SiteCode). Default is an empty character vector.
@@ -87,7 +87,7 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
 #' - \code{CreateTimeStamp}: APM file creation time. Default is current system date and time.
 #' - \code{ProcessingSteps}: Processing steps applied to this object. Default is an empty character vector.
 #' - \code{AmplitudeFactors}: Numeric vector with two elements for the amplitude factors. Default is \code{c(0,0)}.
-#' - \code{AntennaBearing}: Default is an empty numeric vector.
+#' - \code{AntennaBearing}: Site bearing (CW degrees from true north). Default is an empty numeric vector.
 #' - \code{StationCode}: 4-character station code. Default is an empty character vector.
 #' - \code{BearingResolution}: In degrees. Default is an empty numeric vector.
 #' - \code{Smoothing}: Numeric vector indicating smoothing applied to the antenna pattern. Default is an empty numeric vector.

@@ -21,7 +21,7 @@ This function initializes attributes for a SeaSondeRAPM object, including metada
 The function initializes the following attributes:
 \itemize{
 \item \code{quality_matrix}: A 3 x b complex matrix for quality data, where b is the number of bearings.
-\item \code{BEAR}: A numeric vector for bearings (degrees).
+\item \code{BEAR}: A numeric vector for bearings (degrees CCW from the site bearing).
 \item \code{Type}: Character string for antenna pattern type.
 \item \code{Creator}: Object creator name. Default is an empty character vector.
 \item \code{SiteName}: Site name (not the same as SiteCode). Default is an empty character vector.
@@ -30,7 +30,7 @@ The function initializes the following attributes:
 \item \code{CreateTimeStamp}: APM file creation time. Default is current system date and time.
 \item \code{ProcessingSteps}: Processing steps applied to this object. Default is an empty character vector.
 \item \code{AmplitudeFactors}: Numeric vector with two elements for the amplitude factors. Default is \code{c(0,0)}.
-\item \code{AntennaBearing}: Default is an empty numeric vector.
+\item \code{AntennaBearing}: Site bearing (CW degrees from true north). Default is an empty numeric vector.
 \item \code{StationCode}: 4-character station code. Default is an empty character vector.
 \item \code{BearingResolution}: In degrees. Default is an empty numeric vector.
 \item \code{Smoothing}: Numeric vector indicating smoothing applied to the antenna pattern. Default is an empty numeric vector.

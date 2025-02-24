@@ -7,18 +7,54 @@
 seasonder_createSeaSondeRCS(x, specs_path = NULL, ...)
 }
 \arguments{
-\item{x}{Either a character string specifying the path to the SeaSonde CS file or a list with header and data.}
+\item{x}{Either a character string specifying the path to the SeaSonde CS file or a list containing header and data.}
 
-\item{specs_path}{A character string specifying the path to the YAML specifications for the CS file. Only used if x is a character string.}
+\item{specs_path}{A character string specifying the path to the YAML specifications for the CS file. Used only if \code{x} is a character string.}
+
+\item{...}{Additional parameters passed to the underlying functions.}
+
+\item{endian}{A character string indicating the byte order. Options are "big" (default) or "little".}
 }
 \value{
 A SeaSondeRCS object.
 }
 \description{
-This function creates a SeaSondeRCS object either from a file path or directly from a list containing header and data.
+This generic function creates a SeaSondeRCS object either from a file path or directly from a list
+containing header and data. When \code{x} is a character string, the function determines the file type
+(either "CS" or "CSSY") by analyzing the spectra file and reads it using the appropriate reading function.
+If \code{specs_path} is not provided (or set to \code{rlang::zap()}), the default YAML specifications path
+corresponding to the detected file type is used.
+}
+\details{
+For character inputs, the function first checks if the specified file exists.
+It then determines the file type using \code{seasonder_find_spectra_file_type}. If the \code{specs_path}
+parameter is not provided or is set to \code{rlang::zap()}, the default specifications file path is obtained
+using \code{seasonder_defaultSpecsFilePath} based on the detected file type. The file is then read using the
+appropriate reading function:
+\itemize{
+\item \code{seasonder_readSeaSondeCSFile} for CS files.
+\item \code{seasonder_readSeaSondeCSSYFile} for CSSY files.
+}
+For list inputs, the SeaSondeRCS object is created directly from the provided header and data.
+Additionally, a processing step is appended to the object using \code{seasonder_setSeaSondeRCS_ProcessingSteps}
+with a creation step text that indicates the source.
+}
+\examples{
+\dontrun{
+  # Creating a SeaSondeRCS object from a list
+  cs_list <- list(header = my_header, data = my_data)
+  rcs_object <- seasonder_createSeaSondeRCS(cs_list)
+
+  # Creating a SeaSondeRCS object from a file path using default YAML specifications
+  rcs_object <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
+
+  # Creating a SeaSondeRCS object from a file path with a specified YAML specifications file
+  rcs_object <- seasonder_createSeaSondeRCS("path/to/cs_file.cs", specs_path = "path/to/specs.yaml")
+}
 }
 \seealso{
-\code{\link{new_SeaSondeRCS}}
-\code{\link{seasonder_readSeaSondeCSFile}} (for character inputs)
+\code{\link{new_SeaSondeRCS}},
+\code{\link{seasonder_readSeaSondeCSFile}},
+\code{\link{seasonder_readSeaSondeCSSYFile}},
 \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}}
 }

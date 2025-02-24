@@ -810,6 +810,38 @@ expect_true("lonlat" %in% names(MUSIC))
 
 #### seasonder_exportMUSICTable ####
 
+
+describe("SUNS test", {
+
+
+  # Create a SeaSondeRAPM object with corrections
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(
+    here::here("tests/testthat/data/TORA/IdealPattern.txt"),
+    override_antenna_bearing = 303,
+    override_phase_corrections = c(41.66,  40.69),
+    override_amplitude_factors = c(8.9078,  7.5399),
+    apply_phase_and_amplitude_corrections = TRUE
+  )
+
+  seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
+
+  # Create a SeaSondeRCS object
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(
+    here::here("tests/testthat/data/CSS_SUNS_2025_02_17_060000.csr"),
+    system.file("specs", "CS_V1.yaml", package = "SeaSondeR"),
+    seasonder_apm_object = seasonder_apm_obj
+  )
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 1L)
+
+  test <- seasonder_exportMUSICTable(seasonder_cs_obj)
+
+  test_that("The table created includes longitude, latitude, cell_number, range, doppler_cell, doppler_freq, radial_velocity, signal_power, bearing", {
+    expect_named(test, c("longitude", "latitude", "range_cell", "range", "doppler_bin", "doppler_freq", "radial_velocity", "signal_power", "bearing"))
+  })
+
+
+})
 describe("seasonder_exportMUSICTable", {
   phase_path <- here::here("tests/testthat/data/TORA/Phases.txt")
   amplitude_corrections <- c(1.22398329, 1.32768297)

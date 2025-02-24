@@ -1,0 +1,16 @@
+metadata:
+  version: 1.0.0
+  type: SeaSondeCS
+
+key_size_block:
+    key:
+      type: Char4
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "character"
+
+    size:
+      type: UInt32
+      qc_fun: qc_check_unsigned
+      qc_params:
+        expected_type: "numeric"

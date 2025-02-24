@@ -3030,3 +3030,24 @@ describe("Doppler interpolation",{
 
   })
 })
+
+
+#### Reduced Cross-spectra files ####
+
+describe("Reduced CS files",{
+
+  filepath <- here::here("tests/testthat/data/SUNS/CSS/CSS_SUNS_2025_02_17_060000.csr")
+  specs_path <- here::here("inst/specs/CSSY_V1.yaml")
+  endian <-  "big"
+
+describe("seasonder_readSeaSondeCSSYFile",{
+  it("should work",{
+
+    expect_silent(seasonder_readSeaSondeCSSYFile(filepath))
+  })
+
+})
+
+
+
+})
