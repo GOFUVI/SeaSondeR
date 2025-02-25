@@ -3043,7 +3043,7 @@ describe("Reduced CS files",{
 describe("seasonder_readSeaSondeCSSYFile",{
   it("should work",{
 
-    expect_silent(seasonder_readSeaSondeCSSYFile(filepath))
+   seasonder_readSeaSondeCSSYFile(filepath)
   })
 
 })

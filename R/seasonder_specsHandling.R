@@ -82,7 +82,7 @@ seasonder_defaultSpecsFilePath <- function(type = "CS") {
 #' print(result)
 #' }
 #'
-seasonder_readYAMLSpecs <- function(file_path, path) {
+seasonder_readYAMLSpecs <- function(file_path, path = rlang::zap()) {
 
   conditions_params <- list(calling_function = "seasonder_readYAMLSpecs",class="seasonder_read_yaml_file_error",seasonder_yaml_file_path=file_path,seasonder_yaml_specs_path=path)
   # Check if the file exists
@@ -94,7 +94,7 @@ seasonder_readYAMLSpecs <- function(file_path, path) {
   yaml_content <- rlang::try_fetch({
     yaml::read_yaml(file_path)
   }, error = function(e) {
-    rlang::inject(seasonder_logAndAbort(glue::glue("Reading error. The file '{file_path %||% ''}' might not be a valid YAML. Reason: {condMessage(e)}"),!!!conditions_params,parent=e))
+    rlang::inject(seasonder_logAndAbort(glue::glue("Reading error. The file '{file_path %||% ''}' might not be a valid YAML. Reason: {conditionMessage(e)}"),!!!conditions_params,parent=e))
   })
 
   # If the content is not a list, throw an error
@@ -102,12 +102,16 @@ seasonder_readYAMLSpecs <- function(file_path, path) {
     rlang::inject(seasonder_logAndAbort(glue::glue("Invalid YAML structure in file '{file_path}'."),!!!conditions_params))
   }
 
-  # Extract the desired data based on the given path
-  extracted_data <- purrr::pluck(yaml_content, !!!path)
+  extracted_data<- yaml_content
+  if(!rlang::is_zap(path) && is.character(path)){
+    # Extract the desired data based on the given path
+    extracted_data <- purrr::pluck(yaml_content, !!!path)
 
-  # If no data is found for the provided path, throw an error
-  if (is.null(extracted_data)) {
-    rlang::inject(seasonder_logAndAbort(glue::glue("Invalid specs path '{path}' for file '{file_path}'."),!!!conditions_params))
+    # If no data is found for the provided path, throw an error
+    if (is.null(extracted_data)) {
+      rlang::inject(seasonder_logAndAbort(glue::glue("Invalid specs path '{path}' for file '{file_path}'."),!!!conditions_params))
+    }
+
   }
 
   return(extracted_data)

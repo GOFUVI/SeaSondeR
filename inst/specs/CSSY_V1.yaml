@@ -14,3 +14,91 @@ key_size_block:
       qc_fun: qc_check_unsigned
       qc_params:
         expected_type: "numeric"
+
+CSSY:
+    HEAD:
+        sign:
+            FileVersion:
+                type: Char4
+                qc_fun: qc_check_type
+                qc_params:
+                    expected_type: "character"
+            SiteCode:
+                type: Char4
+                qc_fun: qc_check_type
+                qc_params:
+                    expected_type: "character"
+            FileType:
+                type: Char4
+                qc_fun: qc_check_type
+                qc_params:
+                    expected_type: "character"
+            UserFlags:
+                type: UInt32
+                qc_fun: qc_check_unsigned
+                qc_params:
+                    expected_type: "numeric"
+            FileDescription:
+                type: Char64
+                qc_fun: qc_check_type
+                qc_params:
+                    expected_type: "character"
+            OwnerName:
+                type: Char64
+                qc_fun: qc_check_type
+                qc_params:
+                    expected_type: "character"
+            Comment:
+                type: Char64
+                qc_fun: qc_check_type
+                qc_params:
+                    expected_type: "character"
+        srcn:
+            SourceCSFilename:
+              type: CharX
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "character"
+        mcda:
+            FirstSweepTimestamp:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+        dbrf:
+            dBmReference:
+              type: Double
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "numeric"
+        cs4h: "Read CS Header"
+    BODY:
+        indx:
+            index:
+              type: SInt32
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "integer"
+        scal:
+            nType:
+              type: SInt32
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "integer"
+            fmin:
+              type: Float
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "numeric"
+            fmax:
+              type: Float
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "numeric"
+            fscale:
+              type: Float
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "numeric"
+        cs1a: "Reduced Encoded Data"
+

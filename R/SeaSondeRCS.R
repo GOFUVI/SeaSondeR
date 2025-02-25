@@ -147,6 +147,7 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL, ...) {
 }
 
 
+
 #' Create a SeaSondeRCS object from a file path
 #'
 #' This method creates a SeaSondeRCS object by reading a file from the specified file path.
@@ -217,7 +218,7 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path = rlang::zap(), 
 
   if(rlang::is_zap(specs_path)){
 
-  # Retrieve the default specifications file path based on the detected file type
+    # Retrieve the default specifications file path based on the detected file type
     specs_path <- seasonder_defaultSpecsFilePath(type = file_type)
 
   }
@@ -2983,12 +2984,16 @@ seasonder_readCSField <- function(con, type, endian = "big") {
            "String" = {
              # Keep reading characters until a null terminator is found.
              chars <- NULL
+             out <- character(0)
              repeat {
                char <- read_values(1, "raw")
                if (char == as.raw(0)) break
                chars <- c(chars, char)
              }
-             rawToChar(do.call(c, list(chars)))
+             if(length(chars) >0){
+               out <- rawToChar(do.call(c, list(chars)))
+             }
+             return(out)
            },
            {
              # Raise an error for unknown data types.
@@ -3900,10 +3905,127 @@ seasonder_readSeaSondeCSFileData <- function(connection, header, endian = "big")
 
 #### Read CSSY file ####
 
-seasonder_readSeaSondeCSSYFile <- function(filepath, specs_path, endian = "big"){
+seasonder_readSeaSondeCSSYFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSY"), endian = "big"){
 
-  seasonder_logAndAbort("seasonder_readSeaSondeCSSYFile not implemented!!")
+  # Set up error handling parameters with function name, error class, and file path
+  conditions_params <- list(
+    calling_function = "seasonder_readSeaSondeCSSYFile",
+    class = "seasonder_read_cs_file_error",
+    seasonder_cs_filepath = filepath
+  )
 
+  # Retrieve YAML specifications for the key size block from the CSSY specifications file
+  specs <- seasonder_readYAMLSpecs(specs_path)
+
+  # Attempt to open the file in binary mode ("rb") with warnings suppressed
+  connection <- rlang::try_fetch(
+    suppressWarnings(file(filepath, "rb")),
+    error = function(e) {
+      # Abort if the file connection cannot be opened, including the error message
+      rlang::inject(
+        seasonder_logAndAbort(
+          glue::glue("Could no open connection to file {filepath %||% ''}. Reason: {conditionMessage(e)}."),
+          !!!conditions_params,
+          parent = e
+        )
+      )
+    }
+  )
+  # Ensure the file connection is closed when the function exits
+  on.exit(close(connection), add = TRUE)
+
+
+  specs_key_size <- purrr::chuck(specs, "key_size_block")
+
+  .read_reduced_encoded_data<- function(connection, key, endian){
+
+tracking_value <- 0L
+    command_byte <- readBin(connection, what = "raw", n = 1, size = 1, endian = endian)
+
+if(command_byte == as.raw(0x82)){
+x <- readBin(connection, what = "integer", n = 1, size = 1, endian = endian, signed = FALSE)
+n <- x + 1
+out <- purrr::accumulate(1:n,\(track,i){
+  val <- readBin(connection, what = "integer", n = 1, size = 2, endian = endian, signed = TRUE)
+  track <- track + val
+  track
+}, .init = tracking_value)
+out <- out[-1]
+
+
+}
+
+    browser()
+  }
+
+  .read_key_data <- function(connection, current_specs, endian, parent_key = NULL, keys_so_far =c()){
+    out <- list()
+
+    has_subkeys <- !all(purrr::map_lgl(current_specs, \(x)"type" %in% names(x)))
+    if(!has_subkeys){
+
+      variable_char_types <- purrr::map_lgl(current_specs, \(x) x$type == "CharX")
+      if(any(variable_char_types)){
+        variable_char_types_index <- which(variable_char_types)
+        current_specs <- purrr::reduce(variable_char_types_index, \(spcs_so_far, i){
+          spcs_so_far[[i]]$type <-  glue::glue("Char{size}", size = parent_key$size)
+          spcs_so_far
+        }, .init = current_specs )
+
+      }
+
+
+
+
+      out <-  seasonder_readSeaSondeCSFileBlock(current_specs, connection, endian)
+    }else{
+
+
+      key <- seasonder_readSeaSondeCSFileBlock(specs_key_size, connection, endian)
+      if(!key$key %in% names(current_specs) && !key$key %in% keys_so_far){
+        browser()
+        seek(connection,key$size,origin = "current")
+
+      }else if(!key$key %in% names(current_specs) && key$key %in% keys_so_far){
+        seek(connection,-8,origin = "current")
+        return(out)
+
+      }else{
+
+        keys_so_far <- unique(c(keys_so_far, names(current_specs)))
+        if(key$key == "cs4h"){
+
+          CSHSpecs <- seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CS"),"header")
+          out <-  list(seasonder_readSeaSondeCSFileHeader(CSHSpecs, connection, endian)) %>% magrittr::set_names(key$key)
+        }else if(key$key =="BODY"){
+
+          BODY_specs <- current_specs$BODY
+
+out <- .read_key_data(connection, BODY_specs, endian, parent_key = key, keys_so_far = keys_so_far)
+
+
+        }else if(key$key %in% c("cs1a")){
+
+          out <- .read_reduced_encoded_data(connection, key, endian)
+
+        }else{
+
+          out <- list(.read_key_data(connection, purrr::chuck(current_specs, key$key), endian, parent_key = key, keys_so_far = keys_so_far)) %>% magrittr::set_names(key$key)
+
+        }
+
+
+
+      }
+
+      out <- c(out,.read_key_data(connection, current_specs, endian, keys_so_far = keys_so_far))
+    }
+
+
+    return(out)
+  }
+  out <- .read_key_data(connection, specs, endian)
+  return(out)
 }
 
 #### Transform functions ####
