@@ -437,6 +437,94 @@ seasonder_readBodyRangeCell <- function(connection, specs, endian, specs_key_siz
   return(out)
 }
 
+#' Apply Scaling to SeaSondeRCSSY Data
+#'
+#' This function applies scaling to each vector of integer values contained in the list `values` by converting them to floating point
+#' voltage values using a specified scaling procedure. For each integer value:
+#'   - If the value equals 0xFFFFFFFF, it returns NaN;
+#'   - Otherwise, it computes an intermediate value using the formula:
+#'         intermediate = value * (fmax - fmin) / fscale + fmin
+#'     and then converts it to a voltage via:
+#'         voltage = 10^((intermediate + dbRef) / 10)
+#'
+#' The function processes each vector in the input list and returns a new list having the same structure, but with each value converted
+#' into its corresponding voltage value. It also performs several validations regarding input types and values.
+#'
+#' @param values A list of numeric vectors containing integer values to be scaled. Each vector is expected to contain values read
+#'        from a binary CSSY values block.
+#' @param fmax A numeric value representing the maximum scaling value. Used to compute the linear scaling factor.
+#' @param fmin A numeric value representing the minimum scaling value. Acts as an offset for the scaling.
+#' @param fscale A numeric value representing the scaling factor. Must not be zero as it determines the divisor in the scaling formula.
+#' @param dbRef A numeric value representing the decibel reference to be added before the voltage conversion step.
+#'
+#' @return A list with the same structure as `values`, where each numeric vector has been transformed to a vector of floating point
+#' voltage values. Special integer values equal to 0xFFFFFFFF are converted to NaN.
+#'
+#' @examples
+#' # Example usage:
+#' values <- list(c(1000, 0xFFFFFFFF, 2000))
+#' scaled <- seasonder_SeaSondeRCSSYApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, dbRef = -20)
+#' print(scaled)
+#'
+#' @details
+#' The scaling process performs the following steps for each input value:
+#'   1. Checks whether the value equals 0xFFFFFFFF. If so, it returns NaN immediately because this value indicates a
+#'      missing or invalid measurement.
+#'   2. Otherwise, it computes the intermediate scaled value by applying a linear transformation:
+#'         intermediate = value * (fmax - fmin) / fscale + fmin
+#'   3. Finally, it converts the intermediate value to a voltage using:
+#'         voltage = 10^((intermediate + dbRef) / 10)
+#'
+#' The function includes input validation to ensure that `values` is a list, and that `fmax`, `fmin`, `fscale`, and `dbRef`
+#' are numeric. It also checks that no element in `values` is non-numeric and that `fscale` is non-zero to prevent division errors.
+seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRef) {
+
+  # Validate that 'values' is a list
+  if (!is.list(values)) {
+    stop("The input 'values' must be a list of numeric vectors.")
+  }
+
+  # Validate that the scaling parameters and reference are numeric
+  if (!is.numeric(fmax) || !is.numeric(fmin) || !is.numeric(fscale) || !is.numeric(dbRef)) {
+    stop("Parameters 'fmax', 'fmin', 'fscale', and 'dbRef' must be numeric.")
+  }
+
+  # Prevent division by zero by ensuring fscale is not zero
+  if (fscale == 0) {
+    stop("'fscale' must not be zero.")
+  }
+
+  # Process each vector in the input list 'values'
+  scaled_values <- lapply(values, function(vec) {
+    # Validate that the current element is a numeric vector
+    if (!is.numeric(vec)) {
+      stop("Each element in 'values' must be a numeric vector.")
+    }
+
+    # Apply scaling to each value in the numeric vector
+    sapply(vec, function(value) {
+      # Check if the current value equals the special marker 0xFFFFFFFF (indicating missing/invalid data)
+      if (value == 0xFFFFFFFF) {
+        # Return NaN for invalid measurement
+        return(NaN)
+      } else {
+        # Compute the intermediate scaled value using the linear transformation
+        intermediate <- value * (fmax - fmin) / fscale + fmin
+
+        # Convert the intermediate value to voltage using the decibel conversion formula
+        voltage <- 10^((intermediate + dbRef) / 10)
+
+        # Return the computed voltage value
+        return(voltage)
+      }
+    })
+  })
+
+  # Return the list containing the scaled voltage vectors, preserving the structure of 'values'
+  return(scaled_values)
+}
+
+
 seasonder_readCSSYBody <- function(connection, specs, size, endian = "big", specs_key_size = NULL){
   end_point <- seek(connection) + size
 
@@ -448,56 +536,103 @@ seasonder_readCSSYBody <- function(connection, specs, size, endian = "big", spec
   return(out)
 }
 
-seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", parent_key = NULL, keys_so_far =c("CSSY","HEAD"), specs_key_size = NULL){
+#' Read CSSY File Header
+#'
+#' This function reads the header section of a CSSY file from a binary connection. The CSSY file header
+#' contains a set of key blocks formatted according to the SeaSonde CSSY specification. The header section
+#' is processed recursively and terminates when one of the following conditions is met:
+#' \itemize{
+#'   \item A key with name "BODY" is encountered. In this case, the connection is rewound by 8 bytes
+#'         to allow subsequent processing of the body.
+#'   \item A key that is not defined in \code{current_specs} but is already present in the
+#'         \code{keys_so_far} vector is encountered (indicative of repeated keys), which triggers termination.
+#' }
+#'
+#' When no subkeys are specified in \code{current_specs} (i.e. \code{current_specs} comprises only
+#' simple field definitions), the function delegates the processing to \code{seasonder_readCSSYFields}.
+#'
+#' @param connection A binary connection from which to read the CSSY file header.
+#' @param current_specs A list representing the specification for the header; may contain nested subkeys.
+#' @param endian A character string indicating the byte order for reading numeric values ("big" or "little").
+#' @param parent_key (Optional) A list with information from the parent key block, used when processing nested keys.
+#' @param keys_so_far A character vector of keys already processed, used to avoid recursive loops. Defaults to c("CSSY", "HEAD").
+#' @param specs_key_size A specification for reading the key size block, often obtained from YAML specs.
+#'
+#' @return A list containing the parsed CSSY header information. The returned list may be empty if a termination
+#'         condition is encountered.
+#'
+#' @details The function processes the CSSY header recursively:
+#' \itemize{
+#'   \item If \code{current_specs} contains only field definitions, \code{seasonder_readCSSYFields} is called.
+#'   \item When a key named "BODY" is encountered, it signifies the beginning of the body section; the
+#'         function rewinds the connection 8 bytes and stops processing further keys.
+#'   \item If a key is encountered that is not defined in \code{current_specs} but is already present in
+#'         \code{keys_so_far}, the function also rewinds the connection 8 bytes and terminates header reading.
+#'   \item Otherwise, the function updates \code{keys_so_far}, handles special cases (e.g., key "cs4h"), and
+#'         calls itself recursively to process nested keys.
+#' }
+#'
+#' @importFrom purrr map_lgl chuck reduce
+#' @importFrom magrittr set_names
+#' @import glue
+#'
+#' @examples
+#' \dontrun{
+#'   con <- file("path/to/file.cssy", "rb")
+#'   specs <- seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CSSY"), "header")
+#'   header <- seasonder_readCSSYHeader(con, specs, endian = "big")
+#'   close(con)
+#' }
+seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", parent_key = NULL, keys_so_far = c("CSSY", "HEAD"), specs_key_size = NULL){
+  # Initialize an empty output list for accumulating header values
   out <- list()
 
-  has_subkeys <- !all(purrr::map_lgl(current_specs, \(x)"type" %in% names(x)))
+  # Determine if the current specifications define subkeys or only simple fields
+  has_subkeys <- !all(purrr::map_lgl(current_specs, \(x) "type" %in% names(x)))
+
   if(!has_subkeys){
-
+    # When there are no subkeys, delegate reading to seasonder_readCSSYFields
     out <- seasonder_readCSSYFields(connection, current_specs, endian, parent_key)
-
-  }else{
-
-
+  } else {
+    # Read the next key block from the binary connection
     key <- seasonder_readSeaSondeCSFileBlock(specs_key_size, connection, endian)
-    browser()
-    if(!key$key %in% names(current_specs) && !key$key %in% keys_so_far){
 
-      seek(connection,key$size,origin = "current")
-
-    }else if(!key$key %in% names(current_specs) && key$key %in% keys_so_far){
-      seek(connection,-8,origin = "current")
+    # Termination condition: if the key is "BODY", rewind 8 bytes and terminate header reading
+    if(key$key == "BODY"){
+      seek(connection, -8, origin = "current")
       return(out)
-
-    }else{
-
+    } else if(!key$key %in% names(current_specs) && !key$key %in% keys_so_far){
+      # If key is unknown (not in current_specs and not already seen), skip it by advancing connection by key$size bytes
+      seek(connection, key$size, origin = "current")
+    } else if(!key$key %in% names(current_specs) && key$key %in% keys_so_far){
+      # If key is not defined in current_specs but already encountered, rewind 8 bytes and finish header reading
+      seek(connection, -8, origin = "current")
+      return(out)
+    } else {
+      # Update keys_so_far to include the names defined in the current specification
       keys_so_far <- unique(c(keys_so_far, names(current_specs)))
       if(key$key == "cs4h"){
-
-        CSHSpecs <- seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CS"),"header")
-        out <-  list(seasonder_readSeaSondeCSFileHeader(CSHSpecs, connection, endian)) %>% magrittr::set_names(key$key)
-      }else{
-
-        out <- list(seasonder_readCSSYHeader(connection, purrr::chuck(current_specs, key$key), endian, parent_key = key, keys_so_far = keys_so_far)) %>% magrittr::set_names(key$key)
-
+        # Special handling: for key 'cs4h', read the CS file header using its respective specifications
+        CSHSpecs <- seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CS"), "header")
+        out <- list(seasonder_readSeaSondeCSFileHeader(CSHSpecs, connection, endian)) %>% magrittr::set_names(key$key)
+      } else {
+        # Recursively process the key using the sub-specs defined in current_specs
+        out <- list(seasonder_readCSSYHeader(connection, purrr::chuck(current_specs, key$key), endian, parent_key = key, keys_so_far = keys_so_far, specs_key_size = specs_key_size)) %>% magrittr::set_names(key$key)
       }
-
-
-
     }
-browser()
-    out <- c(out,seasonder_readCSSYHeader(connection, current_specs, endian, keys_so_far = keys_so_far))
+    # Continue recursive processing of the header for any remaining keys
+    out <- c(out, seasonder_readCSSYHeader(connection, current_specs, endian, keys_so_far = keys_so_far, specs_key_size = specs_key_size))
   }
-
 
   return(out)
 }
 
-seasonder_readSeaSondeCSSYFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSY"), endian = "big"){
+
+seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSY"), endian = "big"){
 
   # Set up error handling parameters with function name, error class, and file path
   conditions_params <- list(
-    calling_function = "seasonder_readSeaSondeCSSYFile",
+    calling_function = "seasonder_readSeaSondeRCSSYFile",
     class = "seasonder_read_cs_file_error",
     seasonder_cs_filepath = filepath
   )
@@ -547,7 +682,6 @@ seasonder_readSeaSondeCSSYFile <- function(filepath, specs_path = seasonder_defa
 
 
   body <- seasonder_readCSSYBody(connection, body_specs, size = body_key$size, endian, specs_key_size = specs_key_size)
-  browser()
 
 
   return(out)

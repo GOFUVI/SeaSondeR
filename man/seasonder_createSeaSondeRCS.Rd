@@ -33,7 +33,7 @@ using \code{seasonder_defaultSpecsFilePath} based on the detected file type. The
 appropriate reading function:
 \itemize{
 \item \code{seasonder_readSeaSondeCSFile} for CS files.
-\item \code{seasonder_readSeaSondeCSSYFile} for CSSY files.
+\item \code{seasonder_readSeaSondeRCSSYFile} for CSSY files.
 }
 For list inputs, the SeaSondeRCS object is created directly from the provided header and data.
 Additionally, a processing step is appended to the object using \code{seasonder_setSeaSondeRCS_ProcessingSteps}
@@ -55,6 +55,6 @@ with a creation step text that indicates the source.
 \seealso{
 \code{\link{new_SeaSondeRCS}},
 \code{\link{seasonder_readSeaSondeCSFile}},
-\code{\link{seasonder_readSeaSondeCSSYFile}},
+\code{\link{seasonder_readSeaSondeRCSSYFile}},
 \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}}
 }

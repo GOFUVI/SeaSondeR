@@ -77,7 +77,7 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 #' appropriate reading function:
 #' \itemize{
 #'   \item \code{seasonder_readSeaSondeCSFile} for CS files.
-#'   \item \code{seasonder_readSeaSondeCSSYFile} for CSSY files.
+#'   \item \code{seasonder_readSeaSondeRCSSYFile} for CSSY files.
 #' }
 #' For list inputs, the SeaSondeRCS object is created directly from the provided header and data.
 #' Additionally, a processing step is appended to the object using \code{seasonder_setSeaSondeRCS_ProcessingSteps}
@@ -86,7 +86,7 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 #' @seealso
 #' \code{\link{new_SeaSondeRCS}},
 #' \code{\link{seasonder_readSeaSondeCSFile}},
-#' \code{\link{seasonder_readSeaSondeCSSYFile}},
+#' \code{\link{seasonder_readSeaSondeRCSSYFile}},
 #' \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}}
 #'
 #' @importFrom rlang zap
@@ -174,7 +174,7 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL, ...) {
 #'   \item Reads the file using the appropriate function:
 #'         \itemize{
 #'           \item \code{seasonder_readSeaSondeCSFile} for CS files.
-#'           \item \code{seasonder_readSeaSondeCSSYFile} for CSSY files.
+#'           \item \code{seasonder_readSeaSondeRCSSYFile} for CSSY files.
 #'         }
 #'   \item Creates a SeaSondeRCS object using \code{new_SeaSondeRCS} with the header and data obtained from the file.
 #'   \item Appends a processing step indicating the creation source via \code{seasonder_setSeaSondeRCS_ProcessingSteps}
@@ -186,7 +186,7 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL, ...) {
 #' \code{\link{seasonder_find_spectra_file_type}},
 #' \code{\link{seasonder_defaultSpecsFilePath}},
 #' \code{\link{seasonder_readSeaSondeCSFile}},
-#' \code{\link{seasonder_readSeaSondeCSSYFile}},
+#' \code{\link{seasonder_readSeaSondeRCSSYFile}},
 #' \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}},
 #' \code{\link{SeaSondeRCS_creation_step_text}}
 #'
@@ -225,7 +225,7 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path = rlang::zap(), 
 
   read_fun <- switch(file_type,
                      CS = seasonder_readSeaSondeCSFile,
-                     CSSY = seasonder_readSeaSondeCSSYFile)
+                     CSSY = seasonder_readSeaSondeRCSSYFile)
 
   # Reading the SeaSonde CS file
   result <- read_fun(x, specs_path, endian = endian)
