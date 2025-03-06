@@ -365,3 +365,121 @@ describe("seasonder_read_asign", {
 })
 
 
+describe("Tests for seasonder_readCSSYFields", {
+  it("replaces CharX with Char{size} and calls seasonder_readSeaSondeCSFileBlock correctly", {
+    con <- rawConnection(as.raw(c(0x01)), "rb")
+    on.exit(close(con))
+    specs <- list(a = list(type = "CharX"), b = list(type = "Other"))
+    parent_key <- list(size = 12)
+    local_mock(seasonder_readSeaSondeCSFileBlock = function(specs_in, con_arg, endian) {
+      return(specs_in)
+    }, .local_envir = environment())
+    result <- seasonder_readCSSYFields(con, specs, "big", parent_key)
+    expect_equal(result$a$type, "Char12",
+                 info = "CharX should be replaced with Char12 using parent_key$size")
+    expect_equal(result$b$type, "Other",
+                 info = "Non-CharX types should remain unchanged")
+  })
+})
+
+
+describe("Tests for seasonder_readBodyRangeCell", {
+  it("advances connection when key is not in specs and terminates on 'END '", {
+    con <- rawConnection(as.raw(rep(0x01, 10)), "rb+")
+    pos_before <- seek(con, where = NA, origin = "current")
+    specs <- list(valid = "dummy")
+    counter <- 0
+    keys <- list(
+      list(key = "unknown", size = 5),
+      list(key = "END ", size = 0)
+    )
+    local_mock(seasonder_readSeaSondeCSFileBlock = function(specs_key, con_arg, endian) {
+      counter <<- counter + 1
+      return(keys[[counter]])
+    }, .local_envir = environment())
+    result <- seasonder_readBodyRangeCell(con, specs, "big", specs_key_size = NULL)
+    pos_after <- seek(con, where = NA, origin = "current")
+    expect_equal(pos_after, pos_before + 5,
+                 info = "Connection should be advanced by key$size when key not in specs")
+    expect_equal(result, list(),
+                 info = "Should return empty list when encountering 'END ' key")
+    close(con)
+  })
+
+  it("exits loop immediately when first key is 'END '", {
+    con <- rawConnection(as.raw(rep(0x01, 10)), "rb")
+    specs <- list(x = "dummy")
+    local_mock(seasonder_readSeaSondeCSFileBlock = function(specs_key, con_arg, endian) {
+      return(list(key = "END ", size = 0))
+    }, .local_envir = environment())
+    result <- seasonder_readBodyRangeCell(con, specs, "big", specs_key_size = NULL)
+    expect_equal(result, list(),
+                 info = "Should return empty list when 'END ' key is encountered")
+    close(con)
+  })
+
+  it("handles repeated 'indx' key by calling seek with -8 and returns the first result", {
+    skip("Skipping test that requires mocking of base function 'seek'")
+  })
+
+  it("handles keys for groups calling reduced, csign, and asign functions", {
+    con <- rawConnection(as.raw(rep(0x01, 10)), "rb")
+    # Test branch for key 'cs1a'
+    counter <- 0
+    keys <- list(
+      list(key = "cs1a", size = 4),
+      list(key = "END ", size = 0)
+    )
+    local_mock(seasonder_readSeaSondeCSFileBlock = function(specs_key, con_arg, endian) {
+      counter <<- counter + 1
+      return(keys[[counter]])
+    }, .local_envir = environment())
+    local_mock(seasonder_read_reduced_encoded_data = function(con, key, endian) {
+      return("reduced_val")
+    }, .local_envir = environment())
+    result <- seasonder_readBodyRangeCell(con, list(cs1a = "dummy"), "big", specs_key_size = NULL)
+    expect_equal(result$cs1a, "reduced_val",
+                 info = "For key 'cs1a', should call reduced function and assign result")
+
+    # Test branch for key 'csgn'
+    counter <- 0
+    keys <- list(
+      list(key = "csgn", size = 5),
+      list(key = "END ", size = 0)
+    )
+    local_mock(seasonder_readSeaSondeCSFileBlock = function(specs_key, con_arg, endian) {
+      counter <<- counter + 1
+      return(keys[[counter]])
+    }, .local_envir = environment())
+    local_mock(seasonder_read_csign = function(con, key) {
+      return("csign_val")
+    }, .local_envir = environment())
+    result <- seasonder_readBodyRangeCell(con, list(csgn = "dummy"), "big", specs_key_size = NULL)
+    expect_equal(result$csgn, "csign_val",
+                 info = "For key 'csgn', should call csign function and assign result")
+
+    # Test branch for key 'asgn'
+    counter <- 0
+    keys <- list(
+      list(key = "asgn", size = 5),
+      list(key = "END ", size = 0)
+    )
+    local_mock(seasonder_readSeaSondeCSFileBlock = function(specs_key, con_arg, endian) {
+      counter <<- counter + 1
+      return(keys[[counter]])
+    }, .local_envir = environment())
+    local_mock(seasonder_read_asign = function(con, key) {
+      return("asgn_val")
+    }, .local_envir = environment())
+    result <- seasonder_readBodyRangeCell(con, list(asgn = "dummy"), "big", specs_key_size = NULL)
+    expect_equal(result$asgn, "asgn_val",
+                 info = "For key 'asgn', should call asign function and assign result")
+    close(con)
+  })
+})
+
+
+
+
+
+

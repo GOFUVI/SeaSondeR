@@ -448,7 +448,7 @@ seasonder_readCSSYBody <- function(connection, specs, size, endian = "big", spec
   return(out)
 }
 
-seasonder_readCSSYHeader <- function(connection, current_specs, endian, parent_key = NULL, keys_so_far =c("CSSY","HEAD"), specs_key_size = NULL){
+seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", parent_key = NULL, keys_so_far =c("CSSY","HEAD"), specs_key_size = NULL){
   out <- list()
 
   has_subkeys <- !all(purrr::map_lgl(current_specs, \(x)"type" %in% names(x)))
@@ -460,8 +460,9 @@ seasonder_readCSSYHeader <- function(connection, current_specs, endian, parent_k
 
 
     key <- seasonder_readSeaSondeCSFileBlock(specs_key_size, connection, endian)
+    browser()
     if(!key$key %in% names(current_specs) && !key$key %in% keys_so_far){
-      browser()
+
       seek(connection,key$size,origin = "current")
 
     }else if(!key$key %in% names(current_specs) && key$key %in% keys_so_far){
@@ -484,7 +485,7 @@ seasonder_readCSSYHeader <- function(connection, current_specs, endian, parent_k
 
 
     }
-
+browser()
     out <- c(out,seasonder_readCSSYHeader(connection, current_specs, endian, keys_so_far = keys_so_far))
   }
 
