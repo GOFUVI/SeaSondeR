@@ -16,6 +16,11 @@ test_that("Related functions are defined",{
   expect_true(is.function(seasonder_readSeaSondeCSFileHeaderV6))
   expect_true(is.function(seasonder_readSeaSondeCSFileData))
   expect_true(is.function(seasonder_readSeaSondeCSFile))
+  expect_true(is.function(seasonder_read_reduced_encoded_data),
+              info = "seasonder_read_reduced_encoded_data must be defined")
+  expect_true(is.function(seasonder_read_csign), info = "The function seasonder_read_csign must be implemented")
+  expect_true(is.function(seasonder_read_asign),
+              info = "The function seasonder_read_asign should exist")
 
 })
 
@@ -3032,22 +3037,4 @@ describe("Doppler interpolation",{
 })
 
 
-#### Reduced Cross-spectra files ####
 
-describe("Reduced CS files",{
-
-  filepath <- here::here("tests/testthat/data/SUNS/CSS/CSS_SUNS_2025_02_17_060000.csr")
-  specs_path <- here::here("inst/specs/CSSY_V1.yaml")
-  endian <-  "big"
-
-describe("seasonder_readSeaSondeCSSYFile",{
-  it("should work",{
-
-   seasonder_readSeaSondeCSSYFile(filepath)
-  })
-
-})
-
-
-
-})

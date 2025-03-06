@@ -101,4 +101,16 @@ CSSY:
               qc_params:
                   expected_type: "numeric"
         cs1a: "Reduced Encoded Data"
+        cs2a: "Reduced Encoded Data"
+        cs3a: "Reduced Encoded Data"
+        c13r: "Reduced Encoded Data"
+        c13i: "Reduced Encoded Data"
+        c23r: "Reduced Encoded Data"
+        c23i: "Reduced Encoded Data"
+        c12r: "Reduced Encoded Data"
+        c12i: "Reduced Encoded Data"
+        csgn: "Cross-Spectra Sign"
+        asgn: "Auto-Spectra Sign"
+        csqf: "Reduced Encoded Data"
+        'END ': "the end"
 

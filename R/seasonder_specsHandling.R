@@ -6,7 +6,8 @@ seasonder_the$valid_yaml_seasondecssy_versions <- c("1.0.0")  # Valid version fo
 # Maps the specification type ("CS" or "CSSY") to its corresponding YAML file located within the SeaSondeR package.
 seasonder_the$specs_filepaths <- list(
   "CS" = system.file("specs", "CS_V1.yaml", package = "SeaSondeR"),
-  "CSSY" = system.file("specs", "CSSY_V1.yaml", package = "SeaSondeR")
+  "CSSY" = system.file("specs", "CSSY_V1.yaml", package = "SeaSondeR"),
+  "CSSW" = system.file("specs", "CSSW_V1.yaml", package = "SeaSondeR")
 )
 
 #' Get the Default Specifications File Path
@@ -212,6 +213,7 @@ seasonder_find_spectra_file_type <- function(filepath, endian = "big") {
   # Use a switch to determine the output based on the key read from the file block
   out <- switch(
     file_id$key,
+    CSSW = "CSSW",
     CSSY = "CSSY",
     CS = "CS",
     # If the key is not recognized, abort with an error message
