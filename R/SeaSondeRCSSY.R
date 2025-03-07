@@ -536,6 +536,16 @@ seasonder_readCSSYBody <- function(connection, specs, size, endian = "big", spec
   return(out)
 }
 
+seasonder_readCSSYLims <- function(connection, n_values, endian = "big") {
+
+  # Read n_values of 32-bit unsigned integers
+  uint_values <- readBin(connection, what = "integer", n = n_values, size = 4, endian = endian, signed = FALSE)
+
+  lims_matrix <- matrix(uint_values, ncol = 4, byrow = TRUE)
+  colnames(lims_matrix) <- c("LeftBraggLeftLimit", "LeftBraggRightLimit", "RightBraggLeftLimit", "RightBraggRightLimit")
+  return(lims_matrix)
+}
+
 #' Read CSSY File Header
 #'
 #' This function reads the header section of a CSSY file from a binary connection. The CSSY file header
@@ -615,7 +625,15 @@ seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", 
         # Special handling: for key 'cs4h', read the CS file header using its respective specifications
         CSHSpecs <- seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CS"), "header")
         out <- list(seasonder_readSeaSondeCSFileHeader(CSHSpecs, connection, endian)) %>% magrittr::set_names(key$key)
-      } else {
+      } else if(key$key %in% c("alim","wlim")){
+
+        out <- seasonder_readCSSYHeader(connection, purrr::chuck(current_specs, key$key), endian, parent_key = key, keys_so_far = keys_so_far, specs_key_size = specs_key_size)
+
+        out$lims <- seasonder_readCSSYLims(connection, out$nRange,endian = endian)
+
+        out <- list(out) %>% magrittr::set_names(key$key)
+
+      }else{
         # Recursively process the key using the sub-specs defined in current_specs
         out <- list(seasonder_readCSSYHeader(connection, purrr::chuck(current_specs, key$key), endian, parent_key = key, keys_so_far = keys_so_far, specs_key_size = specs_key_size)) %>% magrittr::set_names(key$key)
       }
