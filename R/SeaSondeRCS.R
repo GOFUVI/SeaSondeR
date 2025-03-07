@@ -3196,7 +3196,7 @@ read_and_qc_field <- function(field_spec, connection, endian = "big") {
 #'
 #' @return A named list where each entry corresponds to a field that has been read. Each key is
 #'   the field name, and its associated value is the data for that field after quality control.
-
+#' @export
 seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian = "big") {
   # Use purrr::map to apply the read_and_qc_field function to each field specification
   results <- withCallingHandlers(

@@ -380,7 +380,7 @@ seasonder_read_asign <- function(connection, key) {
   return(result)
 }
 
-seasonder_readCSSYFields <- function(connection, specs, endian, parent_key){
+seasonder_readCSSYFields <- function(connection, specs, endian, parent_key= NULL){
   variable_char_types <- purrr::map_lgl(specs, \(x) x$type == "CharX")
   if(any(variable_char_types)){
     variable_char_types_index <- which(variable_char_types)
@@ -390,6 +390,7 @@ seasonder_readCSSYFields <- function(connection, specs, endian, parent_key){
     }, .init = specs )
 
   }
+  # browser(expr = parent_key$key == "scal")
   out <-  seasonder_readSeaSondeCSFileBlock(specs, connection, endian)
 
   return(out)
@@ -425,6 +426,7 @@ seasonder_readBodyRangeCell <- function(connection, specs, endian, specs_key_siz
 
 
     }else{
+
       out <- append(out,
                     list(seasonder_readCSSYFields(connection, purrr::chuck(specs, key$key), endian, parent_key = key )) %>% magrittr::set_names(key$key)
       )
