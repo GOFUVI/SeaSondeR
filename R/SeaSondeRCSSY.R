@@ -648,6 +648,26 @@ seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", 
 }
 
 
+#' Transform CSSY Header to SeaSondeRCS Header
+#'
+#' This helper function extracts the 'cs4h' component from a CSSY header, removes it from the original header,
+#' and embeds the remaining header information within the 'header_cssy' field of the CS header.
+#'
+#' @param header A list representing the CSSY header. Must contain a 'cs4h' component.
+#' @return A transformed header where the primary CS header is taken from 'cs4h' and the remaining CSSY header fields
+#'         are stored in the 'header_cssy' element.
+seasonder_CSSY2CSHeader <- function(header) {
+  if (is.null(header$cs4h)) {
+    seasonder_logAndAbort("CSSY header does not contain a cs4h component")
+  }
+  header_cs <- header$cs4h  # Extract the valid CS header
+  header_cssy <- header    # Copy the original header
+  header_cssy$cs4h <- NULL  # Remove the cs4h component from the original header
+  header_cs$header_cssy <- header_cssy  # Embed the remaining header
+  return(header_cs)
+}
+
+
 seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSY"), endian = "big"){
 
   # Set up error handling parameters with function name, error class, and file path
@@ -693,7 +713,7 @@ seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_def
 
 
   header <- seasonder_readCSSYHeader(connection, header_specs,endian, specs_key_size = specs_key_size)
-
+  header <- seasonder_CSSY2CSHeader(header)  # Transform CSSY header to valid CS header
   body_key <- seasonder_readSeaSondeCSFileBlock(specs_key_size, connection, endian)
 
   body_specs <- file_specs %>% purrr::chuck(body_key$key)
