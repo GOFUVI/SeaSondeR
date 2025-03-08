@@ -1,0 +1,92 @@
+List of 63
+ $ :List of 23
+  ..$ indx:List of 1
+  .. ..$ index: int 1
+  ..$ scal:List of 4
+  .. ..$ nType : int 1
+  .. ..$ fmin  : num -57.9
+  .. ..$ fmax  : num -42949732
+  .. ..$ fscale: num 4.29e+09
+  ..$ cs1a: int [1:1024] 6095 5681 5747 6223 6182 6104 5817 6285 5658 5968 ...
+  ..$ scal:List of 4
+  .. ..$ nType : int 1
+  .. ..$ fmin  : num -58.5
+  .. ..$ fmax  : num -42949732
+  .. ..$ fscale: num 4.29e+09
+  ..$ cs2a: int [1:1024] 5569 5838 5433 6119 5855 5555 5605 5818 5806 5830 ...
+  ..$ scal:List of 4
+  .. ..$ nType : int 1
+  .. ..$ fmin  : num -50.2
+  .. ..$ fmax  : num -42949724
+  .. ..$ fscale: num 4.29e+09
+  ..$ cs3a: int [1:1024] 7035 6999 6849 6668 6921 7027 6777 6629 6596 6926 ...
+  ..$ scal:List of 4
+  .. ..$ nType : int 1
+  .. ..$ fmin  : num -55.2
+  .. ..$ fmax  : num -42949728
+  .. ..$ fscale: num 4.29e+09
+  ..$ c13r: int [1:1024] 7109 7806 6651 7258 6689 6861 6637 8034 6302 6581 ...
+  ..$ scal:List of 4
+  .. ..$ nType : int 1
+  .. ..$ fmin  : num -56
+  .. ..$ fmax  : num -42949728
+  .. ..$ fscale: num 4.29e+09
+  ..$ c13i: int [1:1024] 7254 7213 6791 6906 7266 7535 7632 6726 6595 7674 ...
+  ..$ scal:List of 4
+  .. ..$ nType : int 1
+  .. ..$ fmin  : num -77.5
+  .. ..$ fmax  : num -42949752
+  .. ..$ fscale: num 4.29e+09
+  ..$ c23r: int [1:1024] 4422 4955 4842 5091 4760 4864 4351 4776 4172 4228 ...
+  ..$ scal:List of 4
+  .. ..$ nType : int 1
+  .. ..$ fmin  : num -54.3
+  .. ..$ fmax  : num -42949728
+  .. ..$ fscale: num 4.29e+09
+  ..$ c23i: int [1:1024] 6599 6674 6633 6767 8740 7143 6336 6998 6652 7465 ...
+  ..$ scal:List of 4
+  .. ..$ nType : int 1
+  .. ..$ fmin  : num -60.1
+  .. ..$ fmax  : num -42949732
+  .. ..$ fscale: num 4.29e+09
+  ..$ c12r: int [1:1024] 6318 6444 5473 6696 6335 6821 6893 6419 5949 6051 ...
+  ..$ scal:List of 4
+  .. ..$ nType : int 1
+  .. ..$ fmin  : num -59.4
+  .. ..$ fmax  : num -42949732
+  .. ..$ fscale: num 4.29e+09
+  ..$ c12i: int [1:1024] 6514 5833 7621 6404 6467 6422 6225 6993 5920 6794 ...
+  ..$ csgn:List of 6
+  .. ..$ C13r: int [1:1024] 1 0 1 0 1 1 0 1 1 1 ...
+  .. ..$ C13i: int [1:1024] 1 1 0 1 1 0 1 1 0 0 ...
+  .. ..$ C23r: int [1:1024] 0 0 0 1 0 1 1 1 1 1 ...
+  .. ..$ C23i: int [1:1024] 1 0 1 1 1 0 0 1 1 0 ...
+  .. ..$ C12r: int [1:1024] 0 1 1 1 1 0 0 0 0 0 ...
+  .. ..$ C12i: int [1:1024] 1 1 1 0 0 0 1 0 1 1 ...
+  ..$ asgn:List of 3
+  .. ..$ cs1a: int [1:1024] 0 0 0 0 0 0 0 0 0 0 ...
+  .. ..$ cs2a: int [1:1024] 0 0 0 0 0 0 0 0 0 0 ...
+  .. ..$ cs3a: int [1:1024] 0 0 0 0 0 0 1 1 0 0 ...
+  ..$ scal:List of 4
+  .. ..$ nType : int 1
+  .. ..$ fmin  : num 1.01
+  .. ..$ fmax  : num -42949672
+  .. ..$ fscale: num 4.29e+09
+  ..$ csqf: int [1:1024] 1 1 1 1 1 1 1 1 1 1 ...
+ $ :List of 23
+  ..$ indx:List of 1
+  .. ..$ index: int 2
+
+  cell 2 data
+
+  $ :List of 23
+  ..$ indx:List of 1
+  .. ..$ index: int 3
+
+  cell 3 data
+
+   $ :List of 23
+  ..$ indx:List of 1
+  .. ..$ index: int 4
+
+cell 4 data

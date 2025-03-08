@@ -2,15 +2,15 @@
 #'
 #' This function creates a SeaSondeRAPM object to store antenna pattern calibration data.
 #'
-#' @param calibration_matrix A 2 x b complex matrix, where b is the number of bearings for calibration.
+#' @param calibration_matrix A 3 x b complex matrix, where b is the number of bearings for calibration.
 #' @param ... Additional named attributes that will be passed to \code{\link{seasonder_initializeAttributesSeaSondeRAPM}}.
 #'
 #' @return A SeaSondeRAPM object containing a complex matrix with class attribute 'SeaSondeRAPM' and
-#'         additional attributes for metadata. Row names are set "A13" and "A23" and column names are set to be the values in BEAR.
+#'         additional attributes for metadata. Row names are set "A13", "A23" and "A33" and column names are set to be the values in BEAR.
 #'
 #' @details
 #' The function performs the following operations:
-#' 1. Validates the \code{calibration_matrix} with code{\link{seasonder_validateCalibrationMatrixSeaSondeRAPM}}.
+#' 1. Validates the \code{calibration_matrix} with \code{\link{seasonder_validateCalibrationMatrixSeaSondeRAPM}}.
 #' 2. Initializes all other attributes either with default or user-provided values.
 #' 3. Merges the initialized attributes into \code{calibration_matrix}.
 #' 4. Sets the object's class to 'SeaSondeRAPM'.
@@ -20,36 +20,48 @@
 #' @seealso
 #' \code{\link{seasonder_validateCalibrationMatrixSeaSondeRAPM}},
 #' \code{\link{seasonder_initializeAttributesSeaSondeRAPM}}
-
+#'
 #' @importFrom rlang %||%
 #' @importFrom magrittr %>% %<>%
 #' @export
-seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(real=NA_real_, imaginary=NA_real_), nrow = 2, ncol = 0), ...) {
+seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(real = NA_real_, imaginary = NA_real_),
+                                                                     nrow = 3, ncol = 0), ...) {
 
-  # Validate calibration matrix
+  # Validate the calibration matrix to ensure it meets required criteria
   seasonder_validateCalibrationMatrixSeaSondeRAPM(calibration_matrix)
 
+  # Set row names for the calibration matrix channels
   rownames(calibration_matrix) <- c("A13", "A23", "A33")
 
-  # Initialize attributes
-  attributes_list <- seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix,...)
+  # Initialize attributes (metadata and quality information) with defaults or user-provided values
+  attributes_list <- seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix, ...)
 
+  # Assign column names to the calibration matrix using the BEAR attribute from the initialized list
   colnames(calibration_matrix) <- attributes_list$BEAR
 
-  calibration_matrix <- attributes_list %>% purrr::reduce2(names(attributes_list),\(cal_matrix_so_far,attribute,attribute_name) {
-    setter_fun <- get(glue::glue("seasonder_setSeaSondeRAPM_{attribute_name}"))
-    cal_matrix_so_far %<>% setter_fun(new_value=attribute)
+  # Iterate over each attribute in the attributes list to update the calibration matrix using its setter
+  calibration_matrix <- attributes_list %>%
+    purrr::reduce2(
+      names(attributes_list),
+      \(cal_matrix_so_far, attribute, attribute_name) {
+        # Construct the name of the setter function dynamically
+        setter_fun <- get(glue::glue("seasonder_setSeaSondeRAPM_{attribute_name}"))
+        # Apply the setter function to update the current state of the calibration matrix
+        cal_matrix_so_far %<>% setter_fun(new_value = attribute)
+      },
+      .init = calibration_matrix
+    )
 
-  },.init = calibration_matrix)
+  # Assign the custom class "SeaSondeRAPM" to the calibration matrix object
+  class(calibration_matrix) <- c("SeaSondeRAPM", class(calibration_matrix))
 
+  # Set a version attribute for the object
+  attr(calibration_matrix, "version") <- 1
 
-  # Assign class
-  class(calibration_matrix) <- c("SeaSondeRAPM",class(calibration_matrix))
-
-  attr(calibration_matrix,"version") <- 1
-
+  # Log a message indicating successful creation of the APM object
   seasonder_logAndMessage("seasonder_createSeaSondeRAPM: APM object created successfully.", "info")
 
+  # Return the fully constructed SeaSondeRAPM object
   return(calibration_matrix)
 }
 
@@ -65,8 +77,8 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
 #'
 #' @details
 #' The function initializes the following attributes:
-#' - \code{quality_matrix}: A 2 x b complex matrix for quality data, where b is the number of bearings.
-#' - \code{BEAR}: A numeric vector for bearings (degrees).
+#' - \code{quality_matrix}: A 3 x b complex matrix for quality data, where b is the number of bearings.
+#' - \code{BEAR}: A numeric vector for bearings (degrees CCW from the site bearing).
 #' - \code{Type}: Character string for antenna pattern type.
 #' - \code{Creator}: Object creator name. Default is an empty character vector.
 #' - \code{SiteName}: Site name (not the same as SiteCode). Default is an empty character vector.
@@ -75,7 +87,7 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
 #' - \code{CreateTimeStamp}: APM file creation time. Default is current system date and time.
 #' - \code{ProcessingSteps}: Processing steps applied to this object. Default is an empty character vector.
 #' - \code{AmplitudeFactors}: Numeric vector with two elements for the amplitude factors. Default is \code{c(0,0)}.
-#' - \code{AntennaBearing}: Default is an empty numeric vector.
+#' - \code{AntennaBearing}: Site bearing (CW degrees from true north). Default is an empty numeric vector.
 #' - \code{StationCode}: 4-character station code. Default is an empty character vector.
 #' - \code{BearingResolution}: In degrees. Default is an empty numeric vector.
 #' - \code{Smoothing}: Numeric vector indicating smoothing applied to the antenna pattern. Default is an empty numeric vector.
@@ -83,23 +95,17 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
 #' - \code{FileID}: File's UUID. Default is an empty character vector.
 #' - \code{PhaseCorrections}: Numeric vector with two elements for phase corrections. Default is \code{c(0,0)}.
 #'
-#' Each attribute has a corresponding setter and getter function, following the naming pattern \code{seasonder_set/getSeaSondeRAPM_*}, where * is the name of the attribute. For example, to set the 'Type' attribute, you would use \code{seasonder_setSeaSondeRAPM_Type(seasonde_apm_obj,new_value)}. To get the same, you would use \code{seasonder_getSeaSondeRAPM_Type(seasonde_apm_obj,new_value)}.
-#'
-#' Please see \code{\link{seasonder_validateAttributesSeaSondeRAPM}} for details in attributes validation.
-#'
 #' @seealso
 #' \code{\link{seasonder_createSeaSondeRAPM}},
 #' \code{\link{seasonder_validateAttributesSeaSondeRAPM}}
-#'
 #'
 #' @importFrom magrittr %<>%
 #' @export
 seasonder_initializeAttributesSeaSondeRAPM <- function(calibration_matrix, ...) {
 
-
-
+  # Define default attribute values for the SeaSondeRAPM object
   defaults <- list(
-    quality_matrix = matrix(complex(real=NA_real_, imaginary=NA_real_), nrow=2, ncol=ncol(calibration_matrix)),
+    quality_matrix = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 3, ncol = ncol(calibration_matrix)),
     BEAR = numeric(ncol(calibration_matrix)),
     Type = character(0),
     Creator = character(0),
@@ -118,13 +124,16 @@ seasonder_initializeAttributesSeaSondeRAPM <- function(calibration_matrix, ...) 
     PhaseCorrections = numeric(2)
   )
 
-  out <- do.call(rlang::dots_list,c(rlang::list2(...),defaults,list(.homonyms = "first")))
+  # Merge user-provided attributes with defaults; in case of homonyms, the first provided is used
+  out <- do.call(rlang::dots_list, c(rlang::list2(...), defaults, list(.homonyms = "first")))
 
+  # Retain only the attributes defined in defaults (preserving the expected order)
   out <- out[names(defaults)]
 
+  # Return the initialized attributes list
   return(out)
-
 }
+
 
 #### Processing_steps ####
 
@@ -136,71 +145,100 @@ seasonder_initializeAttributesSeaSondeRAPM <- function(calibration_matrix, ...) 
 #'
 #' @return
 #' A character string with the formatted message indicating the time of creation and the file path.
-#'
 SeaSondeRAPM_creation_step_text <- function(file_path) {
-  # Use glue to format the message with the current system time and the provided file path
+  # Format and return the creation message with the current time and file path using glue
   glue::glue("{Sys.time()}: Created from {file_path}.")
 }
 
+#' Generate Antenna Bearing Override Step Text
+#'
+#' This function generates a message indicating that the AntennaBearing attribute was overridden.
+#'
+#' @param antenna_bearing The new antenna bearing value.
 SeaSondeRAPM_antenna_bearing_override_step_text <- function(antenna_bearing) {
-
+  # Return a formatted message stating that the antenna bearing has been overridden
   glue::glue("{Sys.time()}: AntennaBearing overriden with value {antenna_bearing}.")
-
 }
 
+#' Generate Smoothing Step Text
+#'
+#' This function generates a message indicating that smoothing has been applied to the APM.
+#'
+#' @param smoothing The smoothing parameter (number of points used).
 SeaSondeRAPM_smoothing_step_text <- function(smoothing){
-
+  # Return a formatted message stating the smoothing parameter used
   glue::glue("{Sys.time()}: APM smoothed with smoothing {smoothing}.")
-
 }
 
+#' Generate Trimming Step Text
+#'
+#' This function generates a message indicating that trimming has been applied to the APM.
+#'
+#' @param trimming The number of points trimmed from each end of the APM.
 SeaSondeRAPM_trimming_step_text <- function(trimming){
-
+  # Return a formatted message stating how many points were trimmed from the APM ends
   glue::glue("{Sys.time()}: trimmed {trimming} points on APM ends.")
-
 }
 
-SeaSondeRAPM_amplitude_and_phase_corrections_step_text <- function( amplitude1, amplitude2, phase1, phase2){
-
+#' Generate Amplitude and Phase Corrections Step Text
+#'
+#' This function generates a message indicating the amplitude and phase corrections applied to the APM.
+#'
+#' @param amplitude1 Amplitude correction for the first channel.
+#' @param amplitude2 Amplitude correction for the second channel.
+#' @param phase1 Phase correction (in degrees) for the first channel.
+#' @param phase2 Phase correction (in degrees) for the second channel.
+SeaSondeRAPM_amplitude_and_phase_corrections_step_text <- function(amplitude1, amplitude2, phase1, phase2){
+  # Return a formatted message detailing the amplitude and phase corrections applied
   glue::glue("{Sys.time()}: Phase corrections {phase1}, {phase2}, and amplitude correction {amplitude1}, {amplitude2} applied to APM.")
-
 }
 
+#' Generate Phase Correction Override Step Text
+#'
+#' This function generates a message indicating that phase corrections have been overridden.
+#'
+#' @param phase_correction A numeric vector with two elements for the new phase corrections.
 SeaSondeRAPM_phase_correction_override_step_text <- function(phase_correction) {
-
+  # Return a formatted message stating the new phase correction values
   glue::glue("{Sys.time()}: PhaseCorrection overriden with values {phase_correction[1]} and {phase_correction[2]}.")
-
 }
 
-
+#' Generate Amplitude Factors Override Step Text
+#'
+#' This function generates a message indicating that amplitude factors have been overridden.
+#'
+#' @param amplitude_factors A numeric vector with two elements for the new amplitude factors.
 SeaSondeRAPM_amplitude_factors_override_step_text <- function(amplitude_factors) {
-
+  # Return a formatted message stating the new amplitude factors
   glue::glue("{Sys.time()}: AmplitudeFactors overriden with values {amplitude_factors[1]} and {amplitude_factors[2]}.")
-
 }
 
+#' Generate SiteOrigin Override Step Text
+#'
+#' This function generates a message indicating that the SiteOrigin has been overridden.
+#'
+#' @param SiteOrigin A numeric vector with two elements representing the new latitude and longitude.
 SeaSondeRAPM_SiteOrigin_override_step_text <- function(SiteOrigin) {
-
+  # Return a formatted message stating the new SiteOrigin (latitude and longitude)
   glue::glue("{Sys.time()}: SiteOrigin overriden with Latitude {SiteOrigin[1]} and Longitude {SiteOrigin[2]}.")
-
 }
+
 
 #### Validation ####
-
 
 #' Validate Calibration Matrix for a SeaSondeRAPM Object
 #'
 #' This function validates the input calibration_matrix to ensure it meets the required specifications
 #' for use in a SeaSondeRAPM object.
 #'
-#' @param matrix A 2 x b complex matrix for calibration, where b is the number of bearings.
+#' @param matrix A 3 x b complex matrix for calibration, where b is the number of bearings.
 #'
 #' @return TRUE if the matrix is valid. The function will stop execution and display an error message if the matrix is invalid.
 #'
 #' @details
 #' The function performs the following validation checks:
 #' 1. Confirms that the input is a matrix.
-#' 2. Verifies that the matrix has exactly two rows.
+#' 2. Verifies that the matrix has exactly three rows.
 #' 3. Checks that the matrix contains only complex numbers.
 #'
 #' If any of these validation steps fail, the function will log a fatal error and stop the execution using \code{rlang::abort}.
@@ -210,23 +248,25 @@ SeaSondeRAPM_SiteOrigin_override_step_text <- function(SiteOrigin) {
 #'
 #' @export
 seasonder_validateCalibrationMatrixSeaSondeRAPM <- function(matrix) {
-  # Implement validation logic here
-
+  # Check if the input is a matrix
   if (!is.matrix(matrix)) {
     seasonder_logAndMessage("seasonder_validateCalibrationMatrixSeaSondeRAPM: Input calibration_matrix must be a matrix.", "fatal")
     rlang::abort("seasonder_validateCalibrationMatrixSeaSondeRAPM: Input calibration_matrix must be a matrix.")
   }
 
+  # Verify that the matrix has exactly three rows
   if (nrow(matrix) != 3) {
     seasonder_logAndMessage("seasonder_validateCalibrationMatrixSeaSondeRAPM: Calibration matrix must have three rows.", "fatal")
     rlang::abort("seasonder_validateCalibrationMatrixSeaSondeRAPM: Calibration matrix must have three rows.")
   }
 
+  # Ensure that the matrix contains complex numbers only
   if (!is.complex(matrix)) {
     seasonder_logAndMessage("seasonder_validateCalibrationMatrixSeaSondeRAPM: Calibration matrix must contain complex numbers.", "fatal")
     rlang::abort("seasonder_validateCalibrationMatrixSeaSondeRAPM: Calibration matrix must contain complex numbers.")
   }
 
+  # If all checks pass, return TRUE
   TRUE
 }
 
@@ -260,8 +300,6 @@ seasonder_validateCalibrationMatrixSeaSondeRAPM <- function(matrix) {
 #'
 #' It internally calls specific validation functions for each of these attributes. If any of the attributes are found to be invalid, the function will stop execution and display an error message.
 #'
-#' For more details on the attributes, see \code{\link{seasonder_initializeAttributesSeaSondeRAPM}}.
-#'
 #' @seealso
 #' \code{\link{validate_SeaSondeRAPM_quality_matrix}},
 #' \code{\link{validate_SeaSondeRAPM_BEAR}},
@@ -281,10 +319,11 @@ seasonder_validateCalibrationMatrixSeaSondeRAPM <- function(matrix) {
 #' \code{\link{validate_SeaSondeRAPM_FileID}},
 #' \code{\link{validate_SeaSondeRAPM_PhaseCorrections}}
 #'
-#'@export
+#' @export
 seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {
-  validate_SeaSondeRAPM_quality_matrix(attributes(seasonde_apm_obj)$quality_matrix,seasonde_apm_obj)
-  validate_SeaSondeRAPM_BEAR(attributes(seasonde_apm_obj)$BEAR,seasonde_apm_obj)
+  # Validate each attribute of the SeaSondeRAPM object using their respective validation functions
+  validate_SeaSondeRAPM_quality_matrix(attributes(seasonde_apm_obj)$quality_matrix, seasonde_apm_obj)
+  validate_SeaSondeRAPM_BEAR(attributes(seasonde_apm_obj)$BEAR, seasonde_apm_obj)
   validate_SeaSondeRAPM_Type(attributes(seasonde_apm_obj)$Type)
   validate_SeaSondeRAPM_Creator(attributes(seasonde_apm_obj)$Creator)
   validate_SeaSondeRAPM_SiteName(attributes(seasonde_apm_obj)$SiteName)
@@ -301,30 +340,34 @@ seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {
   validate_SeaSondeRAPM_FileID(attributes(seasonde_apm_obj)$FileID)
   validate_SeaSondeRAPM_PhaseCorrections(attributes(seasonde_apm_obj)$PhaseCorrections)
 
+  # Return TRUE if all validations pass
   return(TRUE)
 }
 
 #' Validate quality_matrix Attribute for a SeaSondeRAPM Object
 #'
-#' This function validates if the provided quality_matrix is a 2-row complex matrix.
+#' This function validates if the provided quality_matrix is a 3-row complex matrix.
 #' It also checks if the number of columns matches that of the calibration_matrix in the given SeaSondeRAPM object.
 #'
 #' @param matrix The matrix to be validated.
 #' @param seasonde_apm_obj The SeaSondeRAPM object for compatibility check.
 #' @return Returns TRUE if the validation passes.
-validate_SeaSondeRAPM_quality_matrix <- function(matrix,seasonde_apm_obj) {
+validate_SeaSondeRAPM_quality_matrix <- function(matrix, seasonde_apm_obj) {
+  # Check that the matrix is a valid 3-row complex matrix
   if (!is.matrix(matrix) || nrow(matrix) != 3 || !is.complex(matrix)) {
-    msg <- "validate_SeaSondeRAPM_quality_matrix: The quality_matrix must be a 2-row complex matrix."
+    msg <- "validate_SeaSondeRAPM_quality_matrix: The quality_matrix must be a 3-row complex matrix."
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
 
+  # Check that the number of columns in the quality_matrix matches the calibration_matrix
   if (ncol(matrix) != ncol(seasonde_apm_obj)) {
-    msg <- glue::glue("validate_SeaSondeRAPM_quality_matrix: The quality_matrix must be a {ncol(seasonde_apm_obj)}-row complex matrix, same as the calibration_matrix. Currently has {ncol(matrix)} columns.")
+    msg <- glue::glue("validate_SeaSondeRAPM_quality_matrix: The quality_matrix must be a {ncol(seasonde_apm_obj)}-column complex matrix, same as the calibration_matrix. Currently has {ncol(matrix)} columns.")
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
 
+  # Return TRUE if both checks pass
   return(TRUE)
 }
 
@@ -337,25 +380,29 @@ validate_SeaSondeRAPM_quality_matrix <- function(matrix,seasonde_apm_obj) {
 #' @param vector The numeric vector to be validated.
 #' @param seasonde_apm_obj The SeaSondeRAPM object for compatibility check.
 #' @return Returns TRUE if the validation passes.
-validate_SeaSondeRAPM_BEAR <- function(vector,seasonde_apm_obj) {
+validate_SeaSondeRAPM_BEAR <- function(vector, seasonde_apm_obj) {
+  # Ensure BEAR is numeric
   if (!is.numeric(vector)) {
     msg <- "validate_SeaSondeRAPM_BEAR: BEAR must be a numeric vector."
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
 
+  # Check that the length of BEAR matches the number of columns in the calibration matrix
   if (length(vector) != ncol(seasonde_apm_obj)) {
     msg <- glue::glue("validate_SeaSondeRAPM_BEAR: BEAR must be a numeric vector of length {ncol(seasonde_apm_obj)}, matching the number of columns of the calibration matrix. Currently is of length {length(vector)}.")
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
 
-  if (any(!dplyr::between(vector,-180,180))) {
+  # Validate that all bearing values are within the range -180 to 180 degrees
+  if (any(!dplyr::between(vector, -180, 180))) {
     msg <- glue::glue("validate_SeaSondeRAPM_BEAR: BEAR must be a numeric vector of values between -180 and 180.")
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
 
+  # Return TRUE if all validations pass
   return(TRUE)
 }
 
@@ -366,6 +413,7 @@ validate_SeaSondeRAPM_BEAR <- function(vector,seasonde_apm_obj) {
 #' @param type The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_Type <- function(type) {
+  # Check if Type is a character string
   if (!is.character(type)) {
     seasonder_logAndMessage("validate_SeaSondeRAPM_Type: Type must be a character string.", "fatal")
     rlang::abort("validate_SeaSondeRAPM_Type: Type must be a character string.")
@@ -380,6 +428,7 @@ validate_SeaSondeRAPM_Type <- function(type) {
 #' @param creator The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_Creator <- function(creator) {
+  # Ensure Creator is a character string
   if (!is.character(creator)) {
     seasonder_logAndMessage("validate_SeaSondeRAPM_Creator: Creator must be a character string.", "fatal")
     rlang::abort("validate_SeaSondeRAPM_Creator: Creator must be a character string.")
@@ -394,6 +443,7 @@ validate_SeaSondeRAPM_Creator <- function(creator) {
 #' @param site_name The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_SiteName <- function(site_name) {
+  # Check if SiteName is a character string
   if (!is.character(site_name)) {
     seasonder_logAndMessage("validate_SeaSondeRAPM_SiteName: SiteName must be a character string.", "fatal")
     rlang::abort("validate_SeaSondeRAPM_SiteName: SiteName must be a character string.")
@@ -408,16 +458,14 @@ validate_SeaSondeRAPM_SiteName <- function(site_name) {
 #' @param site_origin The numeric vector to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_SiteOrigin <- function(site_origin) {
-
-  if (!is.numeric(site_origin) | length(site_origin) !=2) {
-    msg <- glue::glue("validate_SeaSondeRAPM_SiteOrigin: SiteOrigin must be a numeric vector of length 2. Current length is {length(vector)}")
+  # Check if SiteOrigin is numeric and has exactly 2 elements
+  if (!is.numeric(site_origin) | length(site_origin) != 2) {
+    msg <- glue::glue("validate_SeaSondeRAPM_SiteOrigin: SiteOrigin must be a numeric vector of length 2. Current length is {length(site_origin)}")
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
-
   return(TRUE)
 }
-
 
 #' Validate FileName Attribute for a SeaSondeRAPM Object
 #'
@@ -426,6 +474,7 @@ validate_SeaSondeRAPM_SiteOrigin <- function(site_origin) {
 #' @param file_name The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_FileName <- function(file_name) {
+  # Check if FileName is a character string
   if (!is.character(file_name)) {
     seasonder_logAndMessage("validate_SeaSondeRAPM_FileName: FileName must be a character string.", "fatal")
     rlang::abort("validate_SeaSondeRAPM_FileName: FileName must be a character string.")
@@ -440,7 +489,7 @@ validate_SeaSondeRAPM_FileName <- function(file_name) {
 #' @param timestamp The Date object to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_CreateTimeStamp <- function(timestamp) {
-
+  # Check if the timestamp inherits from POSIXct (i.e., is a valid date-time object)
   if (!inherits(timestamp, "POSIXct")) {
     seasonder_logAndMessage("validate_SeaSondeRAPM_CreateTimeStamp: CreateTimeStamp must be a Date object.", "fatal")
     rlang::abort("validate_SeaSondeRAPM_CreateTimeStamp: CreateTimeStamp must be a Date object.")
@@ -455,6 +504,7 @@ validate_SeaSondeRAPM_CreateTimeStamp <- function(timestamp) {
 #' @param steps The character vector to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_ProcessingSteps <- function(steps) {
+  # Ensure ProcessingSteps is a character vector
   if (!is.character(steps)) {
     seasonder_logAndMessage("validate_SeaSondeRAPM_ProcessingSteps: ProcessingSteps must be a character vector.", "fatal")
     rlang::abort("validate_SeaSondeRAPM_ProcessingSteps: ProcessingSteps must be a character vector.")
@@ -469,8 +519,9 @@ validate_SeaSondeRAPM_ProcessingSteps <- function(steps) {
 #' @param factors The numeric vector to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_AmplitudeFactors <- function(factors) {
-  if (!is.numeric(factors) | length(factors) !=2) {
-    msg <- glue::glue("validate_SeaSondeRAPM_AmplitudeFactors: AmplitudeFactors must be a numeric vector of length 2. Current length is {length(vector)}")
+  # Check if AmplitudeFactors is numeric and exactly length 2
+  if (!is.numeric(factors) | length(factors) != 2) {
+    msg <- glue::glue("validate_SeaSondeRAPM_AmplitudeFactors: AmplitudeFactors must be a numeric vector of length 2. Current length is {length(factors)}")
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
@@ -484,6 +535,7 @@ validate_SeaSondeRAPM_AmplitudeFactors <- function(factors) {
 #' @param bearing The numeric value to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_AntennaBearing <- function(bearing) {
+  # Ensure that AntennaBearing is numeric
   if (!is.numeric(bearing)) {
     seasonder_logAndMessage("validate_SeaSondeRAPM_AntennaBearing: AntennaBearing must be a numeric value.", "fatal")
     rlang::abort("validate_SeaSondeRAPM_AntennaBearing: AntennaBearing must be a numeric value.")
@@ -498,19 +550,21 @@ validate_SeaSondeRAPM_AntennaBearing <- function(bearing) {
 #' @param code The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_StationCode <- function(code) {
+  # Check if StationCode is a character string
   if (!is.character(code)) {
     msg <- glue::glue("validate_SeaSondeRAPM_StationCode: StationCode must be a character string. Provided value is {code}")
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
-  if (length(code)>0) {
-    if (length(code)==1) {
-      if (nchar(code) !=4) {
+  # If a non-empty code is provided, check its length and number of characters
+  if (length(code) > 0) {
+    if (length(code) == 1) {
+      if (nchar(code) != 4) {
         msg <- glue::glue("validate_SeaSondeRAPM_StationCode: StationCode must have 4 characters. Provided value is {code}.")
         seasonder_logAndMessage(msg, "fatal")
         rlang::abort(msg)
       }
-    }else{
+    } else {
       msg <- glue::glue("validate_SeaSondeRAPM_StationCode: StationCode must have length 0 or 1. Provided value is {length(code)}.")
       seasonder_logAndMessage(msg, "fatal")
       rlang::abort(msg)
@@ -526,13 +580,13 @@ validate_SeaSondeRAPM_StationCode <- function(code) {
 #' @param resolution The numeric value to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_BearingResolution <- function(resolution) {
+  # Check if BearingResolution is numeric
   if (!is.numeric(resolution)) {
     seasonder_logAndMessage("validate_SeaSondeRAPM_BearingResolution: BearingResolution must be a numeric value.", "fatal")
     rlang::abort("validate_SeaSondeRAPM_BearingResolution: BearingResolution must be a numeric value.")
   }
   return(TRUE)
 }
-
 
 #' Validate Smoothing Attribute for a SeaSondeRAPM Object
 #'
@@ -541,6 +595,7 @@ validate_SeaSondeRAPM_BearingResolution <- function(resolution) {
 #' @param smoothing The numeric value to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_Smoothing <- function(smoothing) {
+  # Ensure that Smoothing is numeric
   if (!is.numeric(smoothing)) {
     seasonder_logAndMessage("validate_SeaSondeRAPM_Smoothing: Smoothing must be a numeric value.", "fatal")
     rlang::abort("validate_SeaSondeRAPM_Smoothing: Smoothing must be a numeric value.")
@@ -555,6 +610,7 @@ validate_SeaSondeRAPM_Smoothing <- function(smoothing) {
 #' @param comment The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_CommentLine <- function(comment) {
+  # Check if CommentLine is a character string
   if (!is.character(comment)) {
     seasonder_logAndMessage("validate_SeaSondeRAPM_CommentLine: CommentLine must be a character string.", "fatal")
     rlang::abort("validate_SeaSondeRAPM_CommentLine: CommentLine must be a character string.")
@@ -569,6 +625,7 @@ validate_SeaSondeRAPM_CommentLine <- function(comment) {
 #' @param id The unique character string to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_FileID <- function(id) {
+  # Check if FileID is a character string
   if (!is.character(id)) {
     seasonder_logAndMessage("validate_SeaSondeRAPM_FileID: FileID must be a unique character string.", "fatal")
     rlang::abort("validate_SeaSondeRAPM_FileID: FileID must be a unique character string.")
@@ -584,19 +641,17 @@ validate_SeaSondeRAPM_FileID <- function(id) {
 #' @param corrections The numeric vector to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_PhaseCorrections <- function(corrections) {
-  if (!is.numeric(corrections) | length(corrections) !=2) {
+  # Check if PhaseCorrections is numeric and has exactly 2 elements
+  if (!is.numeric(corrections) | length(corrections) != 2) {
     msg <- glue::glue("validate_SeaSondeRAPM_PhaseCorrections: PhaseCorrections must be a numeric vector of length 2. Current length is {length(corrections)}")
     seasonder_logAndMessage(msg, "fatal")
     rlang::abort(msg)
   }
-
   return(TRUE)
 }
 
 
-
-####' Getters y Setters ####
-
+#### Getters and Setters ####
 
 #' Get the version value from a SeaSondeRAPM object
 #'
@@ -604,8 +659,8 @@ validate_SeaSondeRAPM_PhaseCorrections <- function(corrections) {
 #' @return The version value.
 #' @export
 seasonder_getVersion.SeaSondeRAPM <- function(seasonder_obj) {
-
-  attr(seasonder_obj,"version",exact = TRUE)
+  # Retrieve the "version" attribute from the object
+  attr(seasonder_obj, "version", exact = TRUE)
 }
 
 #' Getter for quality_matrix
@@ -614,6 +669,7 @@ seasonder_getVersion.SeaSondeRAPM <- function(seasonder_obj) {
 #'
 #' @export
 seasonder_getSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj) {
+  # Return the quality_matrix attribute from the object
   return(attributes(seasonde_apm_obj)$quality_matrix)
 }
 
@@ -624,16 +680,18 @@ seasonder_getSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj, new_value) {
-  validate_SeaSondeRAPM_quality_matrix(new_value,seasonde_apm_obj)
+  # Validate the new quality_matrix value against the object
+  validate_SeaSondeRAPM_quality_matrix(new_value, seasonde_apm_obj)
   modified_obj <- seasonde_apm_obj
 
+  # Ensure that the new quality_matrix has the same row and column names as the existing object
   colnames(new_value) <- colnames(seasonde_apm_obj)
   rownames(new_value) <- rownames(seasonde_apm_obj)
 
+  # Update the quality_matrix attribute in the object
   attributes(modified_obj)$quality_matrix <- new_value
   return(modified_obj)
 }
-
 
 #' Getter for BEAR
 #'
@@ -641,6 +699,7 @@ seasonder_setSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj, new_value
 #'
 #' @export
 seasonder_getSeaSondeRAPM_BEAR <- function(seasonde_apm_obj) {
+  # Return the BEAR attribute (bearing values) from the object
   return(attributes(seasonde_apm_obj)$BEAR)
 }
 
@@ -651,8 +710,10 @@ seasonder_getSeaSondeRAPM_BEAR <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_BEAR <- function(seasonde_apm_obj, new_value) {
-  validate_SeaSondeRAPM_BEAR(new_value,seasonde_apm_obj)
+  # Validate the new BEAR value
+  validate_SeaSondeRAPM_BEAR(new_value, seasonde_apm_obj)
   modified_obj <- seasonde_apm_obj
+  # Update the BEAR attribute with the new value
   attributes(modified_obj)$BEAR <- new_value
   return(modified_obj)
 }
@@ -663,6 +724,7 @@ seasonder_setSeaSondeRAPM_BEAR <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 seasonder_getSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj) {
+  # Return the PhaseCorrections attribute from the object
   return(attributes(seasonde_apm_obj)$PhaseCorrections)
 }
 
@@ -673,8 +735,10 @@ seasonder_getSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj, new_value) {
+  # Validate the new PhaseCorrections value
   validate_SeaSondeRAPM_PhaseCorrections(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the PhaseCorrections attribute with the new value
   attributes(modified_obj)$PhaseCorrections <- new_value
   return(modified_obj)
 }
@@ -685,9 +749,9 @@ seasonder_setSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj, new_val
 #'
 #' @export
 seasonder_getSeaSondeRAPM_Type <- function(seasonde_apm_obj) {
+  # Return the Type attribute from the object
   return(attributes(seasonde_apm_obj)$Type)
 }
-
 
 #' Setter for Type
 #'
@@ -696,12 +760,13 @@ seasonder_getSeaSondeRAPM_Type <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_Type <- function(seasonde_apm_obj, new_value) {
+  # Validate the new Type value
   validate_SeaSondeRAPM_Type(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the Type attribute with the new value
   attributes(modified_obj)$Type <- new_value
   return(modified_obj)
 }
-
 
 #' Getter for Creator
 #'
@@ -709,6 +774,7 @@ seasonder_setSeaSondeRAPM_Type <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 seasonder_getSeaSondeRAPM_Creator <- function(seasonde_apm_obj) {
+  # Return the Creator attribute from the object
   return(attributes(seasonde_apm_obj)$Creator)
 }
 
@@ -719,13 +785,13 @@ seasonder_getSeaSondeRAPM_Creator <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_Creator <- function(seasonde_apm_obj, new_value) {
+  # Validate the new Creator value
   validate_SeaSondeRAPM_Creator(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the Creator attribute with the new value
   attributes(modified_obj)$Creator <- new_value
   return(modified_obj)
 }
-
-
 
 #' Getter for SiteName
 #'
@@ -733,6 +799,7 @@ seasonder_setSeaSondeRAPM_Creator <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 seasonder_getSeaSondeRAPM_SiteName <- function(seasonde_apm_obj) {
+  # Return the SiteName attribute from the object
   return(attributes(seasonde_apm_obj)$SiteName)
 }
 
@@ -743,13 +810,13 @@ seasonder_getSeaSondeRAPM_SiteName <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_SiteName <- function(seasonde_apm_obj, new_value) {
+  # Validate the new SiteName value
   validate_SeaSondeRAPM_SiteName(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the SiteName attribute with the new value
   attributes(modified_obj)$SiteName <- new_value
   return(modified_obj)
 }
-
-
 
 #' Getter for SiteOrigin
 #'
@@ -757,9 +824,9 @@ seasonder_setSeaSondeRAPM_SiteName <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 seasonder_getSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj) {
+  # Return the SiteOrigin attribute from the object
   return(attributes(seasonde_apm_obj)$SiteOrigin)
 }
-
 
 #' Setter for SiteOrigin
 #'
@@ -768,14 +835,15 @@ seasonder_getSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj, new_value) {
+  # Validate the new SiteOrigin value
   validate_SeaSondeRAPM_SiteOrigin(new_value)
   modified_obj <- seasonde_apm_obj
+  # Assign names to the new SiteOrigin values for clarity
   names(new_value) <- c("Latitude", "Longitude")
-
+  # Update the SiteOrigin attribute with the new value
   attributes(modified_obj)$SiteOrigin <- new_value
   return(modified_obj)
 }
-
 
 #' Getter for FileName
 #'
@@ -783,9 +851,9 @@ seasonder_setSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 seasonder_getSeaSondeRAPM_FileName <- function(seasonde_apm_obj) {
+  # Return the FileName attribute from the object
   return(attributes(seasonde_apm_obj)$FileName)
 }
-
 
 #' Setter for FileName
 #'
@@ -794,12 +862,13 @@ seasonder_getSeaSondeRAPM_FileName <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_FileName <- function(seasonde_apm_obj, new_value) {
+  # Validate the new FileName value
   validate_SeaSondeRAPM_FileName(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the FileName attribute with the new value
   attributes(modified_obj)$FileName <- new_value
   return(modified_obj)
 }
-
 
 #' Getter for CreateTimeStamp
 #'
@@ -807,9 +876,9 @@ seasonder_setSeaSondeRAPM_FileName <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 seasonder_getSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj) {
+  # Return the CreateTimeStamp attribute from the object
   return(attributes(seasonde_apm_obj)$CreateTimeStamp)
 }
-
 
 #' Setter for CreateTimeStamp
 #'
@@ -818,12 +887,13 @@ seasonder_getSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj, new_value) {
+  # Validate the new CreateTimeStamp value
   validate_SeaSondeRAPM_CreateTimeStamp(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the CreateTimeStamp attribute with the new value
   attributes(modified_obj)$CreateTimeStamp <- new_value
   return(modified_obj)
 }
-
 
 #' Getter for ProcessingSteps
 #'
@@ -831,34 +901,31 @@ seasonder_setSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj, new_valu
 #'
 #' @export
 seasonder_getSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj) {
+  # Return the ProcessingSteps attribute from the object
   return(attributes(seasonde_apm_obj)$ProcessingSteps)
 }
-
 
 #' Setter for ProcessingSteps
 #'
 #' @param seasonde_apm_obj SeaSonderAPM object
 #' @param new_value new value
-#' @param append append the new step or replace previous steps? Default: TRUE
+#' @param append Append the new step to existing steps if TRUE; otherwise, replace previous steps.
 #'
 #' @export
-seasonder_setSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj, new_value,append=TRUE) {
-
-
-
+seasonder_setSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj, new_value, append = TRUE) {
+  # If appending, combine the existing processing steps with the new step
   if (append) {
-    steps <-  seasonder_getSeaSondeRAPM_ProcessingSteps(seasonde_apm_obj)
-    new_value <- c(steps,new_value)
+    steps <- seasonder_getSeaSondeRAPM_ProcessingSteps(seasonde_apm_obj)
+    new_value <- c(steps, new_value)
   }
+  # Validate the new ProcessingSteps value
   validate_SeaSondeRAPM_ProcessingSteps(new_value)
   modified_obj <- seasonde_apm_obj
 
+  # Update the ProcessingSteps attribute with the new value
   attributes(modified_obj)$ProcessingSteps <- new_value
-
-
   return(modified_obj)
 }
-
 
 #' Getter for AmplitudeFactors
 #'
@@ -866,9 +933,9 @@ seasonder_setSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj, new_valu
 #'
 #' @export
 seasonder_getSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj) {
+  # Return the AmplitudeFactors attribute from the object
   return(attributes(seasonde_apm_obj)$AmplitudeFactors)
 }
-
 
 #' Setter for AmplitudeFactors
 #'
@@ -877,12 +944,13 @@ seasonder_getSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj, new_value) {
+  # Validate the new AmplitudeFactors value
   validate_SeaSondeRAPM_AmplitudeFactors(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the AmplitudeFactors attribute with the new value
   attributes(modified_obj)$AmplitudeFactors <- new_value
   return(modified_obj)
 }
-
 
 #' Getter for AntennaBearing
 #'
@@ -890,9 +958,9 @@ seasonder_setSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj, new_val
 #'
 #' @export
 seasonder_getSeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj) {
+  # Return the AntennaBearing attribute from the object
   return(attributes(seasonde_apm_obj)$AntennaBearing)
 }
-
 
 #' Setter for AntennaBearing
 #'
@@ -901,12 +969,13 @@ seasonder_getSeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj, new_value) {
+  # Validate the new AntennaBearing value
   validate_SeaSondeRAPM_AntennaBearing(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the AntennaBearing attribute with the new value
   attributes(modified_obj)$AntennaBearing <- new_value
   return(modified_obj)
 }
-
 
 #' Getter for StationCode
 #'
@@ -914,9 +983,9 @@ seasonder_setSeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj, new_value
 #'
 #' @export
 seasonder_getSeaSondeRAPM_StationCode <- function(seasonde_apm_obj) {
+  # Return the StationCode attribute from the object
   return(attributes(seasonde_apm_obj)$StationCode)
 }
-
 
 #' Setter for StationCode
 #'
@@ -925,12 +994,13 @@ seasonder_getSeaSondeRAPM_StationCode <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_StationCode <- function(seasonde_apm_obj, new_value) {
+  # Validate the new StationCode value
   validate_SeaSondeRAPM_StationCode(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the StationCode attribute with the new value
   attributes(modified_obj)$StationCode <- new_value
   return(modified_obj)
 }
-
 
 #' Getter for BearingResolution
 #'
@@ -938,6 +1008,7 @@ seasonder_setSeaSondeRAPM_StationCode <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 seasonder_getSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj) {
+  # Return the BearingResolution attribute from the object
   return(attributes(seasonde_apm_obj)$BearingResolution)
 }
 
@@ -948,13 +1019,13 @@ seasonder_getSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj, new_value) {
+  # Validate the new BearingResolution value
   validate_SeaSondeRAPM_BearingResolution(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the BearingResolution attribute with the new value
   attributes(modified_obj)$BearingResolution <- new_value
   return(modified_obj)
 }
-
-
 
 #' Getter for Smoothing
 #'
@@ -962,6 +1033,7 @@ seasonder_setSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj, new_va
 #'
 #' @export
 seasonder_getSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj) {
+  # Return the Smoothing attribute from the object
   return(attributes(seasonde_apm_obj)$Smoothing)
 }
 
@@ -972,12 +1044,13 @@ seasonder_getSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj, new_value) {
+  # Validate the new Smoothing value
   validate_SeaSondeRAPM_Smoothing(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the Smoothing attribute with the new value
   attributes(modified_obj)$Smoothing <- new_value
   return(modified_obj)
 }
-
 
 #' Getter for CommentLine
 #'
@@ -985,6 +1058,7 @@ seasonder_setSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 seasonder_getSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj) {
+  # Return the CommentLine attribute from the object
   return(attributes(seasonde_apm_obj)$CommentLine)
 }
 
@@ -995,8 +1069,10 @@ seasonder_getSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj, new_value) {
+  # Validate the new CommentLine value
   validate_SeaSondeRAPM_CommentLine(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the CommentLine attribute with the new value
   attributes(modified_obj)$CommentLine <- new_value
   return(modified_obj)
 }
@@ -1008,13 +1084,13 @@ seasonder_setSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 seasonder_setSeaSondeRAPM_FileID <- function(seasonde_apm_obj, new_value) {
+  # Validate the new FileID value
   validate_SeaSondeRAPM_FileID(new_value)
   modified_obj <- seasonde_apm_obj
+  # Update the FileID attribute with the new value
   attributes(modified_obj)$FileID <- new_value
   return(modified_obj)
 }
-
-
 
 #' Getter for FileID
 #'
@@ -1022,85 +1098,119 @@ seasonder_setSeaSondeRAPM_FileID <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 seasonder_getSeaSondeRAPM_FileID <- function(seasonde_apm_obj) {
+  # Return the FileID attribute from the object
   return(attributes(seasonde_apm_obj)$FileID)
 }
 
+
 #### Methods ####
 
-#'@export
-seasonder_smoothAPM <- function(seasonder_apm_object, smoothing){
+#' Smooth APM Data
+#'
+#' This function smooths the antenna pattern data for each channel of a SeaSonde RAPM object
+#' by applying a moving average with a specified number of points.
+#'
+#' @param seasonder_apm_object A SeaSonde RAPM object containing raw antenna pattern data.
+#' @param smoothing The number of points to use for the moving average smoothing.
+#'
+#' @return The SeaSonde RAPM object with smoothed antenna pattern data and an updated processing step.
+#'
+#' @export
+seasonder_smoothAPM <- function(seasonder_apm_object, smoothing) {
+  # Smooth the first antenna channel:
+  # - Extract the real part using pracma::Real and apply moving average using slider::slide_mean
+  # - Extract the imaginary part using pracma::Imag and apply moving average similarly
+  seasonder_apm_object[1,] <- complex(
+    real = slider::slide_mean(pracma::Real(seasonder_apm_object[1,]), before = smoothing, na_rm = TRUE),
+    imaginary = slider::slide_mean(pracma::Imag(seasonder_apm_object[1,]), before = smoothing, na_rm = TRUE)
+  )
 
-  seasonder_apm_object[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_object[1,]),before = smoothing, na_rm = T), imaginary =
-                                              slider::slide_mean(pracma::Imag(seasonder_apm_object[1,]),before = smoothing, na_rm = T))
+  # Smooth the second antenna channel in the same way
+  seasonder_apm_object[2,] <- complex(
+    real = slider::slide_mean(pracma::Real(seasonder_apm_object[2,]), before = smoothing, na_rm = TRUE),
+    imaginary = slider::slide_mean(pracma::Imag(seasonder_apm_object[2,]), before = smoothing, na_rm = TRUE)
+  )
 
-  seasonder_apm_object[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_object[2,]),before = smoothing, na_rm = T), imaginary =
-                                              slider::slide_mean(pracma::Imag(seasonder_apm_object[2,]),before = smoothing, na_rm = T))
-
+  # Update the processing steps attribute with a message indicating the smoothing operation
   seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_smoothing_step_text(smoothing))
 
+  # Return the modified SeaSonde RAPM object with smoothed data
   return(seasonder_apm_object)
-
 }
 
+#' Trim APM Data
+#'
+#' This function trims a specified number of points from the beginning and end of the antenna pattern data.
+#'
+#' @param seasonder_apm_object A SeaSonde RAPM object containing the antenna pattern data.
+#' @param trimming The number of points to trim from each end.
+#'
+#' @return The SeaSonde RAPM object with trimmed antenna pattern data and updated attributes.
+#'
+#' @export
+seasonder_trimAPM <- function(seasonder_apm_object, trimming) {
 
-#'@export
-seasonder_trimAPM <- function(seasonder_apm_object, trimming){
-
-
+  # Store the current attributes of the APM object
   attrib <- attributes(seasonder_apm_object)
 
-  seasonder_apm_object <-   seasonder_apm_object[,-c(1:(trimming),(dim(seasonder_apm_object)[2]-trimming)+1:dim(seasonder_apm_object)[2])]
+  # Trim the columns: remove the first 'trimming' columns and the last 'trimming' columns
+  seasonder_apm_object <- seasonder_apm_object[, -c(1:trimming, (dim(seasonder_apm_object)[2] - trimming + 1):dim(seasonder_apm_object)[2])]
 
+  # Update the dimension attribute to reflect the new size of the matrix
   attrib[["dim"]] <- dim(seasonder_apm_object)
 
-  attrib[["dimnames"]][[2]] <- attrib[["dimnames"]][[2]][-c(1:(trimming),(length(attrib[["dimnames"]][[2]])-trimming+1):length(attrib[["dimnames"]][[2]]))]
+  # Update the column names in the dimnames attribute by removing the trimmed names
+  attrib[["dimnames"]][[2]] <- attrib[["dimnames"]][[2]][-c(1:trimming, (length(attrib[["dimnames"]][[2]]) - trimming + 1):length(attrib[["dimnames"]][[2]]))]
 
-  new_bear <-  attrib[["BEAR"]]
-
-  new_bear <- new_bear[-c(1:(trimming),(length(new_bear)-trimming+1):length(new_bear))]
-
+  # Update the BEAR attribute by removing the corresponding trimmed bearing values
+  new_bear <- attrib[["BEAR"]]
+  new_bear <- new_bear[-c(1:trimming, (length(new_bear) - trimming + 1):length(new_bear))]
   attrib[["BEAR"]] <- new_bear
 
+  # Reassign the updated attributes to the modified APM object
   attributes(seasonder_apm_object) <- attrib
 
-
+  # Log the trimming operation in the processing steps attribute
   seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_trimming_step_text(trimming))
 
+  # Return the trimmed SeaSonde RAPM object
   return(seasonder_apm_object)
-
 }
-
 
 #' Apply Amplitude and Phase Corrections to a SeaSonde RAPM Object
 #'
 #' This function applies amplitude and phase corrections to each antenna channel
-#' of a SeaSonde RAPM object based on the specified corrections retrieved from the object.
-#' The corrections are applied to the raw data matrix within the SeaSonde RAPM object.
+#' of a SeaSonde RAPM object based on the correction factors stored within the object.
 #'
 #' @param seasonder_apm_object A SeaSonde RAPM object containing raw data and correction factors.
 #'
-#' @return Returns the SeaSonde RAPM object with amplitude and phase corrections applied to the data.
+#' @return The SeaSonde RAPM object with amplitude and phase corrections applied to the data.
 #'
 #' @export
 seasonder_applyAPMAmplitudeAndPhaseCorrections <- function(seasonder_apm_object) {
-  # TODO: Validate corrections
+  # Retrieve the amplitude factors from the object
   amplitude_factors <- seasonder_getSeaSondeRAPM_AmplitudeFactors(seasonder_apm_object)
+  # Retrieve the phase corrections (in degrees) from the object
   phase_corrections <- seasonder_getSeaSondeRAPM_PhaseCorrections(seasonder_apm_object)
 
+  # Extract individual correction values for clarity
   amplitude1 <- amplitude_factors[1]
   amplitude2 <- amplitude_factors[2]
   phase1 <- phase_corrections[1]
   phase2 <- phase_corrections[2]
 
-  # Apply corrections to channel 1
+  # Apply amplitude and phase correction to the first antenna channel
   seasonder_apm_object[1,] <- seasonder_apm_object[1,] * amplitude1 * exp(1i * phase1 * pi / 180)
 
-  # Apply corrections to channel 2
+  # Apply amplitude and phase correction to the second antenna channel
   seasonder_apm_object[2,] <- seasonder_apm_object[2,] * amplitude2 * exp(1i * phase2 * pi / 180)
 
-  # Update the processing steps in the object
-  seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_amplitude_and_phase_corrections_step_text(amplitude1, amplitude2, phase1, phase2))
+  # Update the processing steps attribute with a message detailing the applied corrections
+  seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(
+    SeaSondeRAPM_amplitude_and_phase_corrections_step_text(amplitude1, amplitude2, phase1, phase2)
+  )
 
+  # Return the corrected SeaSonde RAPM object
   return(seasonder_apm_object)
 }
 
@@ -1108,16 +1218,18 @@ seasonder_applyAPMAmplitudeAndPhaseCorrections <- function(seasonder_apm_object)
 
 #' Read a Row from a Matrix Represented as Text Lines
 #'
-#' This function reads a row of numbers from a matrix, which is represented
-#' as an array of text lines. It's used to facilitate reading data from
+#' This function reads a row of numbers from a matrix that is represented
+#' as an array of text lines. It is used to facilitate reading data from
 #' SeaSonde APM files.
 #'
 #' @param lines The array of lines, each representing part of the row.
 #' @param start The start index of the lines to read from.
 #' @param number_of_lines_to_read The number of lines to read to form the row.
-#' @return Returns a numeric vector containing the row values.
-read_matrix_row <- function(lines, start,number_of_lines_to_read) {
-  row_str <- paste(lines[start:(start + number_of_lines_to_read -1)], collapse = " ")
+#' @return A numeric vector containing the row values.
+read_matrix_row <- function(lines, start, number_of_lines_to_read) {
+  # Concatenate the specified lines into a single string with spaces between them
+  row_str <- paste(lines[start:(start + number_of_lines_to_read - 1)], collapse = " ")
+  # Split the string by spaces, convert to numeric, and return the resulting vector
   row_str <- as.numeric(unlist(stringr::str_split(stringr::str_squish(row_str), " ")))
 }
 
@@ -1127,12 +1239,16 @@ read_matrix_row <- function(lines, start,number_of_lines_to_read) {
 #' a named attribute and its corresponding value.
 #'
 #' @param line The line of text to parse.
-#' @return Returns a list containing the attribute name and its value.
+#' @return A list containing the attribute name and its value.
 parse_metadata_line <- function(line) {
+  # Split the line into components using "!" as the delimiter
   components <- unlist(strsplit(line, "!"))
+  # Trim and extract the value part from the first component
   value_str <- stringr::str_squish(components[1])
+  # Trim and extract the attribute descriptor from the second component
   attribute_str <- stringr::str_squish(components[2])
 
+  # Map the attribute descriptor to the corresponding attribute name using switch
   attribute_name <- switch(attribute_str,
                            "Amplitude Factors" = "AmplitudeFactors",
                            "Antenna Bearing" = "AntennaBearing",
@@ -1144,7 +1260,7 @@ parse_metadata_line <- function(line) {
                            "UUID" = "FileID",
                            "Phase Corrections" = "PhaseCorrections",
                            "Unknown")
-
+  # Convert the value string to the appropriate type based on the attribute name
   value <- switch(attribute_name,
                   "AmplitudeFactors" = as.numeric(unlist(strsplit(value_str, " "))),
                   "AntennaBearing" = as.numeric(value_str),
@@ -1152,11 +1268,12 @@ parse_metadata_line <- function(line) {
                   "SiteOrigin" = as.numeric(unlist(strsplit(value_str, " "))),
                   "BearingResolution" = as.numeric(value_str),
                   "Smoothing" = as.numeric(value_str),
-                  "CreateTimeStamp" = as.POSIXct(value_str, format="%Y %m %d  %H %M %S"),
+                  "CreateTimeStamp" = as.POSIXct(value_str, format = "%Y %m %d  %H %M %S"),
                   "FileID" = value_str,
                   "PhaseCorrections" = as.numeric(unlist(strsplit(value_str, " "))),
                   value_str)
 
+  # Return a list containing the parsed attribute name and value
   return(list(attribute_name = attribute_name, value = value))
 }
 
@@ -1166,20 +1283,28 @@ parse_metadata_line <- function(line) {
 #' the parsed data.
 #'
 #' @param file_path The path to the SeaSonde APM file to read.
-#' @param override_antenna_bearing If not NULL, overrides the Antenna Bearing data in the file
-#' @param ... Additional arguments passed to the object creation function (See \code{\link{seasonder_createSeaSondeRAPM}} for more details).
-#' @return Returns a SeaSondeRAPM object containing the parsed data.
+#' @param override_antenna_bearing If not NULL, overrides the Antenna Bearing data in the file.
+#' @param override_phase_corrections If not NULL, overrides the phase corrections in the file.
+#' @param override_amplitude_factors If not NULL, overrides the amplitude factors in the file.
+#' @param override_SiteOrigin If not NULL, overrides the SiteOrigin attribute.
+#' @param ... Additional arguments passed to the object creation function.
+#'
+#' @return A SeaSondeRAPM object containing the parsed data.
+#'
 #' @export
 #' @importFrom magrittr %<>%
 #' @seealso \code{\link{seasonder_createSeaSondeRAPM}}
 #' @seealso \code{\link{seasonder_validateAttributesSeaSondeRAPM}}
 seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing = NULL, override_phase_corrections = NULL, override_amplitude_factors = NULL, override_SiteOrigin = NULL, ...) {
 
+  # Read all lines from the specified file
   lines <- readLines(file_path)
+  # The first line contains the number of angles (bearings)
   num_angles <- as.integer(lines[1])
 
-
+  # Determine the number of lines needed to represent one row of data (assuming 7 values per line)
   number_of_lines_to_read <- ceiling(num_angles / 7)
+  # Define the starting line indices for various sections of the file
   BEAR_start <- 2
   A13R_start  <- BEAR_start + number_of_lines_to_read
   A13RQ_start  <- A13R_start + number_of_lines_to_read
@@ -1190,128 +1315,185 @@ seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing =
   A23I_start  <- A23RQ_start + number_of_lines_to_read
   A23IQ_start  <- A23I_start + number_of_lines_to_read
 
-  BEAR <- read_matrix_row(lines,BEAR_start,number_of_lines_to_read)
-  A13R <- read_matrix_row(lines,A13R_start,number_of_lines_to_read)
-  A13RQ <- read_matrix_row(lines,A13RQ_start,number_of_lines_to_read)
-  A13I <- read_matrix_row(lines,A13I_start,number_of_lines_to_read)
-  A13IQ <- read_matrix_row(lines,A13IQ_start,number_of_lines_to_read)
-  A23R <- read_matrix_row(lines,A23R_start,number_of_lines_to_read)
-  A23RQ <- read_matrix_row(lines,A23RQ_start,number_of_lines_to_read)
-  A23I <- read_matrix_row(lines,A23I_start,number_of_lines_to_read)
-  A23IQ <- read_matrix_row(lines,A23IQ_start,number_of_lines_to_read)
+  # Read the BEAR values (bearing angles) from the file
+  BEAR <- read_matrix_row(lines, BEAR_start, number_of_lines_to_read)
+  # Read the real and imaginary parts for the first antenna channel (A13)
+  A13R <- read_matrix_row(lines, A13R_start, number_of_lines_to_read)
+  A13RQ <- read_matrix_row(lines, A13RQ_start, number_of_lines_to_read)
+  A13I <- read_matrix_row(lines, A13I_start, number_of_lines_to_read)
+  A13IQ <- read_matrix_row(lines, A13IQ_start, number_of_lines_to_read)
+  # Read the real and imaginary parts for the second antenna channel (A23)
+  A23R <- read_matrix_row(lines, A23R_start, number_of_lines_to_read)
+  A23RQ <- read_matrix_row(lines, A23RQ_start, number_of_lines_to_read)
+  A23I <- read_matrix_row(lines, A23I_start, number_of_lines_to_read)
+  A23IQ <- read_matrix_row(lines, A23IQ_start, number_of_lines_to_read)
 
-
-  # Concatenar las líneas y luego dividirlas en ángulos
-  angle_str <- paste(lines[2:(2 + number_of_lines_to_read -1)], collapse = " ")
+  # Concatenate the lines representing the angles and split them to obtain numeric angle values
+  angle_str <- paste(lines[2:(2 + number_of_lines_to_read - 1)], collapse = " ")
   angles <- as.numeric(unlist(stringr::str_split(stringr::str_squish(angle_str), " ")))
 
+  # Create the calibration matrix using the real and imaginary parts of A13 and A23
+  # A33 is assumed to be a unity gain channel (real = 1, imaginary = 0)
+  A13 <- complex(real = A13R, imaginary = A13I)
+  A23 <- complex(real = A23R, imaginary = A23I)
+  A33 <- complex(real = rep(1, length(A13R)), imaginary = rep(0, length(A13I)))
+  # Construct the calibration matrix with 3 rows (A13, A23, A33)
+  calibration_matrix <- matrix(c(A13, A23, A33), nrow = 3, byrow = TRUE)
 
-  calibration_matrix <- matrix(0, nrow = 2, ncol = num_angles)
+  # Create the quality matrix using the quality data (A13Q, A23Q) and zeros for A33Q
+  A13Q <- complex(real = A13RQ, imaginary = A13IQ)
+  A23Q <- complex(real = A23RQ, imaginary = A23IQ)
+  A33Q <- complex(real = rep(0, length(A13R)), imaginary = rep(0, length(A13I)))
+  quality_matrix <- matrix(c(A13Q, A23Q, A33Q), nrow = 3, byrow = TRUE)
 
-  A13 <- complex(real=A13R,imaginary = A13I)
-  A23 <- complex(real=A23R,imaginary = A23I)
-  A13Q <- complex(real=A13RQ,imaginary = A13IQ)
-  A23Q <- complex(real=A23RQ,imaginary = A23IQ)
-  A33 <- complex(real=rep(1,length(A13R)), imaginary=rep(0,length(A13I)))
-  A33Q <- complex(real=rep(0,length(A13R)), imaginary=rep(0,length(A13I)))
+  # Create the SeaSondeRAPM object using the calibration and quality matrices, along with BEAR and additional arguments
+  out <- seasonder_createSeaSondeRAPM(calibration_matrix = calibration_matrix, quality_matrix = quality_matrix, BEAR = BEAR, ...)
 
-  calibration_matrix <- matrix(c(A13,A23,A33),nrow=3,byrow = TRUE)
-  quality_matrix <- matrix(c(A13Q,A23Q,A33Q),nrow=3,byrow = TRUE)
+  # Update the quality_matrix attribute explicitly
+  out <- seasonder_setSeaSondeRAPM_quality_matrix(out, new_value = quality_matrix)
 
-  out <- seasonder_createSeaSondeRAPM(calibration_matrix = calibration_matrix,quality_matrix=quality_matrix,BEAR=BEAR,...)
-
-  out <- seasonder_setSeaSondeRAPM_quality_matrix(out,new_value = quality_matrix)
-
+  # Determine the starting line for metadata (after the data rows)
   metadata_start <- A23IQ_start + number_of_lines_to_read
   metadata_lines <- lines[(metadata_start):length(lines)]
   comment_lines <- character(0)
+  # Parse each metadata line into a list of attribute-value pairs
   metadata_list <- lapply(metadata_lines, parse_metadata_line)
 
+  # Iterate over the parsed metadata to update the object's attributes
   for (meta in metadata_list) {
     attribute_name <- meta$attribute_name
     value <- meta$value
 
+    # If the attribute is unknown, collect it as a comment
     if (attribute_name == "Unknown") {
       comment_lines <- c(comment_lines, value)
     } else {
+      # Dynamically retrieve the setter function for the attribute and update the object
       setter_fun <- get(glue::glue("seasonder_setSeaSondeRAPM_{attribute_name}"))
-      out <- setter_fun(out, new_value=value)
+      out <- setter_fun(out, new_value = value)
     }
   }
 
-  # Si hay comentarios, añadirlos al objeto
+  # If there are any comment lines, concatenate them and set the CommentLine attribute
   if (length(comment_lines) > 0) {
     comment_str <- paste(comment_lines, collapse = "; ")
     setter_fun <- get("seasonder_setSeaSondeRAPM_CommentLine")
     out <- setter_fun(out, new_value = comment_str)
   }
 
+  # Set the FileName attribute using the base name of the file path
+  out <- seasonder_setSeaSondeRAPM_FileName(out, basename(file_path))
 
-  out <- seasonder_setSeaSondeRAPM_FileName(out,basename(file_path))
-
-
+  # Log the creation step in the processing steps attribute
   out %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_creation_step_text(file_path))
 
+  # Override the AntennaBearing attribute if an override value is provided
   if (!is.null(override_antenna_bearing)) {
-
-
     out %<>% seasonder_setSeaSondeRAPM_AntennaBearing(override_antenna_bearing)
-
-
-    out  %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_antenna_bearing_override_step_text(override_antenna_bearing))
+    out %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_antenna_bearing_override_step_text(override_antenna_bearing))
   }
 
-
+  # Override the PhaseCorrections attribute if an override value is provided
   if (!is.null(override_phase_corrections)) {
-
+    # If the override is a file path, read the phase corrections from the file
     if (is.character(override_phase_corrections) && file.exists(override_phase_corrections)) {
       override_phase_corrections <- seasonder_readPhaseFile(override_phase_corrections)
     }
-
+    # If the override is numeric and of length 2, apply it
     if (is.numeric(override_phase_corrections) && length(override_phase_corrections) == 2) {
-
-out %<>% seasonder_setSeaSondeRAPM_PhaseCorrections(override_phase_corrections)
-      out  %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_phase_correction_override_step_text(override_phase_corrections))
-    }else{
-      seasonder_logAndMessage("override_phase_corrections parameters is not a valid file path with valid phase correction values, or a numeric vector of length 2",log_level = "error", calling_function = "seasonder_readSeaSondeRAPMFile")
+      out %<>% seasonder_setSeaSondeRAPM_PhaseCorrections(override_phase_corrections)
+      out %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_phase_correction_override_step_text(override_phase_corrections))
+    } else {
+      seasonder_logAndMessage("override_phase_corrections parameters is not a valid file path with valid phase correction values, or a numeric vector of length 2", log_level = "error", calling_function = "seasonder_readSeaSondeRAPMFile")
     }
-
   }
 
-
+  # Override the AmplitudeFactors attribute if an override value is provided
   if (!is.null(override_amplitude_factors)) {
-
-
-
     if (is.numeric(override_amplitude_factors) && length(override_amplitude_factors) == 2) {
-
       out %<>% seasonder_setSeaSondeRAPM_AmplitudeFactors(override_amplitude_factors)
-      out  %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_amplitude_factors_override_step_text(override_amplitude_factors))
+      out %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_amplitude_factors_override_step_text(override_amplitude_factors))
     }
-
   }
 
+  # Override the SiteOrigin attribute if an override value is provided
   if (!is.null(override_SiteOrigin)) {
-
-      out %<>% seasonder_setSeaSondeRAPM_SiteOrigin(override_SiteOrigin)
-      out  %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_SiteOrigin_override_step_text(override_SiteOrigin))
-
-
+    out %<>% seasonder_setSeaSondeRAPM_SiteOrigin(override_SiteOrigin)
+    out %<>% seasonder_setSeaSondeRAPM_ProcessingSteps(SeaSondeRAPM_SiteOrigin_override_step_text(override_SiteOrigin))
   }
 
-  # Validar los atributos después de la lectura
+  # Validate all attributes of the final SeaSondeRAPM object
   seasonder_validateAttributesSeaSondeRAPM(out)
 
+  # Return the fully parsed and validated SeaSondeRAPM object
   return(out)
 }
 
+#' Read Phase Correction File
+#'
+#' This function reads a phase correction file and extracts phase correction values.
+#'
+#' @param file_path The path to the phase correction file.
+#'
+#' @return A numeric vector with two elements: phase corrections for the two channels.
+#'
 #' @export
-seasonder_readPhaseFile <- function(file_path){
-
-  phasec1 <-    readLines(file_path) %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 1) %>% as.numeric()
-  phasec2 <-    readLines(file_path) %>% stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)",group = 2) %>% as.numeric()
-
-
+seasonder_readPhaseFile <- function(file_path) {
+  # Read the file lines and extract the first phase correction value using regex
+  phasec1 <- readLines(file_path) %>%
+    stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)", group = 1) %>%
+    as.numeric()
+  # Read the file lines again and extract the second phase correction value using regex
+  phasec2 <- readLines(file_path) %>%
+    stringr::str_extract("([-\\d\\.]+)\\s*([-\\d\\.]+)", group = 2) %>%
+    as.numeric()
+  # Return the phase corrections as a numeric vector with named elements
   return(c(phase1 = phasec1, phase2 = phasec2))
+}
 
+#### Plots ####
+
+#' Plot APM Loops in a Polar Coordinate System
+#'
+#' This function generates a polar plot of the antenna pattern loops from a SeaSonde RAPM object.
+#'
+#' @param seasonder_apm_obj A SeaSonde RAPM object containing the antenna pattern data.
+#'
+#' @return A ggplot object displaying the magnitude of the two loops as a function of bearings.
+#'
+#' @export
+seasonder_plotAPMLoops <- function(seasonder_apm_obj) {
+  # Convert the BEAR attribute to geographical bearings using a helper function and unlist the result
+  bearings <- seasonder_MUSICBearing2GeographicalBearing(attr(seasonder_apm_obj, "BEAR", exact = TRUE), seasonder_apm_obj) %>%
+    unlist
+
+  # Create a data frame with bearings and the magnitudes of the two antenna channels
+  plot_data <- data.frame(
+    bearings = bearings,
+    loop1 = Mod(seasonder_apm_obj[1,]),
+    loop2 = Mod(seasonder_apm_obj[2,])
+  )
+
+  # Pivot the data frame from wide to long format for plotting
+  plot_data_long <- plot_data %>%
+    tidyr::pivot_longer(
+      cols = -bearings,        # Specify that all columns except 'bearings' should be pivoted
+      names_to = "loop",       # The new column to store the names of the loops
+      values_to = "Mod"        # The new column to store the magnitude values
+    )
+
+  # Build the ggplot object step by step
+  p <- ggplot2::ggplot(
+    data = plot_data_long,
+    mapping = ggplot2::aes(x = bearings, y = Mod, color = loop)
+  )
+  p <- p + ggplot2::geom_point()         # Add points for each data observation
+  p <- p + ggplot2::coord_polar()          # Convert the plot to polar coordinates
+  p <- p + ggplot2::scale_x_continuous(    # Set x-axis scale for bearings from 0 to 360 degrees with breaks at 0, 90, 180, and 270
+    limits = c(0, 360),
+    breaks = c(0, 90, 180, 270)
+  )
+
+  # Return the completed ggplot object
+  return(p)
 }

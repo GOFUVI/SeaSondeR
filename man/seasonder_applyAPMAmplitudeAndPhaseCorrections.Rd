@@ -10,10 +10,9 @@ seasonder_applyAPMAmplitudeAndPhaseCorrections(seasonder_apm_object)
 \item{seasonder_apm_object}{A SeaSonde RAPM object containing raw data and correction factors.}
 }
 \value{
-Returns the SeaSonde RAPM object with amplitude and phase corrections applied to the data.
+The SeaSonde RAPM object with amplitude and phase corrections applied to the data.
 }
 \description{
 This function applies amplitude and phase corrections to each antenna channel
-of a SeaSonde RAPM object based on the specified corrections retrieved from the object.
-The corrections are applied to the raw data matrix within the SeaSonde RAPM object.
+of a SeaSonde RAPM object based on the correction factors stored within the object.
 }

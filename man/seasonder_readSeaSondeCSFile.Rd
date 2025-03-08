@@ -4,12 +4,14 @@
 \alias{seasonder_readSeaSondeCSFile}
 \title{Read SeaSonde Cross Spectra (CS) File}
 \usage{
-seasonder_readSeaSondeCSFile(filepath, specs_path)
+seasonder_readSeaSondeCSFile(filepath, specs_path, endian = "big")
 }
 \arguments{
 \item{filepath}{A character string specifying the path to the SeaSonde CS file.}
 
 \item{specs_path}{A character string specifying the path to the YAML specifications for the CS file.}
+
+\item{endian}{Character string indicating the byte order. Options are "big" (default) or "little".}
 }
 \value{
 A list containing two components:

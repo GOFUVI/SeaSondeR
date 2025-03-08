@@ -2,58 +2,250 @@
 
 
 
+#' Validate First Order Region (FOR) Processing Method
+#'
+#' This function checks whether the specified method for First Order Region (FOR) detection
+#' is supported. If an unsupported method is provided, it logs an error and aborts execution.
+#'
+#' @param method A character string specifying the FOR processing method. Currently, only `"SeaSonde"` is supported.
+#'
+#' @details
+#' The function verifies that the `method` argument is valid. If the method is not recognized,
+#' an error is raised using \code{\link{seasonder_logAndAbort}}.
+#'
+#' **Supported Methods:**
+#' - `"SeaSonde"`: Implements first-order region detection based on CODAR's SeaSonde methodology.
+#'
+#' @return The function returns the input \code{method} invisibly if it is valid.
+#'
+#' @seealso
+#' - \code{\link{seasonder_validateFOR_parameters}} for FOR parameter validation.
+#' - \code{\link{seasonder_logAndAbort}} for error handling and logging.
+#'
+#' @examples
+#' \dontrun{
+#' # Validate a correct method
+#' seasonder_validateFORMethod("SeaSonde")
+#'
+#' # Attempting to use an invalid method will trigger an error
+#' seasonder_validateFORMethod("InvalidMethod") # This will abort execution
+#' }
 seasonder_validateFORMethod <- function(method) {
 
-  method %in% c("SeaSonde") || seasonder_logAndAbort(glue::glue("Method '{method}' not implemented."), calling_function = "seasonder_validateFORMethod")
+  # Check if the provided method is in the list of supported methods
+  method %in% c("SeaSonde") ||
+    seasonder_logAndAbort(
+      glue::glue("Method '{method}' not implemented."),
+      calling_function = "seasonder_validateFORMethod"
+    )
 
+  # Return the method invisibly if it is valid
   invisible(method)
-
 }
 
+
+#' Default First-Order Radial Processing Parameters
+#'
+#' This function returns a list of default parameters for first-order
+#' radial processing in CODAR's Radial Suite R7. Each parameter has an equivalent
+#' R8 version, where applicable, often expressed in decibels (dB).
+#'
+#' @details
+#' **Parameter Descriptions:**
+#'
+#' 1. **nsm (R8: Doppler Smoothing)**
+#'
+#'    - **Default value:** 2
+#'    - **Usage:** Sets how many Doppler bins (points) are smoothed. Smoothing helps
+#'      remove jagged edges in the sea echo spectrum, aiding in locating the null
+#'      between the first and second order (or noise floor).
+#'    - **Recommended values:** Typically 2 to 6. Default in Radial Suite R8 is 2
+#'    - **Effects of over-/under-smoothing:**
+#'      - Too high: May smear out the real null, causing the first order to appear
+#'        wider.
+#'      - Too low: Jagged minima may cause the null to be detected inside the
+#'        first-order region, making it appear too narrow.
+#'
+#' 2. **fdown (R8: Null Below Peak Power)**
+#'
+#'    - **Default value (R7):** 10
+#'    - **Equivalent in dB (R8):** 10 dB
+#'    - **Usage:** Defines how far below the peak power the algorithm must descend
+#'      (in dB) before searching for the null that separates the first and second
+#'      order. This helps avoid including second-order energy as part of the
+#'      first-order.
+#'    - **Recommended range:** 3.981072 to 31.62278 (6 to 15 dB in R8). Default in Radial Suite R8 is 10 dB
+#'    - **Effects of misconfiguration:**
+#'      - Too large: The null search may be bypassed entirely, causing
+#'        second-order content to be included in the first order.
+#'      - Too small: The null may be found inside the first-order region,
+#'        excluding valid Bragg energy.
+#'
+#' 3. **flim (R8: Peak Power Dropoff)**
+#'
+#'    - **Default value (R7):** 100
+#'    - **Equivalent in dB (R8):** 20 dB
+#'    - **Usage:** Once a peak is located, any spectral bins that are more than
+#'      `flim` below the peak (in linear scale) or `20 dB` below the peak (in dB
+#'      scale) are excluded from the first-order region.
+#'    - **Recommended range:** 15.84893 to 316.2278 (12 to 25 dB in R8). Default in Radial Suite R8 is 20 dB.
+#'    - **Effects of misconfiguration:**
+#'      - Too high: May include non-Bragg signal and yield spurious high
+#'        velocity estimates.
+#'      - Too low: May cut out part of the actual Bragg signal, underestimating
+#'        maximum velocities.
+#'
+#' 4. **noisefact (R8: Signal to Noise)**
+#'
+#'    - **Default value (R7):** 3.981072
+#'    - **Equivalent in dB (R8):** 6 dB
+#'    - **Usage:** Sets the threshold above the noise floor that must be exceeded
+#'      for the algorithm to accept Doppler bins as potential first-order.
+#'    - **Recommended range:** 3.981072 to 7.943282 (6 to 9 dB in R8). Default in Radial Suite R8 is 6 dB
+#'    - **Effects of misconfiguration:**
+#'      - Too high: Useful Bragg data could be excluded.
+#'      - Too low: Noise or spurious signals may be included as Bragg.
+#'
+#' 5. **currmax (R8: Maximum Velocity)**
+#'
+#'    - **Default value:** 2 m/s
+#'    - **Usage:** Sets a maximum radial velocity,
+#'      preventing first-order limits from extending beyond realistic current
+#'      speeds for the site.
+#'    - **Effects of misconfiguration:**
+#'      - Too high: May include non-Bragg data, producing overestimated
+#'        velocities.
+#'      - Too low: May exclude valid Bragg data, underestimating velocities.
+#'
+#' 6. **reject_distant_bragg (Reject Distant Bragg)**
+#'
+#'    - **Default value:** TRUE
+#'    - **Usage:** Rejects a first-order region if its limits are farther from
+#'      the Bragg index (central Doppler bin for zero current) than the width of
+#'      the region itself. Helps avoid misclassifying strong but isolated signals
+#'      (e.g., ships) as Bragg.
+#'    - **Recommendation:** Usually keep this enabled unless operating at a site
+#'      where only strongly biased positive or negative currents are expected.
+#'
+#' 7. **reject_noise_ionospheric (Reject Noise/Ionospheric)**
+#'
+#'    - **Default value:** TRUE
+#'    - **Usage:** Rejects Bragg if the total non-Bragg power in a range cell
+#'      exceeds the Bragg power by at least the threshold set in
+#'      `reject_noise_ionospheric_threshold`. Recommended to set as FALSE for 42 MHz systems.
+#'    - **Recommendation:** Enable if the site experiences significant noise.
+#'
+#' 8. **reject_noise_ionospheric_threshold (Reject Noise/Ionospheric Threshold)**
+#'
+#'    - **Default value:** 0
+#'    - **Equivalent in dB:** 0 dB
+#'    - **Usage:** Difference threshold (in dB) for comparing non-Bragg power to
+#'      Bragg power. If non-Bragg power is higher by this threshold, the Bragg is
+#'      rejected.
+#'    - **Recommended setting:** Typically 0 dB. Increase only if needed to be
+#'      less sensitive to noise contamination.
+#'
+#' @return A named list containing the default parameter values.
+#'
+#' @references
+#'
+#' COS. SeaSonde Radial Suite Release 7; CODAR Ocean Sensors (COS): Mountain View, CA, USA, 2013.
+#' COS. SeaSonde Radial Suite Release 8; CODAR Ocean Sensors (COS): Mountain View, CA, USA, 2016.
+#'
+#' @examples
+#' params <- seasonder_defaultFOR_parameters()
+#' print(params)
+#'
+#' @export
 seasonder_defaultFOR_parameters <- function() {
 
-  out <- list(nsm = 11,
-              fdown = 7.5,
-              flim = 4,
-              noisefact = 15,
-              currmax = 2,
-              reject_distant_bragg = TRUE, #  Default is to apply this test
-              reject_noise_ionospheric = TRUE, #  Default is to apply this test (except for 42 MHz)
-              # TODO: implement default reject_noise_ionospheric = FALSE for 42 MHz
-              reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
+  out <- list(
+    nsm = 2,    # R8: Doppler Smoothing
+    fdown = 10, # R8: Null Below Peak Power (10 dB)
+    flim = 100, # R8: Peak Power Dropoff (20 dB)
+    noisefact = 3.981072, # R8: Signal to Noise (6 dB)
+    currmax = 2,          # R8: Maximum Velocity
+    reject_distant_bragg = TRUE,    # Reject Distant Bragg
+    reject_noise_ionospheric = TRUE, # Reject Noise/Ionospheric
+    # TODO: implement default reject_noise_ionospheric = FALSE for 42 MHz
+    reject_noise_ionospheric_threshold = 0 # 0 dB threshold
   )
-
 
   return(out)
 }
 
+#' Validate First Order Region (FOR) Parameters
+#'
+#' This function validates and assigns default values to the parameters used in defining
+#' the First Order Region (FOR) in a SeaSondeR cross-spectral object. It ensures that all
+#' necessary parameters are present and assigns appropriate defaults where values are missing.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing metadata about the Doppler spectrum.
+#' @param FOR_parameters A named list containing the parameters for first-order region detection.
+#' @param method A character string specifying the validation method. Default is \code{"SeaSonde"}.
+#'        Currently, only "SeaSonde" is supported.
+#'
+#' @details
+#' The function validates FOR parameters and assigns default values where necessary.
+#' If the selected method is "SeaSonde", the function ensures that each parameter is
+#' defined and, if missing, assigns it a default value based on \code{\link{seasonder_defaultFOR_parameters}}.
+#'
+#' The parameters validated include:
+#'
+#' - **nsm** (Doppler Smoothing): Number of points used for spectral smoothing.
+#' - **fdown** (Peak Power Dropoff): Defines how far below peak power the algorithm descends before searching for the null.
+#' - **flim** (Null Below Peak Power): Specifies a power threshold for identifying the first-order region.
+#' - **noisefact** (Signal to Noise): Threshold above the noise floor that a spectral bin must exceed to be considered first-order.
+#' - **currmax** (Maximum Velocity): Maximum radial velocity allowed in the first-order region.
+#' - **reject_distant_bragg**: Logical flag indicating whether to reject Bragg regions that are too distant from the central Bragg frequency.
+#' - **reject_noise_ionospheric**: Logical flag indicating whether to reject Bragg regions affected by ionospheric noise.
+#' - **reject_noise_ionospheric_threshold**: Threshold (in dB) for rejecting first-order regions based on noise contamination.
+#' - **reference_noise_normalized_limits**: Estimated reference noise range in normalized Doppler frequency,
+#'   computed using \code{\link{seasonder_estimateReferenceNoiseNormalizedLimits}}.
+#'
+#' @return A named list containing validated and completed FOR parameters.
+#'
+#' @seealso
+#' - \code{\link{seasonder_defaultFOR_parameters}} for default FOR settings.
+#' - \code{\link{seasonder_estimateReferenceNoiseNormalizedLimits}} for computing reference noise limits.
+#' - \code{\link{seasonder_validateFORMethod}} for validating the processing method.
+#'
+#' @examples
+#' \dontrun{
+#' # Validate and complete FOR parameters for a SeaSondeRCS object
+#' validated_params <- seasonder_validateFOR_parameters(cs_obj, list(fdown = 12))
+#' print(validated_params)
+#' }
 seasonder_validateFOR_parameters <- function(seasonder_cs_obj, FOR_parameters, method = "SeaSonde") {
 
+  # Validate that the provided method is supported
   seasonder_validateFORMethod(method)
 
+  # Ensure that the method is "SeaSonde" before proceeding with parameter validation
   if (method == "SeaSonde") {
 
+    # Assign default value for Doppler Smoothing if not provided
     FOR_parameters$nsm <- FOR_parameters$nsm %||% seasonder_defaultFOR_parameters()$nsm
 
-    FOR_parameters$reference_noise_normalized_limits <- FOR_parameters$reference_noise_normalized_limits %||% seasonder_estimateReferenceNoiseNormalizedLimits(seasonder_cs_obj)
+    # Assign default reference noise limits if not provided
+    FOR_parameters$reference_noise_normalized_limits <- FOR_parameters$reference_noise_normalized_limits %||%
+      seasonder_estimateReferenceNoiseNormalizedLimits(seasonder_cs_obj)
 
-
+    # Assign default values for first-order detection parameters if missing
     FOR_parameters$fdown <- FOR_parameters$fdown %||% seasonder_defaultFOR_parameters()$fdown
     FOR_parameters$flim <- FOR_parameters$flim %||% seasonder_defaultFOR_parameters()$flim
     FOR_parameters$noisefact <- FOR_parameters$noisefact %||% seasonder_defaultFOR_parameters()$noisefact
     FOR_parameters$currmax <- FOR_parameters$currmax %||% seasonder_defaultFOR_parameters()$currmax
     FOR_parameters$reject_distant_bragg <- FOR_parameters$reject_distant_bragg %||% seasonder_defaultFOR_parameters()$reject_distant_bragg
     FOR_parameters$reject_noise_ionospheric <- FOR_parameters$reject_noise_ionospheric %||% seasonder_defaultFOR_parameters()$reject_noise_ionospheric
-    FOR_parameters$reject_noise_ionospheric_threshold <- FOR_parameters$reject_noise_ionospheric_threshold %||% seasonder_defaultFOR_parameters()$reject_noise_ionospheric_threshold
-
+    FOR_parameters$reject_noise_ionospheric_threshold <- FOR_parameters$reject_noise_ionospheric_threshold %||%
+      seasonder_defaultFOR_parameters()$reject_noise_ionospheric_threshold
   }
 
+  # Return the validated FOR parameters without printing them explicitly (invisible)
   invisible(FOR_parameters)
-
-
-
-
 }
+
 
 ##### Setters #####
 
@@ -84,19 +276,48 @@ seasonder_setSeaSondeRCS_FOR <- function(seasonder_cs_obj, FOR) {
 
 }
 
+#' Set Smoothed Self-Spectra for First Order Region (FOR)
+#'
+#' This function assigns a smoothed self-spectra (SS) matrix to the First Order Region (FOR) data
+#' within a \code{SeaSondeRCS} object. This smoothed matrix is used in FOR processing to improve
+#' the detection of the first-order region.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object to which the smoothed FOR self-spectra will be assigned.
+#' @param FOR_SS_Smoothed A matrix containing the smoothed self-spectra data.
+#'
+#' @details
+#' The function assigns the provided smoothed self-spectra matrix to the \code{FOR_data} attribute
+#' of the \code{SeaSondeRCS} object. This matrix is typically generated using
+#' \code{\link{seasonder_SmoothSS}} and applied to antenna 3.
+#'
+#' **Validation Considerations:**
+#' - The function currently lacks explicit validation for \code{FOR_SS_Smoothed}.
+#' - Future improvements should include checking whether \code{FOR_SS_Smoothed} is a matrix and
+#'   ensuring its dimensions match the original self-spectra structure.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the smoothed self-spectra stored in the \code{FOR_data} attribute.
+#'
+#' @seealso
+#' - \code{\link{seasonder_SmoothSS}} for generating the smoothed self-spectra.
+#' - \code{\link{seasonder_SmoothFORSS}} for applying smoothing and setting the result.
+#'
+#' @examples
+#' \dontrun{
+#' # Smooth and assign self-spectra for FOR processing
+#' smoothed_SS <- seasonder_SmoothSS(cs_obj, antenna = 3)
+#' cs_obj <- seasonder_setSeaSondeRCS_FOR_SS_Smoothed(cs_obj, smoothed_SS)
+#' }
 seasonder_setSeaSondeRCS_FOR_SS_Smoothed <- function(seasonder_cs_obj, FOR_SS_Smoothed) {
 
-  # TODO: validate
+  # TODO: Implement validation to check that FOR_SS_Smoothed is a valid matrix
 
-
-
+  # Assign the smoothed self-spectra matrix to the FOR_data attribute of the SeaSondeRCS object
   attr(seasonder_cs_obj, "FOR_data")$FOR_SS_Smoothed <- FOR_SS_Smoothed
 
-
+  # Return the updated object
   return(seasonder_cs_obj)
-
-
 }
+
 
 seasonder_setSeaSondeRCS_FOR_method <- function(seasonder_cs_obj, FOR_method) {
 
@@ -112,32 +333,80 @@ seasonder_setSeaSondeRCS_FOR_method <- function(seasonder_cs_obj, FOR_method) {
 
 }
 
+#' Set Maximum Power (MAXP) for First Order Region (FOR)
+#'
+#' This function assigns the computed maximum power values (\code{MAXP}) for each range cell
+#' in the First Order Region (FOR) to the \code{SeaSondeRCS} object.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object to which the \code{MAXP} values will be assigned.
+#' @param FOR_MAXP A list containing the maximum power values for each range cell.
+#'
+#' @details
+#' The maximum power (\code{MAXP}) represents the highest spectral power detected in the first-order region.
+#' This value is extracted from the self-spectra and used for setting first-order boundaries.
+#'
+#' **Validation Considerations:**
+#' - The function does not currently perform explicit validation on \code{FOR_MAXP}.
+#' - Future improvements should ensure that \code{FOR_MAXP} contains numeric values corresponding to each range cell.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the \code{MAXP} values stored in the \code{FOR_data} attribute.
+#'
+#' @seealso
+#' - \code{\link{seasonder_findFORNulls}} for computing \code{MAXP}.
+#' - \code{\link{seasonder_setSeaSondeRCS_FOR_MAXP.bin}} for setting maximum power bin indices.
+#'
+#' @examples
+#' \dontrun{
+#' # Assign maximum power values to a SeaSondeRCS object
+#' cs_obj <- seasonder_setSeaSondeRCS_FOR_MAXP(cs_obj, MAXP_values)
+#' }
 seasonder_setSeaSondeRCS_FOR_MAXP <- function(seasonder_cs_obj, FOR_MAXP) {
 
-  # TODO: Validate
+  # TODO: Implement validation to check that FOR_MAXP is a valid list of numeric values
 
-
-
+  # Assign the maximum power values to the FOR_data attribute of the SeaSondeRCS object
   attr(seasonder_cs_obj, "FOR_data")$FOR_MAXP <- FOR_MAXP
 
-
+  # Return the updated object
   return(seasonder_cs_obj)
-
-
 }
 
+#' Set Maximum Power Bin Indices for First Order Region (FOR)
+#'
+#' This function assigns the Doppler bin indices corresponding to the maximum power (\code{MAXP.bin})
+#' for each range cell in the First Order Region (FOR) to the \code{SeaSondeRCS} object.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object to which the \code{MAXP.bin} values will be assigned.
+#' @param FOR_MAXP.bin A list containing the Doppler bin indices of the maximum power for each range cell.
+#'
+#' @details
+#' The maximum power bin (\code{MAXP.bin}) represents the Doppler bin index at which the highest spectral power
+#' was detected in the first-order region. This information is used to refine first-order boundary detection.
+#'
+#' **Validation Considerations:**
+#' - The function does not currently validate the format of \code{FOR_MAXP.bin}.
+#' - Future improvements should ensure that \code{FOR_MAXP.bin} consists of integer values corresponding to Doppler bins.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the \code{MAXP.bin} values stored in the \code{FOR_data} attribute.
+#'
+#' @seealso
+#' - \code{\link{seasonder_findFORNulls}} for computing \code{MAXP.bin}.
+#' - \code{\link{seasonder_setSeaSondeRCS_FOR_MAXP}} for setting maximum power values.
+#'
+#' @examples
+#' \dontrun{
+#' # Assign maximum power bin indices to a SeaSondeRCS object
+#' cs_obj <- seasonder_setSeaSondeRCS_FOR_MAXP.bin(cs_obj, MAXP_bin_values)
+#' }
 seasonder_setSeaSondeRCS_FOR_MAXP.bin <- function(seasonder_cs_obj, FOR_MAXP.bin) {
 
-  # TODO: Validate
+  # TODO: Implement validation to check that FOR_MAXP.bin is a valid list of integer values
 
-
-
+  # Assign the maximum power bin indices to the FOR_data attribute of the SeaSondeRCS object
   attr(seasonder_cs_obj, "FOR_data")$FOR_MAXP.bin <- FOR_MAXP.bin
 
-
+  # Return the updated object
   return(seasonder_cs_obj)
-
-
 }
 
 
@@ -155,16 +424,52 @@ seasonder_setSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, NoiseLevel) {
 # TODO: implement access to individual parameters:
 # seasonder_getSeaSondeRCS_FOR_parameter <- function(seasonder_cs_object, FOR_parameter)
 
+#' Retrieve First Order Region (FOR) Parameters
+#'
+#' This function retrieves the First Order Region (FOR) parameters associated with a
+#' SeaSondeR cross-spectral object. If no FOR parameters are found in the object's
+#' attributes, it initializes them using \code{\link{seasonder_validateFOR_parameters}}.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing FOR-related metadata.
+#'
+#' @details
+#' The function extracts the FOR parameters stored within the object. If the parameters
+#' are missing, the function initializes them using \code{\link{seasonder_validateFOR_parameters}}
+#' and assigns default values where necessary.
+#'
+#' **FOR Parameters:**
+#' - **nsm**: Doppler smoothing factor.
+#' - **fdown**: Peak power dropoff threshold.
+#' - **flim**: Null below peak power threshold.
+#' - **noisefact**: Signal-to-noise threshold.
+#' - **currmax**: Maximum velocity allowed.
+#' - **reject_distant_bragg**: Flag to reject distant Bragg signals.
+#' - **reject_noise_ionospheric**: Flag to reject ionospheric noise contamination.
+#' - **reject_noise_ionospheric_threshold**: Threshold (in dB) for rejecting noise-affected Bragg signals.
+#' - **reference_noise_normalized_limits**: Estimated limits for reference noise in normalized Doppler frequency.
+#'
+#' @return A named list containing the validated FOR parameters.
+#'
+#' @seealso
+#' \code{\link{seasonder_validateFOR_parameters}} for initializing and validating FOR parameters.
+#' \code{\link{seasonder_defaultFOR_parameters}} for retrieving default parameter values.
+#'
+#' @examples
+#' \dontrun{
+#' # Retrieve FOR parameters for a SeaSondeRCS object
+#' for_params <- seasonder_getSeaSondeRCS_FOR_parameters(cs_obj)
+#' print(for_params)
+#' }
 seasonder_getSeaSondeRCS_FOR_parameters <- function(seasonder_cs_obj) {
 
+  # Extract FOR parameters from the object's attributes
+  out <- attr(seasonder_cs_obj, "FOR_data", exact = TRUE)$FOR_parameters %||%
+    seasonder_validateFOR_parameters(seasonder_cs_obj, list())
 
-  out <- attr(seasonder_cs_obj, "FOR_data", exact = TRUE)$FOR_parameters %||% seasonder_validateFOR_parameters(seasonder_cs_obj, list())
-
-
+  # Return the FOR parameters
   return(out)
-
-
 }
+
 
 seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits <- function(seasonder_cs_obj) {
 
@@ -185,16 +490,43 @@ seasonder_getSeaSondeRCS_FOR <- function(seasonder_cs_obj) {
 }
 
 
+#' Retrieve Smoothed Self-Spectra for First Order Region (FOR)
+#'
+#' This function retrieves the smoothed self-spectra (SS) matrix stored in the \code{FOR_data} attribute
+#' of a \code{SeaSondeRCS} object. The smoothed self-spectra are used in First Order Region (FOR) processing
+#' to refine the detection of the first-order boundaries.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing smoothed self-spectra data.
+#'
+#' @details
+#' The function extracts the matrix assigned by \code{\link{seasonder_setSeaSondeRCS_FOR_SS_Smoothed}}.
+#' If no smoothed self-spectra are found, the function returns \code{NULL}.
+#'
+#' The smoothed self-spectra are typically generated using \code{\link{seasonder_SmoothSS}} and applied
+#' to the self-spectra of antenna 3. This smoothing aids in detecting the nulls that separate first- and
+#' second-order regions.
+#'
+#' @return A matrix representing the smoothed self-spectra, or \code{NULL} if no smoothed data is stored.
+#'
+#' @seealso
+#' - \code{\link{seasonder_SmoothFORSS}} for applying smoothing and storing the result.
+#' - \code{\link{seasonder_setSeaSondeRCS_FOR_SS_Smoothed}} for setting smoothed self-spectra.
+#'
+#' @examples
+#' \dontrun{
+#' # Retrieve smoothed FOR self-spectra
+#' smoothed_SS <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(cs_obj)
+#' print(smoothed_SS)
+#' }
 seasonder_getSeaSondeRCS_FOR_SS_Smoothed  <- function(seasonder_cs_obj) {
 
-
+  # Extract the smoothed self-spectra matrix from the FOR_data attribute
   out <- attr(seasonder_cs_obj, "FOR_data", exact = TRUE)$FOR_SS_Smoothed
 
-
+  # Return the retrieved matrix (or NULL if it does not exist)
   return(out)
-
-
 }
+
 
 
 seasonder_getSeaSondeRCS_FOR_method  <- function(seasonder_cs_obj) {
@@ -274,620 +606,1453 @@ SeaSondeRCS_FOR_SeaSonde_end_step_text <- function(seasonder_cs_object) {
 
 
 
+#' Estimate Reference Noise Limits in Normalized Doppler Frequency
+#'
+#' This function estimates the reference noise limits for normalized Doppler frequencies
+#' in a SeaSondeR cross-spectral object. These limits are used to define the frequency range
+#' where the noise level is assessed for first-order region (FOR) detection.
+#'
+#' @param seasonder_cs_obj A SeaSondeRCS object containing Doppler frequency metadata.
+#'
+#' @details
+#' The function computes the noise limits based on the maximum normalized Doppler frequency
+#' from \code{\link{seasonder_getDopplerBinsFrequency}}. The limits are scaled using fixed
+#' factors to set a reference range for noise analysis:
+#' - The lower bound is 56.5% of the maximum normalized Doppler frequency.
+#' - The upper bound is 100% of the maximum normalized Doppler frequency.
+#'
+#' The lower bound value of 56.5% was determined through an empirical process involving
+#' multiple sample spectra. The procedure began with an initial lower bound set at 100%,
+#' and in each iteration, this value was decreased by 0.5%. The noise floor was
+#' calculated repeatedly and compared with the temporal NoiseFloor.txt file generated
+#' by the AnalyseSpectra Tool in Radial Suite R8. The final lower bound percentage
+#' was established as the value that closely matched the corresponding noise floor
+#' in the NoiseFloor.txt file. After this, several percentages were averaged and
+#' rounded to the nearest 0.5%.
+#'
+#' The function is used in first-order detection processes where noise reference levels
+#' are required for signal-to-noise ratio (SNR) calculations.
+#'
+#' @return A numeric vector of length two, representing the lower and upper reference
+#' noise limits in normalized Doppler frequency.
+#'
+#' @seealso
+#' \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving Doppler bin frequencies.
+#'
+#' @examples
+#' \dontrun{
+#' # Estimate reference noise limits for a SeaSondeRCS object
+#' noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj)
+#' print(noise_limits)
+#' }
 seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_obj) {
 
+  # Retrieve Doppler bin frequencies in normalized units (relative to Bragg frequency)
+  freq <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = TRUE)
 
-  freq <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = T)
+  # Compute the noise limits using predefined scaling factors
+  # - The lower (empirical) bound is 56.5% of the maximum normalized Doppler frequency
+  # - The upper bound is 100% of the maximum normalized Doppler frequency
+  out <- max(freq) * c(0.565, 1)
 
-  out <- max(freq)*c(0.565,1)
-
+  # Return the estimated reference noise limits
   return(out)
-
 }
 
 
 
 
+
+#' Compute Noise Level for First Order Region (FOR) Processing
+#'
+#' This function estimates the noise level in the self-spectra of a SeaSondeR cross-spectral object.
+#' The noise level is computed by averaging the spectral power within a predefined frequency range
+#' where no first-order Bragg signal is expected.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing spectral data and FOR parameters.
+#'
+#' @details
+#' **Steps in Noise Level Computation:**
+#' 1. **Determine Noise Reference Limits:**
+#'    - Retrieves the normalized Doppler frequency limits for noise reference from \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}}.
+#'    - Converts these limits into Doppler bin indices using \code{\link{seasonder_SwapDopplerUnits}}.
+#'    - Ensures that missing values are replaced with appropriate boundary values.
+#'
+#' 2. **Extract Spectral Data for Noise Estimation:**
+#'    - The function extracts self-spectra (SSA3) from antenna 3 using \code{\link{seasonder_getSeaSondeRCS_SelfSpectra}}.
+#'    - The extraction is limited to the Doppler bins within the computed noise reference range.
+#'
+#' 3. **Compute the Average Noise Level:**
+#'    - The extracted spectral data from both negative and positive Doppler regions is concatenated.
+#'    - The row-wise mean is computed to estimate the average noise level.
+#'
+#' 4. **Store the Noise Level in the Object:**
+#'    - The computed noise level is assigned to the \code{NoiseLevel} attribute of the SeaSondeRCS object.
+#'
+#' The computed noise level is crucial in setting signal-to-noise thresholds used in first-order Bragg region detection.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the computed noise level stored in its attributes.
+#'
+#' @seealso
+#' - \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}} for retrieving reference noise limits.
+#' - \code{\link{seasonder_SwapDopplerUnits}} for converting frequency limits into Doppler bins.
+#' - \code{\link{seasonder_getSeaSondeRCS_SelfSpectra}} for extracting self-spectra.
+#' - \code{\link{seasonder_setSeaSondeRCS_NoiseLevel}} for storing the computed noise level.
+#'
+#' @examples
+#' \dontrun{
+#' # Compute noise level for a SeaSondeRCS object
+#' cs_obj <- seasonder_computeNoiseLevel(cs_obj)
+#' }
 seasonder_computeNoiseLevel <- function(seasonder_cs_obj) {
 
+  # Retrieve the normalized Doppler frequency limits for noise reference
   normalized_doppler_range <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$reference_noise_normalized_limits
 
-  positive_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, sort(normalized_doppler_range), in_units = "normalized doppler frequency", out_units = "bins")
+  # Convert normalized Doppler frequencies to Doppler bin indices (positive region)
+  positive_doppler_range <- seasonder_SwapDopplerUnits(
+    seasonder_cs_obj,
+    sort(normalized_doppler_range),
+    in_units = "normalized doppler frequency",
+    out_units = "bins"
+  )
 
-if(is.na(positive_doppler_range[2])){
-  positive_doppler_range[2] <- seasonder_getnDopplerCells(seasonder_cs_obj)
-}
+  # Ensure the upper limit is set correctly if missing
+  if (is.na(positive_doppler_range[2])) {
+    positive_doppler_range[2] <- seasonder_getnDopplerCells(seasonder_cs_obj)
+  }
 
-  negative_doppler_range <- seasonder_SwapDopplerUnits(seasonder_cs_obj, sort(-1 * normalized_doppler_range), in_units = "normalized doppler frequency", out_units = "bins")
+  # Convert normalized Doppler frequencies to Doppler bin indices (negative region)
+  negative_doppler_range <- seasonder_SwapDopplerUnits(
+    seasonder_cs_obj,
+    sort(-1 * normalized_doppler_range),
+    in_units = "normalized doppler frequency",
+    out_units = "bins"
+  )
 
-  if(is.na(negative_doppler_range[1])){
+  # Ensure the lower limit is set correctly if missing
+  if (is.na(negative_doppler_range[1])) {
     negative_doppler_range[1] <- 1
   }
 
-  SS3 <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_obj, antennae = 3, doppler_ranges = list(negative = negative_doppler_range, positive = positive_doppler_range), collapse = TRUE)
+  # Extract self-spectra (SSA3) for the defined Doppler ranges
+  SS3 <- seasonder_getSeaSondeRCS_SelfSpectra(
+    seasonder_cs_obj,
+    antennae = 3,
+    doppler_ranges = list(negative = negative_doppler_range, positive = positive_doppler_range),
+    collapse = TRUE
+  )
 
-  avg_noise <- cbind(SS3[[1]],SS3[[2]]) %>% rowMeans()
+  # Compute the average noise level by taking the mean across the concatenated positive and negative regions
+  avg_noise <- cbind(SS3[[1]], SS3[[2]]) %>% rowMeans()
 
-
-
+  # Store the computed noise level in the object's attributes
   seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_NoiseLevel(avg_noise)
 
-
   return(seasonder_cs_obj)
-
-
 }
 
+
+#' Smooth Self-Spectra for First Order Region (FOR)
+#'
+#' This function applies a smoothing operation to the self-spectra (SS) matrix of antenna 3
+#' in a SeaSondeR cross-spectral object, specifically for First Order Region (FOR) processing.
+#' The smoothed self-spectra are stored as an attribute within the object.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing self-spectra data.
+#'
+#' @details
+#' The function retrieves the default Doppler smoothing factor (\code{nsm}) from
+#' \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}} and applies the smoothing operation
+#' using \code{\link{seasonder_SmoothSS}} on the self-spectra of antenna 3.
+#'
+#' **Steps:**
+#' 1. Retrieve the Doppler smoothing factor (\code{nsm}).
+#' 2. Apply the sliding mean smoothing to the self-spectra of antenna 3.
+#' 3. Store the smoothed matrix as an attribute within the \code{SeaSondeRCS} object.
+#'
+#' The smoothing process helps stabilize the estimation of nulls between first- and second-order
+#' regions, preventing over-smoothing that could distort boundaries or under-smoothing that could
+#' introduce jagged edges.
+#'
+#' @return The input \code{SeaSondeRCS} object with the smoothed self-spectra stored as an attribute.
+#'
+#' @seealso
+#' - \code{\link{seasonder_SmoothSS}} for performing the smoothing operation.
+#' - \code{\link{seasonder_setSeaSondeRCS_FOR_SS_Smoothed}} for storing the smoothed self-spectra.
+#' - \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}} for retrieving default \code{nsm} values.
+#'
+#' @examples
+#' \dontrun{
+#' # Apply smoothing to the FOR self-spectra
+#' cs_obj <- seasonder_SmoothFORSS(cs_obj)
+#' }
 seasonder_SmoothFORSS <- function(seasonder_cs_obj) {
 
+  # Retrieve the Doppler smoothing factor (nsm) from the FOR parameters
   nsm <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$nsm
 
+  # Apply smoothing to the self-spectra of antenna 3 using the retrieved nsm value
   SmoothSS <- seasonder_SmoothSS(seasonder_cs_obj, antenna = 3, smoothing = nsm)
 
+  # Store the smoothed self-spectra within the SeaSondeRCS object
   seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR_SS_Smoothed(SmoothSS)
 
+  # Return the updated object with the smoothed self-spectra attribute
   return(seasonder_cs_obj)
-
 }
 
+
+#' Smooth Self-Spectra Matrix Using a Sliding Window
+#'
+#' This function applies a smoothing operation to the self-spectra (SS) matrix of a specific antenna
+#' in a SeaSondeR cross-spectral object. The smoothing is performed using a sliding mean over a specified
+#' number of Doppler bins.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing self-spectra data.
+#' @param antenna A character or numeric identifier of the antenna whose self-spectra will be smoothed.
+#' @param smoothing Optional. An integer specifying the number of Doppler bins used for smoothing.
+#'        If \code{NULL}, the function retrieves the default smoothing factor (\code{nsm}) from
+#'        \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}}.
+#'
+#' @details
+#' The smoothing process is performed using a centered sliding mean filter with a window of \code{nsm} bins.
+#' The window extends symmetrically before and after each bin, with adjustments based on whether \code{nsm}
+#' is even or odd:
+#' - If \code{nsm} is even, the window includes \code{nsm/2} bins before and after the target bin.
+#' - If \code{nsm} is odd, the window includes \code{(nsm - 1)/2} bins before and \code{(nsm - 1)/2 + 1} bins after.
+#'
+#' The function utilizes \code{\link[slider]{slide_mean}} to apply the smoothing operation row-wise
+#' across the self-spectra matrix.
+#'
+#' This smoothing implementation mimics the one performed by the tool AnalyzeSpectra of CODAR's Radial Suite R8.
+#'
+#' @return A matrix with the same dimensions as the input self-spectra matrix, but with smoothed values.
+#'
+#' @seealso
+#' - \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}} for retrieving default \code{nsm} values.
+#' - \code{\link{seasonder_getSeaSondeRCS_antenna_SSdata}} for accessing self-spectra data.
+#' - \code{\link[slider]{slide_mean}} for applying the sliding window mean operation.
+#'
+#' @examples
+#' \dontrun{
+#' # Smooth the self-spectra for a given antenna
+#' smoothed_SS <- seasonder_SmoothSS(cs_obj, antenna = "A1")
+#' print(smoothed_SS)
+#' }
 seasonder_SmoothSS <- function(seasonder_cs_obj, antenna, smoothing = NULL) {
 
+  # Retrieve the default smoothing parameter (nsm) if not provided
   nsm <- smoothing %||% seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$nsm
 
+  # Retrieve the self-spectra matrix for the specified antenna
   SS <- seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_obj, antenna = antenna)
 
-after_bins <- 0
-before_bins <- 0
+  # Initialize smoothing window parameters
+  after_bins <- 0
+  before_bins <- 0
 
-if(nsm > 0 ){
-  # even
-  after_bins  <- nsm/2
-  before_bins <- nsm/2
+  # Determine the number of bins to include in the smoothing window
+  if (nsm > 0) {
+    # If nsm is even, split equally before and after the current bin
+    after_bins  <- nsm / 2
+    before_bins <- nsm / 2
 
-  if (nsm %% 2 != 0) { #odd
-    after_bins <- (nsm - 1)/2 + 1
-    before_bins <- (nsm - 1)/2
+    # If nsm is odd, assign one extra bin to the after window
+    if (nsm %% 2 != 0) {
+      after_bins <- (nsm - 1) / 2 + 1
+      before_bins <- (nsm - 1) / 2
+    }
   }
-}
 
+  # Apply the sliding mean filter row-wise to the self-spectra matrix
+  out <- purrr::map(1:nrow(SS), \(i) {
+    # Compute the smoothed values for the current row
+    smoothed_row <- slider::slide_mean(abs(SS[i, , drop = TRUE]),
+                                       after = after_bins,
+                                       before = before_bins)
 
-  out <- purrr::map(1:nrow(SS),\(i) {
+    # Convert the smoothed row into a matrix with the same dimensions
+    smoothed_row %>% matrix(nrow = 1, byrow = TRUE) %>%
+      magrittr::set_rownames(rownames(SS)[i])
+  }) %>%
+    purrr::reduce(\(x, y) rbind(x, y)) %>%  # Combine all rows into a single matrix
+    magrittr::set_colnames(colnames(SS))  # Preserve original column names
 
-    slider::slide_mean(abs(SS[i,,drop = TRUE]),after = after_bins,before = before_bins) %>% matrix(nrow = 1,byrow = T) %>% magrittr::set_rownames(rownames(SS)[i])
-
-  }) %>% purrr::reduce(\(x,y) rbind(x,y)) %>% magrittr::set_colnames(colnames(SS))
-
-
+  # Return the smoothed self-spectra matrix
   return(out)
-
 }
 
 
 
+
+#' Find Nulls in First Order Region (FOR)
+#'
+#' This function locates the null point in the First Order Region (FOR) spectrum, which separates the first-order Bragg peak from second-order energy or the noise floor.
+#'
+#' @param FOR A numeric vector representing the power spectrum in the FOR region.
+#' @param start_point_P A numeric value representing the power threshold at which the search for the null point begins.
+#' @param doppler_bins A numeric vector containing the Doppler bins corresponding to the spectrum in \code{FOR}.
+#' @param left_region A logical value indicating whether the null is being searched for in the negative Bragg region. Default is \code{FALSE}.
+#'
+#' @details
+#' The function follows these steps to determine the null point:
+#' 1. If \code{left_region} is \code{TRUE}, the FOR spectrum and Doppler bins are reversed.
+#' 2. The power spectrum is transformed to facilitate peak identification:
+#'    - The absolute values of the power are taken and multiplied by -1.
+#'    - The \code{start_point_P} threshold is also inverted.
+#' 3. The function identifies the first local maximum in the transformed spectrum that exceeds \code{start_point_P}.
+#' 4. The corresponding Doppler bin at the detected peak is returned as the null position.
+#'
+#' The function relies on \code{pracma::findpeaks} to identify the peak.
+#'
+#' @return A numeric value representing the Doppler bin at the detected null position.
+#'
+#' @seealso
+#' - \code{\link{seasonder_findFORNullsInSpectrum}} for locating nulls in a full spectrum.
+#' - \code{\link{pracma::findpeaks}} for peak detection.
+#'
+#' @examples
+#' \dontrun{
+#' FOR_spectrum <- c(0.1, 0.2, 0.3, 0.5, 0.8, 0.6, 0.4, 0.2, 0.1)
+#' start_power <- 0.4
+#' doppler_bins <- seq(-5, 5, length.out = length(FOR_spectrum))
+#' null_bin <- seasonder_findFORNullsInFOR(FOR_spectrum, start_power, doppler_bins)
+#' print(null_bin)
+#' }
 seasonder_findFORNullsInFOR <- function(FOR, start_point_P, doppler_bins, left_region = FALSE) {
 
-
-
+  # If searching in the left region, reverse the spectrum and Doppler bins
   if (left_region) {
     FOR %<>% rev()
     doppler_bins %<>% rev()
   }
 
-
-
-
+  # Transform the power spectrum by taking absolute values and multiplying by -1
   FOR %<>% abs() %>% magrittr::multiply_by(-1)
+
+  # Invert the starting threshold for null detection
   start_point_P <- -1 * abs(start_point_P)
 
+  # Identify the first local peak that exceeds the threshold start_point_P
+  FOR_index <- pracma::findpeaks(FOR, nups = 1, ndowns = 1, zero = "0",
+                                 minpeakheight = start_point_P, npeaks = 1, sortstr = FALSE)[,2,drop = TRUE]
 
-  FOR_index <- pracma::findpeaks(FOR,nups = 1, ndowns = 1, zero = "0",minpeakheight = start_point_P, npeaks = 1, sortstr = FALSE)[,2,drop = TRUE]
-
+  # Retrieve the corresponding Doppler bin for the detected null position
   FOR_bins <- doppler_bins[FOR_index]
 
   return(FOR_bins)
-
-
-
 }
 
+
+#' Identify Nulls in First Order Region (FOR) Spectrum
+#'
+#' This function locates the null points in the First Order Region (FOR) of a Doppler spectrum.
+#' These nulls define the boundaries separating the first-order Bragg peak from the surrounding noise or second-order energy.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing the spectral data.
+#' @param spectrum A numeric vector representing the power spectrum to analyze.
+#' @param doppler_bins A numeric vector containing the Doppler bins corresponding to the spectrum.
+#' @param negative_Bragg_region A logical value indicating whether the function should analyze the negative Bragg region. Default is \code{FALSE}.
+#'
+#' @details
+#' The function executes the following steps:
+#' 1. **Retrieve First Order Settings:** The function extracts the \code{fdown} parameter, which defines the drop-off level relative to the maximum power.
+#' 2. **Prepare the Spectrum:**
+#'    - Convert all values to negative absolute magnitudes to facilitate peak detection.
+#'    - Reverse the spectrum and Doppler bins if analyzing the negative Bragg region.
+#' 3. **Find the Main Spectral Peak:**
+#'    - The function identifies the first major peak using \code{\link[pracma]{findpeaks}} with at least two consecutive increases and decreases.
+#'    - The search is limited to the portion of the spectrum beyond this peak.
+#' 4. **Determine the First Order Boundaries:**
+#'    - The maximum power (\code{MAXP}) is found along with its bin index (\code{MAXP.bin}).
+#'    - A threshold value \code{start_point_P} is computed as \code{MAXP / fdown} to establish the cutoff point for the null search.
+#' 5. **Search for Nulls:** The spectrum is split into left and right sections:
+#'    - The right-side spectrum is analyzed using \code{\link{seasonder_findFORNullsInFOR}} to find the right null.
+#'    - The left-side spectrum undergoes the same process but reversed.
+#' 6. **Output the Results:** The function returns a list containing:
+#'    - The sequence of Doppler bins defining the FOR region.
+#'    - The maximum power detected (\code{MAXP}).
+#'    - The Doppler bin index where \code{MAXP} occurred (\code{MAXP.bin}).
+#'
+#' @return A list with three elements:
+#' - \code{FOR}: A sequence of Doppler bins defining the first order region.
+#' - \code{MAXP}: The maximum power found in the spectrum.
+#' - \code{MAXP.bin}: The Doppler bin index of the maximum power.
+#'
+#' @seealso
+#' - \code{\link{seasonder_findFORNullsInFOR}} for detecting nulls within a selected region.
+#' - \code{\link[pracma]{findpeaks}} for peak identification.
+#' - \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}} for retrieving FOR settings.
+#'
+#' @examples
+#' \dontrun{
+#' # Sample spectrum
+#' spectrum <- c(0.1, 0.3, 0.5, 1.0, 2.5, 3.8, 2.1, 1.0, 0.5, 0.2)
+#' doppler_bins <- seq(-5, 5, length.out = length(spectrum))
+#'
+#' # Find nulls in the spectrum
+#' result <- seasonder_findFORNullsInSpectrum(cs_obj, spectrum, doppler_bins)
+#' print(result)
+#' }
 seasonder_findFORNullsInSpectrum <- function(seasonder_cs_obj, spectrum, doppler_bins, negative_Bragg_region = FALSE) {
 
+  # Retrieve the 'fdown' parameter, which controls the threshold for null detection
   fdown <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$fdown
 
-  # TODO: better center region removing
+  # Transform spectrum for peak detection by converting to negative absolute values
   sp <- -1 * abs(spectrum)
   dop_b <- doppler_bins
+
+  # If analyzing the negative Bragg region, reverse the spectrum and Doppler bins
   if (negative_Bragg_region) {
     sp %<>% rev()
     dop_b %<>% rev()
   }
 
+  # Identify the main peak in the spectrum to segment it into left and right regions
+  center_region_index <- pracma::findpeaks(sp, nups = 2, ndowns = 2, zero = "0",
+                                           npeaks = 1, sortstr = FALSE)[, 2, drop = TRUE]
 
-
-  center_region_index <- pracma::findpeaks(sp,nups = 2, ndowns = 2, zero = "0", npeaks = 1, sortstr = FALSE)[,2,drop = TRUE]
-
+  # Trim the spectrum to exclude regions before the main peak
   dop_b <- dop_b[center_region_index:length(dop_b)]
-
   sp <- sp[center_region_index:length(sp)]
 
+  # Restore positive values to the spectrum for further analysis
   sp <- abs(sp)
 
+  # If processing the negative Bragg region, restore the original order
   if (negative_Bragg_region) {
     sp %<>% rev()
     dop_b %<>% rev()
   }
 
-
+  # Identify the maximum power in the spectrum
   MAXP <- max(sp, na.rm = TRUE)
+
+  # Find the Doppler bin index corresponding to the maximum power
   MAXP.bin <- which.max(sp)
+
+  # Calculate the starting threshold for null detection
   start_point_P <- MAXP / fdown
 
+  # Define the right side of the spectrum for null detection
   right_FOR_index <- (MAXP.bin + 1):length(sp)
   right_FOR_sp <- sp[right_FOR_index]
   right_FOR_bins <- dop_b[right_FOR_index]
 
+  # Define the left side of the spectrum for null detection
   left_FOR_index <- 1:(MAXP.bin - 1)
   left_FOR_sp <- sp[left_FOR_index]
   left_FOR_bins <- dop_b[left_FOR_index]
 
+  # Detect the right-side null
   right_FOL <- seasonder_findFORNullsInFOR(right_FOR_sp, start_point_P, doppler_bins = right_FOR_bins, left_region = FALSE)
 
+  # Detect the left-side null
   left_FOL <- seasonder_findFORNullsInFOR(left_FOR_sp, start_point_P, doppler_bins = left_FOR_bins, left_region = TRUE)
 
+  # Validate that both nulls were successfully detected
   has_left_FOL <- length(left_FOL) == 1 && !is.na(left_FOL)
   has_right_FOL <- length(right_FOL) == 1 && !is.na(right_FOL)
 
-  out <- list(FOR = integer(0),MAXP = MAXP, MAXP.bin = MAXP.bin)
+  # Initialize output structure
+  out <- list(FOR = integer(0), MAXP = MAXP, MAXP.bin = MAXP.bin)
 
+  # If both nulls are found, define the first order region
   if (has_left_FOL && has_right_FOL) {
-
     out$FOR <- seq(left_FOL, right_FOL)
   }
-  return(out)
 
+  return(out)
 }
 
-seasonder_findFORNullsInSSMatrix <- function(seasonder_cs_obj, SS, doppler_bins,  negative_Bragg_region = FALSE) {
 
+#' Identify Nulls in First Order Region (FOR) for a Self-Spectra Matrix
+#'
+#' This function applies the null-finding algorithm to each row of a self-spectra (SS) matrix,
+#' determining the boundaries of the First Order Region (FOR) for each range cell.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing spectral data and FOR parameters.
+#' @param SS A numeric matrix representing the self-spectra data, where rows correspond to range cells
+#'        and columns correspond to Doppler bins.
+#' @param doppler_bins A numeric vector indicating the Doppler bins corresponding to the columns of \code{SS}.
+#' @param negative_Bragg_region A logical value indicating whether to analyze the negative Bragg region. Default is \code{FALSE}.
+#'
+#' @details
+#' This function processes each row of the self-spectra matrix, treating each row as an independent spectrum
+#' for which the FOR nulls are identified. The nulls define the boundaries of the first-order Bragg region.
+#'
+#' **Processing Steps:**
+#' 1. Iterate through each row of the \code{SS} matrix.
+#' 2. Extract the power spectrum for the corresponding range cell.
+#' 3. Apply \code{\link{seasonder_findFORNullsInSpectrum}} to determine the null positions.
+#' 4. Store the results in a named list, where each entry corresponds to a range cell.
+#'
+#' @return A named list where each entry corresponds to a range cell, containing the detected FOR null positions.
+#'
+#' @seealso
+#' - \code{\link{seasonder_findFORNullsInSpectrum}} for detecting nulls in a single spectrum.
+#' - \code{\link{seasonder_findFORNulls}} for high-level null detection across all spectra.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_obj` is a valid SeaSondeRCS object with self-spectra data
+#' doppler_bins <- seq(-5, 5, length.out = ncol(SS_matrix))
+#' FOR_nulls <- seasonder_findFORNullsInSSMatrix(cs_obj, SS_matrix, doppler_bins)
+#' print(FOR_nulls)
+#' }
+seasonder_findFORNullsInSSMatrix <- function(seasonder_cs_obj, SS, doppler_bins, negative_Bragg_region = FALSE) {
 
-
+  # Iterate through each row of the self-spectra matrix
   out <- purrr::map(seq_len(nrow(SS)), \(i) {
-    spectrum <- SS[i,,drop = TRUE]
 
+    # Extract the power spectrum for the current range cell
+    spectrum <- SS[i, , drop = TRUE]
+
+    # Identify the nulls in the spectrum using seasonder_findFORNullsInSpectrum
     result <- seasonder_findFORNullsInSpectrum(seasonder_cs_obj, spectrum, doppler_bins, negative_Bragg_region = negative_Bragg_region)
 
     return(result)
 
-  }) %>% magrittr::set_names(rownames(SS))
+  }) %>%
+    # Assign row names (range cell identifiers) to the output list
+    magrittr::set_names(rownames(SS))
 
-
+  # Return the list of detected FOR nulls for each range cell
   return(out)
 }
 
+
+#' Identify Nulls in First Order Region (FOR) Across All Range Cells
+#'
+#' This function locates the null points in the First Order Region (FOR) of a SeaSondeR cross-spectral object.
+#' It smooths the self-spectra (SS) data, extracts the relevant Doppler bins, and determines the boundaries
+#' of the first-order Bragg region for each range cell.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing spectral data and FOR parameters.
+#'
+#' @details
+#' The function follows these steps:
+#' 1. **Smooth the Self-Spectra Data:** Calls \code{\link{seasonder_SmoothFORSS}} to apply a running mean filter.
+#' 2. **Extract Smoothed Self-Spectra:** Retrieves the processed SS matrix using \code{\link{seasonder_getSeaSondeRCS_FOR_SS_Smoothed}}.
+#' 3. **Identify the Doppler Center Bin:** Determines the central Doppler bin using \code{\link{seasonder_getCenterDopplerBin}}.
+#' 4. **Segment the Spectrum:** Splits the smoothed SS data into:
+#'    - The negative Bragg region (left side of the Doppler spectrum).
+#'    - The positive Bragg region (right side of the Doppler spectrum).
+#' 5. **Find Nulls in Each Region:** Uses \code{\link{seasonder_findFORNullsInSSMatrix}} to identify the null positions.
+#' 6. **Store Results:** Extracts:
+#'    - The First Order Region (\code{FOR}).
+#'    - The maximum power (\code{MAXP}).
+#'    - The Doppler bin index of the maximum power (\code{MAXP.bin}).
+#' 7. **Update the SeaSondeRCS Object:** Saves the detected FOR boundaries and related metrics.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the computed FOR nulls, maximum power, and bin indices.
+#'
+#' @seealso
+#' - \code{\link{seasonder_findFORNullsInSpectrum}} for processing individual spectra.
+#' - \code{\link{seasonder_findFORNullsInSSMatrix}} for batch processing spectra across multiple range cells.
+#' - \code{\link{seasonder_getSeaSondeRCS_FOR_SS_Smoothed}} for retrieving smoothed SS data.
+#'
+#' @examples
+#' \dontrun{
+#' # Find First Order Nulls for a SeaSondeRCS object
+#' cs_obj <- seasonder_findFORNulls(cs_obj)
+#' }
 seasonder_findFORNulls <- function(seasonder_cs_obj) {
 
+  # Apply smoothing to the self-spectra matrix
   seasonder_cs_obj %<>% seasonder_SmoothFORSS()
 
+  # Retrieve the smoothed self-spectra matrix
   SS3_smoothed <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_obj)
 
+  # Identify the center Doppler bin
   Center_Bin <- seasonder_getCenterDopplerBin(seasonder_cs_obj)
 
+  # Retrieve the total number of Doppler bins
   nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
 
-  SS3_smoothed_positive <- SS3_smoothed[,(Center_Bin + 1):nDoppler]
+  # Extract the positive Bragg region (bins to the right of the center bin)
+  SS3_smoothed_positive <- SS3_smoothed[, (Center_Bin + 1):nDoppler]
 
-  SS3_smoothed_negative <- SS3_smoothed[,1:(Center_Bin - 1)]
+  # Extract the negative Bragg region (bins to the left of the center bin)
+  SS3_smoothed_negative <- SS3_smoothed[, 1:(Center_Bin - 1)]
 
-  FOR_negative <- seasonder_findFORNullsInSSMatrix(seasonder_cs_obj, SS3_smoothed_negative, doppler_bins = 1:(Center_Bin - 1),  negative_Bragg_region = TRUE)
+  # Find the nulls in the negative Bragg region
+  FOR_negative <- seasonder_findFORNullsInSSMatrix(
+    seasonder_cs_obj,
+    SS3_smoothed_negative,
+    doppler_bins = 1:(Center_Bin - 1),
+    negative_Bragg_region = TRUE
+  )
 
-  FOR_positive <- seasonder_findFORNullsInSSMatrix(seasonder_cs_obj, SS3_smoothed_positive, doppler_bins = (Center_Bin + 1):nDoppler,  negative_Bragg_region = FALSE)
+  # Find the nulls in the positive Bragg region
+  FOR_positive <- seasonder_findFORNullsInSSMatrix(
+    seasonder_cs_obj,
+    SS3_smoothed_positive,
+    doppler_bins = (Center_Bin + 1):nDoppler,
+    negative_Bragg_region = FALSE
+  )
 
-
-
-
+  # Organize results into a list
   FOR <- list(negative_FOR = FOR_negative, positive_FOR = FOR_positive)
+
+  # Transpose the list structure for easier access
   FOR <- purrr::transpose(FOR)
 
+  # Extract maximum power values for each range cell
+  MAXP <- FOR %>% purrr::map(\(x) x %>% purrr::map(\(peak) purrr::pluck(peak, "MAXP")))
 
-  MAXP <- FOR %>% purrr::map(\(x) x %>% purrr::map( \(peak) purrr::pluck(peak,"MAXP")) )
-
+  # Store the maximum power in the SeaSondeRCS object
   seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR_MAXP(MAXP)
 
+  # Extract the Doppler bin indices where maximum power occurs
+  MAXP.bin <- FOR %>% purrr::map(\(x) x %>% purrr::map(\(peak) purrr::pluck(peak, "MAXP.bin")))
 
-
-  MAXP.bin <- FOR %>% purrr::map(\(x) x %>% purrr::map( \(peak) purrr::pluck(peak,"MAXP.bin")) )
-
+  # Store the Doppler bin indices in the SeaSondeRCS object
   seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR_MAXP.bin(MAXP.bin)
 
-  FOR %<>% purrr::map(\(x) x %>% purrr::map( \(peak) purrr::pluck(peak,"FOR")) )
+  # Extract the actual First Order Region bin sequences
+  FOR %<>% purrr::map(\(x) x %>% purrr::map(\(peak) purrr::pluck(peak, "FOR")))
 
+  # Store the detected First Order Region bins in the SeaSondeRCS object
   seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR(FOR)
 
+  # Return the updated SeaSondeRCS object
   return(seasonder_cs_obj)
-
 }
 
 
+
+#' Extract First Order Region (FOR) Spectral Data
+#'
+#' This function extracts the spectral power corresponding to the First Order Region (FOR)
+#' from a given self-spectra (SS) matrix. It retrieves the spectral values within the
+#' Doppler bins identified as part of the positive and negative Bragg regions.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing the spectral data.
+#' @param spectrum A numeric matrix representing the self-spectra data for a single range cell.
+#' @param FOR A list containing the Doppler bin indices defining the FOR region, with two elements:
+#'        - \code{negative_FOR}: A numeric vector of Doppler bins for the negative Bragg region.
+#'        - \code{positive_FOR}: A numeric vector of Doppler bins for the positive Bragg region.
+#'
+#' @details
+#' The function performs the following steps:
+#' 1. **Initialize Empty Matrices:** Creates empty matrices to store extracted spectral data.
+#' 2. **Extract Negative FOR Data:**
+#'    - If the negative FOR bins exist, calls \code{\link{seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata}}
+#'      to extract the corresponding spectral values.
+#' 3. **Extract Positive FOR Data:**
+#'    - If the positive FOR bins exist, extracts the spectral values using the same function.
+#' 4. **Return Extracted Spectral Data:** Outputs a list containing the extracted negative and positive
+#'    Bragg region spectral data.
+#'
+#' This function is primarily used for filtering and validating the first-order Bragg region in
+#' SeaSonde radar processing.
+#'
+#' @return A list with two elements:
+#' - \code{negative_FOR}: A matrix containing spectral power for the negative Bragg region.
+#' - \code{positive_FOR}: A matrix containing spectral power for the positive Bragg region.
+#'
+#' @seealso
+#' - \code{\link{seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata}} for extracting Doppler bin subsets.
+#' - \code{\link{seasonder_filterFORAmplitudes}} for filtering weak FOR detections.
+#'
+#' @examples
+#' \dontrun{
+#' # Extract spectral power for FOR bins
+#' FOR_data <- seasonder_extractFOR(cs_obj, spectrum_matrix, detected_FOR_bins)
+#' print(FOR_data)
+#' }
 seasonder_extractFOR <- function(seasonder_cs_obj, spectrum, FOR) {
 
+  # Initialize empty matrix for negative Bragg region
+  negative_FOR <- matrix(numeric(0), byrow = TRUE)
 
-
-  negative_FOR <- matrix(numeric(0), byrow = T)
-
+  # Extract spectral values for the negative Bragg region if bins exist
   if (length(FOR$negative_FOR) > 0) {
     negative_FOR <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(spectrum, FOR$negative_FOR)
-
   }
 
-  positive_FOR <- matrix(numeric(0), byrow = T)
+  # Initialize empty matrix for positive Bragg region
+  positive_FOR <- matrix(numeric(0), byrow = TRUE)
 
+  # Extract spectral values for the positive Bragg region if bins exist
   if (length(FOR$positive_FOR) > 0) {
     positive_FOR <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(spectrum, FOR$positive_FOR)
-
   }
 
-
+  # Combine extracted FOR spectral data into a list
   out <- list(negative_FOR = negative_FOR, positive_FOR = positive_FOR)
 
   return(out)
-
 }
 
+
+#' Filter First Order Region (FOR) Based on Amplitude Thresholds
+#'
+#' This function filters the First Order Region (FOR) Doppler bins based on amplitude thresholds.
+#' It applies a combination of noise-based and peak power-based criteria to remove low-amplitude bins
+#' that do not meet the required signal-to-noise ratio.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing spectral data and FOR parameters.
+#'
+#' @details
+#' **Steps in FOR Amplitude Filtering:**
+#' 1. **Retrieve First Order Parameters:**
+#'    - The function extracts \code{flim} (Null Below Peak Power) and \code{noisefact} (Signal-to-Noise Factor)
+#'      from \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}}.
+#'
+#' 2. **Compute Noise Levels:**
+#'    - Calls \code{\link{seasonder_computeNoiseLevel}} to estimate the average noise level across all range cells.
+#'    - Converts the noise level into a filtering threshold by multiplying it by \code{noisefact}.
+#'
+#' 3. **Extract Smoothed Self-Spectra Data:**
+#'    - Retrieves the smoothed self-spectra (SSA3) using \code{\link{seasonder_getSeaSondeRCS_FOR_SS_Smoothed}}.
+#'    - Extracts the FOR spectral power for each range cell using \code{\link{seasonder_extractFOR}}.
+#'
+#' 4. **Determine Filtering Thresholds:**
+#'    - Computes a power threshold for each FOR region by taking the maximum amplitude in the FOR region
+#'      and dividing it by \code{flim}.
+#'
+#' 5. **Apply Filtering Conditions:**
+#'    - A Doppler bin is retained if its power is greater than:
+#'      - The noise threshold (computed from \code{noisefact}).
+#'      - The power threshold computed from \code{flim}.
+#'
+#' 6. **Store Filtered FOR in Object:**
+#'    - Updates the SeaSondeRCS object with the filtered FOR bins.
+#'
+#' This filtering ensures that only strong, reliable first-order Bragg signals are retained, reducing
+#' the impact of noise and second-order contamination.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the filtered FOR bins.
+#'
+#' @seealso
+#' - \code{\link{seasonder_computeNoiseLevel}} for computing noise levels.
+#' - \code{\link{seasonder_getSeaSondeRCS_FOR_SS_Smoothed}} for retrieving smoothed self-spectra.
+#' - \code{\link{seasonder_extractFOR}} for extracting FOR spectral power.
+#' - \code{\link{seasonder_setSeaSondeRCS_FOR}} for storing the filtered FOR data.
+#'
+#' @examples
+#' \dontrun{
+#' # Apply amplitude filtering to the FOR detection
+#' cs_obj <- seasonder_filterFORAmplitudes(cs_obj)
+#' }
 seasonder_filterFORAmplitudes <- function(seasonder_cs_obj) {
 
+  # Retrieve the current FOR detection results
   FORs <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_FOR()
 
+  # Extract the filtering parameters
   flim <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$flim
   noisefact <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$noisefact
 
-  seasonder_cs_obj %<>%  seasonder_computeNoiseLevel()
+  # Compute the noise level
+  seasonder_cs_obj %<>% seasonder_computeNoiseLevel()
 
+  # Retrieve the computed noise levels
   noise_levels <- seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_obj, dB = FALSE)
 
+  # Compute the noise threshold for filtering
   noise_limit <- noise_levels * noisefact
+
+  # Retrieve the smoothed self-spectra (SSA3)
   SS3 <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_obj) %>% abs()
 
-  FORs_sp <- 1:length(FORs) %>% purrr::map(\(i) seasonder_extractFOR(seasonder_cs_obj,SS3[i,,drop = FALSE], FORs[[i]]) ) %>% magrittr::set_names(names(FORs))
+  # Extract the FOR spectral power for each range cell
+  FORs_sp <- 1:length(FORs) %>% purrr::map(\(i) {
+    seasonder_extractFOR(seasonder_cs_obj, SS3[i, , drop = FALSE], FORs[[i]])
+  }) %>% magrittr::set_names(names(FORs))
 
+  # Retrieve the FOR Doppler bin indices
   FOR_bins <- FORs %>% purrr::map(\(FOR) {
-
-
-
-
-
-    positive_FOR <- FOR$positive_FOR
-
-
-
-    negative_FOR <- FOR$negative_FOR
-
-
-    list(negative_FOR = negative_FOR, positive_FOR = positive_FOR)
-
+    list(
+      negative_FOR = FOR$negative_FOR,
+      positive_FOR = FOR$positive_FOR
+    )
   })
 
-  p_limit <- FORs_sp %>% purrr::map(\(FOR) FOR %>% purrr::map(\(x) if (all(dim(x) > 0)) max(x,na.rm = T)/flim else NA_real_ ))
+  # Compute the power threshold for each FOR region
+  p_limit <- FORs_sp %>% purrr::map(\(FOR) {
+    FOR %>% purrr::map(\(x) if (all(dim(x) > 0)) max(x, na.rm = TRUE) / flim else NA_real_)
+  })
 
-
+  # Apply filtering conditions to retain only strong signals
   filtered_FORs <- purrr::pmap(list(FORs_sp, FOR_bins, p_limit, noise_limit), \(FOR, bins, p, noise) {
 
-
-
+    # Filter the positive Bragg region
     if (length(bins$positive_FOR) > 0) {
       bins$positive_FOR <- bins$positive_FOR[FOR$positive_FOR > noise & FOR$positive_FOR > p$positive_FOR]
     }
 
+    # Filter the negative Bragg region
     if (length(bins$negative_FOR) > 0) {
       bins$negative_FOR <- bins$negative_FOR[FOR$negative_FOR > noise & FOR$negative_FOR > p$negative_FOR]
     }
 
-
-    bins
+    return(bins)
   })
 
+  # Store the filtered FOR results in the SeaSondeRCS object
   seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR(filtered_FORs)
 
   return(seasonder_cs_obj)
 }
 
 
+#' Limit First Order Region (FOR) Based on Maximum Radial Velocity
+#'
+#' This function removes Doppler bins from the detected First Order Region (FOR) if their
+#' corresponding radial velocity exceeds a predefined maximum threshold.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing spectral data and FOR parameters.
+#'
+#' @details
+#' **Steps in Current Range Limiting:**
+#' 1. **Retrieve Maximum Velocity Threshold:**
+#'    - Extracts the \code{currmax} parameter from \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}}.
+#'
+#' 2. **Obtain Current FOR Detection Results:**
+#'    - Retrieves the existing FOR Doppler bin indices from \code{\link{seasonder_getSeaSondeRCS_FOR}}.
+#'
+#' 3. **Compute Radial Velocities for Doppler Bins:**
+#'    - Calls \code{\link{seasonder_getBinsRadialVelocity}} to convert Doppler bins into radial velocities.
+#'
+#' 4. **Identify Bins Exceeding Maximum Velocity:**
+#'    - Finds the Doppler bins where the absolute radial velocity is greater than or equal to \code{currmax}.
+#'
+#' 5. **Filter Out Exceeding Bins:**
+#'    - Uses \code{\link[dplyr]{setdiff}} to remove bins exceeding \code{currmax} from the FOR region.
+#'
+#' 6. **Store Updated FOR Data in Object:**
+#'    - Updates the \code{SeaSondeRCS} object with the filtered FOR results.
+#'
+#' This function ensures that only Doppler bins corresponding to physically realistic
+#' radial velocities are included in the first-order Bragg region.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the FOR bins filtered based on maximum velocity.
+#'
+#' @seealso
+#' - \code{\link{seasonder_getBinsRadialVelocity}} for computing radial velocities.
+#' - \code{\link{seasonder_getSeaSondeRCS_FOR}} for retrieving FOR bin indices.
+#' - \code{\link{seasonder_setSeaSondeRCS_FOR}} for storing updated FOR data.
+#'
+#' @examples
+#' \dontrun{
+#' # Apply maximum radial velocity filtering
+#' cs_obj <- seasonder_limitFORCurrentRange(cs_obj)
+#' }
 seasonder_limitFORCurrentRange <- function(seasonder_cs_obj) {
 
+  # Retrieve the maximum allowable radial velocity
   currmax <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$currmax
 
+  # Get the current First Order Region (FOR) detection results
   FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_obj)
 
+  # Compute the radial velocity for each Doppler bin
   rad_vel <- seasonder_getBinsRadialVelocity(seasonder_cs_obj)
 
+  # Identify Doppler bins where the radial velocity exceeds the maximum allowed
   drop_rad_vel <- which(abs(rad_vel) >= currmax)
 
-  FOR %<>% purrr::map(\(x) x %>% purrr::map(\(Bragg_peak) dplyr::setdiff(Bragg_peak,drop_rad_vel)))
+  # Remove Doppler bins exceeding the max velocity from the FOR detection
+  FOR %<>% purrr::map(\(x) {
+    x %>% purrr::map(\(Bragg_peak) dplyr::setdiff(Bragg_peak, drop_rad_vel))
+  })
 
+  # Store the updated FOR results in the SeaSondeRCS object
   seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR(FOR)
 
   return(seasonder_cs_obj)
-
 }
 
-#' Reject Distant Bragg Peaks
+
+#' Reject Bragg Peaks Far from Expected Bragg Index
 #'
-#' This function evaluates Bragg peaks based on their proximity to expected Bragg line bins.
-#' If the boundaries of a peak are farther from all Bragg lines than the width of the peak itself,
-#' the peak is rejected by setting it to an empty integer vector.
+#' This function evaluates Bragg peaks based on their proximity to expected Bragg index bins.
+#' If the boundaries of a peak are farther from all Bragg indices than the width of the peak itself,
+#' the peak is rejected by returning an empty integer vector.
 #'
-#' @param seasonder_cs_obj An object representing the current state of the radar cross section analysis,
-#'        expected to contain methods or properties needed to determine Bragg lines.
-#' @param peak A numeric vector indicating the positions of the peak under consideration.
-#' @param range Optional; A numeric or integer NA indicating the range over which to consider the peak.
-#'        Defaults to NA if not specified.
-#' @param peak_name Optional; A character string representing the name or identifier of the peak.
-#'        Defaults to an empty string if not specified.
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing the spectral data and Bragg indices.
+#' @param peak A numeric vector indicating the Doppler bin positions of the peak under evaluation.
+#' @param range Optional; A numeric or integer value representing the range cell corresponding to the peak.
+#'        Defaults to \code{NA}.
+#' @param peak_name Optional; A character string representing the name or identifier of the peak
+#'        (e.g., \code{"positive_FOR"} or \code{"negative_FOR"}). Defaults to an empty string.
 #'
 #' @details
-#' The function computes the left and right limits of the given peak and checks if the distance
-#' from these limits to the nearest Bragg lines exceeds the width of the peak. If both boundaries
-#' exceed this threshold, the peak is rejected.
+#' **Reason for the Test:**
+#' The test ensures that peaks identified as part of the first-order Bragg region are reasonably close
+#' to the expected Bragg index. Peaks that are distant from the Bragg index are likely caused by
+#' noise, interference, or other sources unrelated to first-order Bragg scatter. These invalid peaks,
+#' if included, can lead to erroneous current velocity vectors and degrade the quality of radar-derived
+#' measurements.
 #'
-#' @return Returns a possibly modified version of the `peak` argument, where a rejected peak
-#'         is returned as `integer(0)`, indicating that no valid peak is present.
+#' Specifically, the test rejects peaks when:
+#' - The distance from the left or right boundary of the peak to the nearest Bragg index exceeds
+#'   the width of the peak.
+#' - This condition ensures that peaks with excessively large offsets from the Bragg index are excluded.
 #'
-#' @export
-seasonder_rejectDistantBraggPeakTest <- function(seasonder_cs_obj, peak, range = NA, peak_name = ""){
-  if(seasonder_is_debug_point_enabled("seasonder_rejectDistantBraggPeakTest")){
-    browser() # Debug point, do not remove
+#' **Steps:**
+#' 1. If the peak is empty, the function does nothing.
+#' 2. Calculates the width of the peak as the difference between its maximum and minimum Doppler bin indices.
+#' 3. Computes the left and right boundaries of the peak.
+#' 4. Calculates the distance from each boundary to all Bragg indices.
+#' 5. Rejects the peak if both boundary distances exceed the peak width.
+#' 6. Logs the rejection information if applicable.
+#'
+#' This test is particularly important in scenarios where strong non-Bragg signals, such as those from
+#' ships or other high-intensity noise sources, might otherwise be misclassified as first-order Bragg.
+#'
+#' @return A possibly modified version of the \code{peak} argument, where a rejected peak
+#'         is returned as \code{integer(0)}, indicating that it does not pass the proximity test.
+#'
+#' @seealso
+#' - \code{\link{seasonder_rejectDistantBragg}} for applying this test to all range cells and Bragg regions.
+#' - \code{\link{seasonder_getBraggLineBins}} for retrieving Bragg index bins.
+#'
+#' @references COS. SpectraPlotterMap 12 User Guide. CODAR Ocean Sensors (COS), Mountain View, CA, USA, 2016.
+#'
+#' @examples
+#' \dontrun{
+#' # Evaluate a single peak for rejection
+#' peak <- c(100, 101, 102)
+#' cs_obj <- seasonder_rejectDistantBraggPeakTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")
+#' }
+seasonder_rejectDistantBraggPeakTest <- function(seasonder_cs_obj, peak, range = NA, peak_name = "") {
+
+  if (seasonder_is_debug_point_enabled("seasonder_rejectDistantBraggPeakTest")) {
+    browser() # Debug point for developers
   }
-  # If there is a peak
+
+  # Check if the peak exists
   if (length(peak) > 0) {
 
+    # Retrieve Bragg index bins
     bragg_lines <- seasonder_getBraggLineBins(seasonder_cs_obj)
 
-    # Calculates the width of the peak
+    # Calculate the width of the peak
     peak_width <- diff(range(peak))
 
-    # Left boundary
-
+    # Determine the left and right boundaries of the peak
     left_limit <- min(peak)
-
-    # Right boundary
-
     right_limit <- max(peak)
 
-    # Calculates the distance from the left boundary to all bragg_lines
-
+    # Calculate distances from boundaries to Bragg indices
     right_limit_distances <- abs(bragg_lines - right_limit)
-
-    # Calculates the distance from the right boundary to all bragg_lines
-
     left_limit_distances <- abs(bragg_lines - left_limit)
 
-    # Are all boundary distances to bragg peaks greater than the width?
-    if (all(left_limit_distances > peak_width) && all(right_limit_distances > peak_width)) { # Yes: we reject the peak
+    # Check if both boundaries are farther from all Bragg indices than the peak width
+    if (all(left_limit_distances > peak_width) && all(right_limit_distances > peak_width)) {
 
-      seasonder_logAndMessage(glue::glue("First Order Rejected at range {range}, peak {peak_name}. Distance Bragg test failed."), log_level = "info", calling_function = "seasonder_rejectDistantBraggPeakTest")
+      # Log the rejection of the peak
+      seasonder_logAndMessage(
+        glue::glue("First Order Rejected at range {range}, peak {peak_name}. Distance Bragg test failed."),
+        log_level = "info",
+        calling_function = "seasonder_rejectDistantBraggPeakTest"
+      )
 
-      # TODO: include speed range rejected in message
-      # TODO: Include rejected index in FOR_data
+      # Mark the peak as rejected
       peak <- integer(0)
-
     }
-
-
   }
+
   return(peak)
 }
 
-#' Implements SpectraPlotterMap First Order Setting: Reject Bragg when First Order is far from index
+
+#' Apply Distant Bragg Peak Rejection to All Range Cells
+#'
+#' This function applies a proximity-based rejection test to all detected First Order Region (FOR) peaks
+#' in a SeaSondeRCS object. Peaks that are too far from their corresponding Bragg indices are removed,
+#' ensuring that only valid Bragg signals are retained.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing the spectral data and FOR parameters.
+#'
 #' @details
-#' When applied, reject the First Order when the limits are farther away from the Bragg index than the width of the first order.
-#' This should be turned off only when the site’s field of view over water is limited such that it sees only string positive current for any given time.
-seasonder_rejectDistantBragg <- function(seasonder_cs_obj){
+#' **Reason for the Test:**
+#' The function filters out peaks in the FOR that are not closely associated with expected Bragg indices.
+#' These distant peaks could result from interference, noise, or other non-Bragg sources, potentially leading
+#' to erroneous current velocity vectors. This ensures that only physically valid Bragg signals are used
+#' in the processing pipeline.
+#'
+#' **Steps:**
+#' 1. **Retrieve Current FOR Data:**
+#'    - Retrieves the detected FOR Doppler bin indices for all range cells using \code{\link{seasonder_getSeaSondeRCS_FOR}}.
+#'
+#' 2. **Apply Rejection Test:**
+#'    - Iterates over each range cell and each Bragg region (\code{positive_FOR} and \code{negative_FOR}).
+#'    - Calls \code{\link{seasonder_rejectDistantBraggPeakTest}} for each peak to evaluate its proximity to the Bragg indices.
+#'    - Peaks that fail the test are removed (replaced with an empty vector).
+#'
+#' 3. **Store Updated FOR Data:**
+#'    - Updates the \code{SeaSondeRCS} object with the filtered FOR results using \code{\link{seasonder_setSeaSondeRCS_FOR}}.
+#'
+#' This function is part of the FOR processing workflow and should be applied after the initial detection of Bragg peaks.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the filtered FOR bins.
+#'
+#' @seealso
+#' - \code{\link{seasonder_rejectDistantBraggPeakTest}} for the peak rejection logic.
+#' - \code{\link{seasonder_getSeaSondeRCS_FOR}} for retrieving detected FOR bins.
+#' - \code{\link{seasonder_setSeaSondeRCS_FOR}} for updating FOR data.
+#'
+#' @references COS. SpectraPlotterMap 12 User Guide. CODAR Ocean Sensors (COS), Mountain View, CA, USA, 2016.
+#'
+#' @examples
+#' \dontrun{
+#' # Apply distant Bragg peak rejection to a SeaSondeRCS object
+#' cs_obj <- seasonder_rejectDistantBragg(cs_obj)
+#' }
+seasonder_rejectDistantBragg <- function(seasonder_cs_obj) {
 
-
+  # Retrieve the detected FOR data
   FORs <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_obj)
 
-  # This test is applied for each range and each negative and positive Bragg.
-  FORs %<>% purrr::map2(1:length(FORs), \(FOR, FOR_range) FOR %>% purrr::map2(names(.), \(peak, peak_name) seasonder_rejectDistantBraggPeakTest(seasonder_cs_obj, peak, FOR_range, peak_name)))
+  # Apply the rejection test to each range cell and each Bragg region
+  FORs %<>% purrr::map2(
+    1:length(FORs), # Iterate over the range cells
+    \(FOR, FOR_range) {
+      FOR %>% purrr::map2(
+        names(.), # Iterate over positive and negative Bragg regions
+        \(peak, peak_name) {
+          # Apply the peak rejection test
+          seasonder_rejectDistantBraggPeakTest(seasonder_cs_obj, peak, FOR_range, peak_name)
+        }
+      )
+    }
+  )
 
+  # Update the FOR data in the SeaSondeRCS object with the filtered results
   seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR(FORs)
 
   return(seasonder_cs_obj)
-
 }
 
 
-seasonder_rejectNoiseIonosphericTest <- function(seasonder_cs_obj, peak, range = NA, peak_name = ""){
 
-  if(seasonder_is_debug_point_enabled("seasonder_rejectNoiseIonosphericTest")){
-    browser() # Debug point, do not remove
+
+#' Reject Bragg Peaks Due to Noise/Ionospheric Contamination
+#'
+#' This function evaluates Bragg peaks based on the power ratio between the Bragg region
+#' and the surrounding non-Bragg region. If the non-Bragg power exceeds the Bragg power
+#' by a specified threshold, the peak is rejected.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing spectral data and FOR parameters.
+#' @param peak A numeric vector indicating the Doppler bin positions of the peak under evaluation.
+#' @param range Optional; A numeric or integer value representing the range cell corresponding to the peak.
+#'        Defaults to \code{NA}.
+#' @param peak_name Optional; A character string representing the name or identifier of the peak
+#'        (e.g., \code{"positive_FOR"} or \code{"negative_FOR"}). Defaults to an empty string.
+#'
+#' @details
+#' **Reason for the Test:**
+#' This test ensures that Bragg peaks are not contaminated by excessive noise or ionospheric interference.
+#' Bragg regions with significantly higher non-Bragg power levels are likely to be invalid and are rejected.
+#'
+#' **Steps:**
+#' 1. **Threshold Retrieval:**
+#'    - Retrieves the \code{reject_noise_ionospheric_threshold} parameter, which defines the power difference (in dB)
+#'      allowed between the Bragg and non-Bragg regions.
+#'
+#' 2. **Peak Region Determination:**
+#'    - Determines whether the peak is in the positive or negative Bragg region based on its location relative to
+#'      the central Doppler bin.
+#'
+#' 3. **Non-Bragg Region Extraction:**
+#'    - Identifies the non-Bragg region by excluding the bins corresponding to the peak.
+#'
+#' 4. **Power Calculations:**
+#'    - Calculates the total power for the Bragg and non-Bragg regions and converts them to decibels (dB).
+#'
+#' 5. **Rejection Criterion:**
+#'    - If the non-Bragg power exceeds the Bragg power by more than the threshold, the peak is rejected.
+#'    - Logs a message detailing the rejection.
+#'
+#' **Use Case:**
+#' This function is particularly useful in environments where noise or ionospheric effects are prevalent,
+#' ensuring that only valid first-order Bragg peaks are retained.
+#'
+#' @return A possibly modified version of the \code{peak} argument, where a rejected peak
+#'         is returned as \code{integer(0)}, indicating that it does not pass the noise/ionospheric test.
+#'
+#' @seealso
+#' - \code{\link{seasonder_rejectDistantBraggPeakTest}} for evaluating peaks based on proximity to Bragg indices.
+#' - \code{\link{seasonder_getSeaSondeRCS_FOR_SS_Smoothed}} for retrieving smoothed spectra.
+#' - \code{\link{seasonder_SelfSpectra2dB}} for power conversion to dB.
+#'
+#' @examples
+#' \dontrun{
+#' # Evaluate a single peak for noise/ionospheric contamination
+#' peak <- c(100, 101, 102)
+#' cs_obj <- seasonder_rejectNoiseIonosphericTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")
+#' }
+seasonder_rejectNoiseIonosphericTest <- function(seasonder_cs_obj, peak, range = NA, peak_name = "") {
+
+  if (seasonder_is_debug_point_enabled("seasonder_rejectNoiseIonosphericTest")) {
+    browser() # Debug point for developers
   }
 
-  # Si hay pico
-
+  # Check if the peak exists
   if (length(peak) > 0) {
 
-
-
+    # Retrieve the noise/ionospheric rejection threshold
     reject_noise_ionospheric_threshold <- seasonder_getSeaSondeRCS_FOR_reject_noise_ionospheric_threshold(seasonder_cs_obj)
 
-    # Obtener el bin central
+    # Get the central Doppler bin
     center_bin <- seasonder_getCenterDopplerBin(seasonder_cs_obj)
 
-    # Obtener los límites izquierdo y derecho del FOR
+    # Determine the left and right limits of the peak
     peak_limits <- range(peak)
 
-    # comprobamos si peak está por encima o por debajo del centro. Y extraemos el espectro suavizado del lado correspondiente.
-
-
-
-    ss_smoothed <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_obj)[range,,drop = TRUE]
-
-    half_spectrum <- seq(1,center_bin - 1)
+    # Identify whether the peak is in the positive or negative Bragg region
+    ss_smoothed <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_obj)[range, , drop = TRUE]
+    half_spectrum <- seq(1, center_bin - 1) # Default: Negative Bragg region
 
     if (all(peak_limits > center_bin)) {
+      # Peak is in the positive Bragg region
       half_spectrum <- seq(center_bin + 1, length(ss_smoothed))
     }
 
-    # Obtener la región NonBragg eliminando de la región positive/negativa los bins fuera del FOR
-
+    # Determine the non-Bragg region by excluding peak bins
     non_bragg <- dplyr::setdiff(half_spectrum, peak)
 
-    # calcular potencia total NonBragg
+    # Calculate total power in the non-Bragg region
+    non_bragg_total <- sum(ss_smoothed[non_bragg], na.rm = TRUE)
 
-    ## sumando los valores de potencia
+    # Convert non-Bragg power to dB
+    non_bragg_power <- seasonder_SelfSpectra2dB(seasonder_cs_obj, non_bragg_total)
 
-    non_bragg_total <- sum(ss_smoothed[non_bragg], na.rm = T)
+    # Calculate total power in the Bragg region
+    bragg_total <- sum(ss_smoothed[seq(peak_limits[1], peak_limits[2])], na.rm = TRUE)
 
-    ## pasamos a dB.
+    # Convert Bragg power to dB
+    bragg_power <- seasonder_SelfSpectra2dB(seasonder_cs_obj, bragg_total)
 
-    non_bragg_power <- seasonder_SelfSpectra2dB(seasonder_cs_obj,non_bragg_total)
+    # Check if the Bragg power plus threshold is less than the non-Bragg power
+    if ((bragg_power + reject_noise_ionospheric_threshold) < non_bragg_power) {
+      # Log the rejection of the peak
+      seasonder_logAndMessage(
+        glue::glue("First Order Rejected at range {range}, peak {peak_name}. Noise/Ionospheric test failed."),
+        log_level = "info",
+        calling_function = "seasonder_rejectNoiseIonosphericTest"
+      )
 
-
-    # calcular potencia total Bragg sumando los valores del espectro dentro de la FOR y pasando a dB
-
-    bragg_total <- sum(ss_smoothed[seq(peak_limits[1],peak_limits[2])], na.rm = T)
-
-    bragg_power <- seasonder_SelfSpectra2dB(seasonder_cs_obj,bragg_total)
-
-    # ¿Es la potencia Bragg más el threshold menor que la potencia NonBragg?
-    if ((bragg_power + reject_noise_ionospheric_threshold) < non_bragg_power) {# Si: rechazamos el peak
-
-      seasonder_logAndMessage(glue::glue("First Order Rejected at range {range}, peak {peak_name}. Noise/Ionospheric test failed."), log_level = "info", calling_function = "seasonder_rejectNoiseIonosphericTest")
-
-
-      # TODO: Include rejected index in FOR_data
+      # Mark the peak as rejected
       peak <- integer(0)
-
     }
-
   }
 
-
   return(peak)
-
 }
 
 
-#' Reject Ionospheric Noise in SeaSonde Data
+
+#' Apply Noise/Ionospheric Contamination Test to All Bragg Peaks
 #'
-#' @description
-#' This function rejects negative and positive Bragg peaks when the total external (non-Bragg)
-#' power is greater than the Bragg power by a specified dB amount. This is applied across each
-#' range for both negative and positive Bragg peaks.
+#' This function evaluates and filters the First Order Region (FOR) detections across all range cells
+#' by applying the noise/ionospheric contamination rejection test to both positive and negative Bragg regions.
 #'
-#' @param seasonder_cs_obj a SeaSonde cross-section object, which contains data for various ranges
-#'        and peaks that need processing.
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing the spectral data and FOR parameters.
 #'
 #' @details
-#' The function iterates over each range and applies a test to each negative and positive Bragg peak.
-#' It uses the `seasonder_rejectNoiseIonosphericTest` function to evaluate whether the Bragg peak should
-#' be rejected based on the comparison of Bragg and non-Bragg power levels.
+#' **Reason for the Test:**
+#' This function ensures that Bragg peaks contaminated by excessive noise or ionospheric interference
+#' are removed from the detected First Order Region (FOR). Peaks where the power in the surrounding
+#' non-Bragg region exceeds the power in the Bragg region by a specified threshold are deemed invalid
+#' and are rejected. This step is critical for maintaining the accuracy of radar-derived measurements.
 #'
-#' @return Returns the modified SeaSonde cross-section object with appropriate Bragg peaks rejected.
-#' @export
+#' **Steps:**
+#' 1. **Retrieve Current FOR Data:**
+#'    - Retrieves the detected FOR Doppler bin indices for all range cells using \code{\link{seasonder_getSeaSondeRCS_FOR}}.
+#'
+#' 2. **Apply Noise/Ionospheric Rejection Test:**
+#'    - Iterates over each range cell and evaluates both positive and negative Bragg regions.
+#'    - Calls \code{\link{seasonder_rejectNoiseIonosphericTest}} to check each peak against the noise/ionospheric criterion.
+#'    - Peaks that fail the test are removed (replaced with an empty vector).
+#'
+#' 3. **Store Updated FOR Data:**
+#'    - Updates the \code{SeaSondeRCS} object with the filtered FOR results using \code{\link{seasonder_setSeaSondeRCS_FOR}}.
+#'
+#' **Use Case:**
+#' This function is particularly useful in environments where noise or ionospheric effects are prevalent,
+#' ensuring that only valid first-order Bragg peaks are retained for further processing.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the filtered FOR bins.
+#'
+#' @seealso
+#' - \code{\link{seasonder_rejectNoiseIonosphericTest}} for the noise/ionospheric rejection logic.
+#' - \code{\link{seasonder_getSeaSondeRCS_FOR}} for retrieving detected FOR bins.
+#' - \code{\link{seasonder_setSeaSondeRCS_FOR}} for updating FOR data.
+#'
+#' @examples
+#' \dontrun{
+#' # Apply noise/ionospheric rejection to a SeaSondeRCS object
+#' cs_obj <- seasonder_rejectNoiseIonospheric(cs_obj)
+#' }
 seasonder_rejectNoiseIonospheric <- function(seasonder_cs_obj) {
 
+  # Retrieve the detected FOR data
   FORs <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_obj)
 
-  # This test is applied for each range and each negative and positive Bragg.
-  FORs %<>% purrr::map2(1:length(FORs), \(FOR, FOR_range) FOR %>% purrr::map2(names(.), \(peak, peak_name) seasonder_rejectNoiseIonosphericTest(seasonder_cs_obj, peak, FOR_range, peak_name)))
+  # Apply the noise/ionospheric test to each range cell and each Bragg region
+  FORs %<>% purrr::map2(
+    1:length(FORs), # Iterate over the range cells
+    \(FOR, FOR_range) { # FOR contains the peaks for a single range cell
+      FOR %>% purrr::map2(
+        names(.), # Iterate over positive and negative Bragg regions
+        \(peak, peak_name) {
+          # Test each peak for noise/ionospheric contamination
+          seasonder_rejectNoiseIonosphericTest(seasonder_cs_obj, peak, FOR_range, peak_name)
+        }
+      )
+    }
+  )
 
+  # Update the FOR data in the SeaSondeRCS object with the filtered results
   seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR(FORs)
 
   return(seasonder_cs_obj)
 }
 
 
+
+#' Compute First Order Regions (FOR) Using the SeaSonde Method
+#'
+#' This function processes a SeaSondeRCS object to compute the First Order Regions (FOR)
+#' using the SeaSonde method. The workflow includes detecting null points, filtering amplitudes,
+#' limiting currents to a maximum range, and rejecting peaks based on proximity to Bragg indices
+#' and noise/ionospheric contamination.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing the spectral data and configuration parameters.
+#'
+#' @details
+#' **Workflow Steps:**
+#' 1. **Initialize Processing Steps:**
+#'    - Marks the start of the SeaSonde method processing in the object's metadata.
+#'
+#' 2. **Detect Null Points:**
+#'    - Locates the nulls defining the First Order Regions (FOR) using \code{\link{seasonder_findFORNulls}}.
+#'
+#' 3. **Filter Amplitudes:**
+#'    - Removes regions with insufficient amplitudes using \code{\link{seasonder_filterFORAmplitudes}}.
+#'
+#' 4. **Limit Currents to Maximum Range:**
+#'    - Ensures that currents exceed the configured maximum radial velocity using \code{\link{seasonder_limitFORCurrentRange}}.
+#'
+#' 5. **Reject Distant Bragg Peaks:**
+#'    - If enabled, rejects peaks that are too far from Bragg indices using \code{\link{seasonder_rejectDistantBragg}}.
+#'
+#' 6. **Reject Noise/Ionospheric Peaks:**
+#'    - If enabled, removes peaks where non-Bragg power significantly exceeds Bragg power using \code{\link{seasonder_rejectNoiseIonospheric}}.
+#'
+#' 7. **Finalize Processing Steps:**
+#'    - Marks the end of the SeaSonde method processing in the object's metadata.
+#'
+#' **Use Case:**
+#' This function is designed for processing SeaSonde radar data to accurately identify and validate the
+#' First Order Regions, ensuring reliable current and wave measurements.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the computed First Order Regions (FOR).
+#'
+#' @seealso
+#' - \code{\link{seasonder_findFORNulls}} for detecting nulls in the FOR.
+#' - \code{\link{seasonder_filterFORAmplitudes}} for amplitude filtering.
+#' - \code{\link{seasonder_limitFORCurrentRange}} for limiting radial velocity.
+#' - \code{\link{seasonder_rejectDistantBragg}} for rejecting distant Bragg peaks.
+#' - \code{\link{seasonder_rejectNoiseIonospheric}} for rejecting noise/ionospheric contamination.
+#'
+#' @examples
+#' \dontrun{
+#' # Compute First Order Regions using the SeaSonde method
+#' cs_obj <- seasonder_computeFORsSeaSondeMethod(cs_obj)
+#' }
 seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_obj) {
 
-  seasonder_cs_obj  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_FOR_SeaSonde_start_step_text())
+  # Mark the start of the SeaSonde processing steps
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_FOR_SeaSonde_start_step_text())
 
+  # Detect null points in the First Order Region (FOR)
   seasonder_cs_obj %<>% seasonder_findFORNulls()
 
+  # Filter the detected FORs based on amplitude thresholds
   seasonder_cs_obj %<>% seasonder_filterFORAmplitudes()
 
+  # Limit the detected FORs based on the maximum current range
   seasonder_cs_obj %<>% seasonder_limitFORCurrentRange()
 
-  # Reject distant Bragg peaks.
+  # Reject distant Bragg peaks, if enabled
   if (seasonder_getSeaSondeRCS_FOR_reject_distant_bragg(seasonder_cs_obj)) {
     seasonder_cs_obj %<>% seasonder_rejectDistantBragg()
   }
 
-  # Reject Noise/Ionospheric Test.
-
+  # Reject noise/ionospheric contamination, if enabled
   if (seasonder_getSeaSondeRCS_FOR_reject_noise_ionospheric(seasonder_cs_obj)) {
-
     seasonder_cs_obj %<>% seasonder_rejectNoiseIonospheric()
   }
 
-  seasonder_cs_obj  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_FOR_SeaSonde_end_step_text())
+  # Mark the end of the SeaSonde processing steps
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_FOR_SeaSonde_end_step_text())
 
+  # Return the updated object
   return(seasonder_cs_obj)
-
 }
 
+
+#' Compute First Order Regions (FOR) Based on Selected Method
+#'
+#' This function processes a \code{SeaSondeRCS} object to compute the First Order Regions (FOR)
+#' using the specified method. It allows the user to configure the processing method and parameters dynamically.
+#'
+#' @param seasonder_cs_obj A \code{SeaSondeRCS} object containing the spectral data and FOR parameters.
+#' @param method Optional; A character string specifying the method to be used for FOR computation.
+#'        Defaults to \code{NULL}, in which case the method stored in the object is used.
+#'        Currently supported method: \code{"SeaSonde"}.
+#' @param FOR_control Optional; A list of parameters for configuring the FOR computation process.
+#'        Defaults to \code{NULL}, in which case the parameters already stored in the object are used.
+#'
+#' @details
+#' **Steps:**
+#' 1. **Set Method:**
+#'    - If a method is provided, it updates the \code{SeaSondeRCS} object with the specified method.
+#' 2. **Retrieve Method:**
+#'    - If no method is specified, the function retrieves the method stored in the object.
+#' 3. **Set Parameters:**
+#'    - If \code{FOR_control} is provided, the function updates the object's FOR parameters.
+#' 4. **Method Execution:**
+#'    - Based on the selected method, the corresponding processing function is called. Currently, the only
+#'      supported method is \code{"SeaSonde"}, which calls \code{\link{seasonder_computeFORsSeaSondeMethod}}.
+#'
+#' **Use Case:**
+#' This function provides a flexible interface for computing FORs, allowing users to dynamically select
+#' methods and configure parameters without modifying the internal object structure.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the computed First Order Regions (FOR).
+#'
+#' @seealso
+#' - \code{\link{seasonder_computeFORsSeaSondeMethod}} for processing FORs using the SeaSonde method.
+#' - \code{\link{seasonder_setSeaSondeRCS_FOR_method}} for setting the processing method.
+#' - \code{\link{seasonder_setSeaSondeRCS_FOR_parameters}} for configuring FOR parameters.
+#'
+#' @examples
+#' \dontrun{
+#' # Compute FORs using the SeaSonde method
+#' cs_obj <- seasonder_computeFORs(cs_obj, method = "SeaSonde")
+#'
+#' # Compute FORs with custom parameters
+#' FOR_control <- list(currmax = 2, noisefact = 4)
+#' cs_obj <- seasonder_computeFORs(cs_obj, FOR_control = FOR_control)
+#' }
 #' @export
 seasonder_computeFORs <- function(seasonder_cs_obj, method = NULL, FOR_control = NULL) {
 
+  # Update the processing method if specified
   if (!is.null(method)) {
     seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR_method(method)
   }
 
+  # Retrieve the processing method from the object
   method <- seasonder_getSeaSondeRCS_FOR_method(seasonder_cs_obj)
 
+  # Update the FOR parameters if specified
   if (!is.null(FOR_control)) {
     seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_FOR_parameters(FOR_control)
   }
 
+  # Execute the method-specific FOR computation
   if (method == "SeaSonde") {
-    seasonder_cs_obj %<>%  seasonder_computeFORsSeaSondeMethod()
+    seasonder_cs_obj %<>% seasonder_computeFORsSeaSondeMethod()
   }
 
+  # Return the updated object
   return(seasonder_cs_obj)
 }
 
 #### Utils ####
 
+#' Export First Order Region (FOR) Boundaries
+#'
+#' This function exports the boundaries of the First Order Region (FOR) for each range cell
+#' from a \code{SeaSondeRCS} object, providing the first and last Doppler bins for both
+#' negative and positive Bragg regions.
+#'
+#' @param seasonder_cs_object A \code{SeaSondeRCS} object containing the computed FOR data.
+#'
+#' @details
+#' **Purpose:**
+#' This function retrieves the computed FOR data from the \code{SeaSondeRCS} object and extracts
+#' the boundary Doppler bins for each range cell. The result is a data frame with the following columns:
+#' - \code{range_cell}: The index of the range cell.
+#' - \code{first_neg_doppler_cell}: The first Doppler bin in the negative Bragg region.
+#' - \code{last_neg_doppler_cell}: The last Doppler bin in the negative Bragg region.
+#' - \code{first_pos_doppler_cell}: The first Doppler bin in the positive Bragg region.
+#' - \code{last_pos_doppler_cell}: The last Doppler bin in the positive Bragg region.
+#'
+#' **Steps:**
+#' 1. Retrieve the FOR data using \code{\link{seasonder_getSeaSondeRCS_FOR}}.
+#' 2. Iterate through each range cell and extract the Doppler bins for both negative and positive Bragg regions.
+#' 3. Determine the range (first and last bins) for each region.
+#' 4. Combine the results into a single data frame, omitting empty entries.
+#'
+#' **Use Case:**
+#' This function is useful for exporting the computed FOR boundaries to a format that can
+#' be further analyzed or visualized.
+#'
+#' @return A data frame with the boundaries of the FOR for each range cell.
+#'
+#' @seealso
+#' - \code{\link{seasonder_getSeaSondeRCS_FOR}} for retrieving the FOR data.
+#'
+#' @examples
+#' \dontrun{
+#' # Export the FOR boundaries from a SeaSondeRCS object
+#' boundaries <- seasonder_SeaSondeRCSExportFORBoundaries(cs_obj)
+#' print(boundaries)
+#' }
 #' @export
 seasonder_SeaSondeRCSExportFORBoundaries <- function(seasonder_cs_object){
 
+  # Retrieve the FOR data from the SeaSondeRCS object
   FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_object)
 
-  FOR <-  1:length(FOR) %>% purrr::map(\(range_cell) {
+  # Iterate through each range cell and extract boundary information
+  FOR <- 1:length(FOR) %>% purrr::map(\(range_cell) {
 
+    # Initialize output for the current range cell
     o <- NULL
 
-    doppler_bins <- integer(0)
-
+    # Extract Doppler bins for the negative Bragg region
     neg_bins <- FOR[[range_cell]]$negative_FOR
-neg_range <- NA_integer_
-    if(length(neg_bins) > 0){
-      neg_range <- range(neg_bins)
-
-
-
-
+    neg_range <- NA_integer_
+    if (length(neg_bins) > 0) {
+      neg_range <- range(neg_bins) # Get the first and last Doppler bins
     }
 
+    # Extract Doppler bins for the positive Bragg region
     pos_bins <- FOR[[range_cell]]$positive_FOR
     pos_range <- NA_integer_
-    if(length(pos_bins) > 0){
-      pos_range <- range(pos_bins)
-
-
+    if (length(pos_bins) > 0) {
+      pos_range <- range(pos_bins) # Get the first and last Doppler bins
     }
 
-
-
-
-
-
-
-      o <- data.frame(range_cell = range_cell, first_neg_doppler_cell = neg_range[1], last_neg_doppler_cell = neg_range[2], first_pos_doppler_cell = pos_range[1], last_pos_doppler_cell = pos_range[2])
-
+    # Create a data frame for the current range cell
+    o <- data.frame(
+      range_cell = range_cell,
+      first_neg_doppler_cell = neg_range[1],
+      last_neg_doppler_cell = neg_range[2],
+      first_pos_doppler_cell = pos_range[1],
+      last_pos_doppler_cell = pos_range[2]
+    )
 
     return(o)
 
-  }) %>% purrr::compact() %>% dplyr::bind_rows()
+  }) %>%
+    purrr::compact() %>% # Remove NULL entries
+    dplyr::bind_rows()   # Combine all range cell data into a single data frame
 
-return(FOR)
+  # Return the resulting data frame
+  return(FOR)
 }

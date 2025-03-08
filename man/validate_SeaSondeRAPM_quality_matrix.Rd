@@ -15,6 +15,6 @@ validate_SeaSondeRAPM_quality_matrix(matrix, seasonde_apm_obj)
 Returns TRUE if the validation passes.
 }
 \description{
-This function validates if the provided quality_matrix is a 2-row complex matrix.
+This function validates if the provided quality_matrix is a 3-row complex matrix.
 It also checks if the number of columns matches that of the calibration_matrix in the given SeaSondeRAPM object.
 }

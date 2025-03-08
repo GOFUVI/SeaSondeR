@@ -76,3 +76,30 @@ seasonder_disable_all_debug_points <- function(){
 
 
 }
+
+
+#### Config ####
+
+
+seasonder_the$config <- list()
+
+##### gshhg #####
+
+seasonder_the$config$gshhg_ver <- "latest"
+
+seasonder_the$config$gshhg_shp_path <-  file.path(tools::R_user_dir("SeaSondeR","cache"),"gshhg","GSHHS_shp","f","GSHHS_f_L1.shp")
+
+seasonder_the$config$shoreline_path <-  file.path(tools::R_user_dir("SeaSondeR","cache"), "shoreline.RData")
+
+seasonder_get_shoreline_path <- function(){
+
+  seasonder_the$config$shoreline_path
+
+}
+
+#' @export
+seasonder_set_shoreline_path <- function(path){
+
+  seasonder_the$config$shoreline_path <- path
+
+}

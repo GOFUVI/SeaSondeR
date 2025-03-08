@@ -20,8 +20,8 @@ This function initializes attributes for a SeaSondeRAPM object, including metada
 \details{
 The function initializes the following attributes:
 \itemize{
-\item \code{quality_matrix}: A 2 x b complex matrix for quality data, where b is the number of bearings.
-\item \code{BEAR}: A numeric vector for bearings (degrees).
+\item \code{quality_matrix}: A 3 x b complex matrix for quality data, where b is the number of bearings.
+\item \code{BEAR}: A numeric vector for bearings (degrees CCW from the site bearing).
 \item \code{Type}: Character string for antenna pattern type.
 \item \code{Creator}: Object creator name. Default is an empty character vector.
 \item \code{SiteName}: Site name (not the same as SiteCode). Default is an empty character vector.
@@ -30,7 +30,7 @@ The function initializes the following attributes:
 \item \code{CreateTimeStamp}: APM file creation time. Default is current system date and time.
 \item \code{ProcessingSteps}: Processing steps applied to this object. Default is an empty character vector.
 \item \code{AmplitudeFactors}: Numeric vector with two elements for the amplitude factors. Default is \code{c(0,0)}.
-\item \code{AntennaBearing}: Default is an empty numeric vector.
+\item \code{AntennaBearing}: Site bearing (CW degrees from true north). Default is an empty numeric vector.
 \item \code{StationCode}: 4-character station code. Default is an empty character vector.
 \item \code{BearingResolution}: In degrees. Default is an empty numeric vector.
 \item \code{Smoothing}: Numeric vector indicating smoothing applied to the antenna pattern. Default is an empty numeric vector.
@@ -38,10 +38,6 @@ The function initializes the following attributes:
 \item \code{FileID}: File's UUID. Default is an empty character vector.
 \item \code{PhaseCorrections}: Numeric vector with two elements for phase corrections. Default is \code{c(0,0)}.
 }
-
-Each attribute has a corresponding setter and getter function, following the naming pattern \code{seasonder_set/getSeaSondeRAPM_*}, where * is the name of the attribute. For example, to set the 'Type' attribute, you would use \code{seasonder_setSeaSondeRAPM_Type(seasonde_apm_obj,new_value)}. To get the same, you would use \code{seasonder_getSeaSondeRAPM_Type(seasonde_apm_obj,new_value)}.
-
-Please see \code{\link{seasonder_validateAttributesSeaSondeRAPM}} for details in attributes validation.
 }
 \seealso{
 \code{\link{seasonder_createSeaSondeRAPM}},

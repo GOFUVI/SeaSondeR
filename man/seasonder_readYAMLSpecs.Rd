@@ -4,7 +4,7 @@
 \alias{seasonder_readYAMLSpecs}
 \title{Read Specifications from a YAML File}
 \usage{
-seasonder_readYAMLSpecs(file_path, path)
+seasonder_readYAMLSpecs(file_path, path = rlang::zap())
 }
 \arguments{
 \item{file_path}{A string. The path to the YAML file.}

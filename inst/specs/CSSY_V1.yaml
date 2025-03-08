@@ -1,0 +1,198 @@
+metadata:
+  version: 1.0.0
+  type: SeaSondeCS
+
+key_size_block:
+    key:
+      type: Char4
+      qc_fun: qc_check_type
+      qc_params:
+        expected_type: "character"
+
+    size:
+      type: UInt32
+      qc_fun: qc_check_unsigned
+      qc_params:
+        expected_type: "numeric"
+
+CSSY:
+    HEAD:
+        sign:
+            FileVersion:
+                type: Char4
+                qc_fun: qc_check_type
+                qc_params:
+                    expected_type: "character"
+            SiteCode:
+                type: Char4
+                qc_fun: qc_check_type
+                qc_params:
+                    expected_type: "character"
+            FileType:
+                type: Char4
+                qc_fun: qc_check_type
+                qc_params:
+                    expected_type: "character"
+            UserFlags:
+                type: UInt32
+                qc_fun: qc_check_unsigned
+                qc_params:
+                    expected_type: "numeric"
+            FileDescription:
+                type: Char64
+                qc_fun: qc_check_type
+                qc_params:
+                    expected_type: "character"
+            OwnerName:
+                type: Char64
+                qc_fun: qc_check_type
+                qc_params:
+                    expected_type: "character"
+            Comment:
+                type: Char64
+                qc_fun: qc_check_type
+                qc_params:
+                    expected_type: "character"
+        srcn:
+            SourceCSFilename:
+              type: CharX
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "character"
+        mcda:
+            FirstSweepTimestamp:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+        dbrf:
+            dBmReference:
+              type: Double
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "numeric"
+        cs4h: "Read CS Header"
+        alim:
+            nType:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+            nRange:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+            fRangeKm:
+              type: Float
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "numeric"
+            fBearingDeg:
+              type: Float
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "numeric"
+            nFirstRange:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+            nDopplers:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+            nReserved1:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+            nReserved2:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+        wlim:
+            nType:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+            nRange:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+            fRangeKm:
+              type: Float
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "numeric"
+            fBearingDeg:
+              type: Float
+              qc_fun: qc_check_type
+              qc_params:
+                expected_type: "numeric"
+            nFirstRange:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+            nDopplers:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+            nReserved1:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+            nReserved2:
+              type: UInt32
+              qc_fun: qc_check_unsigned
+              qc_params:
+                  expected_type: "numeric"
+    BODY:
+        indx:
+            index:
+              type: SInt32
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "integer"
+        scal:
+            nType:
+              type: SInt32
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "integer"
+            fmin:
+              type: Float
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "numeric"
+            fmax:
+              type: Float
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "numeric"
+            fscale:
+              type: Float
+              qc_fun: qc_check_type
+              qc_params:
+                  expected_type: "numeric"
+        cs1a: "Reduced Encoded Data"
+        cs2a: "Reduced Encoded Data"
+        cs3a: "Reduced Encoded Data"
+        c13r: "Reduced Encoded Data"
+        c13i: "Reduced Encoded Data"
+        c23r: "Reduced Encoded Data"
+        c23i: "Reduced Encoded Data"
+        c12r: "Reduced Encoded Data"
+        c12i: "Reduced Encoded Data"
+        csgn: "Cross-Spectra Sign"
+        asgn: "Auto-Spectra Sign"
+        csqf: "Reduced Encoded Data"
+        'END ': "the end"
+

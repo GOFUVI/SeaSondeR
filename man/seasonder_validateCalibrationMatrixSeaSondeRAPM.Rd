@@ -7,7 +7,7 @@
 seasonder_validateCalibrationMatrixSeaSondeRAPM(matrix)
 }
 \arguments{
-\item{matrix}{A 2 x b complex matrix for calibration, where b is the number of bearings.}
+\item{matrix}{A 3 x b complex matrix for calibration, where b is the number of bearings.}
 }
 \value{
 TRUE if the matrix is valid. The function will stop execution and display an error message if the matrix is invalid.
@@ -20,7 +20,7 @@ for use in a SeaSondeRAPM object.
 The function performs the following validation checks:
 \enumerate{
 \item Confirms that the input is a matrix.
-\item Verifies that the matrix has exactly two rows.
+\item Verifies that the matrix has exactly three rows.
 \item Checks that the matrix contains only complex numbers.
 }
 

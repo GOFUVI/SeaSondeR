@@ -15,7 +15,7 @@ seasonder_setSeaSondeRAPM_ProcessingSteps(
 
 \item{new_value}{new value}
 
-\item{append}{append the new step or replace previous steps? Default: TRUE}
+\item{append}{Append the new step to existing steps if TRUE; otherwise, replace previous steps.}
 }
 \description{
 Setter for ProcessingSteps

@@ -5,19 +5,19 @@
 \title{Create a SeaSondeRAPM Object}
 \usage{
 seasonder_createSeaSondeRAPM(
-  calibration_matrix = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 2,
+  calibration_matrix = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 3,
     ncol = 0),
   ...
 )
 }
 \arguments{
-\item{calibration_matrix}{A 2 x b complex matrix, where b is the number of bearings for calibration.}
+\item{calibration_matrix}{A 3 x b complex matrix, where b is the number of bearings for calibration.}
 
 \item{...}{Additional named attributes that will be passed to \code{\link{seasonder_initializeAttributesSeaSondeRAPM}}.}
 }
 \value{
 A SeaSondeRAPM object containing a complex matrix with class attribute 'SeaSondeRAPM' and
-additional attributes for metadata. Row names are set "A13" and "A23" and column names are set to be the values in BEAR.
+additional attributes for metadata. Row names are set "A13", "A23" and "A33" and column names are set to be the values in BEAR.
 }
 \description{
 This function creates a SeaSondeRAPM object to store antenna pattern calibration data.
@@ -25,7 +25,7 @@ This function creates a SeaSondeRAPM object to store antenna pattern calibration
 \details{
 The function performs the following operations:
 \enumerate{
-\item Validates the \code{calibration_matrix} with code{\link{seasonder_validateCalibrationMatrixSeaSondeRAPM}}.
+\item Validates the \code{calibration_matrix} with \code{\link{seasonder_validateCalibrationMatrixSeaSondeRAPM}}.
 \item Initializes all other attributes either with default or user-provided values.
 \item Merges the initialized attributes into \code{calibration_matrix}.
 \item Sets the object's class to 'SeaSondeRAPM'.

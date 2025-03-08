@@ -14,10 +14,10 @@ read_matrix_row(lines, start, number_of_lines_to_read)
 \item{number_of_lines_to_read}{The number of lines to read to form the row.}
 }
 \value{
-Returns a numeric vector containing the row values.
+A numeric vector containing the row values.
 }
 \description{
-This function reads a row of numbers from a matrix, which is represented
-as an array of text lines. It's used to facilitate reading data from
+This function reads a row of numbers from a matrix that is represented
+as an array of text lines. It is used to facilitate reading data from
 SeaSonde APM files.
 }
