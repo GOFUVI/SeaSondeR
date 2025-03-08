@@ -1,0 +1,2 @@
+Thread created with ID: thread_7XhfMeTbQGhQZxAhPATcfufK 
+Ejecutando agente coordinador TDD en thread thread_7XhfMeTbQGhQZxAhPATcfufK
