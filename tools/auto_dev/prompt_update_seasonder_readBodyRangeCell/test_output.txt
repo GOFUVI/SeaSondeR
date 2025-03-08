@@ -1,0 +1,27 @@
+#### Unit tests output ####
+
+1..4
+ok 1 Functions existence
+ok 2 Functions existence
+not ok 3 seasonder_readBodyRangeCell scaling functionality: applies scaling when 'scal' key is provided
+  Error in `dev_package()`: No packages loaded with pkgload
+  Backtrace:
+      ▆
+   1. └─base::eval(...)
+   2.   └─base::eval(...)
+   3.     └─testthat::local_mocked_bindings(...) at file1411667d51be.R:768:7
+   4.       ├─.package %||% dev_package() at testthat/R/mock2.R:110:3
+   5.       └─testthat:::dev_package() at testthat/R/mock2.R:110:3
+   6.         └─cli::cli_abort("No packages loaded with pkgload") at testthat/R/mock2.R:183:7
+   7.           └─rlang::abort(...)
+not ok 4 seasonder_readBodyRangeCell scaling functionality: returns raw data when no 'scal' key is provided
+  Error in `dev_package()`: No packages loaded with pkgload
+  Backtrace:
+      ▆
+   1. └─base::eval(...)
+   2.   └─base::eval(...)
+   3.     └─testthat::local_mocked_bindings(...) at file1411667d51be.R:823:7
+   4.       ├─.package %||% dev_package() at testthat/R/mock2.R:110:3
+   5.       └─testthat:::dev_package() at testthat/R/mock2.R:110:3
+   6.         └─cli::cli_abort("No packages loaded with pkgload") at testthat/R/mock2.R:183:7
+   7.           └─rlang::abort(...)
