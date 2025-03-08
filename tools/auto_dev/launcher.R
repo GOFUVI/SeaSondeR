@@ -35,7 +35,7 @@ for(prompt_file in prompt_files){
     dir.create(auto_dev_folder)
   }
 
-  rstudioapi::jobRunScript(here::here("tools/auto_dev/autodev_script.R"),workingDir = here::here(),importEnv = T,name = basename(prompt_file))
+  rstudioapi::jobRunScript(here::here("tools/auto_dev/autodev_script.R"),workingDir = here::here(),importEnv = T,name = prompt_name)
 
 
 
