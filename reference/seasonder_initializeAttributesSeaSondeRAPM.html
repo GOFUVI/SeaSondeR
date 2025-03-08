@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,8 +65,8 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The function initializes the following attributes:</p><ul><li><p><code>quality_matrix</code>: A 2 x b complex matrix for quality data, where b is the number of bearings.</p></li>
-<li><p><code>BEAR</code>: A numeric vector for bearings (degrees).</p></li>
+    <p>The function initializes the following attributes:</p><ul><li><p><code>quality_matrix</code>: A 3 x b complex matrix for quality data, where b is the number of bearings.</p></li>
+<li><p><code>BEAR</code>: A numeric vector for bearings (degrees CCW from the site bearing).</p></li>
 <li><p><code>Type</code>: Character string for antenna pattern type.</p></li>
 <li><p><code>Creator</code>: Object creator name. Default is an empty character vector.</p></li>
 <li><p><code>SiteName</code>: Site name (not the same as SiteCode). Default is an empty character vector.</p></li>
@@ -75,16 +75,14 @@
 <li><p><code>CreateTimeStamp</code>: APM file creation time. Default is current system date and time.</p></li>
 <li><p><code>ProcessingSteps</code>: Processing steps applied to this object. Default is an empty character vector.</p></li>
 <li><p><code>AmplitudeFactors</code>: Numeric vector with two elements for the amplitude factors. Default is <code>c(0,0)</code>.</p></li>
-<li><p><code>AntennaBearing</code>: Default is an empty numeric vector.</p></li>
+<li><p><code>AntennaBearing</code>: Site bearing (CW degrees from true north). Default is an empty numeric vector.</p></li>
 <li><p><code>StationCode</code>: 4-character station code. Default is an empty character vector.</p></li>
 <li><p><code>BearingResolution</code>: In degrees. Default is an empty numeric vector.</p></li>
 <li><p><code>Smoothing</code>: Numeric vector indicating smoothing applied to the antenna pattern. Default is an empty numeric vector.</p></li>
 <li><p><code>CommentLine</code>: Metadata lines in the data file not matching any other attribute. Default is an empty character vector.</p></li>
 <li><p><code>FileID</code>: File's UUID. Default is an empty character vector.</p></li>
 <li><p><code>PhaseCorrections</code>: Numeric vector with two elements for phase corrections. Default is <code>c(0,0)</code>.</p></li>
-</ul><p>Each attribute has a corresponding setter and getter function, following the naming pattern <code>seasonder_set/getSeaSondeRAPM_*</code>, where * is the name of the attribute. For example, to set the 'Type' attribute, you would use <code>seasonder_setSeaSondeRAPM_Type(seasonde_apm_obj,new_value)</code>. To get the same, you would use <code>seasonder_getSeaSondeRAPM_Type(seasonde_apm_obj,new_value)</code>.</p>
-<p>Please see <code><a href="seasonder_validateAttributesSeaSondeRAPM.html">seasonder_validateAttributesSeaSondeRAPM</a></code> for details in attributes validation.</p>
-    </div>
+</ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="seasonder_createSeaSondeRAPM.html">seasonder_createSeaSondeRAPM</a></code>,

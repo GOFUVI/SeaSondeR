@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">seasonder_createSeaSondeRAPM</span><span class="op">(</span></span>
-<span>  calibration_matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">complex</a></span><span class="op">(</span>real <span class="op">=</span> <span class="cn">NA_real_</span>, imaginary <span class="op">=</span> <span class="cn">NA_real_</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  calibration_matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">complex</a></span><span class="op">(</span>real <span class="op">=</span> <span class="cn">NA_real_</span>, imaginary <span class="op">=</span> <span class="cn">NA_real_</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>    ncol <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -56,7 +56,7 @@
 
 
 <dl><dt id="arg-calibration-matrix">calibration_matrix<a class="anchor" aria-label="anchor" href="#arg-calibration-matrix"></a></dt>
-<dd><p>A 2 x b complex matrix, where b is the number of bearings for calibration.</p></dd>
+<dd><p>A 3 x b complex matrix, where b is the number of bearings for calibration.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -66,11 +66,11 @@
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A SeaSondeRAPM object containing a complex matrix with class attribute 'SeaSondeRAPM' and
-additional attributes for metadata. Row names are set "A13" and "A23" and column names are set to be the values in BEAR.</p>
+additional attributes for metadata. Row names are set "A13", "A23" and "A33" and column names are set to be the values in BEAR.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The function performs the following operations:</p><ol><li><p>Validates the <code>calibration_matrix</code> with code<a href="seasonder_validateCalibrationMatrixSeaSondeRAPM.html">seasonder_validateCalibrationMatrixSeaSondeRAPM</a>.</p></li>
+    <p>The function performs the following operations:</p><ol><li><p>Validates the <code>calibration_matrix</code> with <code><a href="seasonder_validateCalibrationMatrixSeaSondeRAPM.html">seasonder_validateCalibrationMatrixSeaSondeRAPM</a></code>.</p></li>
 <li><p>Initializes all other attributes either with default or user-provided values.</p></li>
 <li><p>Merges the initialized attributes into <code>calibration_matrix</code>.</p></li>
 <li><p>Sets the object's class to 'SeaSondeRAPM'.</p></li>

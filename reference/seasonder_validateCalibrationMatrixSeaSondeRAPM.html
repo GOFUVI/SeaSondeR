@@ -9,7 +9,7 @@ for use in a SeaSondeRAPM object."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,7 @@ for use in a SeaSondeRAPM object.</p>
 
 
 <dl><dt id="arg-matrix">matrix<a class="anchor" aria-label="anchor" href="#arg-matrix"></a></dt>
-<dd><p>A 2 x b complex matrix for calibration, where b is the number of bearings.</p></dd>
+<dd><p>A 3 x b complex matrix for calibration, where b is the number of bearings.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -65,7 +65,7 @@ for use in a SeaSondeRAPM object.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function performs the following validation checks:</p><ol><li><p>Confirms that the input is a matrix.</p></li>
-<li><p>Verifies that the matrix has exactly two rows.</p></li>
+<li><p>Verifies that the matrix has exactly three rows.</p></li>
 <li><p>Checks that the matrix contains only complex numbers.</p></li>
 </ol><p>If any of these validation steps fail, the function will log a fatal error and stop the execution using <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">rlang::abort</a></code>.</p>
     </div>

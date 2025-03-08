@@ -9,7 +9,7 @@ the parsed data."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,16 +66,28 @@ the parsed data.</p>
 
 
 <dt id="arg-override-antenna-bearing">override_antenna_bearing<a class="anchor" aria-label="anchor" href="#arg-override-antenna-bearing"></a></dt>
-<dd><p>If not NULL, overrides the Antenna Bearing data in the file</p></dd>
+<dd><p>If not NULL, overrides the Antenna Bearing data in the file.</p></dd>
+
+
+<dt id="arg-override-phase-corrections">override_phase_corrections<a class="anchor" aria-label="anchor" href="#arg-override-phase-corrections"></a></dt>
+<dd><p>If not NULL, overrides the phase corrections in the file.</p></dd>
+
+
+<dt id="arg-override-amplitude-factors">override_amplitude_factors<a class="anchor" aria-label="anchor" href="#arg-override-amplitude-factors"></a></dt>
+<dd><p>If not NULL, overrides the amplitude factors in the file.</p></dd>
+
+
+<dt id="arg-override-siteorigin">override_SiteOrigin<a class="anchor" aria-label="anchor" href="#arg-override-siteorigin"></a></dt>
+<dd><p>If not NULL, overrides the SiteOrigin attribute.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to the object creation function (See <code><a href="seasonder_createSeaSondeRAPM.html">seasonder_createSeaSondeRAPM</a></code> for more details).</p></dd>
+<dd><p>Additional arguments passed to the object creation function.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Returns a SeaSondeRAPM object containing the parsed data.</p>
+    <p>A SeaSondeRAPM object containing the parsed data.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
