@@ -1,7 +1,9 @@
 library(magrittr)
 
+local({
+sink(log_file)
 
-
+on.exit(sink())
 input_test_file <- file.path(auto_dev_folder, "autodev_test_output.R")
 
 code_file <- file.path(auto_dev_folder, "code.R")
@@ -13,6 +15,8 @@ tests_output_file <- file.path(auto_dev_folder, "test_output.txt")
 output_code_file <- file.path(auto_dev_folder, "autodev_code_output.R")
 
 output_test_file <- file.path(auto_dev_folder, "autodev_test_output.R")
+
+log_file <-  file.path(auto_dev_folder, "log.txt")
 
 prompt <- readLines(prompt_file) %>% paste0(collapse = "\n")
 
@@ -50,6 +54,8 @@ coordinator_agent <- TeamFunctionBuilder::tfb_create_tdd_coordinator_agent(unit_
                                                                            force_update = F)
 
 result <- try({
+
+
   TeamFunctionBuilder::tfb_tdd_coordinator_agent_develop_from_files(coordinator_agent,
                                                                             prompt = prompt,
                                                                             input_test_file = input_test_file,
@@ -77,3 +83,4 @@ gert::git_add(files = files_to_commit)
 gert::git_commit(glue::glue("{prompt_name}"))
 
 gert::git_push()
+})
