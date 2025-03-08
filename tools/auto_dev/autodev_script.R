@@ -1,6 +1,12 @@
 library(magrittr)
 
 local({
+
+  log_file <-  file.path(auto_dev_folder, "log.txt")
+
+  if(!file.exists(log_file)){
+    file.create(log_file)
+  }
 sink(log_file)
 
 on.exit(sink())
@@ -16,7 +22,7 @@ output_code_file <- file.path(auto_dev_folder, "autodev_code_output.R")
 
 output_test_file <- file.path(auto_dev_folder, "autodev_test_output.R")
 
-log_file <-  file.path(auto_dev_folder, "log.txt")
+
 
 prompt <- readLines(prompt_file) %>% paste0(collapse = "\n")
 
