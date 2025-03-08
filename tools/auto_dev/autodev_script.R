@@ -49,7 +49,8 @@ coordinator_agent <- TeamFunctionBuilder::tfb_create_tdd_coordinator_agent(unit_
                                                                            doc_agent = doc_agent,
                                                                            force_update = F)
 
-result <- TeamFunctionBuilder::tfb_tdd_coordinator_agent_develop_from_files(coordinator_agent,
+result <- try({
+  TeamFunctionBuilder::tfb_tdd_coordinator_agent_develop_from_files(coordinator_agent,
                                                                             prompt = prompt,
                                                                             input_test_file = input_test_file,
                                                                             input_code_file = input_code_file,
@@ -61,7 +62,7 @@ result <- TeamFunctionBuilder::tfb_tdd_coordinator_agent_develop_from_files(coor
                                                                             temp_tests_output_file = tests_output_file,
                                                                             thread_options = list(tool_resources = list(file_search = list(vector_store_ids = list("vs_67c06a9c65988191ae56bb2cf1b917eb")))))
 
-
+})
 
 
 gert::git_add(files = file.path(glue::glue("tools/auto_dev/{prompt_name}"),list.files(auto_dev_folder)))
