@@ -64,8 +64,15 @@ result <- try({
 
 })
 
+file.copy(prompt_file,to = tasks_to_review_folder)
+file.remove(prompt_file)
 
-gert::git_add(files = file.path(glue::glue("tools/auto_dev/{prompt_name}"),list.files(auto_dev_folder)))
+
+files_to_commit <- file.path(glue::glue("tools/auto_dev/{prompt_name}"),list.files(auto_dev_folder))
+files_to_commit <- c(files_to_commit, glue::glue("tools/auto_dev/tasks_to_do/{basename(prompt_file)}"))
+files_to_commit <- c(files_to_commit, glue::glue("tools/auto_dev/tasks_to_review/{basename(prompt_file)}"))
+
+gert::git_add(files = files_to_commit)
 
 gert::git_commit(glue::glue("{prompt_name}"))
 
