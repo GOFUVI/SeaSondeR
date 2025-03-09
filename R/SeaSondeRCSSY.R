@@ -397,48 +397,6 @@ seasonder_readCSSYFields <- function(connection, specs, endian, parent_key= NULL
 
 }
 
-seasonder_readBodyRangeCell <- function(connection, specs, endian, specs_key_size = NULL){
-  indx_read <- FALSE
-  out <- list()
-
-  while(TRUE){
-    key <- seasonder_readSeaSondeCSFileBlock(specs_key_size, connection, endian)
-    if(!key$key %in% names(specs)){
-      seek(connection,key$size,origin = "current")
-
-    }else if(key$key == "END "){
-      break
-    }else if(key$key == "indx" && indx_read){
-      seek(connection,-8,origin = "current")
-      break
-    }else if(key$key %in% c("cs1a","cs2a","cs3a","c13r","c13i","c23r","c23i","c12r","c12i", "csqf")){
-
-      out <- append(out,list(seasonder_read_reduced_encoded_data(connection, key, endian))  %>% magrittr::set_names(key$key))
-
-    }else if(key$key %in% c("csgn")){
-      out <- append(out,list(seasonder_read_csign(connection, key))  %>% magrittr::set_names(key$key))
-
-
-
-    }else if(key$key %in% c("asgn")){
-      out <- append(out,list(seasonder_read_asign(connection, key))  %>% magrittr::set_names(key$key))
-
-
-
-    }else{
-
-      out <- append(out,
-                    list(seasonder_readCSSYFields(connection, purrr::chuck(specs, key$key), endian, parent_key = key )) %>% magrittr::set_names(key$key)
-      )
-      if(key$key == "indx"){
-        indx_read <- TRUE
-      }
-
-    }
-  }
-  return(out)
-}
-
 #' Apply Scaling to SeaSondeRCSSY Data
 #'
 #' This function applies scaling to each vector of integer values contained in the list `values` by converting them to floating point
@@ -526,13 +484,92 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
   return(scaled_values)
 }
 
+#' Read a Body Range Cell and Apply Scaling if Required
+#'
+#' This function processes a block of keys from a binary connection according to a given specification ('specs').
+#' Each key is read using seasonder_readSeaSondeCSFileBlock and processed based on its name.
+#'
+#' Key processing details:
+#'   - 'scal': Reads scaling parameters (fmax, fmin, fscale, dbRef) via seasonder_readCSSYFields and stores
+#'             them for use in scaling subsequent reduced data blocks.
+#'
+#'   - Reduced data keys (e.g., 'cs1a', 'cs2a', etc.): Reads the data using seasonder_read_reduced_encoded_data.
+#'     If scaling parameters were set by a preceding 'scal' block, the raw data is transformed into voltage values
+#'     using seasonder_SeaSondeRCSSYApplyScaling; otherwise, the raw data is returned as is.
+#'
+#'   - Other keys such as 'csgn' and 'asgn' invoke their own specialized read functions.
+#'
+#' The function terminates when the 'END ' key is encountered or when a repeated key (e.g., 'indx') signals the end of
+#' the block.
+#'
+#' @param connection A binary connection from which keys and data are read.
+#' @param specs A list that defines the expected keys and their formats.
+#' @param endian A string specifying the byte order ("big" or "little").
+#' @param specs_key_size Optional specification for the key size block.
+#' @return A list with elements named after the keys read. For reduced data blocks, each element contains either
+#'         raw decoded data or scaled voltage values if a 'scal' block was applied.
+seasonder_readBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
+  indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
+  scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
+  out <- list()
 
-seasonder_readCSSYBody <- function(connection, specs, size, endian = "big", specs_key_size = NULL){
+  while(TRUE){
+    key <- seasonder_readSeaSondeCSFileBlock(specs_key_size, connection, endian)
+    if(!key$key %in% names(specs)){
+      # Skip keys not defined in the specifications
+      seek(connection, key$size, origin = "current")
+    } else if(key$key == "END "){
+      # End-of-block marker encountered
+      break
+    } else if(key$key == "indx" && indx_read){
+      # A repeated 'indx' indicates end of the block; rewind if necessary
+      seek(connection, -8, origin = "current")
+      break
+    } else if(key$key == "scal"){
+      # 'scal' block encountered: read and store scaling parameters
+      scaling_params <- seasonder_readCSSYFields(connection, purrr::chuck(specs, key$key),
+                                                 endian, parent_key = key)
+      out <- append(out, list(scaling_params) %>% magrittr::set_names(key$key))
+    } else if(key$key %in% c("cs1a", "cs2a", "cs3a", "c13r", "c13i", "c23r", "c23i", "c12r", "c12i", "csqf")){
+      # Reduced data block: read the block; apply scaling if parameters are available
+      data_block <- seasonder_read_reduced_encoded_data(connection, key, endian)
+      if(!is.null(scaling_params)){
+        data_block <- seasonder_SeaSondeRCSSYApplyScaling(list(data_block),
+                                                          fmax = scaling_params$fmax,
+                                                          fmin = scaling_params$fmin,
+                                                          fscale = scaling_params$fscale,
+                                                          dbRef = dbRef)[[1]]
+      }
+      out <- append(out, list(data_block) %>% magrittr::set_names(key$key))
+    } else if(key$key %in% c("csgn")){
+      # Process complex spectral sign information
+      out <- append(out, list(seasonder_read_csign(connection, key)) %>% magrittr::set_names(key$key))
+    } else if(key$key %in% c("asgn")){
+      # Process self spectra sign information
+      out <- append(out, list(seasonder_read_asign(connection, key)) %>% magrittr::set_names(key$key))
+    } else {
+      # For all other keys, process them as simple field blocks
+      out <- append(out, list(seasonder_readCSSYFields(connection, purrr::chuck(specs, key$key),
+                                                       endian, parent_key = key)) %>%
+                      magrittr::set_names(key$key))
+      if(key$key == "indx"){
+        indx_read <- TRUE
+      }
+    }
+  }
+  return(out)
+}
+
+
+
+
+
+seasonder_readCSSYBody <- function(connection, specs, size, dbRef, endian = "big", specs_key_size = NULL){
   end_point <- seek(connection) + size
 
   out <- list()
   while(seek(connection) < end_point){
-    out <- append(out, list(seasonder_readBodyRangeCell(connection, specs, endian, specs_key_size = specs_key_size)))
+    out <- append(out, list(seasonder_readBodyRangeCell(connection, specs,  dbRef,endian = endian, specs_key_size = specs_key_size)))
   }
 
   return(out)
@@ -713,6 +750,7 @@ seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_def
 
 
   header <- seasonder_readCSSYHeader(connection, header_specs,endian, specs_key_size = specs_key_size)
+  dbRef <- header$dbrf$dBmReference
   header <- seasonder_CSSY2CSHeader(header)  # Transform CSSY header to valid CS header
   body_key <- seasonder_readSeaSondeCSFileBlock(specs_key_size, connection, endian)
 
@@ -721,7 +759,7 @@ seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_def
 
 
 
-  body <- seasonder_readCSSYBody(connection, body_specs, size = body_key$size, endian, specs_key_size = specs_key_size)
+  body <- seasonder_readCSSYBody(connection, body_specs, size = body_key$size, dbRef = dbRef, endian = endian, specs_key_size = specs_key_size)
 
 
   return(out)
