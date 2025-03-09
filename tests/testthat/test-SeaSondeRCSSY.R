@@ -478,14 +478,14 @@ describe("seasonder_readBodyRangeCell",{
 
       # Override seasonder_readCSSYFields to simulate reading scaling parameters
       seasonder_readCSSYFields = function(connection, spec, endian, parent_key) {
-        return(list(fmax = 5, fmin = 0, fscale = 1000, dbRef = -20))
+        return(list(fmax = 5, fmin = 0, fscale = 1000))
       },
 
       # Override seasonder_read_reduced_encoded_data to simulate reading a reduced data block
       seasonder_read_reduced_encoded_data = function(connection, key, endian) {
         return(c(1000, 2000, 3000))
       },
-    result <- seasonder_readBodyRangeCell(con, specs, endian = "big", specs_key_size = NULL)
+    result <- seasonder_readBodyRangeCell(con, specs, dbRef = -20, endian = "big", specs_key_size = NULL)
 )
     expected <- sapply(c(1000, 2000, 3000), function(val){
       if(val == 0xFFFFFFFF) return(NaN)
