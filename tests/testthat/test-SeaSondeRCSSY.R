@@ -8,6 +8,7 @@ test_that("Related functions are defined",{
   expect_true(exists("seasonder_SeaSondeRCSSYApplyScaling", mode = "function"),
               info = "seasonder_SeaSondeRCSSYApplyScaling should be defined")
 
+
 })
 
 
@@ -445,6 +446,7 @@ describe("seasonder_SeaSondeRCSSYApplyScaling", {
 
 })
 
+
 describe("seasonder_readBodyRangeCell",{
 
   # Test: Verify that when a scaling block is provided, the reduced data block is scaled correctly
@@ -530,5 +532,6 @@ describe("seasonder_readBodyRangeCell",{
   })
 
 })
+
 
 
