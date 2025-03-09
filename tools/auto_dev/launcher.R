@@ -32,9 +32,10 @@ while(TRUE){
 
 if(files_changed){
 for(prompt_file in prompt_files){
-  cat(glue::glue("{Sys.time()}: launching task {prompt_name}\n\n"))
+
 
   prompt_name <- tools::file_path_sans_ext(basename(prompt_file))
+  cat(glue::glue("{Sys.time()}: launching task {prompt_name}\n\n"))
 
   auto_dev_folder <- file.path(here::here("tools/auto_dev/"),prompt_name)
   unlink(auto_dev_folder,recursive = T)
