@@ -1,2 +1,7 @@
 #### Unit tests output ####
 
+
+1..2
+ok 1 scaling is applied to reduced data block when scal is present
+ok 2 reduced data block is unscaled when scal is absent
+
