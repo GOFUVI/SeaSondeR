@@ -10,7 +10,10 @@ local({
 sink(log_file)
 
 on.exit(sink())
-input_test_file <- file.path(auto_dev_folder, "autodev_test_output.R")
+
+
+
+
 
 code_file <- file.path(auto_dev_folder, "code.R")
 
