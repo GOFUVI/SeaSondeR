@@ -397,6 +397,8 @@ seasonder_readCSSYFields <- function(connection, specs, endian, parent_key= NULL
 
 }
 
+
+
 #' Apply Scaling to SeaSondeRCSSY Data
 #'
 #' This function applies scaling to each vector of integer values contained in the list `values` by converting them to floating point
@@ -484,6 +486,8 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
   return(scaled_values)
 }
 
+
+
 #' Read a Body Range Cell and Apply Scaling if Required
 #'
 #' This function processes a block of keys from a binary connection according to a given specification ('specs').
@@ -565,11 +569,16 @@ seasonder_readBodyRangeCell <- function(connection, specs, dbRef, endian = "big"
 
 
 seasonder_readCSSYBody <- function(connection, specs, size, dbRef, endian = "big", specs_key_size = NULL){
+
+
   end_point <- seek(connection) + size
 
   out <- list()
   while(seek(connection) < end_point){
+
+
     out <- append(out, list(seasonder_readBodyRangeCell(connection, specs,  dbRef,endian = endian, specs_key_size = specs_key_size)))
+
   }
 
   return(out)
@@ -750,11 +759,17 @@ seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_def
 
 
   header <- seasonder_readCSSYHeader(connection, header_specs,endian, specs_key_size = specs_key_size)
+
+
   dbRef <- header$dbrf$dBmReference
+
+
   header <- seasonder_CSSY2CSHeader(header)  # Transform CSSY header to valid CS header
   body_key <- seasonder_readSeaSondeCSFileBlock(specs_key_size, connection, endian)
 
   body_specs <- file_specs %>% purrr::chuck(body_key$key)
+
+
 
 
 
