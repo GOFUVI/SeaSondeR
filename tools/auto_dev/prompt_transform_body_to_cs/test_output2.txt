@@ -1,0 +1,47 @@
+#### Unit tests output ####
+
+1..3
+not ok 1 seasonder_CSSY2CSData exists
+  exists("seasonder_CSSY2CSData", mode = "function") is not TRUE
+  
+  `actual`:   FALSE
+  `expected`: TRUE 
+  seasonder_CSSY2CSData must be defined
+not ok 2 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+  Error in `seasonder_CSSY2CSData(body)`: could not find function "seasonder_CSSY2CSData"
+not ok 3 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+  Error in `seasonder_CSSY2CSData(body)`: could not find function "seasonder_CSSY2CSData"
+1..33
+ok 1 seasonder_CSSY2CSData exists
+ok 2 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 3 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 4 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 5 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 6 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 7 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 8 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 9 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 10 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 11 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 12 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 13 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 14 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 15 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 16 seasonder_CSSY2CSData transformation tests: transforms a single cell correctly
+ok 17 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 18 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 19 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 20 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 21 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 22 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 23 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 24 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 25 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 26 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 27 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 28 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 29 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 30 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 31 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 32 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
+ok 33 seasonder_CSSY2CSData transformation tests: transforms multiple cells correctly
