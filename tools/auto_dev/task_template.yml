@@ -1,0 +1,7 @@
+name: "task_name"
+prompt_file: "tools/auto_dev/prompts/task_name.txt"
+input_code_files:
+  - ""
+input_test_files:
+  - ""
+vector_store_ids: ["vs_67c06a9c65988191ae56bb2cf1b917eb"]

@@ -22,62 +22,66 @@ tasks_to_review_folder <- here::here("tools/auto_dev/tasks_to_review/")
 tasks_done_folder <- here::here("tools/auto_dev/tasks_done/")
 
 
-input_code_files <- yaml::read_yaml(here::here("tools/auto_dev/Input_code_files.yml"))
-input_test_files <- yaml::read_yaml(here::here("tools/auto_dev/Input_test_files.yml"))
 
-prompt_files <- list.files(tasks_to_do_folder,pattern = "\\.txt$",full.names = T)
+task_files <- list.files(tasks_to_do_folder,pattern = "\\.yml$",full.names = T)
 files_changed <- TRUE
 while(TRUE){
 
 
-if(files_changed){
-for(prompt_file in prompt_files){
+  if(files_changed){
+    for(task_file in task_files){
 
 
-  prompt_name <- tools::file_path_sans_ext(basename(prompt_file))
-  cat(glue::glue("{Sys.time()}: launching task {prompt_name}\n\n"))
+      task <- yaml::read_yaml(task_file)
 
-  auto_dev_folder <- file.path(here::here("tools/auto_dev/"),prompt_name)
-  unlink(auto_dev_folder,recursive = T)
+      task_name <- task$name
 
-  if(!dir.exists(auto_dev_folder)){
-    dir.create(auto_dev_folder)
+
+
+      cat(glue::glue("{Sys.time()}: launching task {task_name}\n\n"))
+      auto_dev_folder <- file.path(here::here("tools/auto_dev/"),task_name)
+      unlink(auto_dev_folder,recursive = T)
+
+      if(!dir.exists(auto_dev_folder)){
+        dir.create(auto_dev_folder)
+      }
+
+      prompt_file <- here::here(task$prompt_file)
+      file.copy(prompt_file,auto_dev_folder)
+
+      input_code_file <- file.path(auto_dev_folder, "autodev_code_input.R")
+
+      input_test_file <- file.path(auto_dev_folder, "autodev_test_input.R")
+      input_code <- ""
+      if(!is.null(task$input_code_files)){
+        input_code <- purrr::map_chr(task$input_code_files, \(file) readLines(file) %>% paste0(collapse = "\n")) %>% paste0(collapse = "\n")
+      }
+      write(input_code, input_code_file)
+
+      input_test_code <- ""
+      if(!is.null(task$input_test_files)){
+        input_test_code <- purrr::map_chr(task$input_test_files, \(file) readLines(file) %>% paste0(collapse = "\n")) %>% paste0(collapse = "\n")
+      }
+      write(input_test_code, input_test_file)
+
+
+
+      rstudioapi::jobRunScript(here::here("tools/auto_dev/autodev_script.R"),workingDir = here::here(),importEnv = T,name = task_name)
+
+
+
+    }
+    files_changed <- FALSE
   }
+  Sys.sleep(20)
+  cat(glue::glue("{Sys.time()}: checking for new tasks\n\n"))
+  gert::git_pull()
 
-  input_code_file <- file.path(auto_dev_folder, "autodev_code_input.R")
+  new_to_do <- setdiff( list.files(tasks_to_do_folder,pattern = "\\.txt$",full.names = T),task_files)
 
-  input_test_file <- file.path(auto_dev_folder, "autodev_test_input.R")
-
-  input_code <- ""
-  if(!is.null(input_code_files) && prompt_name %in% names(input_code_files)){
-    input_code <- purrr::map_chr(input_code_files[[prompt_name]], \(file) readLines(file) %>% paste0(collapse = "\n")) %>% paste0(collapse = "\n")
+  if(length(new_to_do) >0){
+    files_changed <- T
+    task_files <- new_to_do
   }
-write(input_code, input_code_file)
-
-input_test_code <- ""
-if(!is.null(input_test_files) && prompt_name %in% names(input_test_files)){
-  input_test_code <- purrr::map_chr(input_test_files[[prompt_name]], \(file) readLines(file) %>% paste0(collapse = "\n")) %>% paste0(collapse = "\n")
-}
-write(input_test_code, input_test_file)
-
-
-
-  rstudioapi::jobRunScript(here::here("tools/auto_dev/autodev_script.R"),workingDir = here::here(),importEnv = T,name = prompt_name)
-
-
-
-}
-  files_changed <- FALSE
-}
-Sys.sleep(20)
-cat(glue::glue("{Sys.time()}: checking for new tasks\n\n"))
-gert::git_pull()
-
-new_to_do <- setdiff( list.files(tasks_to_do_folder,pattern = "\\.txt$",full.names = T),prompt_files)
-
-if(length(new_to_do) >0){
-  files_changed <- T
-  prompt_files <- new_to_do
-}
 
 }
