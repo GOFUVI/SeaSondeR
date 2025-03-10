@@ -566,6 +566,7 @@ describe("seasonder_CSSY2CSData transformation tests", {
       expect_true(is.matrix(result[[key]]), info = paste0(key, " should be a matrix"))
     })
 
+
     # For self-spectra, the row corresponding to index 1 must equal the input vector value
     expect_equal(result$SSA1[1, ], cell$cs1a, info = "SSA1 should equal cs1a for cell at index 1")
     expect_equal(result$SSA2[1, ], cell$cs2a, info = "SSA2 should equal cs2a for cell at index 1")
