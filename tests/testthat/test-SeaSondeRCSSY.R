@@ -485,8 +485,8 @@ describe("seasonder_readBodyRangeCell",{
       seasonder_read_reduced_encoded_data = function(connection, key, endian) {
         return(c(1000, 2000, 3000))
       },
-      result <- seasonder_readBodyRangeCell(con, specs, dbRef = -20, endian = "big", specs_key_size = NULL)
-    )
+    result <- seasonder_readBodyRangeCell(con, specs, dbRef = -20, endian = "big", specs_key_size = NULL)
+)
     expected <- sapply(c(1000, 2000, 3000), function(val){
       if(val == 0xFFFFFFFF) return(NaN)
       intermediate <- val * (5 - 0) / 1000 + 0
@@ -565,6 +565,7 @@ describe("seasonder_CSSY2CSData transformation tests", {
     lapply(required_keys, function(key) {
       expect_true(is.matrix(result[[key]]), info = paste0(key, " should be a matrix"))
     })
+
 
     # For self-spectra, the row corresponding to index 1 must equal the input vector value
     expect_equal(result$SSA1[1, ], cell$cs1a, info = "SSA1 should equal cs1a for cell at index 1")

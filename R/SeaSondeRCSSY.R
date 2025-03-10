@@ -900,11 +900,13 @@ seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_def
 
   body <- seasonder_readCSSYBody(connection, body_specs, size = body_key$size, dbRef = dbRef, endian = endian, specs_key_size = specs_key_size)
 
-  data <- seasonder_CSSY2CSData(body)
 
-  cs_list <- list(header = header , data = data)
+data <- seasonder_CSSY2CSData(body)
 
-  out <- seasonder_createSeaSondeRCS.list(cs_list)
+cs_list <- list(header = header , data = data)
+
+out <- seasonder_createSeaSondeRCS.list(cs_list)
+
 
   return(out)
 }

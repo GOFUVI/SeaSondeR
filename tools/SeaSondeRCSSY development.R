@@ -12,7 +12,6 @@ library(magrittr)
 #
 #
 #
-#
 # specs <-   seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CSSY"),c("CSSY","HEAD"))
 #
 #
@@ -25,7 +24,6 @@ library(magrittr)
 # seek(con,0,origin = "start")
 #
 #
-#
 # con <-   file(filepath, "rb")
 # seek(con,8,origin = "start")
 #
@@ -34,7 +32,6 @@ library(magrittr)
 # seek(con,key$size, origin = "current")
 # key <- seasonder_readSeaSondeCSFileBlock(key_specs,con, endian)
 # specs <-   seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CSSY"),c("CSSY","BODY"))
-#
 #
 #
 # body <- seasonder_readCSSYBody(connection = con, size= key$size, dbRef = dbRef, specs = specs,specs_key_size = key_specs)
