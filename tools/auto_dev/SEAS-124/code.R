@@ -1,31 +1,37 @@
 #### Coding agent runs ####
 
-# Auxiliary function: Applies the sign factors to the spectra and autospectra data
-seasonder_apply_signs <- function(spectra, autospectra, cSign, aSign) {
-  # Apply the sign to the spectra and autospectra data.
-  # It multiplies the spectra with the cSign and the autospectra with the aSign.
-  # It assumes that the sign values (cSign and aSign) are either scalars or conformable vectors/matrices.
-  modifiedSpectra <- spectra * cSign
-  modifiedAutospectra <- autospectra * aSign
+# Helper function to apply sign corrections to spectra and autospectra
+applySignsToData <- function(data, cellSign, autoSign) {
+  # Check and apply the cell sign to spectra
+  if (!is.null(data$spectra)) {
+    data$spectra <- data$spectra * cellSign
+  } else {
+    warning("Spectra data not found in the input object.")
+  }
   
-  # Return the modified data as a list
-  return(list(spectra = modifiedSpectra, autospectra = modifiedAutospectra))
+  # Check and apply the auto sign to autospectra
+  if (!is.null(data$autospectra)) {
+    data$autospectra <- data$autospectra * autoSign
+  } else {
+    warning("Autospectra data not found in the input object.")
+  }
+  
+  return(data)
 }
 
-# Main function: Reads the SeaSonde RCSSY file, processes the data and applies the sign corrections
-seasonder_readSeaSondeRCSSYFile <- function(file_path) {
-  # Read spectra and autospectra data using seasonder_CSSY2CSData
-  data <- seasonder_CSSY2CSData(file_path)
+# Main function to read SeaSonde RCSSY File, which integrates sign corrections
+seasonder_readSeaSondeRCSSYFile <- function(filePath) {
+  # Read raw data (spectra and autospectra) from the SeaSonde RCSSY file
+  rawData <- seasonder_CSSY2CSData(filePath)
   
-  # Read the sign values using the corresponding functions
-  cSign <- seasonder_read_csign(file_path)
-  aSign <- seasonder_read_asign(file_path)
+  # Read the sign information for spectra and autospectra
+  cellSign <- seasonder_read_csign(filePath)
+  autoSign <- seasonder_read_asign(filePath)
   
-  # Apply the sign corrections to the data using the auxiliary function
-  modifiedData <- seasonder_apply_signs(data$spectra, data$autospectra, cSign, aSign)
+  # Apply sign corrections to the raw data using the helper function
+  correctedData <- applySignsToData(rawData, cellSign, autoSign)
   
-  # Return the sign-corrected data
-  return(modifiedData)
+  return(correctedData)
 }
 
 
@@ -33,33 +39,39 @@ seasonder_readSeaSondeRCSSYFile <- function(file_path) {
 
 
 #Acción a realizar: write_new_code.
-#Detalles: Se solicita crear una nueva función auxiliar en R que reciba los espectros y autoespectros devueltos por seasonder_CSSY2CSData, junto con los signos leídos por seasonder_read_csign y seasonder_read_asign, y que aplique dichos signos a los datos correspondientes. Esta función deberá ser llamada desde seasonder_readSeaSondeRCSSYFile. Por favor, desarrolla la función desde cero implementando la lógica necesaria para aplicar los signos y retornar la data modificada.
+#Detalles: Se solicita implementar la función auxiliar en R que aplique los signos (leídos por seasonder_read_csign y seasonder_read_asign) a los espectros y autoespectros devueltos por seasonder_CSSY2CSData, y luego llamar a dicha función desde seasonder_readSeaSondeRCSSYFile. Se deberá definir claramente la firma de la función auxiliar, su comportamiento y las expectativas de entrada y salida, permitiendo así la integración en seasonder_readSeaSondeRCSSYFile.
 #
-# Auxiliary function: Applies the sign factors to the spectra and autospectra data
-seasonder_apply_signs <- function(spectra, autospectra, cSign, aSign) {
-  # Apply the sign to the spectra and autospectra data.
-  # It multiplies the spectra with the cSign and the autospectra with the aSign.
-  # It assumes that the sign values (cSign and aSign) are either scalars or conformable vectors/matrices.
-  modifiedSpectra <- spectra * cSign
-  modifiedAutospectra <- autospectra * aSign
+# Helper function to apply sign corrections to spectra and autospectra
+applySignsToData <- function(data, cellSign, autoSign) {
+  # Check and apply the cell sign to spectra
+  if (!is.null(data$spectra)) {
+    data$spectra <- data$spectra * cellSign
+  } else {
+    warning("Spectra data not found in the input object.")
+  }
   
-  # Return the modified data as a list
-  return(list(spectra = modifiedSpectra, autospectra = modifiedAutospectra))
+  # Check and apply the auto sign to autospectra
+  if (!is.null(data$autospectra)) {
+    data$autospectra <- data$autospectra * autoSign
+  } else {
+    warning("Autospectra data not found in the input object.")
+  }
+  
+  return(data)
 }
 
-# Main function: Reads the SeaSonde RCSSY file, processes the data and applies the sign corrections
-seasonder_readSeaSondeRCSSYFile <- function(file_path) {
-  # Read spectra and autospectra data using seasonder_CSSY2CSData
-  data <- seasonder_CSSY2CSData(file_path)
+# Main function to read SeaSonde RCSSY File, which integrates sign corrections
+seasonder_readSeaSondeRCSSYFile <- function(filePath) {
+  # Read raw data (spectra and autospectra) from the SeaSonde RCSSY file
+  rawData <- seasonder_CSSY2CSData(filePath)
   
-  # Read the sign values using the corresponding functions
-  cSign <- seasonder_read_csign(file_path)
-  aSign <- seasonder_read_asign(file_path)
+  # Read the sign information for spectra and autospectra
+  cellSign <- seasonder_read_csign(filePath)
+  autoSign <- seasonder_read_asign(filePath)
   
-  # Apply the sign corrections to the data using the auxiliary function
-  modifiedData <- seasonder_apply_signs(data$spectra, data$autospectra, cSign, aSign)
+  # Apply sign corrections to the raw data using the helper function
+  correctedData <- applySignsToData(rawData, cellSign, autoSign)
   
-  # Return the sign-corrected data
-  return(modifiedData)
+  return(correctedData)
 }
 
