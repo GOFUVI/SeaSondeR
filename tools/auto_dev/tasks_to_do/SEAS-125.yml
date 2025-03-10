@@ -1,0 +1,5 @@
+name: SEAS-125
+prompt_file: "tools/auto_dev/prompts/SEAS-125.txt"
+input_code_files:
+  - "R/SeaSondeRCS.R"
+vector_store_ids: ["vs_67c06a9c65988191ae56bb2cf1b917eb"]
