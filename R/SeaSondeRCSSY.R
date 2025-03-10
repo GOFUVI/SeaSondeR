@@ -279,7 +279,7 @@ seasonder_read_csign <- function(connection, key) {
   group_bytes_count <- total_bytes / 6
 
   # Define the names of the 6 groups in the expected order.
-  group_names <- c("C13r", "C13i", "C23r", "C23i", "C12r", "C12i")
+  group_names <- c("c13r", "c13i", "c23r", "c23i", "c12r", "c12i")
 
   # Initialize the result list with names set for each group.
   result <- setNames(vector("list", length(group_names)), group_names)
@@ -486,6 +486,8 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 }
 
 
+
+
 #' Read a Body Range Cell and Apply Scaling if Required
 #'
 #' This function processes a block of keys from a binary connection according to a given specification ('specs').
@@ -559,6 +561,7 @@ seasonder_readBodyRangeCell <- function(connection, specs, dbRef, endian = "big"
       }
     }
   }
+
   return(out)
 }
 
@@ -576,7 +579,7 @@ seasonder_readCSSYBody <- function(connection, specs, size, dbRef, endian = "big
     out <- append(out, list(seasonder_readBodyRangeCell(connection, specs,  dbRef,endian = endian, specs_key_size = specs_key_size)))
 
   }
-
+  out <- seasonder_applyCSSYSigns(out)
   return(out)
 }
 
@@ -840,6 +843,40 @@ seasonder_CSSY2CSData <- function(body) {
   )
 }
 
+
+seasonder_applyCSSYSigns <- function(cs_data) {
+  for (i in seq_along(cs_data)) {
+    cell <- cs_data[[i]]
+
+    # Apply cross-spectra sign correction if 'csgn' exists
+    if (!is.null(cell$csgn)) {
+      cs_fields <- c("c12r", "c12i", "c13r", "c13i", "c23r", "c23i")
+      for (field in cs_fields) {
+        if (!is.null(cell[[field]])) {
+
+      csgn <- cell$csgn[[field]] *-2 +1
+
+          # Multiply element-wise the spectral data by the sign vector
+          cell[[field]] <- cell[[field]] * csgn
+        }
+      }
+    }
+
+    # Apply auto-spectra sign correction if 'asgn' exists
+    if (!is.null(cell$asgn)) {
+      auto_fields <- c("cs1a", "cs2a", "cs3a")
+      for (field in auto_fields) {
+        if (!is.null(cell[[field]])) {
+          asgn <- cell$asgn[[field]] *-2 +1
+          cell[[field]] <- cell[[field]] * asgn
+        }
+      }
+    }
+
+    cs_data[[i]] <- cell
+  }
+  return(cs_data)
+}
 
 seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSY"), endian = "big"){
 
