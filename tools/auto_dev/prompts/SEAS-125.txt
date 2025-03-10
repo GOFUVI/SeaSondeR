@@ -1,0 +1,1 @@
+El objetivo es solucionar un bug. El comportamiento observado es que cuando se llama a seasonder_createSeaSondeRCS con x = here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), internamente se está llamando a la función seasonder_readSeaSondeRCSSYFile cuando se debería estar llamando a seasonder_readSeaSondeCSFile

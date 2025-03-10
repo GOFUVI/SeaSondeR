@@ -1,0 +1,53 @@
+#### Unit tests output ####
+
+
+1..5
+ok 1 Function existence check
+not ok 2 Function existence check
+  exists("seasonder_find_spectra_file_type", mode = "function") is not TRUE
+  
+  `actual`:   FALSE
+  `expected`: TRUE 
+  seasonder_find_spectra_file_type function exists
+not ok 3 Function existence check
+  exists("seasonder_readSeaSondeCSFile", mode = "function") is not TRUE
+  
+  `actual`:   FALSE
+  `expected`: TRUE 
+  seasonder_readSeaSondeCSFile function exists
+not ok 4 Function existence check
+  exists("seasonder_readSeaSondeRCSSYFile", mode = "function") is not TRUE
+  
+  `actual`:   FALSE
+  `expected`: TRUE 
+  seasonder_readSeaSondeRCSSYFile function exists
+not ok 5 seasonder_createSeaSondeRCS.character reading function selection: invokes seasonder_readSeaSondeCSFile when dummy returns 'CS'
+  Error in `eval(code, test_env)`: object 'seasonder_find_spectra_file_type' not found
+1..5
+ok 1 Function existence check
+ok 2 Function existence check
+ok 3 Function existence check
+ok 4 Function existence check
+not ok 5 seasonder_createSeaSondeRCS.character reading function selection: invokes seasonder_readSeaSondeCSFile when dummy returns 'CS'
+  Error in `seasonder_defaultSpecsFilePath(type = file_type)`: could not find function "seasonder_defaultSpecsFilePath"
+  Backtrace:
+      ▆
+   1. └─seasonder_createSeaSondeRCS.character(tmp_file) at file95c230888d0.R:110:5
+1..5
+ok 1 Function existence check
+ok 2 Function existence check
+ok 3 Function existence check
+ok 4 Function existence check
+not ok 5 seasonder_createSeaSondeRCS.character reading function selection: invokes seasonder_readSeaSondeCSFile when dummy returns 'CS'
+  Error in `new_SeaSondeRCS(result$header, result$data, ...)`: could not find function "new_SeaSondeRCS"
+  Backtrace:
+      ▆
+   1. └─seasonder_createSeaSondeRCS.character(tmp_file) at file95c7a43b70b.R:118:5
+1..7
+ok 1 Function existence check
+ok 2 Function existence check
+ok 3 Function existence check
+ok 4 Function existence check
+ok 5 seasonder_createSeaSondeRCS.character reading function selection: invokes seasonder_readSeaSondeCSFile when dummy returns 'CS'
+ok 6 seasonder_createSeaSondeRCS.character reading function selection: invokes seasonder_readSeaSondeCSFile when dummy returns 'CS'
+ok 7 seasonder_createSeaSondeRCS.character reading function selection: invokes seasonder_readSeaSondeCSFile when dummy returns 'CS'

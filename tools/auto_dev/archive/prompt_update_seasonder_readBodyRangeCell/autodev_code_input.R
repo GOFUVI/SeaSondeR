@@ -279,7 +279,7 @@ seasonder_read_csign <- function(connection, key) {
   group_bytes_count <- total_bytes / 6
 
   # Define the names of the 6 groups in the expected order.
-  group_names <- c("c13r", "c13i", "c23r", "c23i", "c12r", "c12i")
+  group_names <- c("C13r", "C13i", "C23r", "C23i", "C12r", "C12i")
 
   # Initialize the result list with names set for each group.
   result <- setNames(vector("list", length(group_names)), group_names)
@@ -397,6 +397,47 @@ seasonder_readCSSYFields <- function(connection, specs, endian, parent_key= NULL
 
 }
 
+seasonder_readBodyRangeCell <- function(connection, specs, endian, specs_key_size = NULL){
+  indx_read <- FALSE
+  out <- list()
+
+  while(TRUE){
+    key <- seasonder_readSeaSondeCSFileBlock(specs_key_size, connection, endian)
+    if(!key$key %in% names(specs)){
+      seek(connection,key$size,origin = "current")
+
+    }else if(key$key == "END "){
+      break
+    }else if(key$key == "indx" && indx_read){
+      seek(connection,-8,origin = "current")
+      break
+    }else if(key$key %in% c("cs1a","cs2a","cs3a","c13r","c13i","c23r","c23i","c12r","c12i", "csqf")){
+
+      out <- append(out,list(seasonder_read_reduced_encoded_data(connection, key, endian))  %>% magrittr::set_names(key$key))
+
+    }else if(key$key %in% c("csgn")){
+      out <- append(out,list(seasonder_read_csign(connection, key))  %>% magrittr::set_names(key$key))
+
+
+
+    }else if(key$key %in% c("asgn")){
+      out <- append(out,list(seasonder_read_asign(connection, key))  %>% magrittr::set_names(key$key))
+
+
+
+    }else{
+
+      out <- append(out,
+                    list(seasonder_readCSSYFields(connection, purrr::chuck(specs, key$key), endian, parent_key = key )) %>% magrittr::set_names(key$key)
+      )
+      if(key$key == "indx"){
+        indx_read <- TRUE
+      }
+
+    }
+  }
+  return(out)
+}
 
 #' Apply Scaling to SeaSondeRCSSY Data
 #'
@@ -486,100 +527,14 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 }
 
 
-
-
-#' Read a Body Range Cell and Apply Scaling if Required
-#'
-#' This function processes a block of keys from a binary connection according to a given specification ('specs').
-#' Each key is read using seasonder_readSeaSondeCSFileBlock and processed based on its name.
-#'
-#' Key processing details:
-#'   - 'scal': Reads scaling parameters (fmax, fmin, fscale, dbRef) via seasonder_readCSSYFields and stores
-#'             them for use in scaling subsequent reduced data blocks.
-#'
-#'   - Reduced data keys (e.g., 'cs1a', 'cs2a', etc.): Reads the data using seasonder_read_reduced_encoded_data.
-#'     If scaling parameters were set by a preceding 'scal' block, the raw data is transformed into voltage values
-#'     using seasonder_SeaSondeRCSSYApplyScaling; otherwise, the raw data is returned as is.
-#'
-#'   - Other keys such as 'csgn' and 'asgn' invoke their own specialized read functions.
-#'
-#' The function terminates when the 'END ' key is encountered or when a repeated key (e.g., 'indx') signals the end of
-#' the block.
-#'
-#' @param connection A binary connection from which keys and data are read.
-#' @param specs A list that defines the expected keys and their formats.
-#' @param endian A string specifying the byte order ("big" or "little").
-#' @param specs_key_size Optional specification for the key size block.
-#' @return A list with elements named after the keys read. For reduced data blocks, each element contains either
-#'         raw decoded data or scaled voltage values if a 'scal' block was applied.
-seasonder_readBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
-  indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
-  scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
-  out <- list()
-
-  while(TRUE){
-    key <- seasonder_readSeaSondeCSFileBlock(specs_key_size, connection, endian)
-    if(!key$key %in% names(specs)){
-      # Skip keys not defined in the specifications
-      seek(connection, key$size, origin = "current")
-    } else if(key$key == "END "){
-      # End-of-block marker encountered
-      break
-    } else if(key$key == "indx" && indx_read){
-      # A repeated 'indx' indicates end of the block; rewind if necessary
-      seek(connection, -8, origin = "current")
-      break
-    } else if(key$key == "scal"){
-      # 'scal' block encountered: read and store scaling parameters
-      scaling_params <- seasonder_readCSSYFields(connection, purrr::chuck(specs, key$key),
-                                                 endian, parent_key = key)
-      out <- append(out, list(scaling_params) %>% magrittr::set_names(key$key))
-    } else if(key$key %in% c("cs1a", "cs2a", "cs3a", "c13r", "c13i", "c23r", "c23i", "c12r", "c12i", "csqf")){
-      # Reduced data block: read the block; apply scaling if parameters are available
-      data_block <- seasonder_read_reduced_encoded_data(connection, key, endian)
-      if(!is.null(scaling_params)){
-        data_block <- seasonder_SeaSondeRCSSYApplyScaling(list(data_block),
-                                                          fmax = scaling_params$fmax,
-                                                          fmin = scaling_params$fmin,
-                                                          fscale = scaling_params$fscale,
-                                                          dbRef = dbRef)[[1]]
-      }
-      out <- append(out, list(data_block) %>% magrittr::set_names(key$key))
-    } else if(key$key %in% c("csgn")){
-      # Process complex spectral sign information
-      out <- append(out, list(seasonder_read_csign(connection, key)) %>% magrittr::set_names(key$key))
-    } else if(key$key %in% c("asgn")){
-      # Process self spectra sign information
-      out <- append(out, list(seasonder_read_asign(connection, key)) %>% magrittr::set_names(key$key))
-    } else {
-      # For all other keys, process them as simple field blocks
-      out <- append(out, list(seasonder_readCSSYFields(connection, purrr::chuck(specs, key$key),
-                                                       endian, parent_key = key)) %>%
-                      magrittr::set_names(key$key))
-      if(key$key == "indx"){
-        indx_read <- TRUE
-      }
-    }
-  }
-
-  return(out)
-}
-
-
-
-
-
-seasonder_readCSSYBody <- function(connection, specs, size, dbRef, endian = "big", specs_key_size = NULL){
-
+seasonder_readCSSYBody <- function(connection, specs, size, endian = "big", specs_key_size = NULL){
   end_point <- seek(connection) + size
 
   out <- list()
   while(seek(connection) < end_point){
-
-    out <- append(out, list(seasonder_readBodyRangeCell(connection, specs,  dbRef,endian = endian, specs_key_size = specs_key_size)))
-
+    out <- append(out, list(seasonder_readBodyRangeCell(connection, specs, endian, specs_key_size = specs_key_size)))
   }
-  out <- seasonder_applyCSSYSigns(out)
+
   return(out)
 }
 
@@ -712,171 +667,6 @@ seasonder_CSSY2CSHeader <- function(header) {
   return(header_cs)
 }
 
-#' Transform CSSY Body to SeaSonde CS Data Structure
-#'
-#' This function converts the body structure of a CSSY file into a list of matrices that conform
-#' to the data structure required for creating a SeaSondeRCS object. The conversion is performed
-#' by mapping specific fields:
-#' \describe{
-#'   \item{SSA1, SSA2, SSA3}{Matrices are built using the numeric vectors found in the \code{cs1a}, \code{cs2a}
-#'          and \code{cs3a} fields respectively.}
-#'   \item{CS12, CS13, CS23}{Each complex cross-spectra matrix is formed by combining the real parts
-#'          from \code{c12r}, \code{c13r} and \code{c23r} with the corresponding imaginary parts
-#'          from \code{c12i}, \code{c13i} and \code{c23i}.}
-#'   \item{QC}{The quality control matrix is obtained directly from the \code{csqf} field.}
-#' }
-#'
-#' Each row in the output matrices corresponds to the index provided by \code{cell$indx$index} in the input list.
-#'
-#' @param body A list representing the body of a CSSY file. Each element of the list is expected to be a
-#'   cell containing the following fields: \code{indx} (which includes an \code{index}), \code{cs1a}, \code{cs2a}, \code{cs3a},
-#'   \code{c12r}, \code{c12i}, \code{c13r}, \code{c13i}, \code{c23r}, \code{c23i} and \code{csqf}.
-#'
-#' @return A list with the following components:
-#' \describe{
-#'   \item{SSA1}{A numeric matrix containing self-spectra from \code{cs1a}.}
-#'   \item{SSA2}{A numeric matrix containing self-spectra from \code{cs2a}.}
-#'   \item{SSA3}{A numeric matrix containing self-spectra from \code{cs3a}.}
-#'   \item{CS12}{A complex matrix formed by pairing \code{c12r} (real) and \code{c12i} (imaginary).}
-#'   \item{CS13}{A complex matrix formed by pairing \code{c13r} (real) and \code{c13i} (imaginary).}
-#'   \item{CS23}{A complex matrix formed by pairing \code{c23r} (real) and \code{c23i} (imaginary).}
-#'   \item{QC}{A numeric matrix containing the quality control data from \code{csqf}.}
-#' }
-#'
-#' @details
-#' The function first determines the maximum index among the cells in the body, which defines the number of rows
-#' for the matrices. Then, it calculates the number of columns for each matrix based on the length of the corresponding
-#' vectors from the first cell where they appear. Finally, each cell's data is inserted into the appropriate row
-#' of the matrices as indicated by the cell's \code{indx$index} value.
-#'
-#' @examples
-#' \dontrun{
-#'   # Example with a single cell
-#'   cell <- list(
-#'     indx  = list(index = 1),
-#'     cs1a  = c(1, 2, 3),
-#'     cs2a  = c(4, 5, 6),
-#'     cs3a  = c(7, 8, 9),
-#'     c12r  = c(10, 11, 12),
-#'     c12i  = c(13, 14, 15),
-#'     c13r  = c(16, 17, 18),
-#'     c13i  = c(19, 20, 21),
-#'     c23r  = c(22, 23, 24),
-#'     c23i  = c(25, 26, 27),
-#'     csqf  = c(28, 29, 30)
-#'   )
-#'   body <- list(cell)
-#'   transformed <- seasonder_CSSY2CSData(body)
-#'   print(transformed)
-#' }
-#'
-#' @export
-
-seasonder_CSSY2CSData <- function(body) {
-  # Validate the input to ensure it's a non-empty list
-  if (!is.list(body) || length(body) == 0) stop("Invalid body: must be a non-empty list")
-
-  # Extract the row indices from each cell using cell$indx$index
-  indices <- sapply(body, function(cell) cell$indx$index)
-  max_index <- max(indices)
-
-  # Helper function: for a given field, determine the number of columns based on the first cell that contains that field
-  get_ncols <- function(field) {
-    for (cell in body) {
-      if (!is.null(cell[[field]])) {
-        return(length(cell[[field]]))
-      }
-    }
-    return(0)
-  }
-
-  # Determine the number of columns for self spectra (SSA), quality control (QC) and cross-spectra (for CS matrices)
-  ncols_SSA1 <- get_ncols("cs1a")
-  ncols_SSA2 <- get_ncols("cs2a")
-  ncols_SSA3 <- get_ncols("cs3a")
-  ncols_QC   <- get_ncols("csqf")
-  ncols_CS12 <- get_ncols("c12r")  # assume c12r and c12i have same length
-  ncols_CS13 <- get_ncols("c13r")
-  ncols_CS23 <- get_ncols("c23r")
-
-  # Create empty matrices for each required field. Each matrix will have 'max_index' rows (provided by cell$indx$index)
-  # and a number of columns as determined by the helper function above.
-  SSA1 <- matrix(NA_real_, nrow = max_index, ncol = ncols_SSA1)
-  SSA2 <- matrix(NA_real_, nrow = max_index, ncol = ncols_SSA2)
-  SSA3 <- matrix(NA_real_, nrow = max_index, ncol = ncols_SSA3)
-  QC   <- matrix(NA_real_, nrow = max_index, ncol = ncols_QC)
-
-  # Initialize complex matrices for cross spectra
-  CS12 <- matrix(NA_complex_, nrow = max_index, ncol = ncols_CS12)
-  CS13 <- matrix(NA_complex_, nrow = max_index, ncol = ncols_CS13)
-  CS23 <- matrix(NA_complex_, nrow = max_index, ncol = ncols_CS23)
-
-  # Iterate over each cell and assign the corresponding data to the appropriate row in the matrices
-  for (cell in body) {
-    row <- cell$indx$index
-    if (!is.null(cell$cs1a)) SSA1[row, ] <- cell$cs1a
-    if (!is.null(cell$cs2a)) SSA2[row, ] <- cell$cs2a
-    if (!is.null(cell$cs3a)) SSA3[row, ] <- cell$cs3a
-    if (!is.null(cell$csqf)) QC[row, ]   <- cell$csqf
-
-    # For cross spectra, combine the real and imaginary parts to create complex numbers
-    if (!is.null(cell$c12r) && !is.null(cell$c12i)) {
-      CS12[row, ] <- complex(real = cell$c12r, imaginary = cell$c12i)
-    }
-    if (!is.null(cell$c13r) && !is.null(cell$c13i)) {
-      CS13[row, ] <- complex(real = cell$c13r, imaginary = cell$c13i)
-    }
-    if (!is.null(cell$c23r) && !is.null(cell$c23i)) {
-      CS23[row, ] <- complex(real = cell$c23r, imaginary = cell$c23i)
-    }
-  }
-
-  # Return a list containing all the matrices required for a SeaSondeRCS object
-  list(
-    SSA1 = SSA1,
-    SSA2 = SSA2,
-    SSA3 = SSA3,
-    CS12 = CS12,
-    CS13 = CS13,
-    CS23 = CS23,
-    QC   = QC
-  )
-}
-
-
-seasonder_applyCSSYSigns <- function(cs_data) {
-  for (i in seq_along(cs_data)) {
-    cell <- cs_data[[i]]
-
-    # Apply cross-spectra sign correction if 'csgn' exists
-    if (!is.null(cell$csgn)) {
-      cs_fields <- c("c12r", "c12i", "c13r", "c13i", "c23r", "c23i")
-      for (field in cs_fields) {
-        if (!is.null(cell[[field]])) {
-
-      csgn <- cell$csgn[[field]] *-2 +1
-
-          # Multiply element-wise the spectral data by the sign vector
-          cell[[field]] <- cell[[field]] * csgn
-        }
-      }
-    }
-
-    # Apply auto-spectra sign correction if 'asgn' exists
-    if (!is.null(cell$asgn)) {
-      auto_fields <- c("cs1a", "cs2a", "cs3a")
-      for (field in auto_fields) {
-        if (!is.null(cell[[field]])) {
-          asgn <- cell$asgn[[field]] *-2 +1
-          cell[[field]] <- cell[[field]] * asgn
-        }
-      }
-    }
-
-    cs_data[[i]] <- cell
-  }
-  return(cs_data)
-}
 
 seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSY"), endian = "big"){
 
@@ -923,9 +713,6 @@ seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_def
 
 
   header <- seasonder_readCSSYHeader(connection, header_specs,endian, specs_key_size = specs_key_size)
-
-  dbRef <- header$dbrf$dBmReference
-
   header <- seasonder_CSSY2CSHeader(header)  # Transform CSSY header to valid CS header
   body_key <- seasonder_readSeaSondeCSFileBlock(specs_key_size, connection, endian)
 
@@ -934,15 +721,7 @@ seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_def
 
 
 
-
-  body <- seasonder_readCSSYBody(connection, body_specs, size = body_key$size, dbRef = dbRef, endian = endian, specs_key_size = specs_key_size)
-
-
-data <- seasonder_CSSY2CSData(body)
-
-cs_list <- list(header = header , data = data)
-
-out <- seasonder_createSeaSondeRCS.list(cs_list)
+  body <- seasonder_readCSSYBody(connection, body_specs, size = body_key$size, endian, specs_key_size = specs_key_size)
 
 
   return(out)
