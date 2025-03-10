@@ -31,6 +31,7 @@ while(TRUE){
   if(files_changed){
     for(task_file in task_files){
 
+
       task <- yaml::read_yaml(task_file)
 
       task_name <- task$name
@@ -40,6 +41,7 @@ while(TRUE){
       cat(glue::glue("{Sys.time()}: launching task {task_name}\n\n"))
       auto_dev_folder <- file.path(here::here("tools/auto_dev/"),task_name)
       unlink(auto_dev_folder,recursive = T)
+
 
       if(!dir.exists(auto_dev_folder)){
         dir.create(auto_dev_folder)
@@ -76,9 +78,11 @@ while(TRUE){
   cat(glue::glue("{Sys.time()}: checking for new tasks\n\n"))
   gert::git_pull()
 
+
   task_files <- purrr::discard(task_files, \(x) basename(x) %in% c(list.files(tasks_to_review_folder,pattern = "\\.yml$",full.names = F),list.files(tasks_done_folder,pattern = "\\.yml$",full.names = F)))
 
   new_to_do <- setdiff( list.files(tasks_to_do_folder,pattern = "\\.yml$",full.names = T),task_files)
+
 
   if(length(new_to_do) >0){
     files_changed <- T
