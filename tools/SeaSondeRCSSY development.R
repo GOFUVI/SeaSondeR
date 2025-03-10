@@ -40,6 +40,5 @@ library(magrittr)
 # close(con)
   seasonder_cs_obj <- seasonder_readSeaSondeRCSSYFile(filepath)
 
+
 seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
-
-
