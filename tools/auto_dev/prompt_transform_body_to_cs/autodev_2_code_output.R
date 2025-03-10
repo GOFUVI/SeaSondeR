@@ -1,74 +1,3 @@
-seasonder_CSSY2CSData <- function(body) {
-  # Validate the input to ensure it's a non-empty list
-  if (!is.list(body) || length(body) == 0) stop("Invalid body: must be a non-empty list")
-  
-  # Extract the row indices from each cell using cell$indx$index
-  indices <- sapply(body, function(cell) cell$indx$index)
-  max_index <- max(indices)
-  
-  # Helper function: for a given field, determine the number of columns based on the first cell that contains that field
-  get_ncols <- function(field) {
-    for (cell in body) {
-      if (!is.null(cell[[field]])) {
-        return(length(cell[[field]]))
-      }
-    }
-    return(0)
-  }
-  
-  # Determine the number of columns for self spectra (SSA), quality control (QC) and cross-spectra (for CS matrices)
-  ncols_SSA1 <- get_ncols("cs1a")
-  ncols_SSA2 <- get_ncols("cs2a")
-  ncols_SSA3 <- get_ncols("cs3a")
-  ncols_QC   <- get_ncols("csqf")
-  ncols_CS12 <- get_ncols("c12r")  # assume c12r and c12i have same length
-  ncols_CS13 <- get_ncols("c13r")
-  ncols_CS23 <- get_ncols("c23r")
-  
-  # Create empty matrices for each required field. Each matrix will have 'max_index' rows (provided by cell$indx$index)
-  # and a number of columns as determined by the helper function above.
-  SSA1 <- matrix(NA_real_, nrow = max_index, ncol = ncols_SSA1)
-  SSA2 <- matrix(NA_real_, nrow = max_index, ncol = ncols_SSA2)
-  SSA3 <- matrix(NA_real_, nrow = max_index, ncol = ncols_SSA3)
-  QC   <- matrix(NA_real_, nrow = max_index, ncol = ncols_QC)
-  
-  # Initialize complex matrices for cross spectra
-  CS12 <- matrix(NA_complex_, nrow = max_index, ncol = ncols_CS12)
-  CS13 <- matrix(NA_complex_, nrow = max_index, ncol = ncols_CS13)
-  CS23 <- matrix(NA_complex_, nrow = max_index, ncol = ncols_CS23)
-  
-  # Iterate over each cell and assign the corresponding data to the appropriate row in the matrices
-  for (cell in body) {
-    row <- cell$indx$index
-    if (!is.null(cell$cs1a)) SSA1[row, ] <- cell$cs1a
-    if (!is.null(cell$cs2a)) SSA2[row, ] <- cell$cs2a
-    if (!is.null(cell$cs3a)) SSA3[row, ] <- cell$cs3a
-    if (!is.null(cell$csqf)) QC[row, ]   <- cell$csqf
-    
-    # For cross spectra, combine the real and imaginary parts to create complex numbers
-    if (!is.null(cell$c12r) && !is.null(cell$c12i)) {
-      CS12[row, ] <- complex(real = cell$c12r, imaginary = cell$c12i)
-    }
-    if (!is.null(cell$c13r) && !is.null(cell$c13i)) {
-      CS13[row, ] <- complex(real = cell$c13r, imaginary = cell$c13i)
-    }
-    if (!is.null(cell$c23r) && !is.null(cell$c23i)) {
-      CS23[row, ] <- complex(real = cell$c23r, imaginary = cell$c23i)
-    }
-  }
-  
-  # Return a list containing all the matrices required for a SeaSondeRCS object
-  list(
-    SSA1 = SSA1,
-    SSA2 = SSA2,
-    SSA3 = SSA3,
-    CS12 = CS12,
-    CS13 = CS13,
-    CS23 = CS23,
-    QC   = QC
-  )
-}
-
 #' Transform CSSY Body to SeaSonde CS Data Structure
 #'
 #' This function converts the body structure of a CSSY file into a list of matrices that conform
@@ -132,11 +61,11 @@ seasonder_CSSY2CSData <- function(body) {
 seasonder_CSSY2CSData <- function(body) {
   # Validate the input to ensure it's a non-empty list
   if (!is.list(body) || length(body) == 0) stop("Invalid body: must be a non-empty list")
-  
+
   # Extract the row indices from each cell using cell$indx$index
   indices <- sapply(body, function(cell) cell$indx$index)
   max_index <- max(indices)
-  
+
   # Helper function: for a given field, determine the number of columns based on the first cell that contains that field
   get_ncols <- function(field) {
     for (cell in body) {
@@ -146,7 +75,7 @@ seasonder_CSSY2CSData <- function(body) {
     }
     return(0)
   }
-  
+
   # Determine the number of columns for self spectra (SSA), quality control (QC) and cross-spectra (for CS matrices)
   ncols_SSA1 <- get_ncols("cs1a")
   ncols_SSA2 <- get_ncols("cs2a")
@@ -155,19 +84,19 @@ seasonder_CSSY2CSData <- function(body) {
   ncols_CS12 <- get_ncols("c12r")  # assume c12r and c12i have same length
   ncols_CS13 <- get_ncols("c13r")
   ncols_CS23 <- get_ncols("c23r")
-  
+
   # Create empty matrices for each required field. Each matrix will have 'max_index' rows (provided by cell$indx$index)
   # and a number of columns as determined by the helper function above.
   SSA1 <- matrix(NA_real_, nrow = max_index, ncol = ncols_SSA1)
   SSA2 <- matrix(NA_real_, nrow = max_index, ncol = ncols_SSA2)
   SSA3 <- matrix(NA_real_, nrow = max_index, ncol = ncols_SSA3)
   QC   <- matrix(NA_real_, nrow = max_index, ncol = ncols_QC)
-  
+
   # Initialize complex matrices for cross spectra
   CS12 <- matrix(NA_complex_, nrow = max_index, ncol = ncols_CS12)
   CS13 <- matrix(NA_complex_, nrow = max_index, ncol = ncols_CS13)
   CS23 <- matrix(NA_complex_, nrow = max_index, ncol = ncols_CS23)
-  
+
   # Iterate over each cell and assign the corresponding data to the appropriate row in the matrices
   for (cell in body) {
     row <- cell$indx$index
@@ -175,7 +104,7 @@ seasonder_CSSY2CSData <- function(body) {
     if (!is.null(cell$cs2a)) SSA2[row, ] <- cell$cs2a
     if (!is.null(cell$cs3a)) SSA3[row, ] <- cell$cs3a
     if (!is.null(cell$csqf)) QC[row, ]   <- cell$csqf
-    
+
     # For cross spectra, combine the real and imaginary parts to create complex numbers
     if (!is.null(cell$c12r) && !is.null(cell$c12i)) {
       CS12[row, ] <- complex(real = cell$c12r, imaginary = cell$c12i)
@@ -187,7 +116,7 @@ seasonder_CSSY2CSData <- function(body) {
       CS23[row, ] <- complex(real = cell$c23r, imaginary = cell$c23i)
     }
   }
-  
+
   # Return a list containing all the matrices required for a SeaSondeRCS object
   list(
     SSA1 = SSA1,
@@ -199,4 +128,3 @@ seasonder_CSSY2CSData <- function(body) {
     QC   = QC
   )
 }
-
