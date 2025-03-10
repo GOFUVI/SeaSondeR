@@ -77,7 +77,7 @@ while(TRUE){
   cat(glue::glue("{Sys.time()}: checking for new tasks\n\n"))
   gert::git_pull()
 
-  new_to_do <- setdiff( list.files(tasks_to_do_folder,pattern = "\\.txt$",full.names = T),task_files)
+  new_to_do <- setdiff( list.files(tasks_to_do_folder,pattern = "\\.yml$",full.names = T),task_files)
 
   if(length(new_to_do) >0){
     files_changed <- T
