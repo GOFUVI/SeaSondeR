@@ -1,0 +1,2 @@
+El objetivo es crear una función auxiliar y llamarla desde seasonder_readSeaSondeRCSSYFile.
+La misión de esta función es aplicar los signos leídos por las funciones seasonder_read_csign y seasonder_read_asign a los espectros y autoespectros devueltos por seasonder_CSSY2CSData
