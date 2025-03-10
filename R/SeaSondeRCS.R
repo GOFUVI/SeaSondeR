@@ -204,35 +204,35 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL, ...) {
 #' @export
 seasonder_createSeaSondeRCS.character <- function(x, specs_path = rlang::zap(), endian = "big", ...) {
 
-
-
   # Checking if the file exists
   if (!file.exists(x)) {
-    seasonder_logAndAbort(glue::glue("File '{x}' does not exist."), calling_function = "seasonder_createSeaSondeRCS.character", class = "seasonder_CS_file_not_found_error")
+    seasonder_logAndAbort(
+      glue::glue("File '{x}' does not exist."),
+      calling_function = "seasonder_createSeaSondeRCS.character",
+      class = "seasonder_CS_file_not_found_error"
+    )
   }
 
   # Determine the file type ("CS" or "CSSY") by analyzing the spectra file
-  file_type <- seasonder_find_spectra_file_type(filepath, endian = endian)
+  file_type <- seasonder_find_spectra_file_type(x, endian = endian)
 
-
-
-  if(rlang::is_zap(specs_path)){
-
+  if (rlang::is_zap(specs_path)) {
     # Retrieve the default specifications file path based on the detected file type
     specs_path <- seasonder_defaultSpecsFilePath(type = file_type)
-
   }
 
+  # Select the appropriate read function based on the file type
   read_fun <- switch(file_type,
                      CS = seasonder_readSeaSondeCSFile,
                      CSSY = seasonder_readSeaSondeRCSSYFile)
 
-  # Reading the SeaSonde CS file
+  # Read the SeaSonde file using the chosen function
   result <- read_fun(x, specs_path, endian = endian)
 
-  # Creating the SeaSondeRCS object
+  # Create the SeaSondeRCS object using the header and data retrieved from the file
   out <- new_SeaSondeRCS(result$header, result$data, ...)
 
+  # Append processing step information indicating the creation source
   out %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_creation_step_text(x))
 
   return(out)
