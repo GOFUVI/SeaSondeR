@@ -1,0 +1,99 @@
+tibble [2,482 × 18] (S3: tbl_df/tbl/data.frame)
+ $ range_cell               : int [1:2482] 2 2 2 2 2 2 2 2 2 2 ...
+ $ doppler_bin              : int [1:2482] 696 697 698 699 700 701 702 703 704 705 ...
+ $ range                    : num [1:2482] 2.99 2.99 2.99 2.99 2.99 ...
+ $ freq                     : num [1:2482] -0.641 -0.639 -0.637 -0.635 -0.633 ...
+ $ radial_v                 : num [1:2482] -0.673 -0.662 -0.65 -0.639 -0.628 ...
+ $ cov                      :List of 2482
+  ..$ : cplx [1:3, 1:3] 1.54e-11+0.00i -2.48e-11+3.37e-12i -4.34e-11+3.56e-11i ...
+  ..$ : cplx [1:3, 1:3] 6.22e-12+0.00i -4.72e-12+5.31e-12i -6.79e-13+9.77e-12i ...
+  .. [list output truncated]
+ $ eigen                    :List of 2482
+  ..$ :List of 2
+  .. ..$ values : num [1:3] 5.09e-10 1.74e-11 3.71e-12
+  .. ..$ vectors: cplx [1:3, 1:3] -0.123+0i 0.396+0.038i 0.676-0.608i ...
+  ..$ :List of 2
+  .. ..$ values : num [1:3] 2.12e-10 9.02e-12 3.95e-12
+  .. ..$ vectors: cplx [1:3, 1:3] -0.0576+0i 0.3515-0.276i 0.0043-0.893i ...
+  .. [list output truncated]
+ $ projections              :List of 2482
+  ..$ : cplx [1:2, 1:175] 0.434+6.94e-18i 0.153-6.94e-18i 0.432-1.39e-17i ...
+  .. ..- attr(*, "dimnames")=List of 2
+  .. .. ..$ : chr [1:2] "single" "dual"
+  .. .. ..$ : NULL
+  .. ..- attr(*, "bearings")= num [1:175] -43 -42 -41 -40 -39 -38 -37 -36 -35 -34 ...
+  ..$ : cplx [1:2, 1:175] 0.429-1.39e-17i 0.106+6.94e-18i 0.427-6.94e-18i ...
+  .. ..- attr(*, "dimnames")=List of 2
+  .. .. ..$ : chr [1:2] "single" "dual"
+  .. .. ..$ : NULL
+  .. ..- attr(*, "bearings")= num [1:175] -43 -42 -41 -40 -39 -38 -37 -36 -35 -34 ...
+  .. [list output truncated]
+ $ DOA_solutions            :List of 2482
+  ..$ :List of 2
+  .. ..$ single:List of 4
+  .. .. ..$ bearing  : num 107
+  .. .. ..$ a        : cplx [1:3, 1] -0.0585-0.0709i 0.2451+0.244i 1+0i
+  .. .. .. ..- attr(*, "dimnames")=List of 2
+  .. .. .. .. ..$ : chr [1:3] "A13" "A23" "A33"
+  .. .. .. .. ..$ : chr "107"
+  .. .. ..$ P        : cplx [1, 1] 4.54e-10+2.58e-26i
+  .. .. ..$ peak_resp: num 20.4
+  .. ..$ dual  :List of 4
+  .. .. ..$ bearing  : num [1:2] 113 128
+  .. .. ..$ a        : cplx [1:3, 1:2] -0.0909-0.0895i 0.2313+0.2246i 1+0i ...
+  .. .. .. ..- attr(*, "dimnames")=List of 2
+  .. .. .. .. ..$ : chr [1:3] "A13" "A23" "A33"
+  .. .. .. .. ..$ : chr [1:2] "113" "128"
+  .. .. ..$ P        : cplx [1:2, 1:2] 7.82e-09+0.00i -7.00e-09+5.38e-10i -7.00e-09-5.38e-10i ...
+  .. .. ..$ peak_resp: num [1:2] 23.8 22.9
+  ..$ :List of 2
+  .. ..$ single:List of 4
+  .. .. ..$ bearing  : num 100
+  .. .. ..$ a        : cplx [1:3, 1] -0.021-0.0449i 0.271+0.2492i 1+0i
+  .. .. .. ..- attr(*, "dimnames")=List of 2
+  .. .. .. .. ..$ : chr [1:3] "A13" "A23" "A33"
+  .. .. .. .. ..$ : chr "100"
+  .. .. ..$ P        : cplx [1, 1] 1.89e-10-8.08e-28i
+  .. .. ..$ peak_resp: num 17.4
+  .. ..$ dual  :List of 4
+  .. .. ..$ bearing  : num [1:2] 102 8
+  .. .. ..$ a        : cplx [1:3, 1:2] -0.0327-0.0528i 0.2644+0.2503i 1+0i ...
+  .. .. .. ..- attr(*, "dimnames")=List of 2
+  .. .. .. .. ..$ : chr [1:3] "A13" "A23" "A33"
+  .. .. .. .. ..$ : chr [1:2] "102" "8"
+  .. .. ..$ P        : cplx [1:2, 1:2] 2.76e-10+0.00i -8.93e-11-5.54e-11i -8.93e-11+5.54e-11i ...
+  .. .. ..$ peak_resp: num [1:2] 26 11.2
+  .. [list output truncated]
+ $ eigen_values_ratio       : num [1:2482] 29.2 23.5 32.2 50.1 82.1 ...
+ $ P1_check                 : logi [1:2482] TRUE TRUE TRUE FALSE FALSE FALSE ...
+ $ signal_power_ratio       : num [1:2482] 1.18 3.37 1.9 8.45 21.8 ...
+ $ P2_check                 : logi [1:2482] TRUE TRUE TRUE TRUE FALSE TRUE ...
+ $ diag_off_diag_power_ratio: num [1:2482] 1.06 2.84 2.98 146.79 13.68 ...
+ $ P3_check                 : logi [1:2482] FALSE TRUE TRUE TRUE TRUE TRUE ...
+ $ retained_solution        : chr [1:2482] "single" "dual" "dual" "single" ...
+ $ DOA                      :List of 2482
+  ..$ :List of 4
+  .. ..$ bearing  : num 107
+  .. ..$ a        : cplx [1:3, 1] -0.0585-0.0709i 0.2451+0.244i 1+0i
+  .. .. ..- attr(*, "dimnames")=List of 2
+  .. .. .. ..$ : chr [1:3] "A13" "A23" "A33"
+  .. .. .. ..$ : chr "107"
+  .. ..$ P        : cplx [1, 1] 4.54e-10+2.58e-26i
+  .. ..$ peak_resp: num 20.4
+  ..$ :List of 4
+  .. ..$ bearing  : num [1:2] 102 8
+  .. ..$ a        : cplx [1:3, 1:2] -0.0327-0.0528i 0.2644+0.2503i 1+0i ...
+  .. .. ..- attr(*, "dimnames")=List of 2
+  .. .. .. ..$ : chr [1:3] "A13" "A23" "A33"
+  .. .. .. ..$ : chr [1:2] "102" "8"
+  .. ..$ P        : cplx [1:2, 1:2] 2.76e-10+0.00i -8.93e-11-5.54e-11i -8.93e-11+5.54e-11i ...
+  .. ..$ peak_resp: num [1:2] 26 11.2
+  .. [list output truncated]
+ $ lonlat                   :List of 2482
+  ..$ :'data.frame':	1 obs. of  2 variables:
+  .. ..$ lon: num -0.00741
+  .. ..$ lat: num -0.026
+  ..$ :'data.frame':	2 obs. of  2 variables:
+  .. ..$ lon: num [1:2] -0.00963 -0.02436
+  .. ..$ lat: num [1:2] -0.0253 0.0114
+  .. [list output truncated]

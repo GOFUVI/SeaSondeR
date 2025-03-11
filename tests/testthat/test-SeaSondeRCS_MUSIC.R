@@ -1094,7 +1094,7 @@ APM <- cbind(A_190, A_205, A_225, A_255,A_330, A_340)
 
 
 
-      test <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$distances[[1]]
+      test <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$projections[[1]]
 
       expect_equal(10*log10(1/as.vector(abs(test["single",4]))), 9.5, tolerance = 0.05)
 

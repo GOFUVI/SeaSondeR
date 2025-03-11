@@ -38,7 +38,37 @@ library(magrittr)
 #
 #
 # close(con)
-  seasonder_cs_obj <- seasonder_readSeaSondeRCSSYFile(filepath)
 
 
-seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
+  # Create a SeaSondeRAPM object with corrections
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(
+    here::here("tests/testthat/data/SUNS/MeasPattern.txt")
+  )
+
+  # smoothing <- 20
+  #
+  # seasonder_apm_obj %<>% seasonder_smoothAPM(smoothing)
+
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(filepath, seasonder_apm_object = seasonder_apm_obj)
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 2L)
+
+
+
+  MUSIC <-   seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
+
+  test <- MUSIC %>% dplyr::filter(range_cell == 2 & doppler_bin == 696) %>% as.list()
+table <- seasonder_cs_obj %>% seasonder_exportMUSICTable()
+(1/abs(test$projections[[1]]["single",]) ) %>% max()
+
+
+
+table_test <-  table %>% dplyr::filter(range_cell == 2 & doppler_bin == 696) %>% as.list()
+# seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
+
+
+10*log10(abs(test$DOA[[1]]$P))
+
+sink(here::here("tools/MUSIC_str.txt"))
+str(MUSIC, list.len = 18)
+sink()
