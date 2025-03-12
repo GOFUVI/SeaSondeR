@@ -1,0 +1,80 @@
+El objetivo es  crear una función seasonder_extrapolateAPM que extrapole linealmente la matriz de APM por ambos lados un numero de columnas n. Actualizando también el campo BEAR y los nombres de las columnas de la matriz.
+
+Esta es una implementación inicial de la función.
+
+
+```r
+seasonder_extrapolateAPM <- function(seasonder_apm_object, n = 1){
+
+   BEAR <- seasonder_getSeaSondeRAPM_BEAR(seasonde_apm_obj = seasonder_apm_object)
+
+   extrapolated_BEAR <- BEAR
+
+   # Extrapolar linealmente n columnas por ambos lados la matriz del objeto seasonder_apm_object
+   # Añadir los correspondientes bearings a extrapolated_BEAR considerando la distancia entre bearings en BEAR.
+   # Cada columna de la matriz se corresponden con un bearing y los nombres coinciden con los bearings.
+
+   seasonder_apm_object %<>% seasonder_setSeaSondeRAPM_BEAR(extrapolated_BEAR)
+
+   return(seasonder_apm_object)
+
+}
+```
+
+
+Esta es la estructura del objeto seasonder_apm_object (el número de columnas de la matriz puede variar)
+
+```
+ 'SeaSondeRAPM' cplx [1:3, 1:175] 0.193+0.1636i -0.19-0.0383i 1+0i ...
+
+attr(*, "dimnames")=List of 2
+
+  ..$ : chr [1:3] "A13" "A23" "A33"
+
+  ..$ : chr [1:175] "-43" "-42" "-41" "-40" ...
+
+attr(*, "quality_matrix")= cplx [1:3, 1:175] 0+0i 0+0i 0+0i ...
+
+  ..- attr(*, "dimnames")=List of 2
+
+  .. ..$ : chr [1:3] "A13" "A23" "A33"
+
+  .. ..$ : chr [1:175] "-43" "-42" "-41" "-40" ...
+
+attr(*, "BEAR")= num [1:175] -43 -42 -41 -40 -39 -38 -37 -36 -35 -34 ...
+
+attr(*, "Type")= chr(0)
+
+attr(*, "Creator")= chr(0)
+
+attr(*, "SiteName")= chr(0)
+
+attr(*, "SiteOrigin")= Named num [1:2] 37.1 -76
+
+  ..- attr(*, "names")= chr [1:2] "Latitude" "Longitude"
+
+attr(*, "FileName")= chr "MeasPattern.txt"
+
+attr(*, "CreateTimeStamp")= POSIXct[1:1], format: "2024-09-23 09:43:55"
+
+attr(*, "ProcessingSteps")= chr "2025-03-12 06:15:21.298548: Created from /home/rstudio/SeaSondeR/tests/testthat/data/SUNS/MeasPattern.txt."
+
+attr(*, "AmplitudeFactors")= num [1:2] 8.91 7.54
+
+attr(*, "AntennaBearing")= num 303
+
+attr(*, "StationCode")= chr "SUNS"
+
+attr(*, "BearingResolution")= num 1
+
+attr(*, "Smoothing")= num 16
+
+attr(*, "CommentLine")= chr "; 26.2510000; 0.0000000; 0.8 0.6 1.1; 302.0 299.0 215.0; "
+
+attr(*, "FileID")= chr "A618CB6A-DB04-4254-9E3E-6D96A363DD7F"
+
+attr(*, "PhaseCorrections")= num [1:2] 41.7 40.7
+
+attr(*, "version")= num 1
+
+```
