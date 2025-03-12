@@ -11,9 +11,10 @@
 #' - \(40\): Threshold used in \code{seasonder_MUSICCheckEigenValueRatio}.
 #' - \(20\): Threshold used in \code{seasonder_MUSICCheckSignalPowers}.
 #' - \(2\): Threshold used in \code{seasonder_MUSICCheckSignalMatrix}.
+#' - \(20\): Threshold used in \code{seasonder_MUSICCheckBearingDistance}.
 #'
 #' @return A numeric vector containing the default parameters for the MUSIC algorithm:
-#' \code{c(40, 20, 2)}.
+#' \code{c(40, 20, 2, 20)}.
 #'
 #' @seealso
 #' \code{\link{seasonder_MUSICTestDualSolutions}} to understand the parameters in context.
@@ -26,7 +27,7 @@
 #' }
 seasonder_defaultMUSIC_parameters <- function(){
 
-  c(40,20,2)
+  c(40,20,2,20)
 
 }
 
@@ -1525,6 +1526,39 @@ seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
 }
 
 
+seasonder_MUSICCheckBearingDistance <- function(seasonder_cs_object){
+
+  # Extract MUSIC data from the object
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+  # Compute the bearing distance for dual-bearing solutions
+  MUSIC %<>% dplyr::mutate(bearing_separation = purrr::map_dbl(DOA_solutions,\(DOA_sol){
+    out <- NA_real_
+    if(length(DOA_sol$dual$bearing) == 2){
+      dist <- abs(diff(DOA_sol$dual$bearing))
+      out <- min(dist, 360 - dist)
+    }
+    return(out)
+  }), .after = "P3_check")
+
+  # Retrieve the threshold parameter for the P4 test
+  MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(4)
+
+  # Determine whether each solution passes the P4 test
+  MUSIC %<>% dplyr::mutate(P4_check = purrr::map_lgl(DOA_solutions, \(DOA_sol) length(DOA_sol$dual$bearing) == 2 ) & !is.na(bearing_separation) & bearing_separation > MUSIC_parameter, .after = "bearing_separation")
+
+  # Mark solutions that fail the P4 test as "single"
+  MUSIC$retained_solution[!MUSIC$P4_check] <- "single"
+
+  # Update the MUSIC data in the object
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+  # Return the modified object
+  return(seasonder_cs_object)
+}
+
+
+
 #' Test Dual-Bearing Solutions Using MUSIC Algorithm
 #'
 #' This function applies a sequence of tests (P1, P2, and P3) to validate dual-bearing solutions
@@ -1569,8 +1603,13 @@ seasonder_MUSICTestDualSolutions <- function(seasonder_cs_object) {
   # Apply the P3 test to validate diagonal to off-diagonal power ratios
   seasonder_cs_object %<>% seasonder_MUSICCheckSignalMatrix()
 
+  # Apply the P4 test to validate the angular distance between solutions
+  seasonder_cs_object %<>% seasonder_MUSICCheckBearingDistance()
+
+
   # Log the end of the dual solutions testing process
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_dual_solutions_testing_end_step_text())
+
 
   # Return the updated object with validated dual solutions
   return(seasonder_cs_object)

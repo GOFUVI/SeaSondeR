@@ -1,0 +1,26 @@
+ 'SeaSondeRAPM' cplx [1:3, 1:175] 0.193+0.1636i -0.19-0.0383i 1+0i ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:3] "A13" "A23" "A33"
+  ..$ : chr [1:175] "-43" "-42" "-41" "-40" ...
+ - attr(*, "quality_matrix")= cplx [1:3, 1:175] 0+0i 0+0i 0+0i ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : chr [1:3] "A13" "A23" "A33"
+  .. ..$ : chr [1:175] "-43" "-42" "-41" "-40" ...
+ - attr(*, "BEAR")= num [1:175] -43 -42 -41 -40 -39 -38 -37 -36 -35 -34 ...
+ - attr(*, "Type")= chr(0) 
+ - attr(*, "Creator")= chr(0) 
+ - attr(*, "SiteName")= chr(0) 
+ - attr(*, "SiteOrigin")= Named num [1:2] 37.1 -76
+  ..- attr(*, "names")= chr [1:2] "Latitude" "Longitude"
+ - attr(*, "FileName")= chr "MeasPattern.txt"
+ - attr(*, "CreateTimeStamp")= POSIXct[1:1], format: "2024-09-23 09:43:55"
+ - attr(*, "ProcessingSteps")= chr "2025-03-12 06:15:21.298548: Created from /home/rstudio/SeaSondeR/tests/testthat/data/SUNS/MeasPattern.txt."
+ - attr(*, "AmplitudeFactors")= num [1:2] 8.91 7.54
+ - attr(*, "AntennaBearing")= num 303
+ - attr(*, "StationCode")= chr "SUNS"
+ - attr(*, "BearingResolution")= num 1
+ - attr(*, "Smoothing")= num 16
+ - attr(*, "CommentLine")= chr "; 26.2510000; 0.0000000; 0.8 0.6 1.1; 302.0 299.0 215.0; "
+ - attr(*, "FileID")= chr "A618CB6A-DB04-4254-9E3E-6D96A363DD7F"
+ - attr(*, "PhaseCorrections")= num [1:2] 41.7 40.7
+ - attr(*, "version")= num 1
