@@ -45,7 +45,7 @@ library(magrittr)
     here::here("tests/testthat/data/SUNS/MeasPattern.txt")
   )
 
-  # smoothing <- 20
+  # smoothing <- 10
   #
   # seasonder_apm_obj %<>% seasonder_smoothAPM(smoothing)
 
@@ -55,9 +55,20 @@ library(magrittr)
 
 
 
-#   MUSIC <-   seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
-#
-#   test <- MUSIC %>% dplyr::filter(range_cell == 2 & doppler_bin == 696) %>% as.list()
+  MUSIC <-   seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
+
+  check_doppler_cell <- MUSIC %>% dplyr::filter(range_cell == 2 & doppler_bin == 699) %>% as.list()
+  (1/(check_doppler_cell$projections[[1]]["dual",] %>% abs())) %>% plot()
+  (10*log10(1/(check_doppler_cell$projections[[1]]["dual",] %>% abs()))) %>% plot()
+
+P <-   check_doppler_cell$DOA_solutions[[1]]$dual$P
+abs(P)
+abs(diag(P)) %>% prod()
+off_P <- P
+diag(off_P) <- 1
+abs(off_P) %>% prod()
+abs(off_P) %>% prod()/abs(diag(P)) %>% prod()
+10*log10(abs(P[1,1]))
 # table <- seasonder_cs_obj %>% seasonder_exportMUSICTable()
 # (1/abs(test$projections[[1]]["single",]) ) %>% max()
 #
@@ -82,7 +93,7 @@ c_names <- c("LOND","LATD","VELU","VELV","VFLG","XDST","YDST","RNGE","BEAR","VEL
 
 target <- read.table("tests/testthat/data/SUNS/RadialMetric/RDLw_SUNS_2025_02_17_0600.ruv", comment.char = "%") %>% magrittr::set_colnames(c_names)
 
-check <- dplyr::full_join(target ,test %>% dplyr::mutate(VELO = round(VELO*100,digits = 3)), by = c("SPRC","SPDC","MSEL","BEAR", "VELO"))
+check <- dplyr::full_join(target %>% dplyr::mutate(id = "target") ,test %>% dplyr::mutate(id = "test",VELO = round(VELO*100,digits = 3)), by = c("SPRC","SPDC","MSEL","BEAR", "VELO"))
 
 
 single_check <- check %>% dplyr::filter(MSEL == 1)
@@ -91,18 +102,42 @@ dual_check_1 <- check %>% dplyr::filter(MSEL == 2)
 
 dual_check_2 <- check %>% dplyr::filter(MSEL == 3)
 
-not_matched <- check %>% dplyr::filter(is.na(LOND.x) | is.na(LOND.y))
+not_matched <- check %>% dplyr::filter(is.na(id.x) | is.na(id.y)) %>% dplyr::arrange(SPRC, SPDC) %>% dplyr::mutate(r_id = paste(SPRC,SPDC,sep = "_"))
 
-target %>% dplyr::filter(SPRC == 2 & SPDC == 696)
-test %>% dplyr::filter(SPRC == 2 & SPDC == 696)
+
+not_matched_MDRJ_4 <- not_matched %>% dplyr::filter(MDRJ.x == 4 | MDRJ.y == 4) %>% dplyr::arrange(SPRC, SPDC)
+
+not_matched_MDRJ_non_4 <- not_matched %>% dplyr::filter(! r_id %in% not_matched_MDRJ_4$r_id ) %>% dplyr::arrange(SPRC, SPDC)
+
+
+dplyr::full_join(not_matched_MDRJ_non_4 %>% dplyr::select(SPRC, SPDC,MDRJ.x) %>% dplyr::filter(!is.na(MDRJ.x)) %>% dplyr::distinct(),
+                 not_matched_MDRJ_non_4 %>% dplyr::select(SPRC, SPDC, MDRJ.y)  %>% dplyr::filter(!is.na(MDRJ.y)) %>% dplyr::distinct()) %>% dplyr::filter(complete.cases(.)) %>% dplyr::select(dplyr::starts_with("MDRJ")) %>% table()
 
 
 #### Error rate ####
 
 
-not_matched_test <- not_matched %>% dplyr::filter(!is.na(LOND.x)) %>% nrow()
+not_matched_target <- not_matched %>% dplyr::filter(id.x == "target") %>% dplyr::select(SPRC, SPDC) %>% dplyr::filter(complete.cases(.)) %>% dplyr::distinct() %>% nrow()
+not_matched_test <- not_matched %>% dplyr::filter(id.y == "test") %>% dplyr::select(SPRC, SPDC) %>% dplyr::filter(complete.cases(.)) %>% dplyr::distinct() %>% nrow()
+cat("Target ")
+cat(not_matched_target/nrow(test)*100)
+cat("\nTest ")
+cat(not_matched_test/nrow(test)*100)
 
-cat(not_matched_test/nrow(target)*100)
+ dplyr::full_join(not_matched %>% dplyr::select(SPRC, SPDC,MDRJ.x) %>% dplyr::filter(!is.na(MDRJ.x)) %>% dplyr::distinct(),
+ not_matched %>% dplyr::select(SPRC, SPDC, MDRJ.y)  %>% dplyr::filter(!is.na(MDRJ.y)) %>% dplyr::distinct()) %>% dplyr::filter(complete.cases(.)) %>% dplyr::select(dplyr::starts_with("MDRJ")) %>% table()
+
+ #### MJDR ####
+
+MDRJ <- not_matched_MDRJ_non_4 %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC","SPDC","MSEL","BEAR", "VELO")), dplyr::starts_with("MDRJ"))
+
+#### MOFR ####
+
+MOFR <- check %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC","SPDC","MSEL","BEAR", "VELO")), dplyr::starts_with("MOFR"), dplyr::starts_with("MDR1"), dplyr::starts_with("MDR2")) %>% dplyr::arrange(SPRC,SPDC)
+
+MOFR_not_matched <-  MOFR %>% dplyr::filter(is.na(id.x) | is.na(id.y)) %>% dplyr::arrange(SPRC,SPDC) %>% dplyr::mutate(MDR1.y = round(MDR1.y,1),MDR2.x = round(MDR2.x,1),MDR2.y = round(MDR2.y,1))
+
+test %>% dplyr::filter(SPRC == 2 & SPDC == 696)
 
 #### single_check ####
 
