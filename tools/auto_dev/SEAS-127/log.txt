@@ -1,6 +1,1 @@
-Thread created with ID: thread_TfvnxCOf6B26tL0wv3E1EJ6j 
-Ejecutando agente coordinador TDD en thread thread_TfvnxCOf6B26tL0wv3E1EJ6j
-Acción a realizar: write_new_tests.
-Detalles: Se deben implementar tests desde cero utilizando testthat para verificar que la función seasonder_extrapolateAPM realiza la extrapolación lineal correctamente. Los tests deben cubrir distintos casos: extrapolación con n = 1 y n = 2, verificando que la matriz SeaSondeRAPM se amplía en 2*n columnas, que el vector BEAR se actualiza correctamente (por ejemplo, para n = 1, el primer nuevo bearing es original - resolución y el último es original + resolución), y que los nombres de las columnas coinciden con los nuevos bearings. También se debe probar el caso n = 0 para confirmar que no se altera el objeto.
-Ejecutando unit testing agent
-
+Thread created with ID:  
