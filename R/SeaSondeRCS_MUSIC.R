@@ -2551,14 +2551,16 @@ seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation
   FOR <- 1:length(FOR) %>% purrr::map(\(range_cell) {
     o <- NULL
     doppler_bins <- integer(0)
-
     # Process negative FOR bins
     neg_bins <- FOR[[range_cell]]$negative_FOR
     if (length(neg_bins) > 0) {
       neg_range <- range(neg_bins)
+
       neg_range_freq <- seasonder_Bins2DopplerFreq(seasonder_cs_object, neg_range)
       new_neg_range_bins <- seasonder_MUSIC_DopplerFreq2Bins(out, neg_range_freq)
-      doppler_bins <- c(doppler_bins, new_neg_range_bins[1]:new_neg_range_bins[2])
+      new_neg_range_bins[1] <- new_neg_range_bins[1]-1*(doppler_interpolation-1)
+      new_neg_range_bins[2] <- new_neg_range_bins[2]-1*(doppler_interpolation-1)
+       doppler_bins <- c(doppler_bins, new_neg_range_bins[1]:new_neg_range_bins[2])
     }
 
     # Process positive FOR bins
@@ -2567,6 +2569,8 @@ seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation
       pos_range <- range(pos_bins)
       pos_range_freq <- seasonder_Bins2DopplerFreq(seasonder_cs_object, pos_range)
       new_pos_range_bins <- seasonder_MUSIC_DopplerFreq2Bins(out, pos_range_freq)
+      new_pos_range_bins[1] <- new_pos_range_bins[1]-1*(doppler_interpolation-1)
+      new_pos_range_bins[2] <- new_pos_range_bins[2]-1*(doppler_interpolation-1)
       doppler_bins <- c(doppler_bins, new_pos_range_bins[1]:new_pos_range_bins[2])
     }
 
