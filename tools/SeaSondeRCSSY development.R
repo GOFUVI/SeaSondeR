@@ -76,45 +76,37 @@ library(magrittr)
   # str(seasonder_apm_obj, list.len = 18)
   # sink()
 
-rm <- seasonder_exportRadialMetrics(seasonder_cs_obj)
+test <- seasonder_exportRadialMetrics(seasonder_cs_obj)
 
 c_names <- c("LOND","LATD","VELU","VELV","VFLG","XDST","YDST","RNGE","BEAR","VELO","HEAD","SPRC","SPDC","MSEL","MSA1","MDA1","MDA2","MEGR","MPKR","MOFR","MSAD","MA13","MP13","MA23","MP23","MSP1","MDP1","MDP2","MSW1","MDW1","MDW2","MSR1","MDR1","MDR2","MA1S","MA2S","MA3S","MEI1","MEI2","MEI3","MSPK","MDPK","MDRJ")
 
-test <- read.table("tests/testthat/data/SUNS/RadialMetric/RDLw_SUNS_2025_02_17_0600.ruv", comment.char = "%") %>% magrittr::set_colnames(c_names)
+target <- read.table("tests/testthat/data/SUNS/RadialMetric/RDLw_SUNS_2025_02_17_0600.ruv", comment.char = "%") %>% magrittr::set_colnames(c_names)
 
-check <- dplyr::full_join(test,rm, by = c("SPRC","SPDC","MSEL"))
+check <- dplyr::full_join(target ,test %>% dplyr::mutate(VELO = round(VELO*100,digits = 3)), by = c("SPRC","SPDC","MSEL","BEAR", "VELO"))
 
 
-single_check <- check %>% dplyr::filter(MSEL == 1 & !is.na(BEAR.x) & !is.na(BEAR.y))
+single_check <- check %>% dplyr::filter(MSEL == 1)
 
-dual_check_1 <- check %>% dplyr::filter(MSEL == 2 & !is.na(BEAR.x) & !is.na(BEAR.y))
+dual_check_1 <- check %>% dplyr::filter(MSEL == 2)
 
-dual_check_2 <- check %>% dplyr::filter(MSEL == 3 & !is.na(BEAR.x) & !is.na(BEAR.y))
+dual_check_2 <- check %>% dplyr::filter(MSEL == 3)
 
-not_matched <- check %>% dplyr::filter(is.na(BEAR.x) | is.na(BEAR.y))
+not_matched <- check %>% dplyr::filter(is.na(LOND.x) | is.na(LOND.y))
 
+target %>% dplyr::filter(SPRC == 2 & SPDC == 696)
+test %>% dplyr::filter(SPRC == 2 & SPDC == 696)
 
 
 #### Error rate ####
 
-single_errors <- table(single_check$BEAR.x == single_check$BEAR.y)
 
-dual_1 <- table(dual_check_1$BEAR.x == dual_check_1$BEAR.y)
+not_matched_test <- not_matched %>% dplyr::filter(!is.na(LOND.x)) %>% nrow()
 
-
-
-dual_2 <- table(dual_check_2$BEAR.x == dual_check_2$BEAR.y)
-
-not_matched_test <- not_matched %>% dplyr::filter(!is.na(BEAR.x)) %>% nrow()
-
-
+cat(not_matched_test/nrow(target)*100)
 
 #### single_check ####
 
 
-
-
-single_check %>% dplyr::filter(BEAR.x != BEAR.y)
 
 
 
@@ -143,10 +135,6 @@ table(abs(single_check$MDR2.x - single_check$MDR2.y) <1e-1)
 
 
 #### dual check ####
-
-
-
-dual_check_2 %>% dplyr::filter(BEAR.x != BEAR.y)
 
 
 
