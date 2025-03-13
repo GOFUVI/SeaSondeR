@@ -94,6 +94,10 @@ c_names <- c("LOND","LATD","VELU","VELV","VFLG","XDST","YDST","RNGE","BEAR","VEL
 target <- read.table("tests/testthat/data/SUNS/RadialMetric/RDLw_SUNS_2025_02_17_0600.ruv", comment.char = "%") %>% magrittr::set_colnames(c_names)
 
 
+# test %<>% dplyr::filter(MSEL !=1 | (MSEL == 1 & MSW1 < 120)) %>%
+#   dplyr::filter(MSEL !=2 | (MSEL == 2 & MDW1 < 120)) %>%
+#   dplyr::filter(MSEL !=3 | (MSEL == 3 & MDW2 < 120))
+
 check <- dplyr::full_join(target %>% dplyr::mutate(id = "target") ,test %>% dplyr::mutate(id = "test",VELO = round(VELO*100,digits = 3)), by = c("SPRC","SPDC","MSEL","BEAR", "VELO"))
 
 
@@ -139,9 +143,9 @@ MDRJ <- not_matched_MDRJ_non_4 %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC
 
 #### MOFR ####
 
-MOFR <- check %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC","SPDC","MSEL","BEAR", "VELO")), dplyr::starts_with("MOFR"), dplyr::starts_with("MDR1"), dplyr::starts_with("MDR2")) %>% dplyr::arrange(SPRC,SPDC)
+MOFR <- check %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC","SPDC","MSEL","BEAR", "VELO")), dplyr::starts_with("MSW1"), dplyr::starts_with("MDW1"), dplyr::starts_with("MDW2")) %>% dplyr::arrange(SPRC,SPDC)
 
-MOFR_not_matched <-  MOFR %>% dplyr::filter(is.na(id.x) | is.na(id.y)) %>% dplyr::arrange(SPRC,SPDC) %>% dplyr::mutate(MDR1.y = round(MDR1.y,1),MDR2.x = round(MDR2.x,1),MDR2.y = round(MDR2.y,1))
+MOFR_not_matched <-  MOFR %>% dplyr::filter(is.na(id.x) | is.na(id.y)) %>% dplyr::arrange(SPRC,SPDC)# %>% dplyr::mutate(MDR1.y = round(MDR1.y,1),MDR2.x = round(MDR2.x,1),MDR2.y = round(MDR2.y,1))
 
 test %>% dplyr::filter(SPRC == 2 & SPDC == 696)
 
