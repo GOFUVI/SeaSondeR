@@ -37,7 +37,7 @@ test_that("All tested functions exist", {
     "SeaSondeRAPM_smoothing_step_text", "SeaSondeRAPM_trimming_step_text",
     "SeaSondeRAPM_amplitude_and_phase_corrections_step_text", "SeaSondeRAPM_phase_correction_override_step_text",
     "SeaSondeRAPM_amplitude_factors_override_step_text", "SeaSondeRAPM_SiteOrigin_override_step_text",
-    "seasonder_plotAPMLoops", "parse_metadata_line"
+    "seasonder_plotAPMLoops", "parse_metadata_line","seasonder_extrapolateAPM"
   )
   for (f in funs) {
     expect_true(exists(f, mode = "function"), info = paste("Function", f, "does not exist"))
@@ -324,7 +324,7 @@ describe("Plots", {
   })
 
   it("Ambiguity plot works", {
-    file_path <- here::here("tests/testthat/data/2018-06-21  170220.txt")
+    file_path <- here::here("tests/testthat/data/MeasPattern.txt")
     seasonder_apm_object <- seasonder_readSeaSondeRAPMFile(file_path)
     seasonder_apm_object %<>% seasonder_smoothAPM(10)
 
@@ -634,4 +634,89 @@ describe("validate_SeaSondeRAPM_BEAR", {
     expect_error(validate_SeaSondeRAPM_BEAR(invalid_bear, dummy_obj),
                  "BEAR must be a numeric vector of values between -180 and 180")
   })
+})
+
+
+#### seasonder_extrapolateAPM ####
+
+describe("seasonder_extrapolateAPM", {
+  # Create a dummy SeaSondeRAPM object with the provided structure
+  dummy_mat <- matrix(c(
+    10, 20, 30, 40, 50,   # row 1
+    15, 25, 35, 45, 55,     # row 2
+    100,200,300,400,500     # row 3
+  ), nrow = 3, ncol = 5, byrow = TRUE)
+  rownames(dummy_mat) <- c("A1", "A2", "A3")
+  colnames(dummy_mat) <- as.character(c(10, 20, 30, 40, 50))
+  dummy_obj <- dummy_mat
+  attr(dummy_obj, "BEAR") <- c(10, 20, 30, 40, 50)
+  attr(dummy_obj, "BearingResolution") <- 10
+
+  # Test case: n = 0, no extrapolation
+  test_that("should not change the object when n = 0", {
+    new_obj <- seasonder_extrapolateAPM(dummy_obj, n = 0)
+    expect_equal(ncol(new_obj), ncol(dummy_obj), info = "Matrix columns should remain unchanged for n = 0")
+    expect_equal(attr(new_obj, "BEAR"), attr(dummy_obj, "BEAR"), info = "BEAR attribute should remain unchanged for n = 0")
+    expect_equal(colnames(new_obj), colnames(dummy_obj), info = "Column names should remain the same for n = 0")
+    expect_equal(new_obj, dummy_obj, info = "Matrix values should remain unchanged for n = 0")
+  })
+
+  # Test case: n = 1, one column extrapolated on each side
+  test_that("should extrapolate one column on each side when n = 1", {
+    new_obj <- seasonder_extrapolateAPM(dummy_obj, n = 1)
+    original_BEAR <- attr(dummy_obj, "BEAR")
+    res <- attr(dummy_obj, "BearingResolution")
+    expected_BEAR <- c(original_BEAR[1] - res, original_BEAR, tail(original_BEAR, 1) + res)
+    expect_equal(attr(new_obj, "BEAR"), expected_BEAR,
+                 info = "BEAR attribute should include extrapolated bearings for n = 1")
+    expect_equal(ncol(new_obj), length(expected_BEAR),
+                 info = "Matrix should have correct number of columns for n = 1")
+    expect_equal(colnames(new_obj), as.character(expected_BEAR),
+                 info = "Column names should match extrapolated BEAR values for n = 1")
+
+    # Calculate expected values via linear extrapolation
+    left_extrap <- dummy_obj[, 1] - (dummy_obj[, 2] - dummy_obj[, 1])
+    right_extrap <- dummy_obj[, ncol(dummy_obj)] + (dummy_obj[, ncol(dummy_obj)] - dummy_obj[, ncol(dummy_obj) - 1])
+    expected_matrix <- cbind(left_extrap, dummy_obj, right_extrap)
+    expect_equal(as.numeric(new_obj), as.numeric(expected_matrix),
+                 info = "Matrix values should be correctly extrapolated for n = 1")
+  })
+
+  # Test case: n = 2, two columns extrapolated on each side
+  test_that("should extrapolate two columns on each side when n = 2", {
+    new_obj <- seasonder_extrapolateAPM(dummy_obj, n = 2)
+    original_BEAR <- attr(dummy_obj, "BEAR")
+    res <- attr(dummy_obj, "BearingResolution")
+    expected_BEAR <- c(original_BEAR[1] - 2 * res, original_BEAR[1] - res, original_BEAR,
+                       tail(original_BEAR, 1) + res, tail(original_BEAR, 1) + 2 * res)
+    expect_equal(attr(new_obj, "BEAR"), expected_BEAR,
+                 info = "BEAR attribute should include extrapolated bearings for n = 2")
+    expect_equal(ncol(new_obj), length(expected_BEAR),
+                 info = "Matrix should have correct number of columns for n = 2")
+    expect_equal(colnames(new_obj), as.character(expected_BEAR),
+                 info = "Column names should match extrapolated BEAR values for n = 2")
+
+    # Compute expected matrix values using linear extrapolation
+    slope_left <- (dummy_obj[, 2] - dummy_obj[, 1]) / (original_BEAR[2] - original_BEAR[1])
+    left_extrap1 <- dummy_obj[, 1] + slope_left * ((original_BEAR[1] - 2 * res) - original_BEAR[1])
+    left_extrap2 <- dummy_obj[, 1] + slope_left * ((original_BEAR[1] - res) - original_BEAR[1])
+
+    n_orig <- ncol(dummy_obj)
+    slope_right <- (dummy_obj[, n_orig] - dummy_obj[, n_orig - 1]) / (original_BEAR[n_orig] - original_BEAR[n_orig - 1])
+    right_extrap1 <- dummy_obj[, n_orig] + slope_right * ((tail(original_BEAR, 1) + res) - tail(original_BEAR, 1))
+    right_extrap2 <- dummy_obj[, n_orig] + slope_right * ((tail(original_BEAR, 1) + 2 * res) - tail(original_BEAR, 1))
+
+    expected_matrix <- cbind(left_extrap1, left_extrap2, dummy_obj, right_extrap1, right_extrap2)
+    expect_equal(as.numeric(new_obj), as.numeric(expected_matrix),
+                 info = "Matrix values should be correctly extrapolated for n = 2")
+  })
+  it("works on a real file",{
+
+    file_path <- here::here("tests/testthat/data/MeasPattern.txt")
+    seasonder_apm_object <- seasonder_readSeaSondeRAPMFile(file_path)
+
+    test <- seasonder_extrapolateAPM(seasonder_apm_object)
+
+  })
+
 })

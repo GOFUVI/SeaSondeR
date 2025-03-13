@@ -648,7 +648,7 @@ seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_c
 
 seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_object, doppler_interpolation){
 
-doppler_interpolation <- SeaSondeRCS_MUSIC_validate_doppler_interpolation(doppler_interpolation, seasonder_cs_object)
+  doppler_interpolation <- SeaSondeRCS_MUSIC_validate_doppler_interpolation(doppler_interpolation, seasonder_cs_object)
 
   attr(seasonder_cs_object, "MUSIC_data")$doppler_interpolation <- doppler_interpolation
 
@@ -2064,6 +2064,9 @@ seasonder_MUSICComputeDOAProjections <- function(seasonder_cs_object){
   # Retrieves the Antenna Pattern Measurement (APM) object associated with the cross spectra (CS) object.
   seasonder_apm_obj <- seasonder_getSeaSondeRCS_APM(seasonder_cs_object)
 
+  # Extrapolate APM
+  seasonder_apm_obj %<>% seasonder_extrapolateAPM(n = 1)
+
   # Retrieves the bearings associated with the APM object.
   bearings <- seasonder_getSeaSondeRAPM_BEAR(seasonder_apm_obj)
 
@@ -2147,7 +2150,7 @@ seasonder_MUSICComputeDOAProjections <- function(seasonder_cs_object){
 #' print(result)
 #' }
 #'
-seasonder_MUSICExtractDOASolutions <- function(projections){
+seasonder_MUSICExtractDOASolutions <- function(projections, valid_bearings, seasonder_apm_obj){
 
   # Initialize an empty DOA solutions structure
   out <- seasonder_MUSICInitDOASolutions()
@@ -2162,12 +2165,20 @@ seasonder_MUSICExtractDOASolutions <- function(projections){
   # Detect peaks in the single solution projections
   single_peaks_results <- pracma::findpeaks(rev_single_solution_dist, npeaks = 1, sortstr = TRUE)
   single_peak <- single_peaks_results[,2,drop = TRUE] # Peak location
+
+
+  single_bearing <- bearings[single_peak]
+  is_single_bearing_valid <- !is.null(single_peaks_results) && single_bearing %in% valid_bearings
   single_peak_resp <- NA
   single_peak_width <- NA
-  # If valid peaks are found, calculate the corresponding responses
-  if (!is.null(single_peaks_results)) {
+  if(is_single_bearing_valid){
+    single_peak <- match(single_bearing, valid_bearings)
+
+
+    # If valid peaks are found, calculate the corresponding responses
+
+
     single_peak_resp <- 10*log10(single_peaks_results[,1,drop = TRUE])
-    single_peak_width <- NA
     limits_3db <- which(10*log10(rev_single_solution_dist) > (single_peak_resp - 3))
 
     limits_3db <- purrr::keep(split(limits_3db,cumsum(c(TRUE, diff(limits_3db) != 1))), function(x){
@@ -2178,24 +2189,39 @@ seasonder_MUSICExtractDOASolutions <- function(projections){
     limits_3db[2] <- min(limits_3db[2]+1,length(bearings))
       single_peak_width <- abs(diff(bearings[limits_3db]))
 
+    # Populate the single DOA solution fields
+    out$single$bearing <-  single_bearing
+
+
+
   }
 
-  # Detect peaks in the dual solution projections
-  dual_peaks_results <- pracma::findpeaks(rev_dual_solution_dist, npeaks = 2, sortstr = TRUE)
-
-  # Populate the single DOA solution fields
-  out$single$bearing <-  bearings[single_peak]
   out$single$a <- seasonder_apm_obj[,single_peak, drop = FALSE]
   out$single$peak_resp <- single_peak_resp
   out$single$peak_width <- single_peak_width
+  # Detect peaks in the dual solution projections
+  dual_peaks_results <- pracma::findpeaks(rev_dual_solution_dist, npeaks = 2, sortstr = TRUE)
+
   # Populate the dual DOA solution fields
-  dual_peaks <- dual_peaks_results[,2,drop = TRUE]
   dual_peaks_resp <- NA
   dual_peaks_width <- c(NA,NA)
-  if (!is.null(dual_peaks_results)) {
-    dual_peaks_resp <- 10*log10(dual_peaks_results[,1,drop = TRUE])
+  dual_peaks <- dual_peaks_results[,2,drop = TRUE]
+  if (!is.null(dual_peaks_results)){
 
-    for(i in 1:nrow(dual_peaks_results)){
+
+
+    dual_bearings <- bearings[dual_peaks]
+    are_dual_bearings_valid <- dual_bearings %in% valid_bearings
+
+
+    dual_peaks <- dual_peaks[are_dual_bearings_valid]
+    dual_bearings <- bearings[dual_peaks]
+    dual_peaks <- match(dual_bearings, valid_bearings)
+
+    if (!is.null(dual_peaks_results) && any(are_dual_bearings_valid)) {
+      dual_peaks_resp <- 10*log10(dual_peaks_results[,1,drop = TRUE])[are_dual_bearings_valid]
+
+      for(i in 1:nrow(dual_peaks_results)){
       dual_row <- dual_peaks_results[i,, drop = FALSE]
       limits_3db <- which((10*log10(rev_dual_solution_dist)) > (dual_peaks_resp[i] - 3))
 
@@ -2207,9 +2233,12 @@ seasonder_MUSICExtractDOASolutions <- function(projections){
       limits_3db[2] <- min(limits_3db[2]+1,length(bearings))
         dual_peaks_width[i] <- abs(diff(bearings[limits_3db]))
     }
-  }
+      
+      out$dual$bearing <- dual_bearings
 
-  out$dual$bearing <- bearings[dual_peaks]
+
+    }
+  }
   out$dual$a <- seasonder_apm_obj[,dual_peaks, drop = FALSE]
   out$dual$peak_resp <- dual_peaks_resp
   out$dual$peak_width <- dual_peaks_width
@@ -2326,11 +2355,13 @@ seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
   # Retrieve the Antenna Pattern Matrix (APM) from the object
   seasonder_apm_obj <- seasonder_getSeaSondeRCS_APM(seasonder_cs_object)
 
+  valid_bearings <- seasonder_getSeaSondeRAPM_BEAR(seasonder_apm_obj)
+
   # Retrieve the MUSIC data structure
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
   # Iterate over the projections matrix in the MUSIC object to extract DOA solutions
-  MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::map(projections, seasonder_MUSICExtractDOASolutions))
+  MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::map(projections, \(projection) seasonder_MUSICExtractDOASolutions(projection, valid_bearings, seasonder_apm_obj)))
 
   # Update the retained solution field based on DOA solutions
   MUSIC %<>% dplyr::mutate(retained_solution = purrr::map2_chr(retained_solution, DOA_solutions, seasonder_MUSICExtractPeaksCheckRetainedSolution))
@@ -3064,17 +3095,17 @@ row_template$MDRJ <- seasonder_computeMDRJ(row_music)
     row_template$MEI2 <- eig_all$values[2]
     row_template$MEI3 <- eig_all$values[3]
 
-ds_all <- music$DOA_solutions[[i]]
+    ds_all <- music$DOA_solutions[[i]]
 
-if(length(ds_all$single$bearing) >0){
-    row_template$MSA1 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$single$bearing,seasonder_apm_obj)[[1]]
-}
-if(length(ds_all$dual$bearing) >0){
-    row_template$MDA1 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$dual$bearing[1],seasonder_apm_obj)[[1]]
-    if(length(ds_all$dual$bearing) >1){
-    row_template$MDA2 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$dual$bearing[2],seasonder_apm_obj)[[1]]
+    if(length(ds_all$single$bearing) >0){
+      row_template$MSA1 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$single$bearing,seasonder_apm_obj)[[1]]
     }
-}
+    if(length(ds_all$dual$bearing) >0){
+      row_template$MDA1 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$dual$bearing[1],seasonder_apm_obj)[[1]]
+      if(length(ds_all$dual$bearing) >1){
+        row_template$MDA2 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$dual$bearing[2],seasonder_apm_obj)[[1]]
+      }
+    }
     row_template$MSR1 <- 10^(ds_all$single$peak_resp/10)
     row_template$MDR1 <- 10^(ds_all$dual$peak_resp[1]/10)
     row_template$MDR2 <- 10^(ds_all$dual$peak_resp[2]/10)
@@ -3105,22 +3136,22 @@ if(length(ds_all$dual$bearing) >0){
     }else if (row_music$retained_solution == "dual") {
       ds <- ds_all$dual
 
-        row_dual1 <- row_template
+      row_dual1 <- row_template
 
-        row_dual1$MSEL <- 2
+      row_dual1$MSEL <- 2
 
-        row_dual1$BEAR <- row_dual1$MDA1
-        row_dual1$HEAD <- (row_dual1$BEAR -180) %% 360
-        out_rows[[length(out_rows) + 1]] <- row_dual1
+      row_dual1$BEAR <- row_dual1$MDA1
+      row_dual1$HEAD <- (row_dual1$BEAR -180) %% 360
+      out_rows[[length(out_rows) + 1]] <- row_dual1
 
 
-        row_dual2 <- row_template
+      row_dual2 <- row_template
 
-        row_dual2$MSEL <- 3
+      row_dual2$MSEL <- 3
 
-        row_dual2$BEAR <- row_dual1$MDA2
-        row_dual2$HEAD <- (row_dual2$BEAR -180) %% 360
-        out_rows[[length(out_rows) + 1]] <- row_dual2
+      row_dual2$BEAR <- row_dual1$MDA2
+      row_dual2$HEAD <- (row_dual2$BEAR -180) %% 360
+      out_rows[[length(out_rows) + 1]] <- row_dual2
 
     }
   }

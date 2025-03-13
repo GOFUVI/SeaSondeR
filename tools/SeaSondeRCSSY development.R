@@ -93,7 +93,9 @@ c_names <- c("LOND","LATD","VELU","VELV","VFLG","XDST","YDST","RNGE","BEAR","VEL
 
 target <- read.table("tests/testthat/data/SUNS/RadialMetric/RDLw_SUNS_2025_02_17_0600.ruv", comment.char = "%") %>% magrittr::set_colnames(c_names)
 
+
 check <- dplyr::full_join(target %>% dplyr::mutate(id = "target") ,test %>% dplyr::mutate(id = "test",VELO = round(VELO*100,digits = 3)), by = c("SPRC","SPDC","MSEL","BEAR", "VELO"))
+
 
 
 single_check <- check %>% dplyr::filter(MSEL == 1)
@@ -102,8 +104,12 @@ dual_check_1 <- check %>% dplyr::filter(MSEL == 2)
 
 dual_check_2 <- check %>% dplyr::filter(MSEL == 3)
 
+
 not_matched <- check %>% dplyr::filter(is.na(id.x) | is.na(id.y)) %>% dplyr::arrange(SPRC, SPDC) %>% dplyr::mutate(r_id = paste(SPRC,SPDC,sep = "_"))
 
+
+target %>% dplyr::filter(SPRC == 2 & SPDC == 696)
+test %>% dplyr::filter(SPRC == 2 & SPDC == 696)
 
 not_matched_MDRJ_4 <- not_matched %>% dplyr::filter(MDRJ.x == 4 | MDRJ.y == 4) %>% dplyr::arrange(SPRC, SPDC)
 
@@ -140,8 +146,6 @@ MOFR_not_matched <-  MOFR %>% dplyr::filter(is.na(id.x) | is.na(id.y)) %>% dplyr
 test %>% dplyr::filter(SPRC == 2 & SPDC == 696)
 
 #### single_check ####
-
-
 
 
 
