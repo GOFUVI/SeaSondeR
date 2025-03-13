@@ -4,7 +4,11 @@
 \alias{seasonder_MUSICExtractDOASolutions}
 \title{Extract Direction of Arrival (DOA) Solutions Using MUSIC Algorithm}
 \usage{
-seasonder_MUSICExtractDOASolutions(projections)
+seasonder_MUSICExtractDOASolutions(
+  projections,
+  valid_bearings,
+  seasonder_apm_obj
+)
 }
 \arguments{
 \item{projections}{A matrix of projections where each column corresponds to a set of MUSIC spectra for single and dual solutions.
