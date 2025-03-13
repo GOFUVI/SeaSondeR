@@ -2057,6 +2057,9 @@ seasonder_MUSICComputeDOAProjections <- function(seasonder_cs_object){
   # Retrieves the Antenna Pattern Measurement (APM) object associated with the cross spectra (CS) object.
   seasonder_apm_obj <- seasonder_getSeaSondeRCS_APM(seasonder_cs_object)
 
+  # Extrapolate APM
+  seasonder_apm_obj %<>% seasonder_extrapolateAPM(n = 1)
+
   # Retrieves the bearings associated with the APM object.
   bearings <- seasonder_getSeaSondeRAPM_BEAR(seasonder_apm_obj)
 
@@ -2140,7 +2143,7 @@ seasonder_MUSICComputeDOAProjections <- function(seasonder_cs_object){
 #' print(result)
 #' }
 #'
-seasonder_MUSICExtractDOASolutions <- function(projections){
+seasonder_MUSICExtractDOASolutions <- function(projections, valid_bearings){
 
   # Initialize an empty DOA solutions structure
   out <- seasonder_MUSICInitDOASolutions()
@@ -2156,31 +2159,38 @@ seasonder_MUSICExtractDOASolutions <- function(projections){
   single_peaks_results <- pracma::findpeaks(rev_single_solution_dist, npeaks = 1, sortstr = TRUE)
   single_peak <- single_peaks_results[,2,drop = TRUE] # Peak location
   single_peak_resp <- NA
+  single_bearing <- bearings[single_peak]
+  is_single_bearing_valid <- single_bearing %in% valid_bearings
 
   # If valid peaks are found, calculate the corresponding responses
-  if (!is.null(single_peaks_results)) {
+  if (!is.null(single_peaks_results) && is_single_bearing_valid) {
     single_peak_resp <- 10*log10(single_peaks_results[,1,drop = TRUE])
   }
 
   # Detect peaks in the dual solution projections
   dual_peaks_results <- pracma::findpeaks(rev_dual_solution_dist, npeaks = 2, sortstr = TRUE)
 
+  if(is_single_bearing_valid){
   # Populate the single DOA solution fields
-  out$single$bearing <-  bearings[single_peak]
+  out$single$bearing <-  single_bearing
   out$single$a <- seasonder_apm_obj[,single_peak, drop = FALSE]
   out$single$peak_resp <- single_peak_resp
 
-  # Populate the dual DOA solution fields
-  dual_peaks <- dual_peaks_results[,2,drop = TRUE]
-  dual_peaks_resp <- NA
-  if (!is.null(dual_peaks_results)) {
-    dual_peaks_resp <- 10*log10(dual_peaks_results[,1,drop = TRUE])
-  }
+}
+  dual_bearings <- bearings[dual_peaks]
+  are_dual_bearings_valid <- dual_bearings %in% valid_bearings
 
-  out$dual$bearing <- bearings[dual_peaks]
+  # Populate the dual DOA solution fields
+  dual_peaks <- dual_peaks_results[,2,drop = TRUE][are_dual_bearings_valid]
+  dual_peaks_resp <- NA
+  if (!is.null(dual_peaks_results) && any(are_dual_bearings_valid)) {
+    dual_peaks_resp <- 10*log10(dual_peaks_results[,1,drop = TRUE])[which(are_dual_bearings_valid)]
+  }
+if(any(are_dual_bearings_valid)){
+  out$dual$bearing <- dual_bearings[are_dual_bearings_valid]
   out$dual$a <- seasonder_apm_obj[,dual_peaks, drop = FALSE]
   out$dual$peak_resp <- dual_peaks_resp
-
+}
   return(out)
 }
 
@@ -2293,11 +2303,13 @@ seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
   # Retrieve the Antenna Pattern Matrix (APM) from the object
   seasonder_apm_obj <- seasonder_getSeaSondeRCS_APM(seasonder_cs_object)
 
+  valid_bearings <- seasonder_getSeaSondeRAPM_BEAR(seasonder_apm_obj)
+
   # Retrieve the MUSIC data structure
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
   # Iterate over the projections matrix in the MUSIC object to extract DOA solutions
-  MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::map(projections, seasonder_MUSICExtractDOASolutions))
+  MUSIC %<>% dplyr::mutate(DOA_solutions = purrr::map(projections, \(projection) seasonder_MUSICExtractDOASolutions(projection, valid_bearings)))
 
   # Update the retained solution field based on DOA solutions
   MUSIC %<>% dplyr::mutate(retained_solution = purrr::map2_chr(retained_solution, DOA_solutions, seasonder_MUSICExtractPeaksCheckRetainedSolution))
