@@ -852,7 +852,6 @@ seasonder_computePowerMatrix <- function(eig, a) {
 
   # Initialize the output matrix P as NULL, to store the computed power matrix
   P <- NULL
-
   # Check if the matrix `a` has at least one column
   if (ncol(a) > 0) {
 
@@ -1436,7 +1435,7 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
   MUSIC %<>% dplyr::mutate(signal_power_ratio = purrr::map_dbl(DOA_solutions,\(DOA_sol){
     out <- NA_real_
     if(length(DOA_sol$dual$bearing) == 2){
-      P_diag <- pracma::Real(diag(DOA_sol$dual$P))
+      P_diag <- abs(diag(DOA_sol$dual$P))
       out <- max(P_diag)/min(P_diag)
     }
     return(out)
@@ -1495,16 +1494,15 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
 seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
   # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
-
   # Compute the ratio of diagonal to off-diagonal power for dual-bearing solutions
   MUSIC %<>% dplyr::mutate(diag_off_diag_power_ratio = purrr::map_dbl(DOA_solutions,\(DOA_sol){
     out <- NA_real_
     if(length(DOA_sol$dual$bearing) == 2){
-      P_diag <- pracma::Real(diag(DOA_sol$dual$P)) %>% prod()
+      P_diag <- abs(diag(DOA_sol$dual$P)) %>% prod()
       P_off_diag <- DOA_sol$dual$P
       diag(P_off_diag) <- 1
-      P_off_diag <- pracma::Real(P_off_diag) %>% prod()
-      out <- P_diag/P_off_diag
+      P_off_diag <- abs(P_off_diag) %>% prod()
+      out <- P_off_diag/P_diag
     }
     return(out)
   }), .after = "P2_check")
@@ -1513,7 +1511,7 @@ seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
   MUSIC_parameter <- seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object) %>% magrittr::extract(3)
 
   # Determine whether each solution passes the P3 test
-  MUSIC %<>% dplyr::mutate(P3_check = purrr::map_lgl(DOA_solutions, \(DOA_sol) length(DOA_sol$dual$bearing) == 2 ) & !is.na(diag_off_diag_power_ratio) & diag_off_diag_power_ratio > MUSIC_parameter, .after = "diag_off_diag_power_ratio")
+  MUSIC %<>% dplyr::mutate(P3_check = purrr::map_lgl(DOA_solutions, \(DOA_sol) length(DOA_sol$dual$bearing) == 2 ) & !is.na(diag_off_diag_power_ratio) & diag_off_diag_power_ratio < 1/MUSIC_parameter, .after = "diag_off_diag_power_ratio")
 
   # Mark solutions that fail the P3 test as "single"
   MUSIC$retained_solution[!MUSIC$P3_check] <- "single"
@@ -1874,8 +1872,17 @@ seasonder_eigen_decomp_C <- function(C){
 
   # Extract eigenvalues and store them in the output list
   out$values <- eigen_decomp$values
+
+  vectors <- eigen_decomp$vectors
+
+  for(i in 1:3){
+
+    theta <- Arg(vectors[3,i])
+    vectors[,i] <- vectors[,i] * exp(-1i * theta)
+  }
+
   # Extract eigenvectors and store them in the output list
-  out$vectors <- eigen_decomp$vectors
+  out$vectors <- vectors
 
   # Return the list containing eigenvalues and eigenvectors
   return(out)
@@ -2163,6 +2170,7 @@ seasonder_MUSICExtractDOASolutions <- function(projections, valid_bearings, seas
   single_bearing <- bearings[single_peak]
   is_single_bearing_valid <- !is.null(single_peaks_results) && single_bearing %in% valid_bearings
   single_peak_resp <- NA
+  single_peak_width <- NA
   if(is_single_bearing_valid){
     single_peak <- match(single_bearing, valid_bearings)
 
@@ -2171,6 +2179,15 @@ seasonder_MUSICExtractDOASolutions <- function(projections, valid_bearings, seas
 
 
     single_peak_resp <- 10*log10(single_peaks_results[,1,drop = TRUE])
+    limits_3db <- which(10*log10(rev_single_solution_dist) > (single_peak_resp - 3))
+
+    limits_3db <- purrr::keep(split(limits_3db,cumsum(c(TRUE, diff(limits_3db) != 1))), function(x){
+      single_peaks_results[,2,drop = TRUE] %in%x
+    }) %>% unlist() %>% range()
+
+    limits_3db[1] <- max(limits_3db[1]-1,1)
+    limits_3db[2] <- min(limits_3db[2]+1,length(bearings))
+      single_peak_width <- abs(diff(bearings[limits_3db]))
 
     # Populate the single DOA solution fields
     out$single$bearing <-  single_bearing
@@ -2181,11 +2198,13 @@ seasonder_MUSICExtractDOASolutions <- function(projections, valid_bearings, seas
 
   out$single$a <- seasonder_apm_obj[,single_peak, drop = FALSE]
   out$single$peak_resp <- single_peak_resp
+  out$single$peak_width <- single_peak_width
   # Detect peaks in the dual solution projections
   dual_peaks_results <- pracma::findpeaks(rev_dual_solution_dist, npeaks = 2, sortstr = TRUE)
 
   # Populate the dual DOA solution fields
   dual_peaks_resp <- NA
+  dual_peaks_width <- c(NA,NA)
   dual_peaks <- dual_peaks_results[,2,drop = TRUE]
   if (!is.null(dual_peaks_results)){
 
@@ -2202,6 +2221,19 @@ seasonder_MUSICExtractDOASolutions <- function(projections, valid_bearings, seas
     if (!is.null(dual_peaks_results) && any(are_dual_bearings_valid)) {
       dual_peaks_resp <- 10*log10(dual_peaks_results[,1,drop = TRUE])[are_dual_bearings_valid]
 
+      for(i in 1:nrow(dual_peaks_results)){
+      dual_row <- dual_peaks_results[i,, drop = FALSE]
+      limits_3db <- which((10*log10(rev_dual_solution_dist)) > (dual_peaks_resp[i] - 3))
+
+      limits_3db <- purrr::keep(split(limits_3db,cumsum(c(TRUE, diff(limits_3db) != 1))), function(x){
+         dual_row[,2] %in%x
+       }) %>% unlist() %>% range()
+
+      limits_3db[1] <- max(limits_3db[1]-1,1)
+      limits_3db[2] <- min(limits_3db[2]+1,length(bearings))
+        dual_peaks_width[i] <- abs(diff(bearings[limits_3db]))
+    }
+      
       out$dual$bearing <- dual_bearings
 
 
@@ -2209,6 +2241,8 @@ seasonder_MUSICExtractDOASolutions <- function(projections, valid_bearings, seas
   }
   out$dual$a <- seasonder_apm_obj[,dual_peaks, drop = FALSE]
   out$dual$peak_resp <- dual_peaks_resp
+  out$dual$peak_width <- dual_peaks_width
+
   return(out)
 }
 
@@ -2590,7 +2624,7 @@ seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation
       new_neg_range_bins <- seasonder_MUSIC_DopplerFreq2Bins(out, neg_range_freq)
       new_neg_range_bins[1] <- new_neg_range_bins[1]-1*(doppler_interpolation-1)
       new_neg_range_bins[2] <- new_neg_range_bins[2]-1*(doppler_interpolation-1)
-      doppler_bins <- c(doppler_bins, new_neg_range_bins[1]:new_neg_range_bins[2])
+       doppler_bins <- c(doppler_bins, new_neg_range_bins[1]:new_neg_range_bins[2])
     }
 
     # Process positive FOR bins
@@ -2903,7 +2937,7 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object) {
         if (length(DOA_sol$bearing) > 0) {
           data.frame(
             bearing = DOA_sol$bearing,
-            signal_power = pracma::Real(diag(DOA_sol$P)),
+            signal_power = abs(diag(DOA_sol$P)),
             DOA_peak_resp_db = DOA_sol$peak_resp
           )
         } else {
@@ -2994,6 +3028,25 @@ seasonder_exportCSVMUSICTable <- function(seasonder_cs_object, filepath) {
   invisible(NULL)
 }
 
+seasonder_computeMDRJ <- function(music){
+
+  out <- rep(0,nrow(music))
+
+out <- out + as.integer(!music$P1_check) * 1
+
+out <- out + as.integer(!music$P2_check) * 2
+
+out <- out + as.integer(!music$P3_check) * 4
+
+out <- out + as.integer(!music$P4_check) * 8
+
+
+  return(out)
+
+}
+
+
+
 #' @export
 seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
   # Obtain the MUSIC table using the function seasonder_getSeaSondeRCS_MUSIC from the global environment. This allows the function to be overridden using local_redefs.
@@ -3032,9 +3085,9 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
     row_template$SPDC <- row_music$doppler_bin -1
     row_template$MEGR <- row_music$eigen_values_ratio
     row_template$MPKR <- row_music$signal_power_ratio
-    row_template$MOFR <- row_music$diag_off_diag_power_ratio
+    row_template$MOFR <- tidyr::replace_na(row_music$diag_off_diag_power_ratio, 0)
 
-
+row_template$MDRJ <- seasonder_computeMDRJ(row_music)
 
     eig_all <- music$eigen[[i]]
 
@@ -3056,6 +3109,11 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
     row_template$MSR1 <- 10^(ds_all$single$peak_resp/10)
     row_template$MDR1 <- 10^(ds_all$dual$peak_resp[1]/10)
     row_template$MDR2 <- 10^(ds_all$dual$peak_resp[2]/10)
+
+    row_template$MSW1 <- ds_all$single$peak_width
+    row_template$MDW1 <- ds_all$dual$peak_width[1]
+    row_template$MDW2 <- ds_all$dual$peak_width[2]
+
 
     row_template$MSP1 <- as.numeric(10*log10(abs(ds_all$single$P)))
     row_template$MDP1 <- as.numeric(10*log10(abs(ds_all$dual$P[1,1])))
