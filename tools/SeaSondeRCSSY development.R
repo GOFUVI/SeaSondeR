@@ -126,7 +126,7 @@ dplyr::full_join(not_matched_MDRJ_non_4 %>% dplyr::select(SPRC, SPDC,MDRJ.x) %>%
 not_matched_target <- not_matched %>% dplyr::filter(id.x == "target") %>% dplyr::select(SPRC, SPDC) %>% dplyr::filter(complete.cases(.)) %>% dplyr::distinct() %>% nrow()
 not_matched_test <- not_matched %>% dplyr::filter(id.y == "test") %>% dplyr::select(SPRC, SPDC) %>% dplyr::filter(complete.cases(.)) %>% dplyr::distinct() %>% nrow()
 cat("Target ")
-cat(not_matched_target/nrow(test)*100)
+cat(not_matched_target/nrow(target)*100)
 cat("\nTest ")
 cat(not_matched_test/nrow(test)*100)
 
