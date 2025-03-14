@@ -89,9 +89,11 @@ abs(off_P) %>% prod()/abs(diag(P)) %>% prod()
 
 range_info <- seasonder_exportRangeInfo(seasonder_cs_obj)
 
+
+
 test <- seasonder_exportRadialMetrics(seasonder_cs_obj)
 
-
+test %<>% dplyr::filter(MA1S >5 | (MA2S > 5 & MA3S > 5))
 
 c_names <- c("LOND","LATD","VELU","VELV","VFLG","XDST","YDST","RNGE","BEAR","VELO","HEAD","SPRC","SPDC","MSEL","MSA1","MDA1","MDA2","MEGR","MPKR","MOFR","MSAD","MA13","MP13","MA23","MP23","MSP1","MDP1","MDP2","MSW1","MDW1","MDW2","MSR1","MDR1","MDR2","MA1S","MA2S","MA3S","MEI1","MEI2","MEI3","MSPK","MDPK","MDRJ")
 
@@ -147,7 +149,7 @@ MDRJ <- not_matched_MDRJ_non_4 %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC
 
 #### MOFR ####
 
-MOFR <- check %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC","SPDC","MSEL","BEAR", "VELO")), dplyr::starts_with("MSW1"), dplyr::starts_with("MDW1"), dplyr::starts_with("MDW2")) %>% dplyr::arrange(SPRC,SPDC)
+MOFR <- check %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC","SPDC","MSEL","BEAR", "VELO")), dplyr::starts_with("MA1S"), dplyr::starts_with("MA2S"), dplyr::starts_with("MA3S")) %>% dplyr::arrange(SPRC,SPDC)
 
 MOFR_not_matched <-  MOFR %>% dplyr::filter(is.na(id.x) | is.na(id.y)) %>% dplyr::arrange(SPRC,SPDC)# %>% dplyr::mutate(MDR1.y = round(MDR1.y,1),MDR2.x = round(MDR2.x,1),MDR2.y = round(MDR2.y,1))
 

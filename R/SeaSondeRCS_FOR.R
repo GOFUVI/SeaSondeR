@@ -413,8 +413,8 @@ seasonder_setSeaSondeRCS_FOR_MAXP.bin <- function(seasonder_cs_obj, FOR_MAXP.bin
 seasonder_setSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, NoiseLevel, antenna = 3) {
 
   # TODO: validate
-  updated_NoiseLevel <- attr(seasonder_cs_obj, "NoiseLevel", exact = TRUE) %||% list(numeric(0), numeric(0), numeric(0))
-  updated_NoiseLevel[antenna] <- NoiseLevel
+  updated_NoiseLevel <- attr(seasonder_cs_obj, "NoiseLevel", exact = TRUE) %||% seasonder_defaultCSNoiseLevel()
+  updated_NoiseLevel[[antenna]] <- NoiseLevel
   attr(seasonder_cs_obj, "NoiseLevel") <- updated_NoiseLevel
 
 
@@ -758,7 +758,6 @@ seasonder_computeSeaSondeRCSAntennaNoise <- function(seasonder_cs_obj, antenna,n
 
   # Compute the average noise level by taking the mean across the concatenated positive and negative regions
   avg_noise <- cbind(SS[[1]], SS[[2]]) %>% rowMeans()
-
   return(avg_noise)
 
 }

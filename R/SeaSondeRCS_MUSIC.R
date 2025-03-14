@@ -2628,7 +2628,9 @@ seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation
       new_neg_range_bins <- seasonder_MUSIC_DopplerFreq2Bins(out, neg_range_freq)
       new_neg_range_bins[1] <- new_neg_range_bins[1]-1*(doppler_interpolation-1)
       new_neg_range_bins[2] <- new_neg_range_bins[2]-1*(doppler_interpolation-1)
+      if(new_neg_range_bins[1] != new_neg_range_bins[2]){
        doppler_bins <- c(doppler_bins, new_neg_range_bins[1]:new_neg_range_bins[2])
+      }
     }
 
     # Process positive FOR bins
@@ -2639,7 +2641,10 @@ seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation
       new_pos_range_bins <- seasonder_MUSIC_DopplerFreq2Bins(out, pos_range_freq)
       new_pos_range_bins[1] <- new_pos_range_bins[1]-1*(doppler_interpolation-1)
       new_pos_range_bins[2] <- new_pos_range_bins[2]-1*(doppler_interpolation-1)
-      doppler_bins <- c(doppler_bins, new_pos_range_bins[1]:new_pos_range_bins[2])
+      if(new_pos_range_bins[1] != new_pos_range_bins[2]){
+        doppler_bins <- c(doppler_bins, new_pos_range_bins[1]:new_pos_range_bins[2])
+      }
+
     }
 
     # Create a data frame if Doppler bins are found
@@ -3054,13 +3059,30 @@ seasonder_exportRangeInfo <- function(seasonder_cs_object){
 
   cols <- c("RNGC", "NF01", "NF02", "NF03", "ALM1", "ALM2", "ALM3", "ALM4", "NVSC", "NVDC", "NVAC")
 
-  rm <- seasonder_exportRadialMetrics(seasonder_cs_object)
+  rm <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object) %>% dplyr::select(SPRC = range_cell, RNGE = range, MSEL = retained_solution)
+
+  rc <- rm %>% dplyr::mutate(is_single = MSEL == "single", is_dual = MSEL == "dual") %>% dplyr::summarise(NVSC = sum(is_single), NVDC = sum(is_dual), NVAC = NVSC + NVDC * 2,.by = c(SPRC, RNGE))
 
   NF01 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1)
   NF02 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 2)
   NF03 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 3)
-rc <- rm %>% dplyr::mutate(is_single = MSEL == 1, is_dual = MSEL >1) %>% dplyr::summarise(NVSC = sum(is_single), NVDC = sum(is_dual),.by = c(SPRC, RNGE))
-browser()
+  Noise <- data.frame(NF01 = NF01, NF02 = NF02, NF03 = NF03) %>% dplyr::mutate(SPRC = dplyr::row_number())
+
+FOR <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_FOR()
+FOR %<>% purrr::map_dfr(\(range_d) c(range(range_d$negative_FOR),range(range_d$positive_FOR)) %>% as.list() %>% magrittr::set_names(c("ALM1", "ALM2", "ALM3", "ALM4")) %>% as.data.frame()) %>% dplyr::mutate(SPRC = dplyr::row_number(), .before = 1)
+interp <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation()
+FOR %<>% dplyr::mutate(dplyr::across(dplyr::all_of(c("ALM1","ALM2","ALM3","ALM4")), \(x) (x-1)* interp ))
+
+
+out <- rc %>% dplyr::left_join(FOR, by = "SPRC") %>% dplyr::left_join(Noise, by = "SPRC")
+
+out %<>% dplyr::rename(RNGC = SPRC)
+
+out %<>% dplyr::select(dplyr::all_of(cols))
+
+attr(out, "radial_metrics") <- rm
+
+return(out)
 }
 
 #' @export
@@ -3144,13 +3166,13 @@ row_template$MDRJ <- seasonder_computeMDRJ(row_music)
     # row_template$MA13 <-  abs(row_music$cov[[1]][1,3])#abs(row_music$cov[[1]][1,1])/abs(row_music$cov[[1]][3,3])
     # row_template$MA23 <-  abs(row_music$cov[[1]][2,3])#abs(row_music$cov[[1]][2,2])/abs(row_music$cov[[1]][3,3])
 row_template$MA3S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][3,3])) -
-(seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 3))
+(seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 3))[row_template$SPRC]
 
 row_template$MA2S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][2,2])) -
-  (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 2))
+  (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 2))[row_template$SPRC]
 
 row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][1,1])) -
-  (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1))
+  (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1))[row_template$SPRC]
 
 
     # Check for DOA solutions and output all available ones: single and dual

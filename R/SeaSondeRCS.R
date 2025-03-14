@@ -1,6 +1,180 @@
 #### SeaSondeRCS ####
 
+##### Init and Defaults #####
 
+seasonder_defaultCSNoiseLevel <- function(){
+  list(numeric(0), numeric(0), numeric(0))
+}
+
+seasonder_SeaSondeRCS_dataMatrix_dimensionNames <- function(nRanges, nDoppler) {
+
+  dimension_names <- list(sprintf("range_%03d",1:nRanges),sprintf("doppler_%03d",0:(nDoppler - 1)))
+
+  return(dimension_names)
+
+}
+
+new_SeaSondeRCS_SSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL) {
+
+  dimension_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges, nDoppler)
+
+  data <- data %||% rep(NA_real_, nRanges * nDoppler)
+
+
+  matrix <- matrix(data, ncol = nDoppler, byrow = TRUE, dimnames = dimension_names)
+
+  out <- structure(matrix,
+                   name = name,
+                   class = c("SeaSondeRCS_SSMatrix",class(matrix)))
+
+  return(out)
+}
+
+
+new_SeaSondeRCS_QCMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL) {
+
+  dimension_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges, nDoppler)
+
+  data <- data %||% rep(NA_real_, nRanges * nDoppler)
+
+
+  matrix <- matrix(data, ncol = nDoppler, byrow = TRUE, dimnames = dimension_names)
+
+  out <- structure(matrix,
+                   name = name,
+                   class = c("SeaSondeRCS_QCMatrix", class(matrix)))
+
+  return(out)
+}
+
+
+new_SeaSondeRCS_CSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL) {
+
+  dimension_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges, nDoppler)
+
+  data <- data %||% rep(complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler)
+
+
+  matrix <- matrix(data, ncol = nDoppler, byrow = TRUE, dimnames = dimension_names)
+
+  out <- structure(matrix,
+                   name = name,
+                   class = c("SeaSondeRCS_CSMatrix", class(matrix)))
+
+  return(out)
+}
+
+#' Initialize Cross-Spectra Data Structure for SeaSondeR
+#'
+#' This function initializes a data structure for storing cross-spectra data
+#' related to SeaSonde radar measurements. It creates a list of matrices,
+#' each corresponding to different components of the SeaSonde data.
+#'
+#' @param nRanges Integer, number of range cells in the radar measurement.
+#'        Specifies the number of rows in each matrix.
+#' @param nDoppler Integer, number of Doppler bins in the radar measurement.
+#'        Specifies the number of columns in each matrix.
+#'
+#' @return A list containing matrices for different cross-spectra components:
+#'         \itemize{
+#'           \item \code{SSA1}: Matrix for SSA1 component, filled with \code{NA_real_}.
+#'           \item \code{SSA2}: Matrix for SSA2 component, filled with \code{NA_real_}.
+#'           \item \code{SSA3}: Matrix for SSA3 component, filled with \code{NA_real_}.
+#'           \item \code{CS12}: Matrix for CS12 component, complex numbers with \code{NA_real_} real and imaginary parts.
+#'           \item \code{CS13}: Matrix for CS13 component, complex numbers with \code{NA_real_} real and imaginary parts.
+#'           \item \code{CS23}: Matrix for CS23 component, complex numbers with \code{NA_real_} real and imaginary parts.
+#'           \item \code{QC}: Quality control matrix, filled with \code{NA_real_}.
+#'         }
+seasonder_initCSDataStructure <- function(nRanges, nDoppler) {
+
+
+  list(
+    SSA1 = new_SeaSondeRCS_SSMatrix(nRanges, nDoppler, name = "SSA1"),
+    SSA2 = new_SeaSondeRCS_SSMatrix(nRanges, nDoppler, name = "SSA2"),
+    SSA3 = new_SeaSondeRCS_SSMatrix(nRanges, nDoppler, name = "SSA3"),
+    CS12 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS12"),
+    CS13 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS13"),
+    CS23 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS23"),
+    QC = new_SeaSondeRCS_QCMatrix(nRanges, nDoppler, name = "QC")
+  )
+
+}
+
+seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_obj, FOR) {
+
+  out <- FOR
+
+  nRanges <- seasonder_getnRangeCells(seasonder_cs_obj)
+
+  nNegBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nNegBraggLeftIndex")$data %||% rep(0,nRanges)
+
+  if (any(nNegBraggLeftIndex > 0)) {
+    nNegBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nNegBraggRightIndex")$data %||% rep(0,nRanges)
+
+    if (any(nNegBraggRightIndex > 0 & nNegBraggLeftIndex > 0)) {
+      out <-  1:nRanges %>% purrr::reduce(\(result,i) {
+        left_index <- nNegBraggLeftIndex[i]
+        right_index <- nNegBraggRightIndex[i]
+
+        if (left_index > 0 && right_index > 0 && left_index <= right_index) {
+          result[[i]]$negative_FOR <- seq(left_index+1, right_index+1)
+        }
+        return(result)
+      },.init = out)
+    }
+
+  }
+
+  nPosBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nPosBraggLeftIndex")$data %||% rep(0,nRanges)
+
+  if (any(nPosBraggLeftIndex > 0)) {
+    nPosBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nPosBraggRightIndex")$data %||% rep(0,nRanges)
+
+    if (any(nPosBraggRightIndex > 0 & nPosBraggLeftIndex > 0)) {
+      out <-  1:nRanges %>% purrr::reduce(\(result,i) {
+        left_index <- nPosBraggLeftIndex[i]
+        right_index <- nPosBraggRightIndex[i]
+
+        if (left_index > 0 && right_index > 0 && left_index <= right_index) {
+          result[[i]]$positive_FOR <- seq(left_index+1, right_index+1)
+        }
+        return(result)
+      },.init = out)
+    }
+
+  }
+
+  return(out)
+
+}
+
+
+seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_obj) {
+
+  nRanges <- seasonder_getnRangeCells(seasonder_cs_obj)
+
+  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
+
+  dim_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges = nRanges, nDoppler = nDoppler)
+
+  out <- rep(list(list(negative_FOR = integer(0), positive_FOR = integer(0))),  nRanges)
+
+  names(out) <- dim_names[[1]]
+
+  out <- seasonder_initSeaSondeRCS_FORFromHeader(seasonder_cs_obj, out)
+
+
+
+
+  return(out)
+
+
+}
+
+
+
+
+##### Class #####
 
 #' Create a New SeaSondeRCS Object
 #'
@@ -26,7 +200,7 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
                    ProcessingSteps = character(0),
                    FOR_data = list(),
                    MUSIC_data = list(),
-                   NoiseLevel = numeric(0),
+                   NoiseLevel = seasonder_defaultCSNoiseLevel(),
                    APM = seasonder_apm_object,
                    interpolated_doppler_cells_index = integer(0),
                    class = c("SeaSondeRCS", "list"))
@@ -237,172 +411,6 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path = rlang::zap(), 
 
   return(out)
 }
-
-seasonder_SeaSondeRCS_dataMatrix_dimensionNames <- function(nRanges, nDoppler) {
-
-  dimension_names <- list(sprintf("range_%03d",1:nRanges),sprintf("doppler_%03d",0:(nDoppler - 1)))
-
-  return(dimension_names)
-
-}
-
-new_SeaSondeRCS_SSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL) {
-
-  dimension_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges, nDoppler)
-
-  data <- data %||% rep(NA_real_, nRanges * nDoppler)
-
-
-  matrix <- matrix(data, ncol = nDoppler, byrow = TRUE, dimnames = dimension_names)
-
-  out <- structure(matrix,
-                   name = name,
-                   class = c("SeaSondeRCS_SSMatrix",class(matrix)))
-
-  return(out)
-}
-
-
-new_SeaSondeRCS_QCMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL) {
-
-  dimension_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges, nDoppler)
-
-  data <- data %||% rep(NA_real_, nRanges * nDoppler)
-
-
-  matrix <- matrix(data, ncol = nDoppler, byrow = TRUE, dimnames = dimension_names)
-
-  out <- structure(matrix,
-                   name = name,
-                   class = c("SeaSondeRCS_QCMatrix", class(matrix)))
-
-  return(out)
-}
-
-
-new_SeaSondeRCS_CSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL) {
-
-  dimension_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges, nDoppler)
-
-  data <- data %||% rep(complex(real = NA_real_, imaginary = NA_real_), nRanges * nDoppler)
-
-
-  matrix <- matrix(data, ncol = nDoppler, byrow = TRUE, dimnames = dimension_names)
-
-  out <- structure(matrix,
-                   name = name,
-                   class = c("SeaSondeRCS_CSMatrix", class(matrix)))
-
-  return(out)
-}
-
-#' Initialize Cross-Spectra Data Structure for SeaSondeR
-#'
-#' This function initializes a data structure for storing cross-spectra data
-#' related to SeaSonde radar measurements. It creates a list of matrices,
-#' each corresponding to different components of the SeaSonde data.
-#'
-#' @param nRanges Integer, number of range cells in the radar measurement.
-#'        Specifies the number of rows in each matrix.
-#' @param nDoppler Integer, number of Doppler bins in the radar measurement.
-#'        Specifies the number of columns in each matrix.
-#'
-#' @return A list containing matrices for different cross-spectra components:
-#'         \itemize{
-#'           \item \code{SSA1}: Matrix for SSA1 component, filled with \code{NA_real_}.
-#'           \item \code{SSA2}: Matrix for SSA2 component, filled with \code{NA_real_}.
-#'           \item \code{SSA3}: Matrix for SSA3 component, filled with \code{NA_real_}.
-#'           \item \code{CS12}: Matrix for CS12 component, complex numbers with \code{NA_real_} real and imaginary parts.
-#'           \item \code{CS13}: Matrix for CS13 component, complex numbers with \code{NA_real_} real and imaginary parts.
-#'           \item \code{CS23}: Matrix for CS23 component, complex numbers with \code{NA_real_} real and imaginary parts.
-#'           \item \code{QC}: Quality control matrix, filled with \code{NA_real_}.
-#'         }
-seasonder_initCSDataStructure <- function(nRanges, nDoppler) {
-
-
-  list(
-    SSA1 = new_SeaSondeRCS_SSMatrix(nRanges, nDoppler, name = "SSA1"),
-    SSA2 = new_SeaSondeRCS_SSMatrix(nRanges, nDoppler, name = "SSA2"),
-    SSA3 = new_SeaSondeRCS_SSMatrix(nRanges, nDoppler, name = "SSA3"),
-    CS12 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS12"),
-    CS13 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS13"),
-    CS23 = new_SeaSondeRCS_CSMatrix(nRanges, nDoppler, name = "CS23"),
-    QC = new_SeaSondeRCS_QCMatrix(nRanges, nDoppler, name = "QC")
-  )
-
-}
-
-seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_obj, FOR) {
-
-  out <- FOR
-
-  nRanges <- seasonder_getnRangeCells(seasonder_cs_obj)
-
-  nNegBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nNegBraggLeftIndex")$data %||% rep(0,nRanges)
-
-  if (any(nNegBraggLeftIndex > 0)) {
-    nNegBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nNegBraggRightIndex")$data %||% rep(0,nRanges)
-
-    if (any(nNegBraggRightIndex > 0 & nNegBraggLeftIndex > 0)) {
-      out <-  1:nRanges %>% purrr::reduce(\(result,i) {
-        left_index <- nNegBraggLeftIndex[i]
-        right_index <- nNegBraggRightIndex[i]
-
-        if (left_index > 0 && right_index > 0 && left_index <= right_index) {
-          result[[i]]$negative_FOR <- seq(left_index+1, right_index+1)
-        }
-        return(result)
-      },.init = out)
-    }
-
-  }
-
-  nPosBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nPosBraggLeftIndex")$data %||% rep(0,nRanges)
-
-  if (any(nPosBraggLeftIndex > 0)) {
-    nPosBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj,"nPosBraggRightIndex")$data %||% rep(0,nRanges)
-
-    if (any(nPosBraggRightIndex > 0 & nPosBraggLeftIndex > 0)) {
-      out <-  1:nRanges %>% purrr::reduce(\(result,i) {
-        left_index <- nPosBraggLeftIndex[i]
-        right_index <- nPosBraggRightIndex[i]
-
-        if (left_index > 0 && right_index > 0 && left_index <= right_index) {
-          result[[i]]$positive_FOR <- seq(left_index+1, right_index+1)
-        }
-        return(result)
-      },.init = out)
-    }
-
-  }
-
-  return(out)
-
-}
-
-
-seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_obj) {
-
-  nRanges <- seasonder_getnRangeCells(seasonder_cs_obj)
-
-  nDoppler <- seasonder_getnDopplerCells(seasonder_cs_obj)
-
-  dim_names <- seasonder_SeaSondeRCS_dataMatrix_dimensionNames(nRanges = nRanges, nDoppler = nDoppler)
-
-  out <- rep(list(list(negative_FOR = integer(0), positive_FOR = integer(0))),  nRanges)
-
-  names(out) <- dim_names[[1]]
-
-  out <- seasonder_initSeaSondeRCS_FORFromHeader(seasonder_cs_obj, out)
-
-
-
-
-  return(out)
-
-
-}
-
 
 
 
