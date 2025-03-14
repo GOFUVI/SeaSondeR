@@ -87,7 +87,11 @@ abs(off_P) %>% prod()/abs(diag(P)) %>% prod()
   # str(seasonder_apm_obj, list.len = 18)
   # sink()
 
+range_info <- seasonder_exportRangeInfo(seasonder_cs_obj)
+
 test <- seasonder_exportRadialMetrics(seasonder_cs_obj)
+
+
 
 c_names <- c("LOND","LATD","VELU","VELV","VFLG","XDST","YDST","RNGE","BEAR","VELO","HEAD","SPRC","SPDC","MSEL","MSA1","MDA1","MDA2","MEGR","MPKR","MOFR","MSAD","MA13","MP13","MA23","MP23","MSP1","MDP1","MDP2","MSW1","MDW1","MDW2","MSR1","MDR1","MDR2","MA1S","MA2S","MA3S","MEI1","MEI2","MEI3","MSPK","MDPK","MDRJ")
 

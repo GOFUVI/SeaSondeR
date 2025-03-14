@@ -4,7 +4,7 @@
 \alias{seasonder_computeNoiseLevel}
 \title{Compute Noise Level for First Order Region (FOR) Processing}
 \usage{
-seasonder_computeNoiseLevel(seasonder_cs_obj)
+seasonder_computeNoiseLevel(seasonder_cs_obj, antenna = 3)
 }
 \arguments{
 \item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}

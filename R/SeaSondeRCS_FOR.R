@@ -410,10 +410,12 @@ seasonder_setSeaSondeRCS_FOR_MAXP.bin <- function(seasonder_cs_obj, FOR_MAXP.bin
 }
 
 
-seasonder_setSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, NoiseLevel) {
+seasonder_setSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, NoiseLevel, antenna = 3) {
 
   # TODO: validate
-  attr(seasonder_cs_obj, "NoiseLevel") <- NoiseLevel
+  updated_NoiseLevel <- attr(seasonder_cs_obj, "NoiseLevel", exact = TRUE) %||% list(numeric(0), numeric(0), numeric(0))
+  updated_NoiseLevel[antenna] <- NoiseLevel
+  attr(seasonder_cs_obj, "NoiseLevel") <- updated_NoiseLevel
 
 
   return(seasonder_cs_obj)
@@ -540,10 +542,10 @@ seasonder_getSeaSondeRCS_FOR_method  <- function(seasonder_cs_obj) {
 
 }
 
-seasonder_getSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, dB = TRUE) {
+seasonder_getSeaSondeRCS_NoiseLevel <- function(seasonder_cs_obj, dB = TRUE, antenna = 3) {
 
 
-  out <- attr(seasonder_cs_obj, "NoiseLevel", exact = TRUE) %||% numeric(0)
+  out <- attr(seasonder_cs_obj, "NoiseLevel", exact = TRUE)[[antenna]] %||% numeric(0)
   if (length(out) > 0 && dB) {
 
     out <- seasonder_SelfSpectra2dB(seasonder_cs_obj = seasonder_cs_obj, out)
@@ -704,7 +706,7 @@ seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_obj) {
 #' # Compute noise level for a SeaSondeRCS object
 #' cs_obj <- seasonder_computeNoiseLevel(cs_obj)
 #' }
-seasonder_computeNoiseLevel <- function(seasonder_cs_obj) {
+seasonder_computeNoiseLevel <- function(seasonder_cs_obj, antenna = 3) {
 
   # Retrieve the normalized Doppler frequency limits for noise reference
   normalized_doppler_range <- seasonder_getSeaSondeRCS_FOR_parameters(seasonder_cs_obj)$reference_noise_normalized_limits
@@ -735,23 +737,31 @@ seasonder_computeNoiseLevel <- function(seasonder_cs_obj) {
     negative_doppler_range[1] <- 1
   }
 
-  # Extract self-spectra (SSA3) for the defined Doppler ranges
-  SS3 <- seasonder_getSeaSondeRCS_SelfSpectra(
+
+  avg_noise <-  seasonder_computeSeaSondeRCSAntennaNoise(seasonder_cs_obj, antenna,negative_doppler_range, positive_doppler_range)
+
+  # Store the computed noise level in the object's attributes
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_NoiseLevel(avg_noise, antenna)
+
+  return(seasonder_cs_obj)
+}
+
+
+seasonder_computeSeaSondeRCSAntennaNoise <- function(seasonder_cs_obj, antenna,negative_doppler_range, positive_doppler_range){
+  # Extract self-spectra (SS) for the defined Doppler ranges
+  SS <- seasonder_getSeaSondeRCS_SelfSpectra(
     seasonder_cs_obj,
-    antennae = 3,
+    antennae = antenna,
     doppler_ranges = list(negative = negative_doppler_range, positive = positive_doppler_range),
     collapse = TRUE
   )
 
   # Compute the average noise level by taking the mean across the concatenated positive and negative regions
-  avg_noise <- cbind(SS3[[1]], SS3[[2]]) %>% rowMeans()
+  avg_noise <- cbind(SS[[1]], SS[[2]]) %>% rowMeans()
 
-  # Store the computed noise level in the object's attributes
-  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_NoiseLevel(avg_noise)
+  return(avg_noise)
 
-  return(seasonder_cs_obj)
 }
-
 
 #' Smooth Self-Spectra for First Order Region (FOR)
 #'

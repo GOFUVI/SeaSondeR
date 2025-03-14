@@ -2233,7 +2233,7 @@ seasonder_MUSICExtractDOASolutions <- function(projections, valid_bearings, seas
       limits_3db[2] <- min(limits_3db[2]+1,length(bearings))
         dual_peaks_width[i] <- abs(diff(bearings[limits_3db]))
     }
-      
+
       out$dual$bearing <- dual_bearings
 
 
@@ -2527,6 +2527,10 @@ seasonder_runMUSIC <- function(seasonder_cs_object){
 
   # Create a copy of the input object to store the results of the processing.
   out <- seasonder_cs_object
+
+out %<>% seasonder_computeNoiseLevel(antenna = 1)
+out %<>% seasonder_computeNoiseLevel(antenna = 2)
+out %<>% seasonder_computeNoiseLevel(antenna = 3)
 
   # Update the processing steps to indicate the start of the MUSIC algorithm.
   out %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_MUSIC_start_step_text())
@@ -3046,6 +3050,18 @@ out <- out + as.integer(!music$P4_check) * 8
 }
 
 
+seasonder_exportRangeInfo <- function(seasonder_cs_object){
+
+  cols <- c("RNGC", "NF01", "NF02", "NF03", "ALM1", "ALM2", "ALM3", "ALM4", "NVSC", "NVDC", "NVAC")
+
+  rm <- seasonder_exportRadialMetrics(seasonder_cs_object)
+
+  NF01 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1)
+  NF02 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 2)
+  NF03 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 3)
+rc <- rm %>% dplyr::mutate(is_single = MSEL == 1, is_dual = MSEL >1) %>% dplyr::summarise(NVSC = sum(is_single), NVDC = sum(is_dual),.by = c(SPRC, RNGE))
+browser()
+}
 
 #' @export
 seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
@@ -3057,12 +3073,14 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
   # Define the expected 34 columns
   cols <- c("LOND", "LATD", "VELU", "VELV", "VFLG", "RNGE", "BEAR", "VELO", "HEAD",
             "SPRC", "SPDC", "MSEL", "MSA1", "MDA1", "MDA2", "MEGR", "MPKR", "MOFR",
+            "MSAD", "MA13", "MP13", "MA23", "MP23",
             "MSP1", "MDP1", "MDP2", "MSW1", "MDW1", "MDW2", "MSR1", "MDR1", "MDR2",
             "MA1S", "MA2S", "MA3S", "MEI1", "MEI2", "MEI3", "MDRJ")
 
   # List to collect output rows
   out_rows <- list()
 
+  data <- seasonder_getSeaSondeRCS_data(seasonder_cs_obj)
   # Iterate over each row of the MUSIC table
   for (i in seq_len(nrow(music))) {
     row_music <- music[i, ]
@@ -3121,6 +3139,18 @@ row_template$MDRJ <- seasonder_computeMDRJ(row_music)
       row_template$MDP2 <- as.numeric(10*log10(abs(ds_all$dual$P[2,2])))
 
     }
+    row_template$MP13 <-  Arg(row_music$cov[[1]][1,3])*180/pi
+    row_template$MP23 <-  Arg(row_music$cov[[1]][2,3])*180/pi
+    # row_template$MA13 <-  abs(row_music$cov[[1]][1,3])#abs(row_music$cov[[1]][1,1])/abs(row_music$cov[[1]][3,3])
+    # row_template$MA23 <-  abs(row_music$cov[[1]][2,3])#abs(row_music$cov[[1]][2,2])/abs(row_music$cov[[1]][3,3])
+row_template$MA3S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][3,3])) -
+(seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 3))
+
+row_template$MA2S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][2,2])) -
+  (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 2))
+
+row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][1,1])) -
+  (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1))
 
 
     # Check for DOA solutions and output all available ones: single and dual
