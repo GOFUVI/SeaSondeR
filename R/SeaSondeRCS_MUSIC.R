@@ -3070,11 +3070,11 @@ seasonder_computeMDRJ <- function(music){
 
 out <- out + as.integer(!music$P1_check) * 1
 
-out <- out + as.integer(!music$P2_check) * 2
+out <- out + as.integer(!music$P2_check) * 2 * as.integer(music$P0_check)
 
-out <- out + as.integer(!music$P3_check) * 4
+out <- out + as.integer(!music$P3_check) * 4 * as.integer(music$P0_check)
 
-out <- out + as.integer(!music$P4_check) * 8
+out <- out + as.integer(!music$P4_check) * 8 * as.integer(music$P0_check)
 
 out <- out + as.integer(!music$P0_check) * 16
 

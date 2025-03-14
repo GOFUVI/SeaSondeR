@@ -57,7 +57,7 @@ library(magrittr)
 
   MUSIC <-   seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
 
-  check_doppler_cell <- MUSIC %>% dplyr::filter(range_cell == 2 & doppler_bin == 699) %>% as.list()
+  check_doppler_cell <- MUSIC %>% dplyr::filter(range_cell == 14 & doppler_bin == 778) %>% as.list()
   (1/(check_doppler_cell$projections[[1]]["dual",] %>% abs())) %>% plot()
   (10*log10(1/(check_doppler_cell$projections[[1]]["dual",] %>% abs()))) %>% plot()
 
@@ -107,7 +107,7 @@ target <- read.table("tests/testthat/data/SUNS/RadialMetric/RDLw_SUNS_2025_02_17
 
 check <- dplyr::full_join(target %>% dplyr::mutate(id = "target") ,test %>% dplyr::mutate(id = "test",VELO = round(VELO*100,digits = 3)), by = c("SPRC","SPDC","MSEL","BEAR", "VELO"))
 
-check_view <- check %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC","SPDC","MSEL","BEAR", "VELO")), dplyr::starts_with("MA1S"), dplyr::starts_with("MA2S"), dplyr::starts_with("MA3S")) %>% dplyr::arrange(SPRC,SPDC)
+check_view <- check %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC","SPDC","MSEL","BEAR", "VELO")), dplyr::starts_with("MDRJ")) %>% dplyr::arrange(SPRC,SPDC)
 
 check_view_not_matched <-  check_view %>% dplyr::filter(is.na(id.x) | is.na(id.y)) %>% dplyr::arrange(SPRC,SPDC)# %>% dplyr::mutate(MDR1.y = round(MDR1.y,1),MDR2.x = round(MDR2.x,1),MDR2.y = round(MDR2.y,1))
 
