@@ -1330,6 +1330,29 @@ seasonder_MUSIC_Bins2DopplerFreq <- function(seasonder_cs_obj, bins) {
 #### Dual solution tests ####
 
 
+seasonder_MUSICCheckTwoSolutions <- function(seasonder_cs_object){
+
+  # Extract MUSIC data from the object
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+  # Compute the ratio of signal powers for dual-bearing solutions
+  MUSIC %<>% dplyr::mutate(P0_check = purrr::map_dbl(DOA_solutions,\(DOA_sol){
+
+   out <- length(DOA_sol$dual$bearing) == 2
+    return(out)
+  }), .before = "P1_check")
+
+  # Mark solutions that fail the P0 test as "single"
+  MUSIC$retained_solution[!MUSIC$P0_check] <- "single"
+
+  # Update the MUSIC data in the object
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+  # Return the modified object
+  return(seasonder_cs_object)
+
+}
+
 #' Validate Eigenvalue Ratio Using MUSIC Algorithm
 #'
 #' This function implements the P1 test for solutions derived using the MUSIC algorithm.
@@ -1589,8 +1612,12 @@ seasonder_MUSICCheckBearingDistance <- function(seasonder_cs_object){
 #' }
 seasonder_MUSICTestDualSolutions <- function(seasonder_cs_object) {
 
+
+
   # Log the start of the dual solutions testing process
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_dual_solutions_testing_start_step_text())
+
+  seasonder_cs_object %<>% seasonder_MUSICCheckTwoSolutions()
 
   # Apply the P1 test to validate eigenvalue ratios
   seasonder_cs_object %<>% seasonder_MUSICCheckEigenValueRatio()
@@ -3049,6 +3076,8 @@ out <- out + as.integer(!music$P3_check) * 4
 
 out <- out + as.integer(!music$P4_check) * 8
 
+out <- out + as.integer(!music$P0_check) * 16
+
 
   return(out)
 
@@ -3086,7 +3115,7 @@ return(out)
 }
 
 #' @export
-seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
+seasonder_exportRadialMetrics <- function(seasonder_cs_object, SNR_threshold = -Inf) {
   # Obtain the MUSIC table using the function seasonder_getSeaSondeRCS_MUSIC from the global environment. This allows the function to be overridden using local_redefs.
   music <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
@@ -3215,6 +3244,6 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
     result <- data.frame(matrix(ncol = length(cols), nrow = 0))
     colnames(result) <- cols
   }
-
+result %<>% dplyr::filter(MA3S > SNR_threshold & (MA1S > SNR_threshold | MA2S > SNR_threshold))
   return(result)
 }

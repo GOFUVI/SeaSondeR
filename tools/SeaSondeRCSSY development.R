@@ -91,9 +91,10 @@ range_info <- seasonder_exportRangeInfo(seasonder_cs_obj)
 
 
 
-test <- seasonder_exportRadialMetrics(seasonder_cs_obj)
+test_or <- seasonder_exportRadialMetrics(seasonder_cs_obj, SNR_threshold = 6)
 
-test %<>% dplyr::filter(MA3S >5 | (MA1S > 5 & MA2S > 5))
+test <- test_or
+
 
 c_names <- c("LOND","LATD","VELU","VELV","VFLG","XDST","YDST","RNGE","BEAR","VELO","HEAD","SPRC","SPDC","MSEL","MSA1","MDA1","MDA2","MEGR","MPKR","MOFR","MSAD","MA13","MP13","MA23","MP23","MSP1","MDP1","MDP2","MSW1","MDW1","MDW2","MSR1","MDR1","MDR2","MA1S","MA2S","MA3S","MEI1","MEI2","MEI3","MSPK","MDPK","MDRJ")
 
@@ -106,20 +107,14 @@ target <- read.table("tests/testthat/data/SUNS/RadialMetric/RDLw_SUNS_2025_02_17
 
 check <- dplyr::full_join(target %>% dplyr::mutate(id = "target") ,test %>% dplyr::mutate(id = "test",VELO = round(VELO*100,digits = 3)), by = c("SPRC","SPDC","MSEL","BEAR", "VELO"))
 
+check_view <- check %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC","SPDC","MSEL","BEAR", "VELO")), dplyr::starts_with("MA1S"), dplyr::starts_with("MA2S"), dplyr::starts_with("MA3S")) %>% dplyr::arrange(SPRC,SPDC)
 
+check_view_not_matched <-  check_view %>% dplyr::filter(is.na(id.x) | is.na(id.y)) %>% dplyr::arrange(SPRC,SPDC)# %>% dplyr::mutate(MDR1.y = round(MDR1.y,1),MDR2.x = round(MDR2.x,1),MDR2.y = round(MDR2.y,1))
 
-single_check <- check %>% dplyr::filter(MSEL == 1)
-
-dual_check_1 <- check %>% dplyr::filter(MSEL == 2)
-
-dual_check_2 <- check %>% dplyr::filter(MSEL == 3)
 
 
 not_matched <- check %>% dplyr::filter(is.na(id.x) | is.na(id.y)) %>% dplyr::arrange(SPRC, SPDC) %>% dplyr::mutate(r_id = paste(SPRC,SPDC,sep = "_"))
 
-
-target %>% dplyr::filter(SPRC == 2 & SPDC == 696)
-test %>% dplyr::filter(SPRC == 2 & SPDC == 696)
 
 not_matched_MDRJ_4 <- not_matched %>% dplyr::filter(MDRJ.x == 4 | MDRJ.y == 4) %>% dplyr::arrange(SPRC, SPDC)
 
@@ -143,21 +138,17 @@ cat(not_matched_test/nrow(test)*100)
  dplyr::full_join(not_matched %>% dplyr::select(SPRC, SPDC,MDRJ.x) %>% dplyr::filter(!is.na(MDRJ.x)) %>% dplyr::distinct(),
  not_matched %>% dplyr::select(SPRC, SPDC, MDRJ.y)  %>% dplyr::filter(!is.na(MDRJ.y)) %>% dplyr::distinct()) %>% dplyr::filter(complete.cases(.)) %>% dplyr::select(dplyr::starts_with("MDRJ")) %>% table()
 
- #### MJDR ####
 
-MDRJ <- not_matched_MDRJ_non_4 %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC","SPDC","MSEL","BEAR", "VELO")), dplyr::starts_with("MDRJ"))
 
-#### MOFR ####
 
-MOFR <- check %>% dplyr::select(id.x,id.y,dplyr::one_of(c("SPRC","SPDC","MSEL","BEAR", "VELO")), dplyr::starts_with("MA1S"), dplyr::starts_with("MA2S"), dplyr::starts_with("MA3S")) %>% dplyr::arrange(SPRC,SPDC)
 
-MOFR_not_matched <-  MOFR %>% dplyr::filter(is.na(id.x) | is.na(id.y)) %>% dplyr::arrange(SPRC,SPDC)# %>% dplyr::mutate(MDR1.y = round(MDR1.y,1),MDR2.x = round(MDR2.x,1),MDR2.y = round(MDR2.y,1))
 
-test %>% dplyr::filter(SPRC == 2 & SPDC == 696)
+
 
 #### single_check ####
 
 
+single_check <- check %>% dplyr::filter(MSEL == 1)
 
 summary(single_check$MEI1.x)
 
@@ -185,5 +176,7 @@ table(abs(single_check$MDR2.x - single_check$MDR2.y) <1e-1)
 
 #### dual check ####
 
+dual_check_1 <- check %>% dplyr::filter(MSEL == 2)
 
+dual_check_2 <- check %>% dplyr::filter(MSEL == 3)
 
