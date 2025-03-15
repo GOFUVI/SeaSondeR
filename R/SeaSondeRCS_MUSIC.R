@@ -389,6 +389,9 @@ seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = N
       freq = seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_object)[doppler_bin],
       radial_v = seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(seasonder_cs_object)[doppler_bin],
       cov = list(seasonder_MUSICInitCov()),
+      MAS1 = NA_real_,
+      MAS2 = NA_real_,
+      MAS3 = NA_real_,
       eigen = list(seasonder_MUSICInitEigenDecomp()),
       projections = list(seasonder_MUSICInitProjections()),
       DOA_solutions = list(seasonder_MUSICInitDOASolutions()),
@@ -1521,10 +1524,9 @@ seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
   MUSIC %<>% dplyr::mutate(diag_off_diag_power_ratio = purrr::map_dbl(DOA_solutions,\(DOA_sol){
     out <- NA_real_
     if(length(DOA_sol$dual$bearing) == 2){
-      P_diag <- abs(diag(DOA_sol$dual$P)) %>% prod()
-      P_off_diag <- DOA_sol$dual$P
-      diag(P_off_diag) <- 1
-      P_off_diag <- abs(P_off_diag) %>% prod()
+      P <- DOA_sol$dual$P
+      P_diag <- abs(diag(P)) %>% prod()
+      P_off_diag <- abs(P[1,2])^2
       out <- P_off_diag/P_diag
     }
     return(out)
@@ -1889,6 +1891,34 @@ seasonder_MUSICComputeCov <- function(seasonder_cs_object) {
   return(seasonder_cs_object)
 }
 
+seasonder_computeSignalSNRForAntenna <- function(seasonder_cs_object, C, antenna, range_cell) {
+  (seasonder_SelfSpectra2dB(seasonder_cs_object, C[antenna,antenna])) -
+    (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = antenna))[range_cell]
+}
+
+seasonder_computeSignalSNR <- function(seasonder_cs_object){
+
+
+  # Retrieve the MUSIC data object from the input
+  MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+
+  MUSIC %<>% dplyr::mutate(MA1S = purrr::map_dbl(cov, range_cell ,\(C, rc) seasonder_computeSignalSNRForAntenna(seasonder_cs_object, C, 1, rc)),
+                           MA2S = purrr::map_dbl(cov, range_cell ,\(C, rc) seasonder_computeSignalSNRForAntenna(seasonder_cs_object, C, 2, rc)),
+                           MA3S = purrr::map_dbl(cov, range_cell ,\(C, rc) seasonder_computeSignalSNRForAntenna(seasonder_cs_object, C, 3, rc)))
+
+
+
+  # Update the MUSIC data object with the computed covariance matrices
+  seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
+
+
+  return(seasonder_cs_object)
+
+}
+
+seasonder_SNRFilter <- function(seasonder_cs_object){
+
+}
 
 seasonder_eigen_decomp_C <- function(C){
   # Initialize an empty list to store the eigen decomposition results
@@ -2559,11 +2589,15 @@ out %<>% seasonder_computeNoiseLevel(antenna = 1)
 out %<>% seasonder_computeNoiseLevel(antenna = 2)
 out %<>% seasonder_computeNoiseLevel(antenna = 3)
 
+out %<>% seasonder_computeSignalSNR()
+
   # Update the processing steps to indicate the start of the MUSIC algorithm.
   out %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_MUSIC_start_step_text())
 
   # Compute the covariance matrix from the cross-spectrum data.
   out %<>% seasonder_MUSICComputeCov()
+
+  out %<>% seasonder_SNRFilter()
 
   # Perform eigen decomposition of the covariance matrix.
   out %<>% seasonder_MUSICCovDecomposition()
