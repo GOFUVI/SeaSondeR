@@ -4,10 +4,10 @@
 \alias{seasonder_extractFOR}
 \title{Extract First Order Region (FOR) Spectral Data}
 \usage{
-seasonder_extractFOR(seasonder_cs_obj, spectrum, FOR)
+seasonder_extractFOR(seasonder_cs_object, spectrum, FOR)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the spectral data.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the spectral data.}
 
 \item{spectrum}{A numeric matrix representing the self-spectra data for a single range cell.}
 

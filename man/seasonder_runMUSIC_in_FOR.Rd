@@ -4,7 +4,7 @@
 \alias{seasonder_runMUSIC_in_FOR}
 \title{Run MUSIC Algorithm on FOR Data}
 \usage{
-seasonder_runMUSIC_in_FOR(seasonder_cs_object, doppler_interpolation = 2L)
+seasonder_runMUSIC_in_FOR(seasonder_cs_object, doppler_interpolation = 2L, ...)
 }
 \arguments{
 \item{seasonder_cs_object}{A SeaSondeRCS object containing cross-spectrum data and initialized First Order Regions (FOR).}

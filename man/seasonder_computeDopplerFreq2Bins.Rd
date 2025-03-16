@@ -5,7 +5,7 @@
 \title{Convert Doppler Frequencies to Doppler Bins}
 \usage{
 seasonder_computeDopplerFreq2Bins(
-  seasonder_cs_obj,
+  seasonder_cs_object,
   doppler_values,
   doppler_freqs,
   delta_freq,
@@ -13,7 +13,7 @@ seasonder_computeDopplerFreq2Bins(
 )
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeR} cross-spectral object.}
+\item{seasonder_cs_object}{A \code{SeaSondeR} cross-spectral object.}
 
 \item{doppler_values}{A numeric vector specifying the Doppler frequencies to be converted into bin indices.}
 

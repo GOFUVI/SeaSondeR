@@ -5,7 +5,7 @@
 \title{returns a list of power spectra for each combination of antenna, dist_range and doppler_range}
 \usage{
 seasonder_getSeaSondeRCS_SelfSpectra(
-  seasonder_cs_obj,
+  seasonder_cs_object,
   antennae,
   dist_ranges = NULL,
   doppler_ranges = NULL,

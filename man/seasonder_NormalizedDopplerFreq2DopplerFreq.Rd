@@ -4,10 +4,13 @@
 \alias{seasonder_NormalizedDopplerFreq2DopplerFreq}
 \title{Convert Normalized Doppler Frequencies to Doppler Frequencies}
 \usage{
-seasonder_NormalizedDopplerFreq2DopplerFreq(seasonder_cs_obj, doppler_values)
+seasonder_NormalizedDopplerFreq2DopplerFreq(
+  seasonder_cs_object,
+  doppler_values
+)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.}
+\item{seasonder_cs_object}{A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.}
 
 \item{doppler_values}{A numeric vector specifying the normalized Doppler frequencies to be converted into Doppler frequencies (Hz).}
 }

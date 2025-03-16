@@ -4,10 +4,10 @@
 \alias{seasonder_getSeaSondeRCS_dataMatrix}
 \title{Retrieve a Specific Data Matrix from a SeaSondeRCS Object}
 \usage{
-seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_obj, matrix_name)
+seasonder_getSeaSondeRCS_dataMatrix(seasonder_cs_object, matrix_name)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSondeRCS object containing the spectral data.}
+\item{seasonder_cs_object}{A SeaSondeRCS object containing the spectral data.}
 
 \item{matrix_name}{A string specifying the name of the matrix to retrieve. Must be one of:
 \itemize{

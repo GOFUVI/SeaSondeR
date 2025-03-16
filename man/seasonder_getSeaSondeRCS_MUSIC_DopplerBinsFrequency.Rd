@@ -5,12 +5,12 @@
 \title{Calculate Doppler Bins Frequencies for MUSIC Analysis}
 \usage{
 seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(
-  seasonder_cs_obj,
+  seasonder_cs_object,
   normalized = FALSE
 )
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the data and parameters
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the data and parameters
 for MUSIC analysis.}
 
 \item{normalized}{Logical. If \code{TRUE}, the returned frequencies are normalized by the

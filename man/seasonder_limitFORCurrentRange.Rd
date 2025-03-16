@@ -4,10 +4,10 @@
 \alias{seasonder_limitFORCurrentRange}
 \title{Limit First Order Region (FOR) Based on Maximum Radial Velocity}
 \usage{
-seasonder_limitFORCurrentRange(seasonder_cs_obj)
+seasonder_limitFORCurrentRange(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
 }
 \value{
 The updated \code{SeaSondeRCS} object with the FOR bins filtered based on maximum velocity.
@@ -21,7 +21,7 @@ corresponding radial velocity exceeds a predefined maximum threshold.
 \enumerate{
 \item \strong{Retrieve Maximum Velocity Threshold:}
 \itemize{
-\item Extracts the \code{currmax} parameter from \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}}.
+\item Extracts the \code{currmax} parameter from \code{\link{seasonder_getFOR_parameters}}.
 }
 \item \strong{Obtain Current FOR Detection Results:}
 \itemize{

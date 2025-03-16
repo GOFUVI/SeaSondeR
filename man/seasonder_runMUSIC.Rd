@@ -4,7 +4,11 @@
 \alias{seasonder_runMUSIC}
 \title{Execute the MUSIC Algorithm on a SeaSondeRCS Object}
 \usage{
-seasonder_runMUSIC(seasonder_cs_object)
+seasonder_runMUSIC(
+  seasonder_cs_object,
+  doppler_interpolation = 2L,
+  discard = c("low_SNR", "no_solution")
+)
 }
 \arguments{
 \item{seasonder_cs_object}{A \code{SeaSondeRCS} object that contains the radar cross-spectrum data

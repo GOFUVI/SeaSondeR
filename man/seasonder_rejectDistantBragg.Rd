@@ -4,10 +4,10 @@
 \alias{seasonder_rejectDistantBragg}
 \title{Apply Distant Bragg Peak Rejection to All Range Cells}
 \usage{
-seasonder_rejectDistantBragg(seasonder_cs_obj)
+seasonder_rejectDistantBragg(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the spectral data and FOR parameters.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the spectral data and FOR parameters.}
 }
 \value{
 The updated \code{SeaSondeRCS} object with the filtered FOR bins.

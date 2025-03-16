@@ -4,10 +4,10 @@
 \alias{seasonder_computeFORs}
 \title{Compute First Order Regions (FOR) Based on Selected Method}
 \usage{
-seasonder_computeFORs(seasonder_cs_obj, method = NULL, FOR_control = NULL)
+seasonder_computeFORs(seasonder_cs_object, method = NULL, FOR_control = NULL)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the spectral data and FOR parameters.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the spectral data and FOR parameters.}
 
 \item{method}{Optional; A character string specifying the method to be used for FOR computation.
 Defaults to \code{NULL}, in which case the method stored in the object is used.
@@ -63,6 +63,6 @@ cs_obj <- seasonder_computeFORs(cs_obj, FOR_control = FOR_control)
 \itemize{
 \item \code{\link{seasonder_computeFORsSeaSondeMethod}} for processing FORs using the SeaSonde method.
 \item \code{\link{seasonder_setSeaSondeRCS_FOR_method}} for setting the processing method.
-\item \code{\link{seasonder_setSeaSondeRCS_FOR_parameters}} for configuring FOR parameters.
+\item \code{\link{seasonder_setFOR_parameters}} for configuring FOR parameters.
 }
 }

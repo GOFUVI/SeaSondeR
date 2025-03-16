@@ -4,10 +4,10 @@
 \alias{seasonder_getBinsRadialVelocity}
 \title{Calculate Radial Velocities for Each Doppler Bin}
 \usage{
-seasonder_getBinsRadialVelocity(seasonder_cs_obj)
+seasonder_getBinsRadialVelocity(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSondeRCS object created using \code{seasonder_createSeaSondeRCS}. This object
+\item{seasonder_cs_object}{A SeaSondeRCS object created using \code{seasonder_createSeaSondeRCS}. This object
 contains the necessary data for calculating the Doppler bins frequencies and, subsequently, radial velocities.}
 }
 \value{

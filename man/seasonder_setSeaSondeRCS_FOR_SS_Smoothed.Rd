@@ -4,10 +4,10 @@
 \alias{seasonder_setSeaSondeRCS_FOR_SS_Smoothed}
 \title{Set Smoothed Self-Spectra for First Order Region (FOR)}
 \usage{
-seasonder_setSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_obj, FOR_SS_Smoothed)
+seasonder_setSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_object, FOR_SS_Smoothed)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object to which the smoothed FOR self-spectra will be assigned.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object to which the smoothed FOR self-spectra will be assigned.}
 
 \item{FOR_SS_Smoothed}{A matrix containing the smoothed self-spectra data.}
 }

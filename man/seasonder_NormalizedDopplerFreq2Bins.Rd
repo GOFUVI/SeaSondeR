@@ -4,10 +4,10 @@
 \alias{seasonder_NormalizedDopplerFreq2Bins}
 \title{Convert Normalized Doppler Frequencies to Doppler Bins}
 \usage{
-seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_obj, doppler_values)
+seasonder_NormalizedDopplerFreq2Bins(seasonder_cs_object, doppler_values)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.}
+\item{seasonder_cs_object}{A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.}
 
 \item{doppler_values}{A numeric vector specifying the normalized Doppler frequencies to be converted into bin indices.}
 }

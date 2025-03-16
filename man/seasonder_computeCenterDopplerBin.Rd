@@ -4,10 +4,10 @@
 \alias{seasonder_computeCenterDopplerBin}
 \title{Compute the Center Doppler Bin}
 \usage{
-seasonder_computeCenterDopplerBin(seasonder_cs_obj, nDoppler)
+seasonder_computeCenterDopplerBin(seasonder_cs_object, nDoppler)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing metadata about
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing metadata about
 Doppler bins and other radar parameters.}
 
 \item{nDoppler}{An integer representing the total number of Doppler bins.}

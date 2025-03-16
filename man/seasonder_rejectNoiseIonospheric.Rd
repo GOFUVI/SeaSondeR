@@ -4,10 +4,10 @@
 \alias{seasonder_rejectNoiseIonospheric}
 \title{Apply Noise/Ionospheric Contamination Test to All Bragg Peaks}
 \usage{
-seasonder_rejectNoiseIonospheric(seasonder_cs_obj)
+seasonder_rejectNoiseIonospheric(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the spectral data and FOR parameters.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the spectral data and FOR parameters.}
 }
 \value{
 The updated \code{SeaSondeRCS} object with the filtered FOR bins.

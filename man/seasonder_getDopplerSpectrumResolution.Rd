@@ -4,10 +4,10 @@
 \alias{seasonder_getDopplerSpectrumResolution}
 \title{Calculate the Doppler Spectrum Resolution}
 \usage{
-seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
+seasonder_getDopplerSpectrumResolution(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the necessary data
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the necessary data
 and metadata for Doppler spectrum analysis.}
 }
 \value{

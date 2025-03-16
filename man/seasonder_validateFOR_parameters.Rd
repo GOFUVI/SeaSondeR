@@ -5,13 +5,13 @@
 \title{Validate First Order Region (FOR) Parameters}
 \usage{
 seasonder_validateFOR_parameters(
-  seasonder_cs_obj,
+  seasonder_cs_object,
   FOR_parameters,
   method = "SeaSonde"
 )
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing metadata about the Doppler spectrum.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing metadata about the Doppler spectrum.}
 
 \item{FOR_parameters}{A named list containing the parameters for first-order region detection.}
 

@@ -4,10 +4,10 @@
 \alias{seasonder_getSeaSondeRCS_headerField}
 \title{Retrieve a Specific Field from a SeaSondeRCS Header}
 \usage{
-seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, field)
+seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, field)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSondeRCS object.}
+\item{seasonder_cs_object}{A SeaSondeRCS object.}
 
 \item{field}{A string specifying the field name to retrieve from the header.}
 }

@@ -4,10 +4,10 @@
 \alias{seasonder_setSeaSondeRCS_FOR_MAXP.bin}
 \title{Set Maximum Power Bin Indices for First Order Region (FOR)}
 \usage{
-seasonder_setSeaSondeRCS_FOR_MAXP.bin(seasonder_cs_obj, FOR_MAXP.bin)
+seasonder_setSeaSondeRCS_FOR_MAXP.bin(seasonder_cs_object, FOR_MAXP.bin)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object to which the \code{MAXP.bin} values will be assigned.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object to which the \code{MAXP.bin} values will be assigned.}
 
 \item{FOR_MAXP.bin}{A list containing the Doppler bin indices of the maximum power for each range cell.}
 }

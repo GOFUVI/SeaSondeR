@@ -4,10 +4,10 @@
 \alias{seasonder_SmoothFORSS}
 \title{Smooth Self-Spectra for First Order Region (FOR)}
 \usage{
-seasonder_SmoothFORSS(seasonder_cs_obj)
+seasonder_SmoothFORSS(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing self-spectra data.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing self-spectra data.}
 }
 \value{
 The input \code{SeaSondeRCS} object with the smoothed self-spectra stored as an attribute.
@@ -19,7 +19,7 @@ The smoothed self-spectra are stored as an attribute within the object.
 }
 \details{
 The function retrieves the default Doppler smoothing factor (\code{nsm}) from
-\code{\link{seasonder_getSeaSondeRCS_FOR_parameters}} and applies the smoothing operation
+\code{\link{seasonder_getFOR_parameters}} and applies the smoothing operation
 using \code{\link{seasonder_SmoothSS}} on the self-spectra of antenna 3.
 
 \strong{Steps:}
@@ -43,6 +43,6 @@ cs_obj <- seasonder_SmoothFORSS(cs_obj)
 \itemize{
 \item \code{\link{seasonder_SmoothSS}} for performing the smoothing operation.
 \item \code{\link{seasonder_setSeaSondeRCS_FOR_SS_Smoothed}} for storing the smoothed self-spectra.
-\item \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}} for retrieving default \code{nsm} values.
+\item \code{\link{seasonder_getFOR_parameters}} for retrieving default \code{nsm} values.
 }
 }

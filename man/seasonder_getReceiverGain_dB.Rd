@@ -4,10 +4,10 @@
 \alias{seasonder_getReceiverGain_dB}
 \title{Retrieve Receiver Gain in Decibels}
 \usage{
-seasonder_getReceiverGain_dB(seasonder_cs_obj)
+seasonder_getReceiverGain_dB(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing header information
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing header information
 about the radar system.}
 }
 \value{

@@ -4,10 +4,10 @@
 \alias{seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity}
 \title{Retrieve Radial Velocities for MUSIC Doppler Bins}
 \usage{
-seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(seasonder_cs_obj)
+seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSondeRCS object representing the cross-spectral data structure.
+\item{seasonder_cs_object}{A SeaSondeRCS object representing the cross-spectral data structure.
 It contains necessary metadata and Doppler frequency information.}
 }
 \value{
@@ -29,8 +29,8 @@ analyses or visualizations.
 }
 \examples{
 \dontrun{
-# Assuming `seasonder_cs_obj` is a valid SeaSondeRCS object
-radial_velocities <- seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(seasonder_cs_obj)
+# Assuming `seasonder_cs_object` is a valid SeaSondeRCS object
+radial_velocities <- seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(seasonder_cs_object)
 print(radial_velocities)
 }
 }
