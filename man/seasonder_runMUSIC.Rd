@@ -7,7 +7,8 @@
 seasonder_runMUSIC(
   seasonder_cs_object,
   doppler_interpolation = 2L,
-  discard = c("low_SNR", "no_solution")
+  discard = c("low_SNR", "no_solution"),
+  options = seasonder_defaultMUSIC_options()
 )
 }
 \arguments{

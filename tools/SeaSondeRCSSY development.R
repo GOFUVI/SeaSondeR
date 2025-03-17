@@ -51,7 +51,8 @@ library(magrittr)
 
   seasonder_cs_obj <- seasonder_createSeaSondeRCS(filepath, seasonder_apm_object = seasonder_apm_obj)
 
-  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 2L)
+
+  seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 2L, options = list(PPMIN = 5, PWMAX = 50))
 
 
 
@@ -91,7 +92,7 @@ range_info <- seasonder_exportRangeInfo(seasonder_cs_obj)
 
 
 
-test_or <- seasonder_exportRadialMetrics(seasonder_cs_obj, SNR_threshold = 6)
+test_or <- seasonder_exportRadialMetrics(seasonder_cs_obj)
 
 test <- test_or
 
