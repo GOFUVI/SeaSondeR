@@ -1952,7 +1952,7 @@ seasonder_computeSignalSNR <- function(seasonder_cs_object){
 
 }
 
-seasonder_SNRCheck <- function(seasonder_cs_object, filter = T){
+seasonder_SNRCheck <- function(seasonder_cs_object, discard_low_SNR  = T){
 
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
   noisefact <- seasonder_getFOR_noisefact(seasonder_cs_object)
@@ -1961,11 +1961,12 @@ seasonder_SNRCheck <- function(seasonder_cs_object, filter = T){
 
   passes_SNR_check <- function(MA1S,MA2S,MA3S, SNR_threshold)  MA3S >= SNR_threshold & (MA1S >= SNR_threshold | MA2S >= SNR_threshold)
 
-  if(filter){
-    MUSIC %<>% dplyr::mutate(VFLG = VFLG + 64L * as.integer(!passes_SNR_check(MA1S,MA2S,MA3S, SNR_threshold)))
+  if(discard_low_SNR){
 
+    MUSIC %<>% dplyr::filter(passes_SNR_check(MA1S,MA2S,MA3S, SNR_threshold))
   }else{
-    MUSIC %<>% dplyr::filter(passes_SNR_check(MA1S,MA2S,MA2S, SNR_threshold))
+
+    MUSIC %<>% dplyr::mutate(VFLG = VFLG + 64L * as.integer(!passes_SNR_check(MA1S,MA2S,MA3S, SNR_threshold)))
 
   }
 
@@ -2718,7 +2719,7 @@ seasonder_runMUSIC <- function(seasonder_cs_object, doppler_interpolation = 2L, 
 
 
 
-  out %<>% seasonder_SNRCheck(filter = "low_SNR" %in% discard)
+  out %<>% seasonder_SNRCheck(discard_low_SNR = "low_SNR" %in% discard)
 
   # Perform eigen decomposition of the covariance matrix.
   out %<>% seasonder_MUSICCovDecomposition()
@@ -2749,6 +2750,8 @@ if("no_solution" %in% discard){
 
   # Convert the selected DOAs into geographical coordinates (longitude and latitude).
   out %<>% seasonder_MUSIC_LonLat()
+
+
   if(!is.null(MUSIC_options$PPMIN)){
     out %<>% seasonder_checkPPMIN()
   }
@@ -3006,8 +3009,7 @@ seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
   # Retrieve original longitude and latitude; fallback to APM origin if unavailable
   longitude <- seasonder_getfLongitude(seasonder_cs_object)
   latitude <- seasonder_getfLatitude(seasonder_cs_object)
-
-  if (is.null(longitude) || is.null(latitude)) {
+  if (is.null(longitude) || is.null(latitude) || abs(longitude) < 1e-10 || abs(latitude) < 1e-10) {
     # Extract the origin from the APM data
     origin <- seasonder_cs_object %>%
       seasonder_getSeaSondeRCS_APM() %>%
@@ -3308,6 +3310,14 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
     row_template$MSA1 <- 1440L
     row_template$MDA1 <- 1440L
     row_template$MDA2 <- 1440L
+    row_template$MPKR <- 0
+    row_template$MDP1 <- 0
+    row_template$MDP2 <- 0
+    row_template$MDR1 <- 0
+    row_template$MDR2 <- 0
+    row_template$MDW1 <- 0
+    row_template$MDW2 <- 0
+
 
     # Assign location data if available
     if (!is.null(music$lonlat[[i]]) && nrow(music$lonlat[[i]]) > 0) {
@@ -3315,8 +3325,10 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
       row_template$LATD <- music$lonlat[[i]]$lat[1]
     }
 
+    row_template$VFLG <- row_music$VFLG
+
     # Copy basic numeric fields from MUSIC
-    row_template$VELO <- row_music$radial_v
+    row_template$VELO <- row_music$radial_v * 100
     row_template$RNGE <- row_music$range
 
     # Fill additional columns from MUSIC table if available
@@ -3417,7 +3429,9 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
   # Combine rows into a data.frame; if no rows, return empty data.frame with correct columns
   if (length(out_rows) > 0) {
     result <- do.call(rbind, lapply(out_rows, as.data.frame))
-    result %<>% dplyr::mutate( VFLG = VFLG + 4096L * as.integer(PPFG != 1 | PWFG != 1))
+    result %<>% dplyr::mutate( VFLG = VFLG + 4096L * as.integer(PPFG != 1 | PWFG != 1),
+                               VELU = abs(VELO) * sin(HEAD * pi / 180),
+                               VELV = abs(VELO) * cos(HEAD * pi / 180))
 
   } else {
     result <- data.frame(matrix(ncol = length(cols), nrow = 0))

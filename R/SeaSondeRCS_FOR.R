@@ -281,7 +281,7 @@ seasonder_setFORParameter <- function(seasonder_cs_object, FOR_parameter, value)
 
   FOR_parameters <- list(value) %>% magrittr::set_names(FOR_parameter)
 
-  seasonder_cs_object %<>% seasonder_setFOR_parameters(seasonder_cs_object = seasonder_cs_object, FOR_parameters = FOR_parameters)
+  seasonder_cs_object %<>% seasonder_setFOR_parameters( FOR_parameters = FOR_parameters)
 
 return(seasonder_cs_object)
 
@@ -291,7 +291,7 @@ return(seasonder_cs_object)
 seasonder_setFOR_noisefact <- function(seasonder_cs_object, noisefact){
 
 
-  seasonder_cs_object %<>% seasonder_setFORParameter(seasonder_cs_object = seasonder_cs_object, FOR_parameter = "noisefact", value = noisefact)
+  seasonder_cs_object %<>% seasonder_setFORParameter( FOR_parameter = "noisefact", value = noisefact)
 
   return(seasonder_cs_object)
 
@@ -717,7 +717,7 @@ seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_object
   # Compute the noise limits using predefined scaling factors
   # - The lower (empirical) bound is 56.5% of the maximum normalized Doppler frequency
   # - The upper bound is 100% of the maximum normalized Doppler frequency
-  out <- max(freq) * c(0.565, 1)
+  out <- max(freq) * c(0.95, 1)
 
   # Return the estimated reference noise limits
   return(out)
