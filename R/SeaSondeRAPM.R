@@ -1582,3 +1582,20 @@ seasonder_plotAPMLoops <- function(seasonder_apm_obj) {
   # Return the completed ggplot object
   return(p)
 }
+
+#### print ####
+
+
+#' @method print SeaSondeRAPM
+#' @export
+print.SeaSondeRAPM <- function(x, ...){
+
+  template <- "Station Code{{{StationCode}}}\nOriginal File: {{{FileName}}}\nSite Origin: {{{Latitude}}} {{{Longitude}}}\nAntenna Bearing: {{{AntennaBearing}}}\n"
+  render_data <- attributes(x)
+  render_data$Longitude <- render_data$SiteOrigin["Longitude"]
+  render_data$Latitude <- render_data$SiteOrigin["Latitude"]
+  cat(whisker::whisker.render(template,data = render_data))
+
+  invisible(x)
+
+}
