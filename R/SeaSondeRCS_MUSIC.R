@@ -151,15 +151,15 @@ seasonder_MUSICInitDOASolutions <- function() {
       bearing = NA_real_,  # Placeholder for bearing angle
       a = NA_complex_,     # Placeholder for complex steering vector
       P = NA_complex_,      # Placeholder for power spectrum value
-      PPFG = NA,
-      PWFG = NA
+      PPFG = 9,
+      PWFG = 9
     ),
     dual = list(
       bearing = NA_real_,  # Placeholder for bearing angle
       a = NA_complex_,     # Placeholder for complex steering vector
       P = matrix(rep(NA_complex_, 4), nrow = 2),  # Placeholder for 2x2 complex matrix
-      PPFG = c(NA,NA),
-      PWFG = c(NA,NA)
+      PPFG = c(9,9),
+      PWFG = c(9,9)
     )
   )
 
@@ -409,7 +409,8 @@ seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = N
       P1_check = TRUE,
       retained_solution = "dual",
       DOA = list(c(NA_real_, NA_real_)),
-      lonlat = list(data.frame(lon = NA_real_, lat = NA_real_))
+      lonlat = list(data.frame(lon = NA_real_, lat = NA_real_)),
+      VFLG = 0
     )
 
   # Return the initialized tibble
@@ -1951,13 +1952,22 @@ seasonder_computeSignalSNR <- function(seasonder_cs_object){
 
 }
 
-seasonder_SNRFilter <- function(seasonder_cs_object){
+seasonder_SNRCheck <- function(seasonder_cs_object, filter = T){
 
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
   noisefact <- seasonder_getFOR_noisefact(seasonder_cs_object)
 
   SNR_threshold <- 10*log10(noisefact)
-  MUSIC %<>% dplyr::filter(MA3S >= SNR_threshold & (MA1S >= SNR_threshold | MA2S >= SNR_threshold))
+
+  passes_SNR_check <- function(MA1S,MA2S,MA3S, SNR_threshold)  MA3S >= SNR_threshold & (MA1S >= SNR_threshold | MA2S >= SNR_threshold)
+
+  if(filter){
+    MUSIC %<>% dplyr::mutate(VFLG = VFLG + 64L * as.integer(!passes_SNR_check(MA1S,MA2S,MA3S, SNR_threshold)))
+
+  }else{
+    MUSIC %<>% dplyr::filter(passes_SNR_check(MA1S,MA2S,MA2S, SNR_threshold))
+
+  }
 
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC(MUSIC)
 
@@ -2706,10 +2716,10 @@ seasonder_runMUSIC <- function(seasonder_cs_object, doppler_interpolation = 2L, 
 
   out %<>% seasonder_computeSignalSNR()
 
-  if("low_SNR" %in% discard){
 
-  out %<>% seasonder_SNRFilter()
-}
+
+  out %<>% seasonder_SNRCheck(filter = "low_SNR" %in% discard)
+
   # Perform eigen decomposition of the covariance matrix.
   out %<>% seasonder_MUSICCovDecomposition()
 
@@ -3281,7 +3291,7 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
   # Define the expected 34 columns
   cols <- c("LOND", "LATD", "VELU", "VELV", "VFLG", "RNGE", "BEAR", "VELO", "HEAD",
             "SPRC", "SPDC", "MSEL", "MSA1", "MDA1", "MDA2", "MEGR", "MPKR", "MOFR",
-            "MSAD", "MA13", "MP13", "MA23", "MP23",
+            "MP13", "MP23",
             "MSP1", "MDP1", "MDP2", "MSW1", "MDW1", "MDW2", "MSR1", "MDR1", "MDR2",
             "MA1S", "MA2S", "MA3S", "MEI1", "MEI2", "MEI3", "MDRJ","PPFG","PWFG")
 
@@ -3295,6 +3305,9 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
 
     # Create a template row with all columns initialized to NA
     row_template <- as.list(setNames(rep(NA, length(cols)), cols))
+    row_template$MSA1 <- 1440L
+    row_template$MDA1 <- 1440L
+    row_template$MDA2 <- 1440L
 
     # Assign location data if available
     if (!is.null(music$lonlat[[i]]) && nrow(music$lonlat[[i]]) > 0) {
@@ -3399,9 +3412,13 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
     }
   }
 
+
+
   # Combine rows into a data.frame; if no rows, return empty data.frame with correct columns
   if (length(out_rows) > 0) {
     result <- do.call(rbind, lapply(out_rows, as.data.frame))
+    result %<>% dplyr::mutate( VFLG = VFLG + 4096L * as.integer(PPFG != 1 | PWFG != 1))
+
   } else {
     result <- data.frame(matrix(ncol = length(cols), nrow = 0))
     colnames(result) <- cols
