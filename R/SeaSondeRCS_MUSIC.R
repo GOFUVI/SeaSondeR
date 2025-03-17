@@ -2605,7 +2605,7 @@ seasonder_checkPWMAX <- function(seasonder_cs_object) {
   if(!is.null(PWMAX)){
     MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
     check_PWMAX <- function(DOA_sol, retained_sol, PWMAX) {
-      DOA_sol$PWFG <- as.integer(DOA_sol$peak_resp < PWMAX) * 3 + 1
+      DOA_sol$PWFG <- as.integer(DOA_sol$peak_width > PWMAX) * 3 + 1
       return(DOA_sol)
     }
 
@@ -3367,11 +3367,10 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
       row_single <- row_template
 
       row_single$MSEL <- 1
-
       row_single$BEAR <- row_single$MSA1
       row_single$HEAD <- (row_single$BEAR -180) %% 360
-      row_single$PPFG <-  row_music$DOA[[1]]$single$PPFG
-      row_single$PWFG <-  row_music$DOA[[1]]$single$PWFG
+      row_single$PPFG <-  row_music$DOA[[1]]$PPFG
+      row_single$PWFG <-  row_music$DOA[[1]]$PWFG
       out_rows[[length(out_rows) + 1]] <- row_single
     }else if (row_music$retained_solution == "dual") {
       ds <- ds_all$dual
@@ -3382,8 +3381,8 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
 
       row_dual1$BEAR <- row_dual1$MDA1
       row_dual1$HEAD <- (row_dual1$BEAR -180) %% 360
-      row_dual1$PPFG <-  row_music$DOA[[1]]$dual$PPFG[1]
-      row_dual1$PWFG <-  row_music$DOA[[1]]$dual$PWFG[1]
+      row_dual1$PPFG <-  row_music$DOA[[1]]$PPFG[1]
+      row_dual1$PWFG <-  row_music$DOA[[1]]$PWFG[1]
       out_rows[[length(out_rows) + 1]] <- row_dual1
 
 
@@ -3393,8 +3392,8 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
 
       row_dual2$BEAR <- row_dual1$MDA2
       row_dual2$HEAD <- (row_dual2$BEAR -180) %% 360
-      row_dual2$PPFG <-  row_music$DOA[[1]]$dual$PPFG[2]
-      row_dual2$PWFG <-  row_music$DOA[[1]]$dual$PWFG[2]
+      row_dual2$PPFG <-  row_music$DOA[[1]]$PPFG[2]
+      row_dual2$PWFG <-  row_music$DOA[[1]]$PWFG[2]
       out_rows[[length(out_rows) + 1]] <- row_dual2
 
     }
