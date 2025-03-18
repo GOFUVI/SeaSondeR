@@ -3250,7 +3250,7 @@ out <- out + as.integer(!music$P0_check) * 16
 
 }
 
-
+#' @export
 seasonder_exportRangeInfo <- function(seasonder_cs_object){
 
   cols <- c("RNGC", "NF01", "NF02", "NF03", "ALM1", "ALM2", "ALM3", "ALM4", "NVSC", "NVDC", "NVAC")
