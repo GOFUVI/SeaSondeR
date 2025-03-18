@@ -2428,12 +2428,12 @@ seasonder_SwapDopplerUnits <- function(seasonder_cs_object, values, in_units, ou
 
 ##### Plot #####
 
-
-seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_object, antenna, range_dist, doppler_units = "normalized doppler frequency", plot_FORs = FALSE) {
+#' @export
+seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_object, antenna, range_cell, doppler_units = "normalized doppler frequency", plot_FORs = FALSE) {
 
   SS <- NULL
 
-  spectrum <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_object = seasonder_cs_object, antennae = antenna,dist_ranges = c(range_dist[1],range_dist[1]), collapse = TRUE)[[1]] %>% t() %>% as.data.frame() %>% magrittr::set_colnames("SS")
+  spectrum <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_object = seasonder_cs_object, antennae = antenna,dist_ranges = c(range_cell,range_cell), collapse = TRUE)[[1]] %>% t() %>% as.data.frame() %>% magrittr::set_colnames("SS")
 
   doppler_values <- seasonder_SwapDopplerUnits(seasonder_cs_object,seasonder_getDopplerBinsFrequency(seasonder_cs_object), in_units = "doppler frequency", out_units = doppler_units)
 
@@ -2453,7 +2453,7 @@ seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_object, antenna,
   if (plot_FORs) {
 
 
-    smoothed_spectrum <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_object)[range_dist,, drop = TRUE]
+    smoothed_spectrum <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_object)[range_cell,, drop = TRUE]
 
 
     if (!is.null(smoothed_spectrum)) {
@@ -2465,7 +2465,7 @@ seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_object, antenna,
 
 
 
-    FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_object)[[range_dist]]
+    FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_object)[[range_cell]]
 
     if (!is.null(FOR)) {
 
@@ -2481,7 +2481,7 @@ seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_object, antenna,
 
 
 
-    noise_level <- seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T)[range_dist] %>% magrittr::set_names(NULL)
+    noise_level <- seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T)[range_cell] %>% magrittr::set_names(NULL)
 
     reference_noise_normalized_limits <- seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits(seasonder_cs_object)
 
@@ -4062,4 +4062,19 @@ seasonder_load_qc_functions <- function() {
 }
 seasonder_load_qc_functions()
 
+#### print ####
+
+
+#' @method print SeaSondeRCS
+#' @export
+print.SeaSondeRCS <- function(x, ...){
+
+  template <- "Station Code: {{{nSiteCodeName}}}\nTime: {{{nDateTime}}}\nN Doppler Cells: {{{nDopplerCells}}}\nN Range Cells: {{{nRangeCells}}}\n"
+  render_data <- x$header
+
+  cat(whisker::whisker.render(template,data = render_data))
+
+  invisible(x)
+
+}
 
