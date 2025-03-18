@@ -1,0 +1,56 @@
+%CTF: 1.00
+%FileType: LLUV rdls "RadialMap"
+%LLUVSpec: 1.51  2021 07 01
+%UUID: 81EFACE9-7FAE-4812-85AD-875175B993C9
+%Manufacturer: CODAR Ocean Sensors. SeaSonde
+%Site: SUNS ""
+%TimeStamp: 2025 02 17  06 00 00
+%TimeZone: "Atlantic/Reykjavik" +0.000 0
+%TimeCoverage: 15.000 Minutes
+%Origin:  37.1379000  -75.9721333
+%GreatCircle: "WGS84" 6378137.000  298.257223562997
+%GeodVersion: "CGEO" 2.00  2019 03 05
+%LLUVTrustData: all %% all lluv xyuv rbvd
+%Suite: 101064283705511 23  06
+%RangeStart: 2
+%RangeEnd: 25
+%RangeResolutionKMeters: 1.496292
+%RangeCells: 24
+%DopplerCells: 2048
+%DopplerInterpolation: 2
+%AntennaBearing: 303.0 True
+%ReferenceBearing: 0 True
+%RiverBearing: 0.0 True
+%PatternType: Measured
+%PatternDate: 2024 09 23  09 43 55
+%PatternResolution: 1.0 deg
+%PatternSmoothing: 16.0 deg
+%PatternUUID: A618CB6A-DB04-4254-9E3E-6D96A363DD7F
+%TransmitCenterFreqMHz: 26.250999
+%TransmitBandwidthKHz: -100.178452
+%TransmitSweepRateHz: 4.000000
+%FirstOrderMethod: 0  2 25
+%BraggSmoothingPoints: 2
+%CurrentVelocityLimit: 200.0
+%BraggHasSecondOrder: 1
+%RadialBraggPeakDropOff: {{{RadialBraggPeakDropOff}}}
+%RadialBraggPeakNull: {{{RadialBraggPeakNull}}}
+%RadialBraggNoiseThreshold: {{{RadialBraggNoiseThreshold}}}
+%RadialSplitBraggRatio: 6.310 0
+%RadialDCBlock: 5.000 1
+%PatternAmplitudeCorrections: {{{PatternAmplitudeCorrections}}}
+%PatternPhaseCorrections: {{{PatternPhaseCorrections}}}
+%PatternAmplitudeCalculations: 6.2308  6.0326
+%PatternPhaseCalculations: 33.95  41.96
+%RadialMusicParameters: {{{RadialMusicParameters}}}
+%FirstOrderCalc: 0
+%TableType: LLUV RDM1
+%TableColumns: {{{ncols}}}
+%TableColumnTypes: LOND LATD VELU VELV VFLG XDST YDST RNGE BEAR VELO HEAD SPRC SPDC MSEL MSA1 MDA1 MDA2 MEGR MPKR MOFR MP13 MP23 MSP1 MDP1 MDP2 MSW1 MDW1 MDW2 MSR1 MDR1 MDR2 MA1S MA2S MA3S MEI1 MEI2 MEI3 MDRJ PPFG PWFG
+%TableRows: {{{nrows}}}
+%TableStart:
+%%   Longitude   Latitude    U comp   V comp  VectorFlag  X Distance  Y Distance   Range   Bearing   Velocity  Direction   Spectra  Spectra  Ang   MusicSngl MusicDual MusicDual      Music        Music         Music   Spectra  Spectra  MusicSngl MusicDual MusicDual MusicSngl MusicDual MusicDual MusicSngl MusicDual MusicDual SpectraA1 SpectraA2 SpectraA3     Eigen         Eigen         Eigen       Dual       Peak Resp     Pk Width
+%%     (deg)       (deg)     (cm/s)   (cm/s)  (GridCode)     (km)        (km)       (km)    (True)    (cm/s)     (True)    RngCell  DopCell Select   (True)    (True)    (True)    Eigen Ratio  Power Ratio    Off Ratio A13phase A23phase Pwr (dB)  Pwr1 (dB) Pwr2 (dB) Pk Width  Pk1 Width Pk2 Width Peak Resp Peak1Resp Peak2Resp  S/N(dB)   S/N(dB)   S/N(dB)     Value 1       Value 2       Value 3     Reject      Flag          Flag
+{{{data}}}
+%TableEnd:
+

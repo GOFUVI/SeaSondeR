@@ -3442,3 +3442,14 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
 
   return(result)
 }
+
+
+#' @export
+seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object) {
+
+  template <- system.file("templates", "LLUV_RDM1.txt",package = "SeaSondeR") %>%
+    readLines() %>% paste0(collapse = "\n")
+
+  radial_metrics <- seasonder_exportRadialMetrics(seasonder_cs_object)
+
+  }

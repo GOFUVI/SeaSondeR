@@ -297,6 +297,26 @@ seasonder_setFOR_noisefact <- function(seasonder_cs_object, noisefact){
 
 }
 
+#' @export
+seasonder_setFOR_flim <- function(seasonder_cs_object, flim){
+
+
+  seasonder_cs_object %<>% seasonder_setFORParameter( FOR_parameter = "flim", value = flim)
+
+  return(seasonder_cs_object)
+
+}
+
+#' @export
+seasonder_setFOR_fdown <- function(seasonder_cs_object, fdown){
+
+
+  seasonder_cs_object %<>% seasonder_setFORParameter( FOR_parameter = "fdown", value = fdown)
+
+  return(seasonder_cs_object)
+
+}
+
 seasonder_setSeaSondeRCS_FOR <- function(seasonder_cs_object, FOR) {
 
   # TODO: validate FOR
@@ -518,6 +538,20 @@ seasonder_getFORParameter <- function(seasonder_cs_object, FOR_parameter){
 seasonder_getFOR_noisefact <- function(seasonder_cs_object){
 
   seasonder_getFORParameter(seasonder_cs_object, "noisefact")
+
+}
+
+#' @export
+seasonder_getFOR_fdown <- function(seasonder_cs_object){
+
+  seasonder_getFORParameter(seasonder_cs_object, "fdown")
+
+}
+
+#' @export
+seasonder_getFOR_flim <- function(seasonder_cs_object){
+
+  seasonder_getFORParameter(seasonder_cs_object, "flim")
 
 }
 

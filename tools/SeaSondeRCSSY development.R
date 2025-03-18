@@ -58,6 +58,39 @@ library(magrittr)
   seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 2L, options = list(PPMIN = 5, PWMAX = 50))
 
 
+  apm_object <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_APM()
+
+  radial_metrics <- seasonder_exportRadialMetrics(seasonder_cs_obj)
+
+  MUSIC_params <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC_parameters() %>% magrittr::extract(1:3)
+
+  APM_attributes <- attributes(apm_object)
+
+  sprintf_vector <- function(x,format,sep = " "){
+    vec_format <- rep(format, length(x)) %>% paste0(collapse = sep)
+do.call(sprintf,c(list(vec_format), as.list(x)))
+  }
+
+  data <- list(
+    RadialMusicParameters = sprintf_vector(MUSIC_params,"%0.3f"," "),
+  ncols = ncol(radial_metrics),
+  nrows = nrow(radial_metrics),
+  PatternPhaseCorrections = sprintf_vector(APM_attributes$PhaseCorrections,"%0.2f"," "),
+  PatternAmplitudeCorrections = sprintf_vector(APM_attributes$AmplitudeFactors,"%0.4f"," "),
+  RadialBraggNoiseThreshold = sprintf("%0.3f",seasonder_getFOR_noisefact(seasonder_cs_obj)),
+  RadialBraggPeakNull = sprintf("%0.3f",seasonder_getFOR_fdown(seasonder_cs_obj)),
+  RadialBraggPeakDropOff = sprintf("%0.3f",seasonder_getFOR_flim(seasonder_cs_obj))
+  )
+  data
+
+  template <- system.file("templates", "LLUV_RDM1.txt",package = "SeaSondeR") %>%
+    readLines() %>% paste0(collapse = "\n")
+
+
+
+  LLUV <- whisker::whisker.render(template, data=data)
+
+  cat(LLUV)
 
   MUSIC <-   seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
 
