@@ -46,11 +46,13 @@
 %FirstOrderCalc: 0
 %TableType: LLUV RDM1
 %TableColumns: {{{ncols}}}
-%TableColumnTypes: LOND LATD VELU VELV VFLG XDST YDST RNGE BEAR VELO HEAD SPRC SPDC MSEL MSA1 MDA1 MDA2 MEGR MPKR MOFR MP13 MP23 MSP1 MDP1 MDP2 MSW1 MDW1 MDW2 MSR1 MDR1 MDR2 MA1S MA2S MA3S MEI1 MEI2 MEI3 MDRJ PPFG PWFG
+%TableColumnTypes: LOND LATD VELU VELV VFLG RNGE BEAR VELO HEAD SPRC SPDC MSEL MSA1 MDA1 MDA2 MEGR MPKR MOFR MP13 MP23 MSP1 MDP1 MDP2 MSW1 MDW1 MDW2 MSR1 MDR1 MDR2 MA1S MA2S MA3S MEI1 MEI2 MEI3 MDRJ PPFG PWFG
 %TableRows: {{{nrows}}}
 %TableStart:
-%%   Longitude   Latitude    U comp   V comp  VectorFlag  X Distance  Y Distance   Range   Bearing   Velocity  Direction   Spectra  Spectra  Ang   MusicSngl MusicDual MusicDual      Music        Music         Music   Spectra  Spectra  MusicSngl MusicDual MusicDual MusicSngl MusicDual MusicDual MusicSngl MusicDual MusicDual SpectraA1 SpectraA2 SpectraA3     Eigen         Eigen         Eigen       Dual       Peak Resp     Pk Width
-%%     (deg)       (deg)     (cm/s)   (cm/s)  (GridCode)     (km)        (km)       (km)    (True)    (cm/s)     (True)    RngCell  DopCell Select   (True)    (True)    (True)    Eigen Ratio  Power Ratio    Off Ratio A13phase A23phase Pwr (dB)  Pwr1 (dB) Pwr2 (dB) Pk Width  Pk1 Width Pk2 Width Peak Resp Peak1Resp Peak2Resp  S/N(dB)   S/N(dB)   S/N(dB)     Value 1       Value 2       Value 3     Reject      Flag          Flag
-{{{data}}}
+%%   Longitude   Latitude    U comp   V comp  VectorFlag   Range   Bearing   Velocity  Direction   Spectra  Spectra  Ang   MusicSngl MusicDual MusicDual      Music        Music         Music   Spectra  Spectra  MusicSngl MusicDual MusicDual MusicSngl MusicDual MusicDual MusicSngl MusicDual MusicDual SpectraA1 SpectraA2 SpectraA3     Eigen         Eigen         Eigen       Dual   Pk Resp Pk Width
+%%     (deg)       (deg)     (cm/s)   (cm/s)  (GridCode)    (km)    (True)    (cm/s)     (True)    RngCell  DopCell Select   (True)    (True)    (True)    Eigen Ratio  Power Ratio    Off Ratio A13phase A23phase Pwr (dB)  Pwr1 (dB) Pwr2 (dB) Pk Width  Pk1 Width Pk2 Width Peak Resp Peak1Resp Peak2Resp  S/N(dB)   S/N(dB)   S/N(dB)     Value 1       Value 2       Value 3     Reject    Flag    Flag
+{{#data}}
+   {{LOND}}{{LATD}}{{VELU}}{{VELV}}{{VFLG}}{{RNGE}}{{BEAR}}{{VELO}}{{HEAD}}{{SPRC}}{{SPDC}}{{MSEL}}{{MSA1}}{{MDA1}}{{MDA2}}{{MEGR}}{{MPKR}}{{MOFR}}{{MP13}}{{MP23}}{{MSP1}}{{MDP1}}{{MDP2}}{{MSW1}}{{MDW1}}{{MDW2}}{{MSR1}}{{MDR1}}{{MDR2}}{{MA1S}}{{MA2S}}{{MA3S}}{{MEI1}}{{MEI2}}{{MEI3}}{{MDRJ}}{{PPFG}}{{PWFG}}
+{{/data}}
 %TableEnd:
 

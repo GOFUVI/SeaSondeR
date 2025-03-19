@@ -63,13 +63,76 @@ library(magrittr)
   radial_metrics <- seasonder_exportRadialMetrics(seasonder_cs_obj)
 
   MUSIC_params <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC_parameters() %>% magrittr::extract(1:3)
-
+header <- seasonder_cs_obj$header
   APM_attributes <- attributes(apm_object)
 
   sprintf_vector <- function(x,format,sep = " "){
     vec_format <- rep(format, length(x)) %>% paste0(collapse = sep)
 do.call(sprintf,c(list(vec_format), as.list(x)))
   }
+
+
+
+  get_col_format <- function(col_name){
+
+    col_formats <- list(
+      # Coordenadas (en grados)
+      list(cols = c("LOND"), format = "%12.7f"),
+      list(cols = c( "LATD"), format = "%12.7f"),
+      # Componentes de velocidad (cm/s)
+      list(cols = c("VELU", "VELV"), format = "%9.3f"),
+      list(cols = c("VELO"), format = "%11.3f"),
+      # Código de vector (entero)
+      list(cols = c("VFLG"), format = "%11d"),
+      # Distancias (km)
+      list(cols = c("RNGE"), format = "%10.4f"),
+      # Ángulo de rumbo (por ejemplo, Bearing en grados)
+      list(cols = c("BEAR"), format = "%8.1f"),
+      # Dirección (por ejemplo, Head)
+      list(cols = c("HEAD"), format = "%10.1f"),
+      # Celdas asociadas (por ejemplo, RngCell, DopCell y flag de selección)
+      list(cols = c("SPRC"), format = "%10d"),
+      list(cols = c( "SPDC"), format = "%9d"),
+      list(cols = c("MSEL"), format = "%6d  "),
+      # Medidas asociadas a MusicSngl/MusicDual (valores numéricos con un decimal)
+      list(cols = c( "MSA1", "MDA1", "MDA2"), format = "%9.1f "),
+      # Razón Eigen (Eigen Ratio)
+      list(cols = c("MEGR"), format = "%14.4f"),
+      # Razón de potencia (Power Ratio)
+      list(cols = c("MPKR"), format = "%13.5f"),
+      # Razón de offset (Off Ratio)
+      list(cols = c("MOFR"), format = "%13.6f"),
+      # Fases A13 y A23 (ángulos)
+      list(cols = c("MP13", "MP23"), format = "%8.1f "),
+      # Columnas asociadas a Pwr, Pk Width, Peak Resp, S/N, etc. (se muestran con un decimal)
+      list(cols = c("MSP1","MDP1", "MDP2"), format = "%10.1f"),
+      list(cols = c(
+                    "MSW1", "MDW1", "MDW2"), format = "%9.1f "),
+      list(cols = c(
+
+        "MSR1", "MDR1", "MDR2"), format = "%10.1f"),
+      list(cols = c(
+        "MA1S", "MA2S", "MA3S"), format = "%8.1f  "),
+      # Valores muy pequeños en notación científica
+      list(cols = c("MEI1", "MEI2", "MEI3"), format = "%14.5e"),
+      # Columnas de conteo (picos, rechazos, etc.)
+      list(cols = c("MDRJ", "PPFG", "PWFG"), format = "%6d  ")
+
+
+    )
+
+    fmt <- purrr::keep(col_formats, \(fmt) col_name %in% fmt$cols)
+    out <- NULL
+    if(length(fmt) >0){
+      out <- fmt %>% magrittr::extract2(1) %>% purrr::pluck("format")
+    }
+
+    return(out)
+  }
+
+  radial_metrics_fmt <- radial_metrics%>% dplyr::mutate(dplyr::across(dplyr::everything(), \(x) sprintf(get_col_format(dplyr::cur_column()), x)))
+
+  radial_metrics_fmt <- as.list(radial_metrics_fmt) %>% purrr::transpose()
 
   data <- list(
     RadialMusicParameters = sprintf_vector(MUSIC_params,"%0.3f"," "),
@@ -79,9 +142,10 @@ do.call(sprintf,c(list(vec_format), as.list(x)))
   PatternAmplitudeCorrections = sprintf_vector(APM_attributes$AmplitudeFactors,"%0.4f"," "),
   RadialBraggNoiseThreshold = sprintf("%0.3f",seasonder_getFOR_noisefact(seasonder_cs_obj)),
   RadialBraggPeakNull = sprintf("%0.3f",seasonder_getFOR_fdown(seasonder_cs_obj)),
-  RadialBraggPeakDropOff = sprintf("%0.3f",seasonder_getFOR_flim(seasonder_cs_obj))
+  RadialBraggPeakDropOff = sprintf("%0.3f",seasonder_getFOR_flim(seasonder_cs_obj)),
+  data = radial_metrics_fmt
   )
-  data
+
 
   template <- system.file("templates", "LLUV_RDM1.txt",package = "SeaSondeR") %>%
     readLines() %>% paste0(collapse = "\n")
@@ -90,8 +154,10 @@ do.call(sprintf,c(list(vec_format), as.list(x)))
 
   LLUV <- whisker::whisker.render(template, data=data)
 
-  cat(LLUV)
+  LLUV %>% writeLines("tools/test.ruv")
 
+  cat(LLUV)
+stop()
   MUSIC <-   seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
 
 #   check_doppler_cell <- MUSIC %>% dplyr::filter(range_cell == 14 & doppler_bin == 778) %>% as.list()

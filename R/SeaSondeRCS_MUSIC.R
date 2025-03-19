@@ -3310,13 +3310,7 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
     row_template$MSA1 <- 1440L
     row_template$MDA1 <- 1440L
     row_template$MDA2 <- 1440L
-    row_template$MPKR <- 0
-    row_template$MDP1 <- 0
-    row_template$MDP2 <- 0
-    row_template$MDR1 <- 0
-    row_template$MDR2 <- 0
-    row_template$MDW1 <- 0
-    row_template$MDW2 <- 0
+
 
 
     # Assign location data if available
@@ -3430,8 +3424,16 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
   if (length(out_rows) > 0) {
     result <- do.call(rbind, lapply(out_rows, as.data.frame))
     result %<>% dplyr::mutate( VFLG = VFLG + 4096L * as.integer(PPFG != 1 | PWFG != 1),
-                               VELU = abs(VELO) * sin(HEAD * pi / 180),
-                               VELV = abs(VELO) * cos(HEAD * pi / 180))
+                               VELU = abs(VELO) * sin(BEAR * pi / 180),
+                               VELV = abs(VELO) * cos(BEAR * pi / 180),
+                               MPKR = tidyr::replace_na(MPKR, 0),
+                               MDP1 = tidyr::replace_na(MDP1, 0),
+                               MDP2 = tidyr::replace_na(MDP2, 0),
+                               MDR1 = tidyr::replace_na(MDR1, 0),
+                               MDR2 = tidyr::replace_na(MDR2, 0),
+                               MDW1 = tidyr::replace_na(MDW1, 0),
+                               MDW2 = tidyr::replace_na(MDW2, 0)
+                               )
 
   } else {
     result <- data.frame(matrix(ncol = length(cols), nrow = 0))
