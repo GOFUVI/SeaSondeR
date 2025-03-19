@@ -147,7 +147,7 @@ do.call(sprintf,c(list(vec_format), as.list(x)))
   )
 
 
-  template <- system.file("templates", "LLUV_RDM1.txt",package = "SeaSondeR") %>%
+  template <- system.file("templates", "LLUV_RDM1.mustache",package = "SeaSondeR") %>%
     readLines() %>% paste0(collapse = "\n")
 
 
