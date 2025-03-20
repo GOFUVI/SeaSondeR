@@ -3,9 +3,11 @@
 %LLUVSpec: 1.51  2021 07 01
 %UUID: 81EFACE9-7FAE-4812-85AD-875175B993C9
 %Manufacturer: CODAR Ocean Sensors. SeaSonde
-%Site: SUNS ""
-%TimeStamp: 2025 02 17  06 00 00
-%TimeZone: "Atlantic/Reykjavik" +0.000 0
+%Site: {{{nSiteCodeName}}}
+%TimeStamp: {{{TimeStamp}}}
+{{#TimeZone}}
+%TimeZone: "{{{TimeZone}}}" {{{fHoursFromUTC}}} 0
+{{/TimeZone}}
 %TimeCoverage: 15.000 Minutes
 %Origin:  37.1379000  -75.9721333
 %GreatCircle: "WGS84" 6378137.000  298.257223562997
@@ -14,7 +16,7 @@
 %Suite: 101064283705511 23  06
 %RangeStart: 2
 %RangeEnd: 25
-%RangeResolutionKMeters: 1.496292
+%RangeResolutionKMeters: {{{RangeResolutionKMeters}}}
 %RangeCells: 24
 %DopplerCells: 2048
 %DopplerInterpolation: 2
@@ -26,9 +28,9 @@
 %PatternResolution: 1.0 deg
 %PatternSmoothing: 16.0 deg
 %PatternUUID: A618CB6A-DB04-4254-9E3E-6D96A363DD7F
-%TransmitCenterFreqMHz: 26.250999
-%TransmitBandwidthKHz: -100.178452
-%TransmitSweepRateHz: 4.000000
+%TransmitCenterFreqMHz: {{{TransmitCenterFreqMHz}}}
+%TransmitBandwidthKHz: {{{TransmitBandwidthKHz}}}
+%TransmitSweepRateHz: {{{TransmitSweepRateHz}}}
 %FirstOrderMethod: 0  2 25
 %BraggSmoothingPoints: 2
 %CurrentVelocityLimit: 200.0

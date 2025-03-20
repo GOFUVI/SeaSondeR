@@ -1,4 +1,3 @@
-
 rm(list=ls())
 devtools::document()
 
@@ -143,7 +142,15 @@ do.call(sprintf,c(list(vec_format), as.list(x)))
   RadialBraggNoiseThreshold = sprintf("%0.3f",seasonder_getFOR_noisefact(seasonder_cs_obj)),
   RadialBraggPeakNull = sprintf("%0.3f",seasonder_getFOR_fdown(seasonder_cs_obj)),
   RadialBraggPeakDropOff = sprintf("%0.3f",seasonder_getFOR_flim(seasonder_cs_obj)),
-  data = radial_metrics_fmt
+  data = radial_metrics_fmt,
+  TimeStamp = format(as.POSIXct(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nDateTime"), origin = "1970-01-01"), "%Y %m %d  %H %M %S"),
+  TransmitCenterFreqMHz = sprintf("%0.6f",seasonder_getCenterFreqMHz(seasonder_cs_obj)),
+  TransmitBandwidthKHz = sprintf("%0.6f",-1^(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "bSweepUp") == 0) * seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fBandwidthKHz")),
+  TransmitSweepRateHz = sprintf("%0.6f",seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")),
+  RangeResolutionKMeters = sprintf("%0.6f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRangeCellDistKm")),
+  nSiteCodeName = seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nSiteCodeName"),
+  TimeZone = seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "szTimeZone"),
+  fHoursFromUTC = sprintf("%+0.3f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fHoursFromUTC"))
   )
 
 
@@ -241,44 +248,4 @@ cat(not_matched_test/nrow(test)*100)
  not_matched %>% dplyr::select(SPRC, SPDC, MDRJ.y)  %>% dplyr::filter(!is.na(MDRJ.y)) %>% dplyr::distinct()) %>% dplyr::filter(complete.cases(.)) %>% dplyr::select(dplyr::starts_with("MDRJ")) %>% table()
 
 
-
-
-
-
-
-
-#### single_check ####
-
-
-single_check <- check %>% dplyr::filter(MSEL == 1)
-
-summary(single_check$MEI1.x)
-
-summary(single_check$MEI2.x)
-
-summary(single_check$MEI3.x)
-
-table(abs(single_check$MEI1.x - single_check$MEI1.y) <1e-11)
-table(abs(single_check$MEI2.x - single_check$MEI2.y) <1e-11)
-table(abs(single_check$MEI3.x - single_check$MEI3.y) <1e-11)
-
-
-summary(single_check$MSR1.x)
-
-summary(single_check$MDR1.x)
-
-summary(single_check$MDR2.x)
-
-table(abs(single_check$MSR1.x - single_check$MSR1.y) < 1e-1)
-table(abs(single_check$MDR1.x - single_check$MDR1.y) <1e-1)
-table(abs(single_check$MDR2.x - single_check$MDR2.y) <1e-1)
-
-
-
-
-#### dual check ####
-
-dual_check_1 <- check %>% dplyr::filter(MSEL == 2)
-
-dual_check_2 <- check %>% dplyr::filter(MSEL == 3)
 
