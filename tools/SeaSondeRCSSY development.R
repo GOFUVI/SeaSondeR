@@ -134,8 +134,7 @@ do.call(sprintf,c(list(vec_format), as.list(x)))
   radial_metrics_fmt <- as.list(radial_metrics_fmt) %>% purrr::transpose()
 
   # Preparar templates
-  template <- system.file("templates", "LLUV_RDM1.mustache", package = "SeaSondeR") %>%
-    readLines() %>% paste0(collapse = "\n")
+
   template_data <- system.file("templates", "LLUV_RDM1_data.mustache", package = "SeaSondeR") %>%
     readLines() %>% paste0(collapse = "\n")
 
@@ -195,8 +194,17 @@ do.call(sprintf,c(list(vec_format), as.list(x)))
     fHoursFromUTC = sprintf("%+0.3f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fHoursFromUTC")),
     TimeCoverage = sprintf("%0.3f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nCoverMinutes")),
     Origin = paste(APM_attributes$SiteOrigin, collapse = " "),
-    UUID = UUID_data
+    UUID = UUID_data,
+    PatternUUID = APM_attributes$FileID,
+    RangeStart = sprintf("%d",min(radial_metrics$SPRC)),
+    RangeEnd = sprintf("%d",max(radial_metrics$SPRC)),
+    RangeCells = sprintf("%d",length(unique(radial_metrics$SPRC))),
+    DopplerInterpolation = sprintf("%d", seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_cs_obj)),
+    DopplerCells = sprintf("%d",seasonder_getnDopplerCells(seasonder_cs_obj)*seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_cs_obj))
   )
+
+  template <- system.file("templates", "LLUV_RDM1.mustache", package = "SeaSondeR") %>%
+    readLines() %>% paste0(collapse = "\n")
 
   LLUV <- whisker::whisker.render(template, data=data)
 

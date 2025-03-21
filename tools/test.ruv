@@ -3,19 +3,19 @@
 %LLUVSpec: 1.51  2021 07 01
 %UUID: DA39A3EE-5E6B-010D-0155-BFEF95601890
 %Manufacturer: GOFUVI. SeaSondeR
-%Site: 
+%Site: SUNS
 %TimeStamp: 2025 02 17  06 00 00
 %TimeZone: "Atlantic/Reykjavik" +0.000 0
 %TimeCoverage: 15.000 Minutes
-%Origin:  37.1379000  -75.9721333
+%Origin:  37.1379 -75.9721333
 %GreatCircle: "WGS84" 6378137.000  298.257223562997
-%GeodVersion: "CGEO" 2.00  2019 03 05
+%GeodVersion: "CGEO" 1.00  2005 03 23
 %LLUVTrustData: all %% all lluv xyuv rbvd
-%Suite: 101064283705511 23  06
+%Suite:
 %RangeStart: 2
-%RangeEnd: 25
+%RangeEnd: 23
 %RangeResolutionKMeters: 1.496292
-%RangeCells: 24
+%RangeCells: 22
 %DopplerCells: 2048
 %DopplerInterpolation: 2
 %AntennaBearing: 303.0 True
