@@ -1,15 +1,15 @@
 %CTF: 1.00
 %FileType: LLUV rdls "RadialMap"
 %LLUVSpec: 1.51  2021 07 01
-%UUID: 81EFACE9-7FAE-4812-85AD-875175B993C9
-%Manufacturer: CODAR Ocean Sensors. SeaSonde
-%Site: {{{nSiteCodeName}}}
+%UUID: {{{UUID}}}
+%Manufacturer: GOFUVI. SeaSondeR
+%Site: {{{Site}}}
 %TimeStamp: {{{TimeStamp}}}
 {{#TimeZone}}
 %TimeZone: "{{{TimeZone}}}" {{{fHoursFromUTC}}} 0
 {{/TimeZone}}
-%TimeCoverage: 15.000 Minutes
-%Origin:  37.1379000  -75.9721333
+%TimeCoverage: {{{TimeCoverage}}} Minutes
+%Origin:  {{{Origin}}}
 %GreatCircle: "WGS84" 6378137.000  298.257223562997
 %GeodVersion: "CGEO" 2.00  2019 03 05
 %LLUVTrustData: all %% all lluv xyuv rbvd
@@ -51,10 +51,6 @@
 %TableColumnTypes: LOND LATD VELU VELV VFLG RNGE BEAR VELO HEAD SPRC SPDC MSEL MSA1 MDA1 MDA2 MEGR MPKR MOFR MP13 MP23 MSP1 MDP1 MDP2 MSW1 MDW1 MDW2 MSR1 MDR1 MDR2 MA1S MA2S MA3S MEI1 MEI2 MEI3 MDRJ PPFG PWFG
 %TableRows: {{{nrows}}}
 %TableStart:
-%%   Longitude   Latitude    U comp   V comp  VectorFlag   Range   Bearing   Velocity  Direction   Spectra  Spectra  Ang   MusicSngl MusicDual MusicDual      Music        Music         Music   Spectra  Spectra  MusicSngl MusicDual MusicDual MusicSngl MusicDual MusicDual MusicSngl MusicDual MusicDual SpectraA1 SpectraA2 SpectraA3     Eigen         Eigen         Eigen       Dual   Pk Resp Pk Width
-%%     (deg)       (deg)     (cm/s)   (cm/s)  (GridCode)    (km)    (True)    (cm/s)     (True)    RngCell  DopCell Select   (True)    (True)    (True)    Eigen Ratio  Power Ratio    Off Ratio A13phase A23phase Pwr (dB)  Pwr1 (dB) Pwr2 (dB) Pk Width  Pk1 Width Pk2 Width Peak Resp Peak1Resp Peak2Resp  S/N(dB)   S/N(dB)   S/N(dB)     Value 1       Value 2       Value 3     Reject    Flag    Flag
-{{#data}}
-   {{LOND}}{{LATD}}{{VELU}}{{VELV}}{{VFLG}}{{RNGE}}{{BEAR}}{{VELO}}{{HEAD}}{{SPRC}}{{SPDC}}{{MSEL}}{{MSA1}}{{MDA1}}{{MDA2}}{{MEGR}}{{MPKR}}{{MOFR}}{{MP13}}{{MP23}}{{MSP1}}{{MDP1}}{{MDP2}}{{MSW1}}{{MDW1}}{{MDW2}}{{MSR1}}{{MDR1}}{{MDR2}}{{MA1S}}{{MA2S}}{{MA3S}}{{MEI1}}{{MEI2}}{{MEI3}}{{MDRJ}}{{PPFG}}{{PWFG}}
-{{/data}}
+{{{data}}}
 %TableEnd:
 

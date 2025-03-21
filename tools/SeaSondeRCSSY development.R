@@ -133,31 +133,70 @@ do.call(sprintf,c(list(vec_format), as.list(x)))
 
   radial_metrics_fmt <- as.list(radial_metrics_fmt) %>% purrr::transpose()
 
-  data <- list(
-    RadialMusicParameters = sprintf_vector(MUSIC_params,"%0.3f"," "),
-  ncols = ncol(radial_metrics),
-  nrows = nrow(radial_metrics),
-  PatternPhaseCorrections = sprintf_vector(APM_attributes$PhaseCorrections,"%0.2f"," "),
-  PatternAmplitudeCorrections = sprintf_vector(APM_attributes$AmplitudeFactors,"%0.4f"," "),
-  RadialBraggNoiseThreshold = sprintf("%0.3f",seasonder_getFOR_noisefact(seasonder_cs_obj)),
-  RadialBraggPeakNull = sprintf("%0.3f",seasonder_getFOR_fdown(seasonder_cs_obj)),
-  RadialBraggPeakDropOff = sprintf("%0.3f",seasonder_getFOR_flim(seasonder_cs_obj)),
-  data = radial_metrics_fmt,
-  TimeStamp = format(as.POSIXct(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nDateTime"), origin = "1970-01-01"), "%Y %m %d  %H %M %S"),
-  TransmitCenterFreqMHz = sprintf("%0.6f",seasonder_getCenterFreqMHz(seasonder_cs_obj)),
-  TransmitBandwidthKHz = sprintf("%0.6f",-1^(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "bSweepUp") == 0) * seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fBandwidthKHz")),
-  TransmitSweepRateHz = sprintf("%0.6f",seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")),
-  RangeResolutionKMeters = sprintf("%0.6f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRangeCellDistKm")),
-  nSiteCodeName = seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nSiteCodeName"),
-  TimeZone = seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "szTimeZone"),
-  fHoursFromUTC = sprintf("%+0.3f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fHoursFromUTC"))
-  )
-
-
-  template <- system.file("templates", "LLUV_RDM1.mustache",package = "SeaSondeR") %>%
+  # Preparar templates
+  template <- system.file("templates", "LLUV_RDM1.mustache", package = "SeaSondeR") %>%
+    readLines() %>% paste0(collapse = "\n")
+  template_data <- system.file("templates", "LLUV_RDM1_data.mustache", package = "SeaSondeR") %>%
     readLines() %>% paste0(collapse = "\n")
 
+  # Inserta la función helper para generar un UUID a partir de una cadena
+  StringToUUID <- function(Name) {
+    # Convierte la cadena Name a su representación en bytes
+    name_bytes <- charToRaw(Name)
+    
+    # Genera el hash SHA-1 utilizando openssl
+    sha1_hash <- openssl::sha1(name_bytes)
+    
+    # Extrae los primeros 16 bytes del hash
+    result <- sha1_hash[1:16]
+    
+    # Ajusta el byte 7 (índice 6 en R) para la versión 5 del UUID
+    result[7] <- as.raw(as.integer(result[7]) & 0x0F | 0x50)
+    
+    # Ajusta el byte 9 (índice 8 en R) para la variante del UUID
+    result[9] <- as.raw(as.integer(result[9]) & 0x3F | 0x80)
+    
+    # Convierte los bytes resultantes en un UUID en formato estándar
+    uuid_str <- paste(sprintf("%02x", as.integer(result[1:4])), collapse = "")
+    uuid_str <- paste0(uuid_str, "-", paste(sprintf("%02x", as.integer(result[5:6])), collapse = ""))
+    uuid_str <- paste0(uuid_str, "-", paste(sprintf("%02x", as.integer(result[7:8])), collapse = ""))
+    uuid_str <- paste0(uuid_str, "-", paste(sprintf("%02x", as.integer(result[9:10])), collapse = ""))
+    uuid_str <- paste0(uuid_str, "-", paste(sprintf("%02x", as.integer(result[11:16])), collapse = ""))
+    
+    return(uuid_str)
+  }
 
+  # Renderizar el template de data a partir de radial_metrics_fmt
+  data_string <- whisker::whisker.render(template_data, radial_metrics_fmt)
+
+  # Calcular UUID_data de forma determinista usando data_string como semilla
+  UUID_data <- toupper(StringToUUID(data_string))
+
+  # Crear lista de datos para el template principal
+  data <- list(
+    RadialMusicParameters = sprintf_vector(MUSIC_params,"%0.3f"," "),
+    ncols = ncol(radial_metrics),
+    nrows = nrow(radial_metrics),
+    PatternPhaseCorrections = sprintf_vector(APM_attributes$PhaseCorrections,"%0.2f"," "),
+    PatternAmplitudeCorrections = sprintf_vector(APM_attributes$AmplitudeFactors,"%0.4f"," "),
+    RadialBraggNoiseThreshold = sprintf("%0.3f", seasonder_getFOR_noisefact(seasonder_cs_obj)),
+    RadialBraggPeakNull = sprintf("%0.3f", seasonder_getFOR_fdown(seasonder_cs_obj)),
+    RadialBraggPeakDropOff = sprintf("%0.3f", seasonder_getFOR_flim(seasonder_cs_obj)),
+    data = data_string,
+    TimeStamp = format(as.POSIXct(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nDateTime"), origin = "1970-01-01"), "%Y %m %d  %H %M %S"),
+    TransmitCenterFreqMHz = sprintf("%0.6f", seasonder_getCenterFreqMHz(seasonder_cs_obj)),
+    TransmitBandwidthKHz = sprintf("%0.6f",
+                                   -1^(seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "bSweepUp") == 0) *
+                                   seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fBandwidthKHz")),
+    TransmitSweepRateHz = sprintf("%0.6f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRepFreqHz")),
+    RangeResolutionKMeters = sprintf("%0.6f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fRangeCellDistKm")),
+    Site = seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nSiteCodeName"),
+    TimeZone = seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "szTimeZone"),
+    fHoursFromUTC = sprintf("%+0.3f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "fHoursFromUTC")),
+    TimeCoverage = sprintf("%0.3f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_obj, "nCoverMinutes")),
+    Origin = paste(APM_attributes$SiteOrigin, collapse = " "),
+    UUID = UUID_data
+  )
 
   LLUV <- whisker::whisker.render(template, data=data)
 
