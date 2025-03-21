@@ -1,5 +1,3 @@
-
-
 #### Defaults ####
 
 #' Default Parameters for MUSIC Algorithm
@@ -833,7 +831,7 @@ seasonder_MUSICComputePropDualSols <- function(seasonder_cs_object) {
   # Calculate the proportion of "dual" solutions in the MUSIC data
   proportion <- sum(as.integer(MUSIC$retained_solution == "dual")) / nrow(MUSIC)
 
-  # Update the SeaSondeRCS object with the calculated proportion of "dual" solutions
+  # Update the SeaSondeRCS object by adding the computed proportion of "dual" solutions
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion(proportion)
 
   # Return the updated SeaSondeRCS object
@@ -3253,11 +3251,11 @@ out <- out + as.integer(!music$P0_check) * 16
 #' @export
 seasonder_exportRangeInfo <- function(seasonder_cs_object){
 
-  cols <- c("RNGC", "NF01", "NF02", "NF03", "ALM1", "ALM2", "ALM3", "ALM4", "NVSC", "NVDC", "NVAC")
+  cols <- c("SPRC", "RNGC", "NF01", "NF02", "NF03", "ALM1", "ALM2", "ALM3", "ALM4", "NVSC", "NVDC", "NVAC")
 
-  rm <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object) %>% dplyr::select(SPRC = range_cell, RNGE = range, MSEL = retained_solution)
+  rm <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object) %>% dplyr::select(SPRC = range_cell, RNGC = range, MSEL = retained_solution)
 
-  rc <- rm %>% dplyr::mutate(is_single = MSEL == "single", is_dual = MSEL == "dual") %>% dplyr::summarise(NVSC = sum(is_single), NVDC = sum(is_dual), NVAC = NVSC + NVDC * 2,.by = c(SPRC, RNGE))
+  rc <- rm %>% dplyr::mutate(is_single = MSEL == "single", is_dual = MSEL == "dual") %>% dplyr::summarise(NVSC = sum(is_single), NVDC = sum(is_dual), NVAC = NVSC + NVDC * 2,.by = c(SPRC, RNGC))
 
   NF01 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1)
   NF02 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 2)
@@ -3274,7 +3272,6 @@ FOR %<>% dplyr::mutate(dplyr::across(dplyr::all_of(c("ALM1","ALM2","ALM3","ALM4"
 
 out <- rc %>% dplyr::left_join(FOR, by = "SPRC") %>% dplyr::left_join(Noise, by = "SPRC")
 
-out %<>% dplyr::rename(RNGC = SPRC)
 
 out %<>% dplyr::select(dplyr::all_of(cols))
 
@@ -3607,3 +3604,30 @@ seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object, LLUV_path) {
 
   return(radial_metrics)
 }
+
+seasonder_exportCFTRangeInfo <- function(range_info, file, tableStart = "") {
+  # Calcular parámetros de la tabla
+  n <- nrow(range_info)
+  tableRows <- n
+  
+  
+  # Leer el template moustache desde inst/templates
+  template_path <- system.file("templates", "music_range_template.mustache", package = "SeaSondeR")
+  template <- paste(readLines(template_path, warn = FALSE), collapse = "\n")
+  
+  # Definir parámetros fijos (TableType, TableColumns y TableColumnTypes se mantienen sin cambios)
+  data_list <- list(
+    TableRows = tableRows,
+    TableStart = tableStart,
+    rows = lapply(1:n, function(i) {
+      # ...existing code for cada fila...
+    })
+  )
+  
+  # Renderizar el template con los datos
+  out_str <- whisker::whisker.render(template, data = data_list)
+  
+  # Escribir el string resultante en el fichero
+  writeLines(out_str, con = file)
+}
+
