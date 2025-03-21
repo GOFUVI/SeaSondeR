@@ -21,10 +21,10 @@
 %AntennaBearing: 303.0 True
 %ReferenceBearing: 0 True
 %RiverBearing: 0.0 True
-%PatternType: Measured
-%PatternDate: 2024 09 23  09 43 55
-%PatternResolution: 1.0 deg
-%PatternSmoothing: 16.0 deg
+%PatternType: 
+%PatternDate: 
+%PatternResolution:  deg
+%PatternSmoothing: 16 deg
 %PatternUUID: A618CB6A-DB04-4254-9E3E-6D96A363DD7F
 %TransmitCenterFreqMHz: 26.250999
 %TransmitBandwidthKHz: -100.178452
@@ -40,8 +40,8 @@
 %RadialDCBlock: 5.000 1
 %PatternAmplitudeCorrections: 8.9078 7.5399
 %PatternPhaseCorrections: 41.70 40.70
-%PatternAmplitudeCalculations: 6.2308  6.0326
-%PatternPhaseCalculations: 33.95  41.96
+%PatternAmplitudeCalculations:
+%PatternPhaseCalculations:
 %RadialMusicParameters: 40.000 20.000 2.000
 %FirstOrderCalc: 0
 %TableType: LLUV RDM1

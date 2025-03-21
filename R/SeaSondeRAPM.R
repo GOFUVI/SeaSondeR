@@ -36,6 +36,28 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
   # Initialize attributes (metadata and quality information) with defaults or user-provided values
   attributes_list <- seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix, ...)
 
+  # Determine the dataset type based on several conditions.
+  # First, check if the 'Type' attribute is not already set to either "Measured" or "Ideal".
+  # If not set, then proceed as follows:
+  # 1. If 'FileName' contains "MeasPattern", assign "Measured" to 'Type'.
+  # 2. Else if 'FileName' contains "IdealPattern", assign "Ideal" to 'Type'.
+  # 3. Else if 'StationCode' exactly equals "XXXX", assign "Ideal" to 'Type'.
+  # 4. Else if 'StationCode' is non-empty, assign "Measured" to 'Type'.
+  # This logic ensures that each file is classified correctly as either "Measured" or "Ideal"
+  # based on its file name pattern or station code.
+  if (length(attributes_list$Type) == 0 ||
+      !( "Measured" %in% attributes_list$Type ||
+         "Ideal" %in% attributes_list$Type)) {
+    attributes_list$Type <- dplyr::case_when(
+      length(attributes_list$FileName) > 0 & grepl("MeasPattern", attributes_list$FileName) ~ "Measured",
+      length(attributes_list$FileName) > 0 & grepl("IdealPattern", attributes_list$FileName) ~ "Ideal",
+      length(attributes_list$StationCode) > 0 & attributes_list$StationCode == "XXXX" ~ "Ideal",
+      length(attributes_list$StationCode) > 0 & nchar(attributes_list$StationCode) > 0 ~ "Measured",
+      nchar(attributes_list$StationCode) > 0 ~ "Measured",
+      TRUE ~ attributes_list$Type
+    )
+  }
+
   # Assign column names to the calibration matrix using the BEAR attribute from the initialized list
   colnames(calibration_matrix) <- attributes_list$BEAR
 
@@ -413,10 +435,13 @@ validate_SeaSondeRAPM_BEAR <- function(vector, seasonde_apm_obj) {
 #' @param type The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_Type <- function(type) {
-  # Check if Type is a character string
+  # Check if type is a character vector
   if (!is.character(type)) {
-    seasonder_logAndMessage("validate_SeaSondeRAPM_Type: Type must be a character string.", "fatal")
-    rlang::abort("validate_SeaSondeRAPM_Type: Type must be a character string.")
+    seasonder_logAndAbort("validate_SeaSondeRAPM_Type: Type must be a character string.", "fatal")
+  }
+  # If type is non-empty, it must be either "Measured" or "Ideal"
+  if (length(type) > 0 && !all(type %in% c("Measured", "Ideal"))) {
+    seasonder_logAndAbort("validate_SeaSondeRAPM_Type: When provided, Type must be either 'Measured' or 'Ideal'.", "fatal")
   }
   return(TRUE)
 }
