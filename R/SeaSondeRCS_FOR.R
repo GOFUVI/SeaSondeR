@@ -287,6 +287,14 @@ return(seasonder_cs_object)
 
 }
 
+
+
+#' @export
+seasonder_setFOR_nsm <- function(seasonder_cs_object, nsm) {
+  seasonder_cs_object %<>% seasonder_setFORParameter(FOR_parameter = "nsm", value = nsm)
+  return(seasonder_cs_object)
+}
+
 #' @export
 seasonder_setFOR_noisefact <- function(seasonder_cs_object, noisefact){
 
@@ -315,6 +323,12 @@ seasonder_setFOR_fdown <- function(seasonder_cs_object, fdown){
 
   return(seasonder_cs_object)
 
+}
+
+#' @export
+seasonder_setFOR_currmax <- function(seasonder_cs_object, currmax) {
+  seasonder_cs_object %<>% seasonder_setFORParameter(FOR_parameter = "currmax", value = currmax)
+  return(seasonder_cs_object)
 }
 
 seasonder_setSeaSondeRCS_FOR <- function(seasonder_cs_object, FOR) {
@@ -534,6 +548,14 @@ seasonder_getFORParameter <- function(seasonder_cs_object, FOR_parameter){
 
 }
 
+
+#' @export
+seasonder_getFOR_nsm <- function(seasonder_cs_object){
+
+  seasonder_getFORParameter(seasonder_cs_object, "nsm")
+
+}
+
 #' @export
 seasonder_getFOR_noisefact <- function(seasonder_cs_object){
 
@@ -553,6 +575,11 @@ seasonder_getFOR_flim <- function(seasonder_cs_object){
 
   seasonder_getFORParameter(seasonder_cs_object, "flim")
 
+}
+
+#' @export
+seasonder_getFOR_currmax <- function(seasonder_cs_object) {
+  seasonder_getFORParameter(seasonder_cs_object, "currmax")
 }
 
 seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits <- function(seasonder_cs_object) {
