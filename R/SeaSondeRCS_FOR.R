@@ -229,9 +229,15 @@ seasonder_validateFOR_parameters <- function(seasonder_cs_object, FOR_parameters
     # Assign default value for Doppler Smoothing if not provided
     FOR_parameters$nsm <- FOR_parameters$nsm %||% current_FOR_parameters$nsm %||% seasonder_defaultFOR_parameters()$nsm
 
+
     # Assign default reference noise limits if not provided
-    FOR_parameters$reference_noise_normalized_limits <- FOR_parameters$reference_noise_normalized_limits %||% current_FOR_parameters$reference_noise_normalized_limits %||%
-      seasonder_estimateReferenceNoiseNormalizedLimits(seasonder_cs_object)
+    FOR_parameters$reference_noise_normalized_limits <-
+      FOR_parameters$reference_noise_normalized_limits %||%
+      current_FOR_parameters$reference_noise_normalized_limits %||%
+      seasonder_estimateReferenceNoiseNormalizedLimits(
+      seasonder_cs_object, 
+      low_limit = ,
+      high_limit =)
 
     # Assign default values for first-order detection parameters if missing
     FOR_parameters$fdown <- FOR_parameters$fdown %||% current_FOR_parameters$fdown %||% seasonder_defaultFOR_parameters()$fdown
@@ -770,7 +776,7 @@ SeaSondeRCS_setFORParameters_step_text <- function(seasonder_cs_object) {
 #' noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj)
 #' print(noise_limits)
 #' }
-seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_object) {
+seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_object, low_limit = 0.95, high_limit = 1.0) {
 
   # Retrieve Doppler bin frequencies in normalized units (relative to Bragg frequency)
   freq <- seasonder_getDopplerBinsFrequency(seasonder_cs_object, normalized = TRUE)
@@ -778,7 +784,7 @@ seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_object
   # Compute the noise limits using predefined scaling factors
   # - The lower (empirical) bound is 56.5% of the maximum normalized Doppler frequency
   # - The upper bound is 100% of the maximum normalized Doppler frequency
-  out <- max(freq) * c(0.95, 1)
+  out <- max(freq) * c(low_limit, high_limit)
 
   # Return the estimated reference noise limits
   return(out)

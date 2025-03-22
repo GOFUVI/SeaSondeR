@@ -4,7 +4,11 @@
 \alias{seasonder_estimateReferenceNoiseNormalizedLimits}
 \title{Estimate Reference Noise Limits in Normalized Doppler Frequency}
 \usage{
-seasonder_estimateReferenceNoiseNormalizedLimits(seasonder_cs_object)
+seasonder_estimateReferenceNoiseNormalizedLimits(
+  seasonder_cs_object,
+  low_limit = 0.95,
+  high_limit = 1
+)
 }
 \arguments{
 \item{seasonder_cs_object}{A SeaSondeRCS object containing Doppler frequency metadata.}
