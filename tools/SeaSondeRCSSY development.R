@@ -98,9 +98,8 @@ library(magrittr)
 
 stop()
 
-range_info <- seasonder_exportRangeInfo(seasonder_cs_obj)
 
-seasonder_exportCTFRangeInfo(range_info, "tools/test.rng", tableStart = 2)
+range_info <- seasonder_exportCTFRangeInfo(seasonder_cs_obj, "tools/test.rng", tableStart = "")
 
 # test_or <- seasonder_exportRadialMetrics(seasonder_cs_obj)
 

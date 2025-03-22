@@ -2,7 +2,7 @@
 %TableColumns: 12
 %TableColumnTypes: SPRC RNGC NF01 NF02 NF03 ALM1 ALM2 ALM3 ALM4 NVSC NVDC NVAC 
 %TableRows: 22
-%TableStart: 2
+%TableStart: 
 %% Range  RadDist  NoiseA1 NoiseA2 NoiseA3   FOL N1  FOL N2   FOL P1  FOL P2   Single  Dual    All   
 %%  Cell    (km)    (dBm)   (dBm)   (dBm)    DopIndx DopIndx  DopIndx DopIndx Vectors Vectors Vectors
 %    2    2.9926   -149.1   -148.3   -149.6      694      802     1242     1334      187       15      217
@@ -27,4 +27,4 @@
 %   21   31.4221   -149.0   -149.1   -149.7      752      752     1286     1322       13        1       15
 %   22   32.9184   -150.0   -150.0   -155.1      754      754     1290     1322        8        1       10
 %   23   34.4147   -150.6   -149.9   -158.8      754      754     1290     1322        6        1        8
-%TableEnd: 2
+%TableEnd: 

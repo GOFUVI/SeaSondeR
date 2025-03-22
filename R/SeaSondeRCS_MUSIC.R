@@ -1063,7 +1063,7 @@ seasonder_getSeaSondeRCS_MUSIC_interpolated_dataMatrix <- function(seasonder_cs_
 #'
 #' @examples
 #' \dontrun{
-#' # Assuming `cs_object` is a valid `SeaSondeRCS` object with MUSIC data
+#' # Assuming `cs_object` is a valid `SeaSondeRCS` object
 #' n_doppler_cells <- seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(cs_object)
 #' print(n_doppler_cells)
 #' }
@@ -3607,23 +3607,17 @@ seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object, LLUV_path) {
 
 
 
-seasonder_exportCTFRangeInfo <- function(range_info, file, tableStart = "") {
-  # Calcular parámetros de la tabla
+seasonder_exportCTFRangeInfo_string <- function(seasonder_cs_object, tableStart = "") {
+  range_info <- seasonder_exportRangeInfo(seasonder_cs_object)
   n <- nrow(range_info)
   tableRows <- n
-  
-  # Leer el template moustache desde inst/templates
   template_path <- system.file("templates", "music_range_template.mustache", package = "SeaSondeR")
   template <- paste(readLines(template_path, warn = FALSE), collapse = "\n")
-  
-  # Definir parámetros fijos (TableType, TableColumns y TableColumnTypes se mantienen sin cambios)
   data_list <- list(
     TableRows = tableRows,
     TableStart = tableStart,
     rows = lapply(1:n, function(i) {
       row_data <- range_info[i, ]
-      # Formatear cada campo según el orden:
-      # SPRC, RNGC, NF01, NF02, NF03, ALM1, ALM2, ALM3, ALM4, NVSC, NVDC, NVAC
       row_str <- sprintf("%% %4s %9s %8s %8s %8s %8s %8s %8s %8s %8s %8s %8s",
         formatC(row_data$SPRC, width = 4, flag = " "),
         formatC(row_data$RNGC, format = "f", digits = 4, width = 9),
@@ -3641,10 +3635,12 @@ seasonder_exportCTFRangeInfo <- function(range_info, file, tableStart = "") {
       list(row = row_str)
     })
   )
-  
-  # Renderizar el template con los datos
   out_str <- whisker::whisker.render(template, data = data_list)
-  
-  # Escribir el string resultante en el fichero
-  writeLines(out_str, con = file)
+  return(list(out_str = out_str, range_info = range_info))
+}
+
+seasonder_exportCTFRangeInfo <- function(seasonder_cs_object, file, tableStart = "") {
+  res <- seasonder_exportCTFRangeInfo_string(seasonder_cs_object, tableStart)
+  writeLines(res$out_str, con = file)
+  invisible(res$range_info)
 }
