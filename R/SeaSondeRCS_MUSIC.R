@@ -3552,7 +3552,9 @@ seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object, LLUV_path) {
   # Calcular UUID_data de forma determinista usando data_string como semilla
   UUID_data <- toupper(StringToUUID(data_string))
 
-  # Crear lista de datos para el template principal
+  # NEW: Compute range info table using tableStart = "2"
+  rangeInfo <- seasonder_exportCTFRangeInfo_string(seasonder_cs_object, tableStart = "2")
+
   data <- list(
     RadialMusicParameters = sprintf_vector(MUSIC_params, "%0.3f", " "),
     ncols = ncol(radial_metrics),
@@ -3592,7 +3594,10 @@ seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object, LLUV_path) {
       seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_cs_object)
     ),
     BraggSmoothingPoints = sprintf("%d", seasonder_getFOR_nsm(seasonder_cs_object)),
-    CurrentVelocityLimit = sprintf("%0.1f", seasonder_getFOR_currmax(seasonder_cs_object))
+    CurrentVelocityLimit = sprintf("%0.1f", seasonder_getFOR_currmax(seasonder_cs_object)),
+    range_info_table = rangeInfo$out_str,
+    ProcessedTimeStamp = format(Sys.time(), "%Y %m %d  %H %M %S"),
+    SeaSondeRVersion = packageVersion("SeaSondeR")
   )
 
   template <- system.file("templates", "LLUV_RDM1.mustache", package = "SeaSondeR") %>%
@@ -3639,6 +3644,7 @@ seasonder_exportCTFRangeInfo_string <- function(seasonder_cs_object, tableStart 
   return(list(out_str = out_str, range_info = range_info))
 }
 
+#' @export
 seasonder_exportCTFRangeInfo <- function(seasonder_cs_object, file, tableStart = "") {
   res <- seasonder_exportCTFRangeInfo_string(seasonder_cs_object, tableStart)
   writeLines(res$out_str, con = file)
