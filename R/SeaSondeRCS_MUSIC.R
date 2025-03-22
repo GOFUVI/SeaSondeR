@@ -3605,11 +3605,12 @@ seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object, LLUV_path) {
   return(radial_metrics)
 }
 
-seasonder_exportCFTRangeInfo <- function(range_info, file, tableStart = "") {
+
+
+seasonder_exportCTFRangeInfo <- function(range_info, file, tableStart = "") {
   # Calcular parámetros de la tabla
   n <- nrow(range_info)
   tableRows <- n
-  
   
   # Leer el template moustache desde inst/templates
   template_path <- system.file("templates", "music_range_template.mustache", package = "SeaSondeR")
@@ -3620,7 +3621,24 @@ seasonder_exportCFTRangeInfo <- function(range_info, file, tableStart = "") {
     TableRows = tableRows,
     TableStart = tableStart,
     rows = lapply(1:n, function(i) {
-      # ...existing code for cada fila...
+      row_data <- range_info[i, ]
+      # Formatear cada campo según el orden:
+      # SPRC, RNGC, NF01, NF02, NF03, ALM1, ALM2, ALM3, ALM4, NVSC, NVDC, NVAC
+      row_str <- sprintf("%% %4s %9s %8s %8s %8s %8s %8s %8s %8s %8s %8s %8s",
+        formatC(row_data$SPRC, width = 4, flag = " "),
+        formatC(row_data$RNGC, format = "f", digits = 4, width = 9),
+        formatC(row_data$NF01, format = "f", digits = 1, width = 8),
+        formatC(row_data$NF02, format = "f", digits = 1, width = 8),
+        formatC(row_data$NF03, format = "f", digits = 1, width = 8),
+        formatC(row_data$ALM1, format = "d", width = 8),
+        formatC(row_data$ALM2, format = "d", width = 8),
+        formatC(row_data$ALM3, format = "d", width = 8),
+        formatC(row_data$ALM4, format = "d", width = 8),
+        formatC(row_data$NVSC, format = "d", width = 8),
+        formatC(row_data$NVDC, format = "d", width = 8),
+        formatC(row_data$NVAC, format = "d", width = 8)
+      )
+      list(row = row_str)
     })
   )
   
@@ -3630,4 +3648,3 @@ seasonder_exportCFTRangeInfo <- function(range_info, file, tableStart = "") {
   # Escribir el string resultante en el fichero
   writeLines(out_str, con = file)
 }
-

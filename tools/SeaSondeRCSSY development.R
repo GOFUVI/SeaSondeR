@@ -91,8 +91,8 @@ library(magrittr)
 # str(MUSIC, list.len = 18)
 # sink()
 
-  # sink(here::here("tools/APM_str.txt"))
-  # str(seasonder_apm_obj, list.len = 18)
+  # sink(here::here("tools/range_info_str.txt"))
+  # str(range_info, list.len = 18)
   # sink()
 
 
@@ -100,6 +100,7 @@ stop()
 
 range_info <- seasonder_exportRangeInfo(seasonder_cs_obj)
 
+seasonder_exportCTFRangeInfo(range_info, "tools/test.rng", tableStart = 2)
 
 # test_or <- seasonder_exportRadialMetrics(seasonder_cs_obj)
 
