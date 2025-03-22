@@ -236,8 +236,9 @@ seasonder_validateFOR_parameters <- function(seasonder_cs_object, FOR_parameters
       current_FOR_parameters$reference_noise_normalized_limits %||%
       seasonder_estimateReferenceNoiseNormalizedLimits(
       seasonder_cs_object, 
-      low_limit = ,
-      high_limit =)
+      low_limit = seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval(seasonder_cs_object)$low_limit,
+      high_limit = seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval(seasonder_cs_object)$high_limit
+      )
 
     # Assign default values for first-order detection parameters if missing
     FOR_parameters$fdown <- FOR_parameters$fdown %||% current_FOR_parameters$fdown %||% seasonder_defaultFOR_parameters()$fdown

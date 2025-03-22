@@ -7,7 +7,7 @@ seasonder_defaultCSNoiseLevel <- function(){
 }
 
 seasonder_defaultCSReference_noise_normalized_limits_estimation_interval <- function(){
-  c(0.95, 1.00)
+  list(low_limit = 0.95, high_limit = 1.00)
 }
 
 seasonder_SeaSondeRCS_dataMatrix_dimensionNames <- function(nRanges, nDoppler) {
@@ -656,7 +656,7 @@ seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_obje
 # Setter for reference_noise_normalized_limits_estimation_interval
 #' @export 
 seasonder_setSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <- function(seasonder_cs_object, interval_value) {
-  # TODO: Validate interval_value to be of length 2 and each value between 0 and 1. The first value should be less than the second value.
+  # TODO: Validate interval_value to be of length 2 and each value between 0 and 1. The low_limit value should be less than high_limit value.
   out <- seasonder_cs_object
   attr(out,"reference_noise_normalized_limits_estimation_interval") <- interval_value
   return(out)
