@@ -4,10 +4,10 @@
 \alias{seasonder_getBraggWaveLength}
 \title{Calculate the Bragg Wavelength}
 \usage{
-seasonder_getBraggWaveLength(seasonder_cs_obj)
+seasonder_getBraggWaveLength(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the necessary data
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the necessary data
 to compute the radar wavelength.}
 }
 \value{

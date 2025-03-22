@@ -8,7 +8,7 @@ seasonder_defaultMUSIC_parameters()
 }
 \value{
 A numeric vector containing the default parameters for the MUSIC algorithm:
-\code{c(40, 20, 2)}.
+\code{c(40, 20, 2, 20)}.
 }
 \description{
 This function returns the default parameters for the MUSIC algorithm used in the SeaSondeR package.
@@ -19,6 +19,7 @@ The default parameters are:
 \item \(40\): Threshold used in \code{seasonder_MUSICCheckEigenValueRatio}.
 \item \(20\): Threshold used in \code{seasonder_MUSICCheckSignalPowers}.
 \item \(2\): Threshold used in \code{seasonder_MUSICCheckSignalMatrix}.
+\item \(20\): Threshold used in \code{seasonder_MUSICCheckBearingDistance}.
 }
 }
 \examples{

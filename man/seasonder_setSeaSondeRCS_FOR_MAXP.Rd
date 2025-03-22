@@ -4,10 +4,10 @@
 \alias{seasonder_setSeaSondeRCS_FOR_MAXP}
 \title{Set Maximum Power (MAXP) for First Order Region (FOR)}
 \usage{
-seasonder_setSeaSondeRCS_FOR_MAXP(seasonder_cs_obj, FOR_MAXP)
+seasonder_setSeaSondeRCS_FOR_MAXP(seasonder_cs_object, FOR_MAXP)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object to which the \code{MAXP} values will be assigned.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object to which the \code{MAXP} values will be assigned.}
 
 \item{FOR_MAXP}{A list containing the maximum power values for each range cell.}
 }

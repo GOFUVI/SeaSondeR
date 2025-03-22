@@ -4,10 +4,10 @@
 \alias{seasonder_computeFORsSeaSondeMethod}
 \title{Compute First Order Regions (FOR) Using the SeaSonde Method}
 \usage{
-seasonder_computeFORsSeaSondeMethod(seasonder_cs_obj)
+seasonder_computeFORsSeaSondeMethod(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the spectral data and configuration parameters.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the spectral data and configuration parameters.}
 }
 \value{
 The updated \code{SeaSondeRCS} object with the computed First Order Regions (FOR).

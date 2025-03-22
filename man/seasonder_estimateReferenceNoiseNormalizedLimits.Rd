@@ -4,10 +4,10 @@
 \alias{seasonder_estimateReferenceNoiseNormalizedLimits}
 \title{Estimate Reference Noise Limits in Normalized Doppler Frequency}
 \usage{
-seasonder_estimateReferenceNoiseNormalizedLimits(seasonder_cs_obj)
+seasonder_estimateReferenceNoiseNormalizedLimits(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSondeRCS object containing Doppler frequency metadata.}
+\item{seasonder_cs_object}{A SeaSondeRCS object containing Doppler frequency metadata.}
 }
 \value{
 A numeric vector of length two, representing the lower and upper reference

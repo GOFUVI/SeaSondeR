@@ -5,6 +5,8 @@ test_that("SeaSondeRCS_MUSIC Related functions are defined",{
   expect_true(is.function(seasonder_MUSICComputeCov))
   expect_true(is.function(seasonder_MUSICCovDecomposition))
   expect_true(is.function(seasonder_MUSICComputeDOAProjections))
+  expect_true(exists('seasonder_exportRadialMetrics', mode = 'function'), info = 'seasonder_exportRadialMetrics should exist.')
+
 
 
 
@@ -1094,7 +1096,7 @@ APM <- cbind(A_190, A_205, A_225, A_255,A_330, A_340)
 
 
 
-      test <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$distances[[1]]
+      test <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_obj)$projections[[1]]
 
       expect_equal(10*log10(1/as.vector(abs(test["single",4]))), 9.5, tolerance = 0.05)
 
@@ -1172,4 +1174,189 @@ expect_equal(test$dual$bearing , c(-155, -30))
 
 })
 
+#### seasonder_exportRadialMetrics ####
+
+
+# Tests for seasonder_exportRadialMetrics
+
+describe('seasonder_exportRadialMetrics', {
+load(here::here("tests/testthat/data/MUSIC_table.RData"))
+
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(
+    here::here("tests/testthat/data/SUNS/MeasPattern.txt")
+  )
+
+  it('fills correctly columns common to single and dual solutions',{
+
+    # Create a fake MUSIC table with a single solution
+    music <- MUSIC %>% dplyr::filter(retained_solution == "single") %>% dplyr::slice(1)
+
+    # Mock seasonder_getSeaSondeRCS_MUSIC to return our fake MUSIC table
+    with_mocked_bindings(
+      seasonder_getSeaSondeRCS_APM = function(...) {seasonder_apm_obj},
+      seasonder_getSeaSondeRCS_MUSIC = function(...) { music },
+      res <- seasonder_exportRadialMetrics("fake_object")
+    )
+
+
+
+    # Check that one row is returned
+    expect_equal(nrow(res), 1, info = 'Single solution should produce one row')
+
+    expect_equal(res$VELO, music$radial_v, info = 'VELO not set properly')
+
+    # Check solution type and bearing values
+    expect_equal(res$MSA1, seasonder_MUSICBearing2GeographicalBearing(music$DOA_solutions[[1]]$single$bearing,seasonder_apm_obj)[[1]], info = 'MSA1 should be set to the single solution bearing')
+    expect_equal(res$MDA1, seasonder_MUSICBearing2GeographicalBearing(music$DOA_solutions[[1]]$dual$bearing[1],seasonder_apm_obj)[[1]], info = 'MDA1 should be set to the first dual solution bearing')
+    expect_equal(res$MDA2, seasonder_MUSICBearing2GeographicalBearing(music$DOA_solutions[[1]]$dual$bearing[2],seasonder_apm_obj)[[1]], info = 'MDA2 should be set to the second dual solution bearing')
+
+
+    # Check that other columns are correctly filled from the MUSIC row
+    expect_equal(res$SPDC, music$doppler_bin -1, info = 'SPDC should be assigned from doppler_bin')
+    expect_equal(res$SPRC, music$range_cell, info = 'SPDC should be assigned from doppler_bin')
+    expect_equal(res$MEGR, music$eigen_values_ratio, info = 'MEGR should be assigned correctly')
+    expect_equal(res$MPKR, music$signal_power_ratio, info = 'MPKR should be assigned correctly')
+    expect_equal(res$MOFR, music$diag_off_diag_power_ratio, info = 'MOFR should be assigned correctly')
+    expect_equal(res$MSR1, 10^(music$DOA_solutions[[1]]$single$peak_resp/10), info = 'MSR1 should be assigned correctly')
+    expect_equal(res$MDR1, 10^(music$DOA_solutions[[1]]$dual$peak_resp/10)[1], info = 'MDR1 should be assigned correctly')
+    expect_equal(res$MDR2, 10^(music$DOA_solutions[[1]]$dual$peak_resp/10)[2], info = 'MDR2 should be assigned correctly')
+
+    expect_equal(res$MSP1, as.numeric(10*log10(abs(music$DOA_solutions[[1]]$single$P))), info = 'MSP1 should be assigned correctly')
+    expect_equal(res$MDP1, as.numeric(10*log10(abs(music$DOA_solutions[[1]]$dual$P[1,1]))), info = 'MDP1 should be assigned correctly')
+    expect_equal(res$MDP2, as.numeric(10*log10(abs(music$DOA_solutions[[1]]$dual$P[2,2]))), info = 'MDP2 should be assigned correctly')
+
+    expect_equal(res$MEI1, music$eigen[[1]]$values[1], info = 'MEI1 should be assigned correctly')
+    expect_equal(res$MEI2, music$eigen[[1]]$values[2], info = 'MEI2 should be assigned correctly')
+    expect_equal(res$MEI3, music$eigen[[1]]$values[3], info = 'MEI3 should be assigned correctly')
+
+  })
+  it('handles single solution correctly', {
+
+    # Create a fake MUSIC table with a single solution
+    music <- MUSIC %>% dplyr::filter(retained_solution == "single") %>% dplyr::slice(1)
+
+with_mocked_bindings(
+  seasonder_getSeaSondeRCS_APM = function(...) {seasonder_apm_obj},
+  seasonder_getSeaSondeRCS_MUSIC = function(...) { music },
+  res <- seasonder_exportRadialMetrics("fake_object")
+)
+
+
+
+    # Check that one row is returned
+    expect_equal(nrow(res), 1, info = 'Single solution should produce one row')
+
+    # Check solution type and bearing values
+    expect_equal(res$MSEL, 1, info = 'MSEL should be 1 for single solution')
+
+    expect_equal(res$BEAR, seasonder_MUSICBearing2GeographicalBearing(music$DOA_solutions[[1]]$single$bearing,seasonder_apm_obj)[[1]], info = 'BEAR should be set to the single solution bearing')
+    expect_equal(res$HEAD, (res$BEAR -180) %% 360, info = 'HEAD not set properly')
+
+    # Check location and velocity assignments
+    expect_equal(res$LOND, music$lonlat[[1]]$lon, info = 'LOND should be assigned from lonlat')
+    expect_equal(res$LATD, music$lonlat[[1]]$lat, info = 'LATD should be assigned from lonlat')
+
+  })
+
+  it('handles dual solution correctly', {
+
+    # Create a fake MUSIC table with a single solution
+    music <- MUSIC %>% dplyr::filter(retained_solution == "dual") %>% dplyr::slice(1)
+
+    with_mocked_bindings(
+      seasonder_getSeaSondeRCS_APM = function(...) {seasonder_apm_obj},
+      seasonder_getSeaSondeRCS_MUSIC = function(...) { music },
+      res <- seasonder_exportRadialMetrics("fake_object")
+    )
+
+
+  })
+
+  it('handles both single and dual solutions together', {
+    # Create a fake MUSIC table where both single and dual solutions are provided
+    music <- data.frame(
+      radial_v = 12,
+      range = 6,
+      range_cell = 4,
+      doppler_bin = 320,
+      eigen_values_ratio = 0.75,
+      signal_power_ratio = 1.05,
+      diag_off_diag_power_ratio = 1.45,
+      retained_solution = 'dual',  # The field can be arbitrary since both keys are checked
+      stringsAsFactors = FALSE
+    )
+    music$lonlat <- list(data.frame(lon = 120, lat = 70))
+    # Provide both single and dual solutions
+    music$DOA_solutions <- list(list(single = list(bearing = 333), dual = list(bearing = c(444, 555))))
+
+    local_mocked_bindings(
+      seasonder_getSeaSondeRCS_MUSIC = function(...) { music }
+    )
+
+    res <- seasonder_exportRadialMetrics()
+
+    # Expect three rows: one for single, two for dual
+    expect_equal(nrow(res), 3, info = 'Both single and dual solutions should produce three rows')
+
+    single_row <- res[res$MSEL == 1, ]
+    dual_row1 <- res[res$MSEL == 2, ]
+    dual_row2 <- res[res$MSEL == 3, ]
+
+    expect_equal(nrow(single_row), 1, info = 'There should be one single solution row')
+    expect_equal(nrow(dual_row1), 1, info = 'There should be one dual solution row with MSEL 2')
+    expect_equal(nrow(dual_row2), 1, info = 'There should be one dual solution row with MSEL 3')
+
+    expect_equal(single_row$MSA1, 333, info = 'Single solution row: MSA1 should match single bearing')
+    expect_equal(single_row$BEAR, 333, info = 'Single solution row: BEAR should match single bearing')
+
+    expect_equal(dual_row1$MDA1, 444, info = 'Dual solution row (MSEL 2): MDA1 should match first dual bearing')
+    expect_equal(dual_row1$BEAR, 444, info = 'Dual solution row (MSEL 2): BEAR should match first dual bearing')
+
+    expect_equal(dual_row2$MDA2, 555, info = 'Dual solution row (MSEL 3): MDA2 should match second dual bearing')
+    expect_equal(dual_row2$BEAR, 555, info = 'Dual solution row (MSEL 3): BEAR should match second dual bearing')
+
+    # Check that shared columns are consistently set
+    for (col in c('SPDC', 'MEGR', 'MPKR', 'MOFR', 'LOND', 'LATD', 'VELU', 'VELV')) {
+      expect_true(all(res[[col]] == music[[col]][1]), info = paste('Column', col, 'should be consistently assigned'))
+    }
+
+    # Verify that the resulting data frame has exactly 34 columns with correct names
+    expected_cols <- c('LOND', 'LATD', 'VELU', 'VELV', 'VFLG', 'RNGE', 'BEAR', 'VELO', 'HEAD',
+                       'SPRC', 'SPDC', 'MSEL', 'MSA1', 'MDA1', 'MDA2', 'MEGR', 'MPKR', 'MOFR',
+                       'MSP1', 'MDP1', 'MDP2', 'MSW1', 'MDW1', 'MDW2', 'MSR1', 'MDR1', 'MDR2',
+                       'MA1S', 'MA2S', 'MA3S', 'MEI1', 'MEI2', 'MEI3', 'MDRJ')
+    expect_equal(colnames(res), expected_cols, info = 'Result should have 34 columns with correct names')
+  })
+
+  it('returns an empty data frame with 34 columns when MUSIC table is empty', {
+    # Create an empty MUSIC table
+    music <- data.frame(
+      radial_v = numeric(0),
+      range = numeric(0),
+      range_cell = integer(0),
+      doppler_bin = integer(0),
+      eigen_values_ratio = numeric(0),
+      signal_power_ratio = numeric(0),
+      diag_off_diag_power_ratio = numeric(0),
+      retained_solution = character(0),
+      stringsAsFactors = FALSE
+    )
+    music$lonlat <- list()
+    music$DOA_solutions <- list()
+
+    local_mocked_bindings(
+      seasonder_getSeaSondeRCS_MUSIC = function(...) { music }
+    )
+
+    res <- seasonder_exportRadialMetrics()
+
+    expect_equal(nrow(res), 0, info = 'Empty MUSIC table should produce a data frame with 0 rows')
+    expected_cols <- c('LOND', 'LATD', 'VELU', 'VELV', 'VFLG', 'RNGE', 'BEAR', 'VELO', 'HEAD',
+                       'SPRC', 'SPDC', 'MSEL', 'MSA1', 'MDA1', 'MDA2', 'MEGR', 'MPKR', 'MOFR',
+                       'MSP1', 'MDP1', 'MDP2', 'MSW1', 'MDW1', 'MDW2', 'MSR1', 'MDR1', 'MDR2',
+                       'MA1S', 'MA2S', 'MA3S', 'MEI1', 'MEI2', 'MEI3', 'MDRJ')
+    expect_equal(colnames(res), expected_cols, info = 'Empty data frame should have 34 columns with correct names')
+  })
+
+})
 

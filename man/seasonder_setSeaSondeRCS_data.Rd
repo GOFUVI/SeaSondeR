@@ -4,10 +4,10 @@
 \alias{seasonder_setSeaSondeRCS_data}
 \title{Setter for data}
 \usage{
-seasonder_setSeaSondeRCS_data(seasonder_cs_obj, data)
+seasonder_setSeaSondeRCS_data(seasonder_cs_object, data)
 }
 \arguments{
-\item{seasonder_cs_obj}{SeaSondeRCS object}
+\item{seasonder_cs_object}{SeaSondeRCS object}
 
 \item{data}{new value}
 }

@@ -38,8 +38,8 @@ If the row index is greater than the column index, the conjugate of the value is
 }
 \examples{
 \dontrun{
-# Assume seasonder_cs_obj is a valid SeaSondeRCS object
-updated_obj <- seasonder_MUSICComputeCov(seasonder_cs_obj)
+# Assume seasonder_cs_object is a valid SeaSondeRCS object
+updated_obj <- seasonder_MUSICComputeCov(seasonder_cs_object)
 }
 }
 \references{

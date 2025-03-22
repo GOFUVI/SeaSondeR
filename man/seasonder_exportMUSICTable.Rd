@@ -45,8 +45,8 @@ This function performs the following operations:
 }
 \examples{
 \dontrun{
-# Assuming `seasonder_cs_obj` is a valid `SeaSondeRCS` object
-music_table <- seasonder_exportMUSICTable(seasonder_cs_obj)
+# Assuming `seasonder_cs_object` is a valid `SeaSondeRCS` object
+music_table <- seasonder_exportMUSICTable(seasonder_cs_object)
 print(music_table)
 }
 }

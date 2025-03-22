@@ -4,10 +4,10 @@
 \alias{seasonder_filterFORAmplitudes}
 \title{Filter First Order Region (FOR) Based on Amplitude Thresholds}
 \usage{
-seasonder_filterFORAmplitudes(seasonder_cs_obj)
+seasonder_filterFORAmplitudes(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
 }
 \value{
 The updated \code{SeaSondeRCS} object with the filtered FOR bins.
@@ -23,7 +23,7 @@ that do not meet the required signal-to-noise ratio.
 \item \strong{Retrieve First Order Parameters:}
 \itemize{
 \item The function extracts \code{flim} (Null Below Peak Power) and \code{noisefact} (Signal-to-Noise Factor)
-from \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}}.
+from \code{\link{seasonder_getFOR_parameters}}.
 }
 \item \strong{Compute Noise Levels:}
 \itemize{

@@ -12,6 +12,6 @@
 ^docs$
 ^pkgdown$
 ^\.github$
-tools\doc_compilation
+^tools$
 r-reticulate
 

@@ -36,6 +36,28 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
   # Initialize attributes (metadata and quality information) with defaults or user-provided values
   attributes_list <- seasonder_initializeAttributesSeaSondeRAPM(calibration_matrix, ...)
 
+  # Determine the dataset type based on several conditions.
+  # First, check if the 'Type' attribute is not already set to either "Measured" or "Ideal".
+  # If not set, then proceed as follows:
+  # 1. If 'FileName' contains "MeasPattern", assign "Measured" to 'Type'.
+  # 2. Else if 'FileName' contains "IdealPattern", assign "Ideal" to 'Type'.
+  # 3. Else if 'StationCode' exactly equals "XXXX", assign "Ideal" to 'Type'.
+  # 4. Else if 'StationCode' is non-empty, assign "Measured" to 'Type'.
+  # This logic ensures that each file is classified correctly as either "Measured" or "Ideal"
+  # based on its file name pattern or station code.
+  if (length(attributes_list$Type) == 0 ||
+      !( "Measured" %in% attributes_list$Type ||
+         "Ideal" %in% attributes_list$Type)) {
+    attributes_list$Type <- dplyr::case_when(
+      length(attributes_list$FileName) > 0 & grepl("MeasPattern", attributes_list$FileName) ~ "Measured",
+      length(attributes_list$FileName) > 0 & grepl("IdealPattern", attributes_list$FileName) ~ "Ideal",
+      length(attributes_list$StationCode) > 0 & attributes_list$StationCode == "XXXX" ~ "Ideal",
+      length(attributes_list$StationCode) > 0 & nchar(attributes_list$StationCode) > 0 ~ "Measured",
+      nchar(attributes_list$StationCode) > 0 ~ "Measured",
+      TRUE ~ attributes_list$Type
+    )
+  }
+
   # Assign column names to the calibration matrix using the BEAR attribute from the initialized list
   colnames(calibration_matrix) <- attributes_list$BEAR
 
@@ -413,10 +435,13 @@ validate_SeaSondeRAPM_BEAR <- function(vector, seasonde_apm_obj) {
 #' @param type The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 validate_SeaSondeRAPM_Type <- function(type) {
-  # Check if Type is a character string
+  # Check if type is a character vector
   if (!is.character(type)) {
-    seasonder_logAndMessage("validate_SeaSondeRAPM_Type: Type must be a character string.", "fatal")
-    rlang::abort("validate_SeaSondeRAPM_Type: Type must be a character string.")
+    seasonder_logAndAbort("validate_SeaSondeRAPM_Type: Type must be a character string.", "fatal")
+  }
+  # If type is non-empty, it must be either "Measured" or "Ideal"
+  if (length(type) > 0 && !all(type %in% c("Measured", "Ideal"))) {
+    seasonder_logAndAbort("validate_SeaSondeRAPM_Type: When provided, Type must be either 'Measured' or 'Ideal'.", "fatal")
   }
   return(TRUE)
 }
@@ -1214,6 +1239,91 @@ seasonder_applyAPMAmplitudeAndPhaseCorrections <- function(seasonder_apm_object)
   return(seasonder_apm_object)
 }
 
+#' Extrapolate SeaSondeR APM Matrix
+#'
+#' This function performs linear extrapolation on the SeaSondeR APM measurement matrix.
+#' It adds \code{n} extrapolated columns to both the left and right sides of the matrix.
+#'
+#' The function retrieves the original bearing vector from the APM object using
+#' \code{seasonder_getSeaSondeRAPM_BEAR} and obtains the bearing resolution (attribute
+#' "BearingResolution"). If \code{n == 0}, the original matrix is returned unchanged.
+#' For \code{n > 0}, new bearings are generated for both sides using the resolution. The
+#' left side is extrapolated using the slope computed from the first two columns of the matrix,
+#' and the right side is extrapolated using the slope from the last two columns. The new columns
+#' are then combined with the original matrix, and the column names and the "BEAR" attribute
+#' are updated to reflect the complete set of bearings.
+#'
+#' @param seasonder_apm_object A matrix containing SeaSondeR APM measurements. Its attributes
+#'        include "BEAR" (numeric vector of bearings) and "BearingResolution" (numeric resolution).
+#' @param n An integer specifying how many extrapolated columns to add on each side (default is 1).
+#' @return A modified matrix with \code{n} extrapolated columns added to both sides. The column names
+#'         and the "BEAR" attribute are updated with the new bearings, while the "BearingResolution"
+#'         attribute remains unchanged.
+#' @examples
+#' \dontrun{
+#'   # Create a dummy APM object
+#'   dummy_mat <- matrix(1:15, nrow = 3)
+#'   attr(dummy_mat, "BEAR") <- c(10, 20, 30)
+#'   attr(dummy_mat, "BearingResolution") <- 10
+#'
+#'   # Extrapolate 1 column on each side
+#'   result <- seasonder_extrapolateAPM(dummy_mat, n = 1)
+#' }
+#' @export
+seasonder_extrapolateAPM <- function(seasonder_apm_object, n = 1) {
+
+  # Retrieve the original BEAR vector and bearing resolution from the input object
+  BEAR <- seasonder_getSeaSondeRAPM_BEAR(seasonder_apm_object)
+  res <- attr(seasonder_apm_object, "BearingResolution")
+
+  # If no extrapolation is requested (n == 0), return the original object unchanged
+  if (n == 0) return(seasonder_apm_object)
+
+  # Generate new bearings for the left and right sides using the bearing resolution
+  # left_new: sequence of new bearings to the left of the original (decreasing values)
+  # right_new: sequence of new bearings to the right of the original (increasing values)
+  left_new <- seq(from = BEAR[1] - n * res, to = BEAR[1] - res, by = res)
+  right_new <- seq(from = tail(BEAR, 1) + res, to = tail(BEAR, 1) + n * res, by = res)
+  new_BEAR <- c(left_new, BEAR, right_new)
+
+  # Store the original measurement matrix in M
+  M <- seasonder_apm_object
+
+  # Extrapolate the left side using linear extrapolation based on the first two columns of M
+  # Calculate the slope from the first two columns
+  slope_left <- (M[, 2] - M[, 1]) / (BEAR[2] - BEAR[1])
+  # For each new left bearing, extrapolate the value from the first column
+  left_mat <- sapply(left_new, function(b) M[, 1] + slope_left * (b - BEAR[1]))
+  # Ensure that left_mat is a matrix with the correct number of columns
+  if (is.null(dim(left_mat))) {
+    left_mat <- matrix(left_mat, ncol = length(left_new))
+  }
+
+  # Extrapolate the right side using linear extrapolation based on the last two columns of M
+  n_orig <- ncol(M)
+  slope_right <- (M[, n_orig] - M[, n_orig - 1]) / (BEAR[length(BEAR)] - BEAR[length(BEAR) - 1])
+  # For each new right bearing, extrapolate the value from the last column
+  right_mat <- sapply(right_new, function(b) M[, n_orig] + slope_right * (b - BEAR[length(BEAR)]))
+  if (is.null(dim(right_mat))) {
+    right_mat <- matrix(right_mat, ncol = length(right_new))
+  }
+
+  # Combine the left extrapolated columns, the original matrix, and the right extrapolated columns
+  new_M <- cbind(left_mat, M, right_mat)
+  old_attr <- attributes(seasonder_apm_object)
+  attributes(new_M) <- c(attributes(new_M), old_attr[!names(old_attr) %in% names(attributes(new_M))])
+  # Update the column names to match the new bearings and update the BEAR attribute
+  colnames(new_M) <- as.character(new_BEAR)
+  attr(new_M, "BEAR") <- new_BEAR
+
+  quality_m <- attr(seasonder_apm_object, "quality_matrix", exact = T)
+  new_q <- cbind(matrix(rep(-1+0i, n*3), ncol = n),quality_m,  matrix(rep(-1+0i, n*3), ncol = n))
+  colnames(new_q) <- as.character(new_BEAR)
+  attr(new_M,"quality_matrix") <- new_q
+  # Return the updated measurement matrix with extrapolated columns
+  return(new_M)
+}
+
 #### File Reading ####
 
 #' Read a Row from a Matrix Represented as Text Lines
@@ -1496,4 +1606,21 @@ seasonder_plotAPMLoops <- function(seasonder_apm_obj) {
 
   # Return the completed ggplot object
   return(p)
+}
+
+#### print ####
+
+
+#' @method print SeaSondeRAPM
+#' @export
+print.SeaSondeRAPM <- function(x, ...){
+
+  template <- "Station Code{{{StationCode}}}\nOriginal File: {{{FileName}}}\nSite Origin: {{{Latitude}}} {{{Longitude}}}\nAntenna Bearing: {{{AntennaBearing}}}\n"
+  render_data <- attributes(x)
+  render_data$Longitude <- render_data$SiteOrigin["Longitude"]
+  render_data$Latitude <- render_data$SiteOrigin["Latitude"]
+  cat(whisker::whisker.render(template,data = render_data))
+
+  invisible(x)
+
 }

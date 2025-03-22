@@ -4,10 +4,10 @@
 \alias{seasonder_SwapDopplerUnits}
 \title{Convert Between Different Doppler Frequency Units}
 \usage{
-seasonder_SwapDopplerUnits(seasonder_cs_obj, values, in_units, out_units)
+seasonder_SwapDopplerUnits(seasonder_cs_object, values, in_units, out_units)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeR} cross-spectral object containing Doppler bin metadata.}
+\item{seasonder_cs_object}{A \code{SeaSondeR} cross-spectral object containing Doppler bin metadata.}
 
 \item{values}{A numeric vector specifying the Doppler values to be converted.}
 

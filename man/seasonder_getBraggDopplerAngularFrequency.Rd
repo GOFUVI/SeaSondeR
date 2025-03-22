@@ -4,10 +4,10 @@
 \alias{seasonder_getBraggDopplerAngularFrequency}
 \title{Calculate the Bragg Doppler Angular Frequency}
 \usage{
-seasonder_getBraggDopplerAngularFrequency(seasonder_cs_obj)
+seasonder_getBraggDopplerAngularFrequency(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the necessary data
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the necessary data
 to compute the radar wave number.}
 }
 \value{

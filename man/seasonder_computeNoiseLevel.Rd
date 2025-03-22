@@ -4,10 +4,10 @@
 \alias{seasonder_computeNoiseLevel}
 \title{Compute Noise Level for First Order Region (FOR) Processing}
 \usage{
-seasonder_computeNoiseLevel(seasonder_cs_obj)
+seasonder_computeNoiseLevel(seasonder_cs_object, antenna = 3)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
 }
 \value{
 The updated \code{SeaSondeRCS} object with the computed noise level stored in its attributes.
@@ -22,7 +22,7 @@ where no first-order Bragg signal is expected.
 \enumerate{
 \item \strong{Determine Noise Reference Limits:}
 \itemize{
-\item Retrieves the normalized Doppler frequency limits for noise reference from \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}}.
+\item Retrieves the normalized Doppler frequency limits for noise reference from \code{\link{seasonder_getFOR_parameters}}.
 \item Converts these limits into Doppler bin indices using \code{\link{seasonder_SwapDopplerUnits}}.
 \item Ensures that missing values are replaced with appropriate boundary values.
 }
@@ -52,7 +52,7 @@ cs_obj <- seasonder_computeNoiseLevel(cs_obj)
 }
 \seealso{
 \itemize{
-\item \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}} for retrieving reference noise limits.
+\item \code{\link{seasonder_getFOR_parameters}} for retrieving reference noise limits.
 \item \code{\link{seasonder_SwapDopplerUnits}} for converting frequency limits into Doppler bins.
 \item \code{\link{seasonder_getSeaSondeRCS_SelfSpectra}} for extracting self-spectra.
 \item \code{\link{seasonder_setSeaSondeRCS_NoiseLevel}} for storing the computed noise level.

@@ -4,10 +4,10 @@
 \alias{seasonder_getRadarWaveNumber}
 \title{Calculate the Radar Wave Number}
 \usage{
-seasonder_getRadarWaveNumber(seasonder_cs_obj)
+seasonder_getRadarWaveNumber(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the necessary data
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the necessary data
 to compute the radar wavelength.}
 }
 \value{

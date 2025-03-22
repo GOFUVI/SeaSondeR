@@ -5,7 +5,7 @@
 \title{Compute Doppler Bins Frequencies}
 \usage{
 seasonder_computeDopplerBinsFrequency(
-  seasonder_cs_obj,
+  seasonder_cs_object,
   nDoppler,
   center_bin,
   spectra_res,
@@ -13,7 +13,7 @@ seasonder_computeDopplerBinsFrequency(
 )
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSonde CS object created by \code{seasonder_createSeaSondeRCS()}.
+\item{seasonder_cs_object}{A SeaSonde CS object created by \code{seasonder_createSeaSondeRCS()}.
 This object contains the necessary metadata, such as Doppler resolution and
 center bin, for frequency computation.}
 

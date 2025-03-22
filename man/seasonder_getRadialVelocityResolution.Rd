@@ -4,10 +4,10 @@
 \alias{seasonder_getRadialVelocityResolution}
 \title{Calculate Radial Velocity Resolution}
 \usage{
-seasonder_getRadialVelocityResolution(seasonder_cs_obj)
+seasonder_getRadialVelocityResolution(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSondeRCS object created using \code{seasonder_createSeaSondeRCS}. This object
+\item{seasonder_cs_object}{A SeaSondeRCS object created using \code{seasonder_createSeaSondeRCS}. This object
 contains the necessary data to calculate the Doppler spectrum resolution and, subsequently, the
 radial velocity resolution.}
 }

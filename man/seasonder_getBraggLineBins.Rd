@@ -4,10 +4,10 @@
 \alias{seasonder_getBraggLineBins}
 \title{Get Bragg Line Doppler Bins}
 \usage{
-seasonder_getBraggLineBins(seasonder_cs_obj)
+seasonder_getBraggLineBins(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSonde Cross Spectra (CS) object created by \code{seasonder_createSeaSondeRCS()}.
+\item{seasonder_cs_object}{A SeaSonde Cross Spectra (CS) object created by \code{seasonder_createSeaSondeRCS()}.
 This object contains the metadata required for the computation, including
 the normalized Doppler frequencies and their mapping to Doppler bins.}
 }

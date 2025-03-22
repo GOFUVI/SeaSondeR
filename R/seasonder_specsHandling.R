@@ -2,13 +2,6 @@
 seasonder_the$valid_yaml_seasondecs_versions <- c("1.0.0")  # Valid version for seasondecs YAML specs
 seasonder_the$valid_yaml_seasondecssy_versions <- c("1.0.0")  # Valid version for seasondecssy YAML specs
 
-# Define the file paths for the specifications.
-# Maps the specification type ("CS" or "CSSY") to its corresponding YAML file located within the SeaSondeR package.
-seasonder_the$specs_filepaths <- list(
-  "CS" = system.file("specs", "CS_V1.yaml", package = "SeaSondeR"),
-  "CSSY" = system.file("specs", "CSSY_V1.yaml", package = "SeaSondeR"),
-  "CSSW" = system.file("specs", "CSSW_V1.yaml", package = "SeaSondeR")
-)
 
 #' Get the Default Specifications File Path
 #'
@@ -31,7 +24,11 @@ seasonder_the$specs_filepaths <- list(
 #' }
 seasonder_defaultSpecsFilePath <- function(type = "CS") {
   # Retrieve the list of default specifications file paths from the shared environment
-  default_paths <- seasonder_the$specs_filepaths
+  default_paths <- list(
+    "CS" = system.file("specs", "CS_V1.yaml", package = "SeaSondeR"),
+    "CSSY" = system.file("specs", "CSSY_V1.yaml", package = "SeaSondeR"),
+    "CSSW" = system.file("specs", "CSSW_V1.yaml", package = "SeaSondeR")
+  )
 
   # Match the provided type against the allowed names in the default paths list
   rlang::arg_match(type, names(default_paths))

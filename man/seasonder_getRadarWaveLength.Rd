@@ -4,10 +4,10 @@
 \alias{seasonder_getRadarWaveLength}
 \title{Calculate the Radar Wavelength}
 \usage{
-seasonder_getRadarWaveLength(seasonder_cs_obj)
+seasonder_getRadarWaveLength(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing metadata about
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing metadata about
 the radar system, including its center frequency.}
 }
 \value{

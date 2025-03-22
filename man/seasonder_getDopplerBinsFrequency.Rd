@@ -4,10 +4,10 @@
 \alias{seasonder_getDopplerBinsFrequency}
 \title{Get Doppler Bins Frequency}
 \usage{
-seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = FALSE)
+seasonder_getDopplerBinsFrequency(seasonder_cs_object, normalized = FALSE)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSonde Cross Spectrum (CS) object created by \code{seasonder_createSeaSondeRCS()}. This object contains the necessary metadata and spectral data to compute Doppler bin frequencies.}
+\item{seasonder_cs_object}{A SeaSonde Cross Spectrum (CS) object created by \code{seasonder_createSeaSondeRCS()}. This object contains the necessary metadata and spectral data to compute Doppler bin frequencies.}
 
 \item{normalized}{A logical value indicating if the returned frequencies should be normalized by the second Bragg frequency. When \code{TRUE}, frequencies are divided by the second Bragg frequency, returning dimensionless values relative to it. Default is \code{FALSE}, returning frequencies in Hz.}
 }

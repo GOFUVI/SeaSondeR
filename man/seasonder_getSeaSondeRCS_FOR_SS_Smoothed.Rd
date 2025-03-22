@@ -4,10 +4,10 @@
 \alias{seasonder_getSeaSondeRCS_FOR_SS_Smoothed}
 \title{Retrieve Smoothed Self-Spectra for First Order Region (FOR)}
 \usage{
-seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_obj)
+seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing smoothed self-spectra data.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing smoothed self-spectra data.}
 }
 \value{
 A matrix representing the smoothed self-spectra, or \code{NULL} if no smoothed data is stored.

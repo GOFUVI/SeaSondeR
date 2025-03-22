@@ -4,10 +4,10 @@
 \alias{seasonder_SeaSondeRCSMUSICInterpolateDoppler}
 \title{Perform Doppler Interpolation for SeaSonde Cross-Spectra Data}
 \usage{
-seasonder_SeaSondeRCSMUSICInterpolateDoppler(seasonder_cs_obj)
+seasonder_SeaSondeRCSMUSICInterpolateDoppler(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing cross-spectra data and metadata for processing.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing cross-spectra data and metadata for processing.}
 }
 \value{
 A \code{SeaSondeRCS} object with updated interpolated cross-spectra data and metadata.

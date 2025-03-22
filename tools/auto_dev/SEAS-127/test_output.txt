@@ -1,0 +1,125 @@
+#### Unit tests output ####
+
+1..2
+ok 1 seasonder_extrapolateAPM exists
+not ok 2 (code run outside of `test_that()`)
+  Error in `dev_package()`: No packages loaded with pkgload
+  Backtrace:
+       ▆
+    1. └─testthat::describe(...) at file7d7c6f7ba72c.R:25:1
+    2.   └─base::eval(substitute(code), describe_environment) at testthat/R/describe.R:72:3
+    3.     └─base::eval(substitute(code), describe_environment)
+    4.       ├─base::local(...) at file7d7c6f7ba72c.R:40:3
+    5.       │ └─base::eval.parent(substitute(eval(quote(expr), envir)))
+    6.       │   └─base::eval(expr, p)
+    7.       │     └─base::eval(expr, p)
+    8.       └─base::eval(...)
+    9.         └─base::eval(...)
+   10.           └─testthat::local_mocked_bindings(...) at file7d7c6f7ba72c.R:41:5
+   11.             ├─.package %||% dev_package() at testthat/R/mock2.R:110:3
+   12.             └─testthat:::dev_package() at testthat/R/mock2.R:110:3
+   13.               └─cli::cli_abort("No packages loaded with pkgload") at testthat/R/mock2.R:183:7
+   14.                 └─rlang::abort(...)
+1..2
+ok 1 seasonder_extrapolateAPM exists
+not ok 2 (code run outside of `test_that()`)
+  Error: 'local_assign' is not an exported object from 'namespace:withr'
+  Backtrace:
+      ▆
+   1. └─testthat::describe(...) at file7d7c1c89847d.R:29:1
+   2.   └─base::eval(substitute(code), describe_environment) at testthat/R/describe.R:72:3
+   3.     └─base::eval(substitute(code), describe_environment)
+   4.       ├─base::local(...) at file7d7c1c89847d.R:43:3
+   5.       │ └─base::eval.parent(substitute(eval(quote(expr), envir)))
+   6.       │   └─base::eval(expr, p)
+   7.       │     └─base::eval(expr, p)
+   8.       └─base::eval(...)
+   9.         └─base::eval(...)
+1..4
+ok 1 seasonder_extrapolateAPM exists
+not ok 2 should not change the object when n = 0
+  Error in `seasonder_getSeaSondeRAPM_BEAR(seasonde_apm_obj = seasonder_apm_object)`: could not find function "seasonder_getSeaSondeRAPM_BEAR"
+  Backtrace:
+      ▆
+   1. └─seasonder_extrapolateAPM(dummy_obj, n = 0) at file7d7c203183a6.R:89:7
+not ok 3 should extrapolate one column on each side when n = 1
+  Error in `seasonder_getSeaSondeRAPM_BEAR(seasonde_apm_obj = seasonder_apm_object)`: could not find function "seasonder_getSeaSondeRAPM_BEAR"
+  Backtrace:
+      ▆
+   1. └─seasonder_extrapolateAPM(dummy_obj, n = 1) at file7d7c203183a6.R:98:7
+not ok 4 should extrapolate two columns on each side when n = 2
+  Error in `seasonder_getSeaSondeRAPM_BEAR(seasonde_apm_obj = seasonder_apm_object)`: could not find function "seasonder_getSeaSondeRAPM_BEAR"
+  Backtrace:
+      ▆
+   1. └─seasonder_extrapolateAPM(dummy_obj, n = 2) at file7d7c203183a6.R:119:7
+1..4
+ok 1 seasonder_extrapolateAPM exists
+not ok 2 should not change the object when n = 0
+  Error in `seasonder_getSeaSondeRAPM_BEAR(seasonde_apm_obj = seasonder_apm_object)`: unused argument (seasonde_apm_obj = seasonder_apm_object)
+  Backtrace:
+      ▆
+   1. └─seasonder_extrapolateAPM(dummy_obj, n = 0) at file7d7c168de35f.R:86:5
+not ok 3 should extrapolate one column on each side when n = 1
+  Error in `seasonder_getSeaSondeRAPM_BEAR(seasonde_apm_obj = seasonder_apm_object)`: unused argument (seasonde_apm_obj = seasonder_apm_object)
+  Backtrace:
+      ▆
+   1. └─seasonder_extrapolateAPM(dummy_obj, n = 1) at file7d7c168de35f.R:95:5
+not ok 4 should extrapolate two columns on each side when n = 2
+  Error in `seasonder_getSeaSondeRAPM_BEAR(seasonde_apm_obj = seasonder_apm_object)`: unused argument (seasonde_apm_obj = seasonder_apm_object)
+  Backtrace:
+      ▆
+   1. └─seasonder_extrapolateAPM(dummy_obj, n = 2) at file7d7c168de35f.R:116:5
+1..13
+ok 1 seasonder_extrapolateAPM exists
+ok 2 should not change the object when n = 0
+ok 3 should not change the object when n = 0
+ok 4 should not change the object when n = 0
+ok 5 should not change the object when n = 0
+not ok 6 should extrapolate one column on each side when n = 1
+  attr(new_obj, "BEAR") not equal to `expected_BEAR`.
+  Lengths differ: 5 is not 7
+  BEAR attribute should include extrapolated bearings for n = 1
+not ok 7 should extrapolate one column on each side when n = 1
+  ncol(new_obj) not equal to length(expected_BEAR).
+  1/1 mismatches
+  [1] 5 - 7 == -2
+  Matrix should have correct number of columns for n = 1
+not ok 8 should extrapolate one column on each side when n = 1
+  colnames(new_obj) not equal to as.character(expected_BEAR).
+  Lengths differ: 5 is not 7
+  Column names should match extrapolated BEAR values for n = 1
+not ok 9 should extrapolate one column on each side when n = 1
+  as.numeric(new_obj) not equal to as.numeric(expected_matrix).
+  Lengths differ: 15 is not 21
+  Matrix values should be correctly extrapolated for n = 1
+not ok 10 should extrapolate two columns on each side when n = 2
+  attr(new_obj, "BEAR") not equal to `expected_BEAR`.
+  Lengths differ: 5 is not 9
+  BEAR attribute should include extrapolated bearings for n = 2
+not ok 11 should extrapolate two columns on each side when n = 2
+  ncol(new_obj) not equal to length(expected_BEAR).
+  1/1 mismatches
+  [1] 5 - 9 == -4
+  Matrix should have correct number of columns for n = 2
+not ok 12 should extrapolate two columns on each side when n = 2
+  colnames(new_obj) not equal to as.character(expected_BEAR).
+  Lengths differ: 5 is not 9
+  Column names should match extrapolated BEAR values for n = 2
+not ok 13 should extrapolate two columns on each side when n = 2
+  as.numeric(new_obj) not equal to as.numeric(expected_matrix).
+  Lengths differ: 15 is not 27
+  Matrix values should be correctly extrapolated for n = 2
+1..13
+ok 1 seasonder_extrapolateAPM exists
+ok 2 should not change the object when n = 0
+ok 3 should not change the object when n = 0
+ok 4 should not change the object when n = 0
+ok 5 should not change the object when n = 0
+ok 6 should extrapolate one column on each side when n = 1
+ok 7 should extrapolate one column on each side when n = 1
+ok 8 should extrapolate one column on each side when n = 1
+ok 9 should extrapolate one column on each side when n = 1
+ok 10 should extrapolate two columns on each side when n = 2
+ok 11 should extrapolate two columns on each side when n = 2
+ok 12 should extrapolate two columns on each side when n = 2
+ok 13 should extrapolate two columns on each side when n = 2

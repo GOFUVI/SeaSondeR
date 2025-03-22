@@ -4,10 +4,10 @@
 \alias{seasonder_SelfSpectra2dB}
 \title{Convert Self-Spectra to dB Using a SeaSondeR Object}
 \usage{
-seasonder_SelfSpectra2dB(seasonder_cs_obj, spectrum_values)
+seasonder_SelfSpectra2dB(seasonder_cs_object, spectrum_values)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeR} cross-spectral object.}
+\item{seasonder_cs_object}{A \code{SeaSondeR} cross-spectral object.}
 
 \item{spectrum_values}{A numeric vector. The power values in linear scale.}
 }
@@ -18,7 +18,7 @@ A numeric vector of power values in decibels (dB).
 This function transforms self-spectra power values into decibels (dB) by retrieving the receiver gain from a given \code{SeaSondeR} object.
 }
 \details{
-This function first extracts the receiver gain in decibels from the \code{seasonder_cs_obj} using \code{\link{seasonder_getReceiverGain_dB}} and then applies the conversion using:
+This function first extracts the receiver gain in decibels from the \code{seasonder_cs_object} using \code{\link{seasonder_getReceiverGain_dB}} and then applies the conversion using:
 \deqn{dB = 10 \log_{10}(|P|) - G}
 where:
 \itemize{

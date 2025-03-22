@@ -4,10 +4,10 @@
 \alias{seasonder_findFORNulls}
 \title{Identify Nulls in First Order Region (FOR) Across All Range Cells}
 \usage{
-seasonder_findFORNulls(seasonder_cs_obj)
+seasonder_findFORNulls(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
 }
 \value{
 The updated \code{SeaSondeRCS} object with the computed FOR nulls, maximum power, and bin indices.

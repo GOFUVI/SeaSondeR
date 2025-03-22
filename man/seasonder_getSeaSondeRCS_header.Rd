@@ -4,10 +4,10 @@
 \alias{seasonder_getSeaSondeRCS_header}
 \title{Getter for header}
 \usage{
-seasonder_getSeaSondeRCS_header(seasonder_cs_obj)
+seasonder_getSeaSondeRCS_header(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{SeaSondeRCS object}
+\item{seasonder_cs_object}{SeaSondeRCS object}
 }
 \description{
 Getter for header
