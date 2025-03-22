@@ -59,6 +59,11 @@ library(magrittr)
   seasonder_cs_obj %<>% seasonder_runMUSIC_in_FOR(doppler_interpolation = 2L, options = list(PPMIN = 5, PWMAX = 50))
 
 
+
+range_info <- seasonder_exportCTFRangeInfo(seasonder_cs_obj, "tools/test.rng", tableStart = "")
+
+stop()
+
   test_or <-seasonder_exportLLUVRadialMetrics(seasonder_cs_obj,"tools/test.ruv")
 
   
@@ -99,9 +104,6 @@ library(magrittr)
 stop()
 
 
-range_info <- seasonder_exportCTFRangeInfo(seasonder_cs_obj, "tools/test.rng", tableStart = "")
-
-# test_or <- seasonder_exportRadialMetrics(seasonder_cs_obj)
 
 test <- test_or
 

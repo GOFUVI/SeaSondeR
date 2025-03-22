@@ -6,6 +6,10 @@ seasonder_defaultCSNoiseLevel <- function(){
   list(numeric(0), numeric(0), numeric(0))
 }
 
+seasonder_defaultCSReference_noise_normalized_limits_estimation_interval <- function(){
+  list(low_limit = 0.95, high_limit = 1.00)
+}
+
 seasonder_SeaSondeRCS_dataMatrix_dimensionNames <- function(nRanges, nDoppler) {
 
   dimension_names <- list(sprintf("range_%03d",1:nRanges),sprintf("doppler_%03d",0:(nDoppler - 1)))
@@ -203,6 +207,8 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
                    NoiseLevel = seasonder_defaultCSNoiseLevel(),
                    APM = seasonder_apm_object,
                    interpolated_doppler_cells_index = integer(0),
+                   reference_noise_normalized_limits_estimation_interval = 
+                   seasonder_defaultCSReference_noise_normalized_limits_estimation_interval(),
                    class = c("SeaSondeRCS", "list"))
 
 
@@ -647,8 +653,14 @@ seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_obje
 
 }
 
-
-
+# Setter for reference_noise_normalized_limits_estimation_interval
+#' @export 
+seasonder_setSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <- function(seasonder_cs_object, interval_value) {
+  # TODO: Validate interval_value to be of length 2 and each value between 0 and 1. The low_limit value should be less than high_limit value.
+  out <- seasonder_cs_object
+  attr(out,"reference_noise_normalized_limits_estimation_interval") <- interval_value
+  return(out)
+}
 
 
 ##### Getters #####
@@ -743,7 +755,11 @@ seasonder_getSeaSondeRCS_APM <- function(seasonder_cs_object){
 
 }
 
-
+# Getter for reference_noise_normalized_limits_estimation_interval
+#' @export 
+seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <- function(seasonder_cs_object) {
+  return(attr(seasonder_cs_object,"reference_noise_normalized_limits_estimation_interval", exact = TRUE))
+}
 
 
 
@@ -4077,4 +4093,6 @@ print.SeaSondeRCS <- function(x, ...){
   invisible(x)
 
 }
+
+
 
