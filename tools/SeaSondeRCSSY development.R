@@ -62,6 +62,8 @@ library(magrittr)
 
 range_info <- seasonder_exportCTFRangeInfo(seasonder_cs_obj, "tools/test.rng", tableStart = "")
 
+
+
 stop()
 
   test_or <-seasonder_exportLLUVRadialMetrics(seasonder_cs_obj,"tools/test.ruv")
@@ -149,6 +151,67 @@ cat(not_matched_test/nrow(test)*100)
 
  dplyr::full_join(not_matched %>% dplyr::select(SPRC, SPDC,MDRJ.x) %>% dplyr::filter(!is.na(MDRJ.x)) %>% dplyr::distinct(),
  not_matched %>% dplyr::select(SPRC, SPDC, MDRJ.y)  %>% dplyr::filter(!is.na(MDRJ.y)) %>% dplyr::distinct()) %>% dplyr::filter(complete.cases(.)) %>% dplyr::select(dplyr::starts_with("MDRJ")) %>% table()
+
+# Se asume que seasonder_cs_obj ya está creado y configurado
+# Si no, se debe crear con seasonder_createSeaSondeRCS(...)
+
+results <- data.frame(low_limit = numeric(0), error = numeric(0))
+
+read_rng_table <- function(file){
+  lines <- readLines(file)
+  # Remove metadata lines starting with %Table
+  lines <- lines[!grepl("^%Table", lines)]
+  # Select header lines starting with "%%"
+  header_lines <- lines[grep("^%%", lines)]
+  # Use the second header line if available (which has 12 columns), else use the first
+  if(length(header_lines) >= 2){
+    header_line <- header_lines[2]
+  } else {
+    header_line <- header_lines[1]
+  }
+  header_line <- sub("^%%\\s*", "", header_line)
+  cnames <- strsplit(header_line, "\\s+")[[1]]
+  # Select data lines: lines starting with "%" but not "%%"
+  data_lines <- lines[grepl("^%", lines) & !grepl("^%%", lines)]
+  data_lines <- sub("^%\\s*", "", data_lines)
+  # Combine header and data
+  text <- paste(c(paste(cnames, collapse = " "), data_lines), collapse = "\n")
+  tbl <- read.table(text = text, header = TRUE, stringsAsFactors = FALSE)
+  return(tbl)
+}
+
+for(low_limit in seq(0.99, 0.1, by = -0.01)){
+  
+  # 1. Configurar limite de estimación de noise reference
+  seasonder_cs_obj %<>% seasonder_setSeaSondeRCS_reference_noise_normalized_limits_estimation_interval(low_limit)
+  
+  # 2. Recalcular el nivel de ruido (para antena 3)
+  seasonder_cs_obj <- seasonder_computeNoiseLevel(seasonder_cs_obj)
+  
+  # 3. Exportar la tabla range_info a "tools/test.rng"
+  seasonder_exportCTFRangeInfo(seasonder_cs_obj, file = "tools/test.rng", tableStart = "")
+  
+  # 4. Leer la tabla exportada y la de referencia
+  test_rng <- tryCatch(read_rng_table("tools/test.rng"), error = function(e) NULL)
+  ref_rng  <- tryCatch(read_rng_table("tools/RNGI.txt"), error = function(e) NULL)
+  
+  # Validar existencia de ambas tablas y columna "NF01" para la antena 3
+  if(!is.null(test_rng) && !is.null(ref_rng) &&
+     "NF01" %in% names(test_rng) && "NF01" %in% names(ref_rng)){
+    
+    # Calcular error; por ejemplo, la diferencia media absoluta en la columna NF01
+    err <- mean(abs(test_rng$NF01 - ref_rng$NF01), na.rm = TRUE)
+    
+    results <- rbind(results, data.frame(low_limit = low_limit, error = err))
+  }
+}
+
+# Seleccionar el/los low_limit con el mínimo error
+best <- results[results$error == min(results$error), ]
+print(best)
+
+# También se puede guardar la tabla de resultados
+write.table(results, file = "tools/estimation_results.txt", row.names = FALSE)
 
 
 
