@@ -659,6 +659,11 @@ seasonder_setSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <
   # TODO: Validate interval_value to be of length 2 and each value between 0 and 1. The low_limit value should be less than high_limit value.
   out <- seasonder_cs_object
   attr(out,"reference_noise_normalized_limits_estimation_interval") <- interval_value
+
+new_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(out, low_limit = interval_value$low_limit, high_limit = interval_value$high_limit) 
+
+ out <- seasonder_setFORParameter(out, "reference_noise_normalized_limits", new_limits)
+
   return(out)
 }
 
