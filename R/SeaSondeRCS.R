@@ -7,7 +7,7 @@ seasonder_defaultCSNoiseLevel <- function(){
 }
 
 seasonder_defaultCSReference_noise_normalized_limits_estimation_interval <- function(){
-  list(low_limit = 0.95, high_limit = 1.00)
+  list(low_limit = 0.9, high_limit = 1.00)
 }
 
 seasonder_SeaSondeRCS_dataMatrix_dimensionNames <- function(nRanges, nDoppler) {
@@ -925,7 +925,7 @@ seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, dop
 
 
 #'  returns a list of power spectra for each combination of antenna, dist_range and doppler_range
-seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_object, antennae, dist_ranges = NULL, doppler_ranges = NULL, dist_in_km = FALSE, collapse = FALSE) {
+seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_object, antennae, dist_ranges = NULL, doppler_ranges = NULL, dist_in_km = FALSE, collapse = FALSE, smoothed = F) {
 
 
   out <- list()
@@ -962,8 +962,15 @@ seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_object, antennae, 
   # TODO: option for all antennae, all dist_ranges and all doppler_ranges
   # TODO: wrappers for antenna + dist_ranges, antenna + doppler ranges, disr_ranges + doppler ranges, dist_ranges, antenna and doppler ranges.
 
+if(smoothed){
+SSMatrices <- antennae %>% purrr::map(\(antenna)  seasonder_SmoothSS(seasonder_cs_object, antenna))
+}else{
 
-  SSMatrices <- antennae %>% purrr::map(\(antenna) seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_object,antenna))
+
+SSMatrices <- antennae %>% purrr::map(\(antenna) seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_object,antenna))
+
+
+}
 
   # Slice dist_ranges
 
@@ -1220,7 +1227,7 @@ seasonder_getReceiverGain_dB <- function(seasonder_cs_object) {
 
   # Retrieve the receiver gain from the SeaSondeRCS object's header field "fReferenceGainDB".
   # If the field is missing or NULL, a default value of -34.2 dB is used.
-  receiver_gain <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fReferenceGainDB") %||% -34.2
+  receiver_gain <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fReferenceGainDB") %||% 34.2
 
   # Return the receiver gain in decibels.
   return(receiver_gain)
