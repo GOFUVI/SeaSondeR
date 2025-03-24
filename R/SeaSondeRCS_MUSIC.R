@@ -2724,6 +2724,16 @@ out %<>% seasonder_computeNoiseLevel(antenna = 1,smoothed= MUSIC_options$smoothN
 
   out %<>% seasonder_SNRCheck(discard_low_SNR = "low_SNR" %in% discard)
 
+out %<>% seasonder_computeNoiseLevel(antenna = 1,smoothed= MUSIC_options$smoothNoiseLevel)
+  out %<>% seasonder_computeNoiseLevel(antenna = 2,smoothed= MUSIC_options$smoothNoiseLevel)
+  out %<>% seasonder_computeNoiseLevel(antenna = 3,smoothed= MUSIC_options$smoothNoiseLevel)
+
+  out %<>% seasonder_computeSignalSNR()
+
+
+
+  out %<>% seasonder_SNRCheck(discard_low_SNR = "low_SNR" %in% discard)
+
   # Perform eigen decomposition of the covariance matrix.
   out %<>% seasonder_MUSICCovDecomposition()
 
