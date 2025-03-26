@@ -35,7 +35,9 @@ seasonder_defaultMUSIC_options <- function(){
 
   list(PPMIN = NULL,
        PWMAX = NULL,
-       smoothNoiseLevel = F)
+       smoothNoiseLevel = F,
+       doppler_interpolation = 2,
+       MUSIC_parameters = seasonder_defaultMUSIC_parameters())
 
 }
 
@@ -644,7 +646,7 @@ seasonder_setSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object, MUSIC
 
   # TODO: validate MUSIC parameters
 
-  attr(seasonder_cs_object, "MUSIC_data")$MUSIC_parameters <- MUSIC_parameters
+  attr(seasonder_cs_object, "MUSIC_data")$MUSIC_options$MUSIC_parameters <- MUSIC_parameters
 
 
   return(seasonder_cs_object)
@@ -677,11 +679,12 @@ seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_c
 
 }
 
+#' @export
 seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_object, doppler_interpolation){
 
   doppler_interpolation <- SeaSondeRCS_MUSIC_validate_doppler_interpolation(doppler_interpolation, seasonder_cs_object)
 
-  attr(seasonder_cs_object, "MUSIC_data")$doppler_interpolation <- doppler_interpolation
+  attr(seasonder_cs_object, "MUSIC_data")$MUSIC_options$doppler_interpolation <- doppler_interpolation
 
   return(seasonder_cs_object)
 
@@ -713,7 +716,7 @@ seasonder_setSeaSondeRCS_MUSIC_interpolated_doppler_cells_index <- function(seas
 seasonder_getSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object) {
 
 
-  out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC_parameters %||% seasonder_defaultMUSIC_parameters()
+  out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC_options$MUSIC_parameters %||% seasonder_defaultMUSIC_parameters()
 
 
   return(out)
@@ -756,11 +759,11 @@ seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_c
 
 }
 
-
+#' @export
 seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_object){
 
 
-  out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$doppler_interpolation %||% 1L
+  out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC_options$doppler_interpolation %||% 1L
 
   return(out)
 
