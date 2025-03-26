@@ -30,7 +30,7 @@ the interpolated number of Doppler cells.
 }
 \examples{
 \dontrun{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object with MUSIC data
+# Assuming `cs_object` is a valid `SeaSondeRCS` object
 n_doppler_cells <- seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(cs_object)
 print(n_doppler_cells)
 }

@@ -10,7 +10,8 @@ seasonder_getSeaSondeRCS_SelfSpectra(
   dist_ranges = NULL,
   doppler_ranges = NULL,
   dist_in_km = FALSE,
-  collapse = FALSE
+  collapse = FALSE,
+  smoothed = F
 )
 }
 \description{

@@ -6,6 +6,10 @@ seasonder_defaultCSNoiseLevel <- function(){
   list(numeric(0), numeric(0), numeric(0))
 }
 
+seasonder_defaultCSReference_noise_normalized_limits_estimation_interval <- function(){
+  list(low_limit = 0.9, high_limit = 1.00)
+}
+
 seasonder_SeaSondeRCS_dataMatrix_dimensionNames <- function(nRanges, nDoppler) {
 
   dimension_names <- list(sprintf("range_%03d",1:nRanges),sprintf("doppler_%03d",0:(nDoppler - 1)))
@@ -203,6 +207,8 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
                    NoiseLevel = seasonder_defaultCSNoiseLevel(),
                    APM = seasonder_apm_object,
                    interpolated_doppler_cells_index = integer(0),
+                   reference_noise_normalized_limits_estimation_interval = 
+                   seasonder_defaultCSReference_noise_normalized_limits_estimation_interval(),
                    class = c("SeaSondeRCS", "list"))
 
 
@@ -647,8 +653,19 @@ seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_obje
 
 }
 
+# Setter for reference_noise_normalized_limits_estimation_interval
+#' @export 
+seasonder_setSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <- function(seasonder_cs_object, interval_value) {
+  # TODO: Validate interval_value to be of length 2 and each value between 0 and 1. The low_limit value should be less than high_limit value.
+  out <- seasonder_cs_object
+  attr(out,"reference_noise_normalized_limits_estimation_interval") <- interval_value
 
+new_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(out, low_limit = interval_value$low_limit, high_limit = interval_value$high_limit) 
 
+ out <- seasonder_setFORParameter(out, "reference_noise_normalized_limits", new_limits)
+
+  return(out)
+}
 
 
 ##### Getters #####
@@ -743,7 +760,11 @@ seasonder_getSeaSondeRCS_APM <- function(seasonder_cs_object){
 
 }
 
-
+# Getter for reference_noise_normalized_limits_estimation_interval
+#' @export 
+seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <- function(seasonder_cs_object) {
+  return(attr(seasonder_cs_object,"reference_noise_normalized_limits_estimation_interval", exact = TRUE))
+}
 
 
 
@@ -904,7 +925,7 @@ seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, dop
 
 
 #'  returns a list of power spectra for each combination of antenna, dist_range and doppler_range
-seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_object, antennae, dist_ranges = NULL, doppler_ranges = NULL, dist_in_km = FALSE, collapse = FALSE) {
+seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_object, antennae, dist_ranges = NULL, doppler_ranges = NULL, dist_in_km = FALSE, collapse = FALSE, smoothed = F) {
 
 
   out <- list()
@@ -941,8 +962,15 @@ seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_object, antennae, 
   # TODO: option for all antennae, all dist_ranges and all doppler_ranges
   # TODO: wrappers for antenna + dist_ranges, antenna + doppler ranges, disr_ranges + doppler ranges, dist_ranges, antenna and doppler ranges.
 
+if(smoothed){
+SSMatrices <- antennae %>% purrr::map(\(antenna)  seasonder_SmoothSS(seasonder_cs_object, antenna))
+}else{
 
-  SSMatrices <- antennae %>% purrr::map(\(antenna) seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_object,antenna))
+
+SSMatrices <- antennae %>% purrr::map(\(antenna) seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_object,antenna))
+
+
+}
 
   # Slice dist_ranges
 
@@ -1199,7 +1227,7 @@ seasonder_getReceiverGain_dB <- function(seasonder_cs_object) {
 
   # Retrieve the receiver gain from the SeaSondeRCS object's header field "fReferenceGainDB".
   # If the field is missing or NULL, a default value of -34.2 dB is used.
-  receiver_gain <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fReferenceGainDB") %||% -34.2
+  receiver_gain <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fReferenceGainDB") %||% 34.2
 
   # Return the receiver gain in decibels.
   return(receiver_gain)
@@ -4061,6 +4089,9 @@ seasonder_load_qc_functions <- function() {
   seasonder_the$qc_functions[["qc_check_unsigned"]] <- qc_check_unsigned
 }
 seasonder_load_qc_functions()
+
+
+
 
 #### print ####
 

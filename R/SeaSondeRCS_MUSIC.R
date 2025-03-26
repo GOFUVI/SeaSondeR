@@ -32,7 +32,8 @@ seasonder_defaultMUSIC_parameters <- function(){
 seasonder_defaultMUSIC_options <- function(){
 
   list(PPMIN = NULL,
-       PWMAX = NULL)
+       PWMAX = NULL,
+       smoothNoiseLevel = F)
 
 }
 
@@ -2712,6 +2713,20 @@ seasonder_runMUSIC <- function(seasonder_cs_object, doppler_interpolation = 2L, 
 
   # Compute the covariance matrix from the cross-spectrum data.
   out %<>% seasonder_MUSICComputeCov()
+
+out %<>% seasonder_computeNoiseLevel(antenna = 1,smoothed= MUSIC_options$smoothNoiseLevel)
+  out %<>% seasonder_computeNoiseLevel(antenna = 2,smoothed= MUSIC_options$smoothNoiseLevel)
+  out %<>% seasonder_computeNoiseLevel(antenna = 3,smoothed= MUSIC_options$smoothNoiseLevel)
+
+  out %<>% seasonder_computeSignalSNR()
+
+
+
+  out %<>% seasonder_SNRCheck(discard_low_SNR = "low_SNR" %in% discard)
+
+out %<>% seasonder_computeNoiseLevel(antenna = 1,smoothed= MUSIC_options$smoothNoiseLevel)
+  out %<>% seasonder_computeNoiseLevel(antenna = 2,smoothed= MUSIC_options$smoothNoiseLevel)
+  out %<>% seasonder_computeNoiseLevel(antenna = 3,smoothed= MUSIC_options$smoothNoiseLevel)
 
   out %<>% seasonder_computeSignalSNR()
 
