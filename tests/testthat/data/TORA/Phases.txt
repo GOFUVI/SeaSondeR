@@ -1,1 +1,0 @@
- -12.2  -37.6             ! 1 Antenna Phase Corrections A13, A23
