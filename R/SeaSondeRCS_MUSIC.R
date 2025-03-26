@@ -23,12 +23,14 @@
 #' params <- seasonder_defaultMUSIC_parameters()
 #' print(params)
 #' }
+#' @export
 seasonder_defaultMUSIC_parameters <- function(){
 
   c(40,20,2,20)
 
 }
 
+#' @export
 seasonder_defaultMUSIC_options <- function(){
 
   list(PPMIN = NULL,
