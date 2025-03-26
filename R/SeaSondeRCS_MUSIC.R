@@ -37,7 +37,9 @@ seasonder_defaultMUSIC_options <- function(){
        PWMAX = NULL,
        smoothNoiseLevel = F,
        doppler_interpolation = 2,
-       MUSIC_parameters = seasonder_defaultMUSIC_parameters())
+       MUSIC_parameters = seasonder_defaultMUSIC_parameters(),
+       discard = c("low_SNR", "no_solution")
+       )
 
 }
 
@@ -2693,11 +2695,11 @@ seasonder_checkPWMAX <- function(seasonder_cs_object) {
 #' }
 #'
 #' @export
-seasonder_runMUSIC <- function(seasonder_cs_object, doppler_interpolation = 2L, discard = c("low_SNR", "no_solution"), options = seasonder_defaultMUSIC_options()){
+seasonder_runMUSIC <- function(seasonder_cs_object, options = seasonder_defaultMUSIC_options()){
 
   # Log the start of the MUSIC algorithm.
   seasonder_logAndMessage("seasonder_runMUSIC: MUSIC algorithm started.", "info")
-
+discard <- options$discard
 
   # Create a copy of the input object to store the results of the processing.
   out <- seasonder_cs_object
@@ -2820,14 +2822,14 @@ if("no_solution" %in% discard){
 #' print(result)
 #' }
 #' @export
-seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation = 2L, ...){
+seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, options = seasonder_defaultMUSIC_options()){
 
   # Initialize the output as a copy of the input SeaSondeRCS object
   out <- seasonder_cs_object
 
-  # Set the Doppler interpolation level for the MUSIC algorithm
-  out %<>% seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation(doppler_interpolation)
 
+doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_options(out)$doppler_interpolation
+  
   # Retrieve the First Order Regions (FOR) from the SeaSondeRCS object
   FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_object)
 
@@ -2875,7 +2877,7 @@ seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, doppler_interpolation
   out %<>% seasonder_initMUSICData(range_cells = FOR$range_cell, doppler_bins = FOR$doppler_bin, NULL_MUSIC = nrow(FOR) == 0)
 
   # Run the MUSIC algorithm on the updated SeaSondeRCS object
-  out %<>% seasonder_runMUSIC(doppler_interpolation = doppler_interpolation, ...)
+  out %<>% seasonder_runMUSIC(...)
 
   # Return the updated SeaSondeRCS object
   return(out)
