@@ -2701,7 +2701,7 @@ seasonder_runMUSIC <- function(seasonder_cs_object, options = seasonder_defaultM
   # Log the start of the MUSIC algorithm.
   seasonder_logAndMessage("seasonder_runMUSIC: MUSIC algorithm started.", "info")
 discard <- options$discard
-
+doppler_interpolation <- options$doppler_interpolation
   # Create a copy of the input object to store the results of the processing.
   out <- seasonder_cs_object
 
