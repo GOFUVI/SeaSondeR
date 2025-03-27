@@ -2696,10 +2696,13 @@ seasonder_checkPWMAX <- function(seasonder_cs_object) {
 #' }
 #'
 #' @export
-seasonder_runMUSIC <- function(seasonder_cs_object, options = seasonder_defaultMUSIC_options()){
+seasonder_runMUSIC <- function(seasonder_cs_object){
 
   # Log the start of the MUSIC algorithm.
   seasonder_logAndMessage("seasonder_runMUSIC: MUSIC algorithm started.", "info")
+options <- seasonder_getSeaSondeRCS_MUSIC_options(seasonder_cs_object)
+  
+
 discard <- options$discard
 doppler_interpolation <- options$doppler_interpolation
   # Create a copy of the input object to store the results of the processing.
@@ -2823,7 +2826,7 @@ if("no_solution" %in% discard){
 #' print(result)
 #' }
 #' @export
-seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object, options = seasonder_defaultMUSIC_options()){
+seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object){
 
   # Initialize the output as a copy of the input SeaSondeRCS object
   out <- seasonder_cs_object
