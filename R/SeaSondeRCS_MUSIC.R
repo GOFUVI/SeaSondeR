@@ -632,7 +632,7 @@ SeaSondeRCS_doa_selection_end_step_text  <- function() {
 
 #### Setters ####
 
-
+#' @export
 seasonder_setSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object, MUSIC_options = seasonder_defaultMUSIC_options()) {
 
   MUSIC_options <- modifyList(seasonder_defaultMUSIC_options(), MUSIC_options)
