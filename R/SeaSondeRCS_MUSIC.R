@@ -2881,7 +2881,7 @@ doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_options(out)$doppler_int
   out %<>% seasonder_initMUSICData(range_cells = FOR$range_cell, doppler_bins = FOR$doppler_bin, NULL_MUSIC = nrow(FOR) == 0)
 
   # Run the MUSIC algorithm on the updated SeaSondeRCS object
-  out %<>% seasonder_runMUSIC(options = options)
+  out %<>% seasonder_runMUSIC()
 
   # Return the updated SeaSondeRCS object
   return(out)
