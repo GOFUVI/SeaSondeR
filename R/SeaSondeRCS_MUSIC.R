@@ -3446,7 +3446,7 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
   # Combine rows into a data.frame; if no rows, return empty data.frame with correct columns
   if (length(out_rows) > 0) {
     result <- do.call(rbind, lapply(out_rows, as.data.frame))
-    result %<>% dplyr::mutate( VFLG = VFLG + 4096L * as.integer(PPFG != 1 | PWFG != 1),
+    result %<>% dplyr::mutate( VFLG = VFLG + 4096L * as.integer(! PPFG %in% c(1,9) | !PWFG %in% c(1,9)),
                                VELU = abs(VELO) * sin(BEAR * pi / 180),
                                VELV = abs(VELO) * cos(BEAR * pi / 180),
                                MPKR = tidyr::replace_na(MPKR, 0),
