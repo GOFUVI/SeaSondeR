@@ -3336,11 +3336,7 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
 
 
 
-    # Assign location data if available
-    if (!is.null(music$lonlat[[i]]) && nrow(music$lonlat[[i]]) > 0) {
-      row_template$LOND <- music$lonlat[[i]]$lon[1]
-      row_template$LATD <- music$lonlat[[i]]$lat[1]
-    }
+    
 
     row_template$VFLG <- row_music$VFLG
 
@@ -3406,7 +3402,14 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
     # Check for DOA solutions and output all available ones: single and dual
 
     if (row_music$retained_solution == "single") {
+      
       row_single <- row_template
+
+# Assign location data if available
+    if (!is.null(row_music$lonlat) && nrow(row_music$lonlat) > 0) {
+      row_single$LOND <- row_music$lonlat$lon[1]
+      row_single$LATD <- row_music$lonlat$lat[1]
+    }
 
       row_single$MSEL <- 1
       row_single$BEAR <- row_single$MSA1
@@ -3418,6 +3421,12 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
       ds <- ds_all$dual
 
       row_dual1 <- row_template
+
+# Assign location data if available
+    if (!is.null(row_music$lonlat) && nrow(row_music$lonlat) > 0) {
+      row_dual1$LOND <- row_music$lonlat$lon[1]
+      row_dual1$LATD <- row_music$lonlat$lat[1]
+    }
 
       row_dual1$MSEL <- 2
 
@@ -3431,7 +3440,11 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
       row_dual2 <- row_template
 
       row_dual2$MSEL <- 3
-
+# Assign location data if available
+    if (!is.null(row_music$lonlat) && nrow(row_music$lonlat) > 1) {
+      row_dual2$LOND <- row_music$lonlat$lon[2]
+      row_dual2$LATD <- row_music$lonlat$lat[2]
+    }
       row_dual2$BEAR <- row_dual1$MDA2
       row_dual2$HEAD <- (row_dual2$BEAR -180) %% 360
       row_dual2$PPFG <-  row_music$DOA[[1]]$PPFG[2]
