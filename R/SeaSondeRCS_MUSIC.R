@@ -3488,11 +3488,11 @@ if(length(seg) == 3 && seg[1] %in% result$SPRC && seg[2] >= seg[3]){
 
 
 #' @export
-seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object, LLUV_path) {
+seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object, LLUV_path,...) {
 
   apm_object <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_APM()
 
-  radial_metrics <- seasonder_exportRadialMetrics(seasonder_cs_object)
+  radial_metrics <- seasonder_exportRadialMetrics(seasonder_cs_object,...)
 
   MUSIC_params <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_MUSIC_parameters() %>% magrittr::extract(1:3)
   # Removed unused variable 'header'
