@@ -3447,8 +3447,8 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
   if (length(out_rows) > 0) {
     result <- do.call(rbind, lapply(out_rows, as.data.frame))
     result %<>% dplyr::mutate( VFLG = VFLG + 4096L * as.integer(! PPFG %in% c(1,9) | !PWFG %in% c(1,9)),
-                               VELU = abs(VELO) * sin(BEAR * pi / 180),
-                               VELV = abs(VELO) * cos(BEAR * pi / 180),
+                               VELU = VELO * sin(HEAD * pi / 180),
+                               VELV = VELO * cos(HEAD * pi / 180),
                                MPKR = tidyr::replace_na(MPKR, 0),
                                MDP1 = tidyr::replace_na(MDP1, 0),
                                MDP2 = tidyr::replace_na(MDP2, 0),
