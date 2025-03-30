@@ -3307,7 +3307,7 @@ return(out)
 }
 
 #' @export
-seasonder_exportRadialMetrics <- function(seasonder_cs_object) {
+seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) {
   # Obtain the MUSIC table using the function seasonder_getSeaSondeRCS_MUSIC from the global environment. This allows the function to be overridden using local_redefs.
   music <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
@@ -3453,9 +3453,14 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
 
     }
   }
-
-
-
+if(length(AngSeg) > 0){
+result <- purrr::reduce(AngSeg,\(result_so_far,seg){
+if(length(seg) == 3 && seg[1] %in% result$SPRC && seg[2] >= seg[3]){
+  result_so_far <- result_so_far %>% dplyr::mutate(VFLG = VFLG + 128 * as.integer(SPRC ==seg[1] & dplyr::between(BEAR,seg[2], seg[3])))
+}
+  return(result_so_far)
+},.init = result)
+}
   # Combine rows into a data.frame; if no rows, return empty data.frame with correct columns
   if (length(out_rows) > 0) {
     result <- do.call(rbind, lapply(out_rows, as.data.frame))
