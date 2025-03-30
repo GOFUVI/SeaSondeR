@@ -3407,8 +3407,8 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
 
 # Assign location data if available
     if (!is.null(row_music$lonlat) && nrow(row_music$lonlat) > 0) {
-      row_single$LOND <- row_music$lonlat$lon[1]
-      row_single$LATD <- row_music$lonlat$lat[1]
+      row_single$LOND <- row_music$lonlat[[1]]$lon[1]
+      row_single$LATD <- row_music$lonlat[[1]]$lat[1]
     }
 
       row_single$MSEL <- 1
@@ -3424,8 +3424,8 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
 
 # Assign location data if available
     if (!is.null(row_music$lonlat) && nrow(row_music$lonlat) > 0) {
-      row_dual1$LOND <- row_music$lonlat$lon[1]
-      row_dual1$LATD <- row_music$lonlat$lat[1]
+      row_dual1$LOND <- row_music$lonlat[[1]]$lon[1]
+      row_dual1$LATD <- row_music$lonlat[[1]]$lat[1]
     }
 
       row_dual1$MSEL <- 2
@@ -3442,8 +3442,8 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
       row_dual2$MSEL <- 3
 # Assign location data if available
     if (!is.null(row_music$lonlat) && nrow(row_music$lonlat) > 1) {
-      row_dual2$LOND <- row_music$lonlat$lon[2]
-      row_dual2$LATD <- row_music$lonlat$lat[2]
+      row_dual2$LOND <- row_music$lonlat[[1]]$lon[2]
+      row_dual2$LATD <- row_music$lonlat[[1]]$lat[2]
     }
       row_dual2$BEAR <- row_dual1$MDA2
       row_dual2$HEAD <- (row_dual2$BEAR -180) %% 360
