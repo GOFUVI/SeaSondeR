@@ -240,9 +240,9 @@ describe("plots",{
                   reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
     )
 
+cs_path <- system.file("data", "CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 
-
-    seasonder_cs_obj <- seasonder_createSeaSondeRCS(here::here("tests/testthat/data/TORA/test1/CSS_TORA_24_04_05_0730.cs"), system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
+    seasonder_cs_obj <- seasonder_createSeaSondeRCS(cs_path, system.file("specs","CS_V1.yaml",package = "SeaSondeR"))
 
     seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 20,plot_FORs = TRUE)
 
