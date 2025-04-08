@@ -29,6 +29,9 @@ seasonder_defaultMUSIC_parameters <- function(){
   c(40,20,2,20)
 
 }
+# Exportar alias
+#' @export
+seasonder_defaultMUSICParameters <- seasonder_defaultMUSIC_parameters
 
 #' @export
 seasonder_defaultMUSIC_options <- function(){
@@ -42,6 +45,9 @@ seasonder_defaultMUSIC_options <- function(){
        )
 
 }
+# Exportar alias
+#' @export
+seasonder_defaultMUSICOptions <- seasonder_defaultMUSIC_options
 
 #' Initialize Covariance Matrix for MUSIC Algorithm
 #'
@@ -644,6 +650,37 @@ seasonder_setSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object, MUSIC_op
 
 
 }
+# Exportar alias de setter de opciones
+#' @export
+seasonder_setMUSICOptions <- seasonder_setSeaSondeRCS_MUSIC_options
+
+#' @export
+seasonder_setSeaSondeRCS_MUSIC_option <- function(seasonder_cs_object, option_name, option_value) {
+  # Get the valid option names from the default MUSIC options
+  valid_options <- names(seasonder_defaultMUSIC_options())
+  
+  # Check if the provided option_name is valid
+  if (!option_name %in% valid_options) {
+    seasonder_logAndAbort(
+      sprintf("Invalid MUSIC option '%s'. Valid options are: %s", option_name, paste(valid_options, collapse = ", ")),
+      calling_function = "seasonder_setSeaSondeRCS_MUSIC_option"
+    )
+  }
+  
+  # Retrieve current MUSIC options from the object
+  current_options <- seasonder_getSeaSondeRCS_MUSIC_options(seasonder_cs_object)
+  
+  # Set the desired option to the new value
+  current_options[[option_name]] <- option_value
+  
+  # Update the SeaSondeRCS object with the modified MUSIC options
+  seasonder_cs_object <- seasonder_setSeaSondeRCS_MUSIC_options(seasonder_cs_object, current_options)
+  
+  return(seasonder_cs_object)
+}
+# Exportar alias de setter de opción individual
+#' @export
+seasonder_setMUSICOption <- seasonder_setSeaSondeRCS_MUSIC_option
 
 seasonder_setSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object, MUSIC_parameters = seasonder_defaultMUSIC_parameters()) {
 
@@ -656,6 +693,7 @@ seasonder_setSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object, MUSIC
 
 
 }
+
 
 
 seasonder_setSeaSondeRCS_MUSIC <- function(seasonder_cs_object, MUSIC) {
@@ -692,6 +730,9 @@ seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_ob
   return(seasonder_cs_object)
 
 }
+# Exportar alias de setter de doppler_interpolation
+#' @export
+seasonder_setMUSICDopplerInterpolation <- seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation
 
 seasonder_setSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object, interpolated_data){
 
@@ -702,6 +743,7 @@ seasonder_setSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object
   return(seasonder_cs_object)
 
 }
+seasonder_setMUSICInterpolatedData <- seasonder_setSeaSondeRCS_MUSIC_interpolated_data
 
 seasonder_setSeaSondeRCS_MUSIC_interpolated_doppler_cells_index <- function(seasonder_cs_object, interpolated_doppler_cells_index){
 
@@ -713,6 +755,8 @@ seasonder_setSeaSondeRCS_MUSIC_interpolated_doppler_cells_index <- function(seas
   return(seasonder_cs_object)
 
 }
+seasonder_setMUSICInterpolatedDopplerCellsIndex <- seasonder_setSeaSondeRCS_MUSIC_interpolated_doppler_cells_index
+
 #### Getters ####
 
 
@@ -726,6 +770,9 @@ seasonder_getSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object) {
 
 
 }
+# Exportar alias de getter de parámetros
+#' @export
+seasonder_getMUSICParameters <- seasonder_getSeaSondeRCS_MUSIC_parameters
 
 
 seasonder_getSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object) {
@@ -738,6 +785,9 @@ seasonder_getSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object) {
 
 
 }
+# Exportar alias de getter de opciones
+#' @export
+seasonder_getMUSICOptions <- seasonder_getSeaSondeRCS_MUSIC_options
 
 seasonder_getSeaSondeRCS_MUSIC <- function(seasonder_cs_object) {
 
@@ -749,6 +799,9 @@ seasonder_getSeaSondeRCS_MUSIC <- function(seasonder_cs_object) {
 
 
 }
+# Exportar alias de getter de MUSIC
+#' @export
+seasonder_getMUSIC <- seasonder_getSeaSondeRCS_MUSIC
 
 #' @export
 seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_cs_object) {
@@ -761,6 +814,9 @@ seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_c
 
 
 }
+# Exportar alias de getter de dual solutions proportion
+#' @export
+seasonder_getMUSICDualSolutionsProportion <- seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion
 
 #' @export
 seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_object){
@@ -771,6 +827,9 @@ seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_ob
   return(out)
 
 }
+# Exportar alias de getter de doppler interpolation
+#' @export
+seasonder_getMUSICDopplerInterpolation <- seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation
 
 
 seasonder_getSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object){
@@ -781,6 +840,9 @@ seasonder_getSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object
 
   return(out)
 }
+# Exportar alias de getter de interpolated data
+#' @export
+seasonder_getMUSICInterpolatedData <- seasonder_getSeaSondeRCS_MUSIC_interpolated_data
 
 seasonder_getSeaSondeRCS_MUSIC_interpolated_doppler_cells_index <- function(seasonder_cs_object){
 
@@ -789,6 +851,9 @@ seasonder_getSeaSondeRCS_MUSIC_interpolated_doppler_cells_index <- function(seas
   return(out)
 
 }
+# Exportar alias de getter de interpolated doppler cells index
+#' @export
+seasonder_getMUSICInterpolatedDopplerCellsIndex <- seasonder_getSeaSondeRCS_MUSIC_interpolated_doppler_cells_index
 
 #' @export
 seasonder_getSeaSondeRCS_MUSICConfig <- function(seasonder_cs_object){
@@ -799,6 +864,9 @@ seasonder_getSeaSondeRCS_MUSICConfig <- function(seasonder_cs_object){
 
   return(out)
 }
+# Exportar alias de getter de configuración
+#' @export
+seasonder_getMUSICConfig <- seasonder_getSeaSondeRCS_MUSICConfig
 
 #### Derived quantities ####
 
@@ -2888,7 +2956,9 @@ doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_options(out)$doppler_int
 
 
 }
-
+# Exportar alias de runMUSIC en FOR
+#' @export
+seasonder_runMUSICInFOR <- seasonder_runMUSIC_in_FOR
 
 #### Utils ####
 
@@ -3070,8 +3140,7 @@ seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
   # Return the updated SeaSondeRCS object
   return(seasonder_cs_object)
 }
-
-
+seasonder_MUSICLonLat <- seasonder_MUSIC_LonLat
 
 
 #' Export MUSIC Table from SeaSondeRCS Object
@@ -3212,6 +3281,7 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object) {
   # Return the processed table
   return(out)
 }
+
 
 #' Export MUSIC Table to CSV
 #'
