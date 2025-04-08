@@ -28,11 +28,11 @@ The function follows these steps:
 }
 
 The normalized Doppler frequency is computed as:
-\deqn{f_{norm} = \frac{f_{doppler}}{f_{bragg}}}
+\deqn{f_{doppler} = f_{norm} \times f_{bragg}}
 where:
 \itemize{
+\item \( f_{doppler} \) is the Doppler frequency in Hz,
 \item \( f_{norm} \) is the normalized Doppler frequency,
-\item \( f_{doppler} \) is the Doppler frequency of a given bin,
 \item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
 }
 

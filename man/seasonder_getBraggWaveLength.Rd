@@ -20,9 +20,7 @@ to identify the fundamental scattering mechanisms in oceanographic radar measure
 }
 \details{
 The Bragg wavelength (\( \lambda_B \)) is calculated as:
-[
-\lambda_B = \frac{\lambda}{2}
-]
+\eqn{\lambda_B = \frac{\lambda}{2}}
 where:
 \itemize{
 \item \( \lambda \) is the radar wavelength in meters, obtained using

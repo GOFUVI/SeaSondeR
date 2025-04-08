@@ -422,11 +422,12 @@ seasonder_readCSSYFields <- function(connection, specs, endian, parent_key= NULL
 #' voltage values. Special integer values equal to 0xFFFFFFFF are converted to NaN.
 #'
 #' @examples
+#' \dontrun{
 #' # Example usage:
 #' values <- list(c(1000, 0xFFFFFFFF, 2000))
 #' scaled <- seasonder_SeaSondeRCSSYApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, dbRef = -20)
 #' print(scaled)
-#'
+#'}
 #' @details
 #' The scaling process performs the following steps for each input value:
 #'   1. Checks whether the value equals 0xFFFFFFFF. If so, it returns NaN immediately because this value indicates a

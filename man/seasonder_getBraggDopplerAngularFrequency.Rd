@@ -21,14 +21,12 @@ wave resonance at the Bragg wavelength.
 }
 \details{
 The Bragg Doppler angular frequency (\( \omega_B \)) is calculated using the formula:
-[
-\omega_B = \pm \frac{\sqrt{2 \cdot g \cdot k}}{2 \pi}
-]
+\eqn{\omega_B = \frac{\sqrt{2 \cdot g \cdot k}}{2\pi} \; \pm \; \text{(for negative and positive frequencies)}}
 where:
 \itemize{
-\item \( g \) is the gravitational acceleration (approximately \( 9.8 \, \text{m/s}^2 \)),
-\item \( k \) is the radar wave number in radians per meter,
-\item \( \pm \) represents the negative and positive directions of wave propagation.
+\item \eqn{g} is the gravitational acceleration (approximately \( 9.8 \, \text{m/s}^2 \)),
+\item \eqn{k} is the radar wave number in radians per meter,
+\item \eqn{pm} represents the negative and positive directions of wave propagation.
 }
 
 The returned vector contains the negative (\( -\omega_B \)) and positive (\( +\omega_B \)) angular frequencies.

@@ -25,9 +25,7 @@ the bin representing zero Doppler frequency.
 }
 \details{
 The center Doppler bin is computed as:
-[
-\text{center\_bin} = \frac{\text{nDoppler}}{2}
-]
+\eqn{\text{center\_bin} = \frac{\text{nDoppler}}{2}}
 where \(\text{nDoppler}\) is the total number of Doppler bins. This represents
 the bin at zero Doppler frequency in a zero-indexed system. Since R uses
 one-based indexing, users might observe an offset when comparing the output

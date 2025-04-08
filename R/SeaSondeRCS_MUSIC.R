@@ -6,10 +6,10 @@
 #'
 #' @details
 #' The default parameters are:
-#' - \(40\): Threshold used in \code{seasonder_MUSICCheckEigenValueRatio}.
-#' - \(20\): Threshold used in \code{seasonder_MUSICCheckSignalPowers}.
-#' - \(2\): Threshold used in \code{seasonder_MUSICCheckSignalMatrix}.
-#' - \(20\): Threshold used in \code{seasonder_MUSICCheckBearingDistance}.
+#' - 40: Threshold used in \code{seasonder_MUSICCheckEigenValueRatio}.
+#' - 20: Threshold used in \code{seasonder_MUSICCheckSignalPowers}.
+#' - 2: Threshold used in \code{seasonder_MUSICCheckSignalMatrix}.
+#' - 20: Threshold used in \code{seasonder_MUSICCheckBearingDistance}.
 #'
 #' @return A numeric vector containing the default parameters for the MUSIC algorithm:
 #' \code{c(40, 20, 2, 20)}.
@@ -24,18 +24,38 @@
 #' print(params)
 #' }
 #' @export
-seasonder_defaultMUSIC_parameters <- function(){
+seasonder_defaultMUSICParameters <- seasonder_defaultMUSIC_parameters <- function(){
 
   c(40,20,2,20)
 
 }
-# Exportar alias
-#' @export
-seasonder_defaultMUSICParameters <- seasonder_defaultMUSIC_parameters
 
-#' @export
-seasonder_defaultMUSIC_options <- function(){
 
+#' Default Options for the MUSIC Algorithm
+#'
+#' This function returns a list of default options used in the MUSIC algorithm.
+#'
+#' The returned list includes:
+#' \itemize{
+#'   \item \code{PPMIN}: Lower threshold value (default is \code{NULL}).
+#'   \item \code{PWMAX}: Upper threshold value (default is \code{NULL}).
+#'   \item \code{smoothNoiseLevel}: Logical flag indicating whether the noise level should be smoothed (\code{FALSE} by default).
+#'   \item \code{doppler_interpolation}: Doppler interpolation factor (default is \code{2}).
+#'   \item \code{MUSIC_parameters}: A numeric vector of default parameters for the MUSIC algorithm, retrieved from \code{seasonder_defaultMUSIC_parameters()}.
+#'   \item \code{discard_low_SNR}: Logical flag to discard solutions with low signal-to-noise ratio (\code{TRUE} by default).
+#'   \item \code{discard_no_solution}: Logical flag to discard cases with no solution (\code{TRUE} by default).
+#' }
+#'
+#' @return A list containing the default options for the MUSIC algorithm.
+#'
+#' @examples
+#' # Retrieve the default options for the MUSIC algorithm
+#' opts <- seasonder_defaultMUSIC_options()
+#' print(opts)
+#'
+#' @export
+seasonder_defaultMUSICOptions <- seasonder_defaultMUSIC_options <- function(){
+  
   list(PPMIN = NULL,
        PWMAX = NULL,
        smoothNoiseLevel = F,
@@ -44,22 +64,20 @@ seasonder_defaultMUSIC_options <- function(){
        discard_low_SNR = TRUE,
        discard_no_solution = TRUE
        )
-
+  
 }
-# Exportar alias
-#' @export
-seasonder_defaultMUSICOptions <- seasonder_defaultMUSIC_options
+
 
 #' Initialize Covariance Matrix for MUSIC Algorithm
 #'
 #' This function initializes a covariance matrix for use in the MUSIC algorithm.
 #'
 #' @details
-#' The covariance matrix is initialized as a \(3 \times 3\) matrix filled with complex \code{NA} values.
+#' The covariance matrix is initialized as a 3 x 3 matrix filled with complex \code{NA} values.
 #' This structure is specifically designed for three-channel antenna configurations commonly used
 #' in SeaSondeR applications.
 #'
-#' @return A \(3 \times 3\) matrix of complex values, each initialized to \code{NA_complex_}.
+#' @return A 3 x 3 matrix of complex values, each initialized to \code{NA_complex_}.
 #'
 #' @seealso
 #' \code{\link{seasonder_defaultMUSIC_parameters}} for default MUSIC parameters.
@@ -86,14 +104,14 @@ seasonder_MUSICInitCov <- function(){
 #'   Defaults to \code{0}.
 #'
 #' @details
-#' The function creates a \(2 \times n\) complex matrix, where \(n\) is the number of bearings.
+#' The function creates a 2 x n complex matrix, where n is the number of bearings.
 #' The matrix rows are labeled:
 #' - \code{"single"}: For single projections.
 #' - \code{"dual"}: For dual projections.
 #'
 #' An attribute \code{"bearings"} is attached to the matrix, storing the input bearings vector.
 #'
-#' @return A \(2 \times n\) matrix of complex values, each initialized to \code{NA_complex_}, with row names
+#' @return A 2 x n matrix of complex values, each initialized to \code{NA_complex_}, with row names
 #'   \code{"single"} and \code{"dual"}. The input bearings are stored as an attribute.
 #'
 #' @seealso
@@ -141,7 +159,7 @@ seasonder_MUSICInitProjections <- function(bearings = 0) {
 #' - \code{"dual"}: Contains placeholders for dual DOA solutions:
 #'   - \code{bearing}: The bearing angle (\code{NA_real_} by default).
 #'   - \code{a}: The complex steering vector (\code{NA_complex_} by default).
-#'   - \code{P}: A \(2 \times 2\) complex matrix initialized to \code{NA_complex_}.
+#'   - \code{P}: A 2 x 2 complex matrix initialized to \code{NA_complex_}.
 #'
 #' @return A list with initialized placeholders for \code{"single"} and \code{"dual"} DOA solutions.
 #'
@@ -188,7 +206,7 @@ seasonder_MUSICInitDOASolutions <- function() {
 #' @details
 #' The function returns a list with the following components:
 #' - \code{values}: A vector of length 3, initialized with \code{NA_complex_}, to hold the eigenvalues.
-#' - \code{vectors}: A \(3 \times 3\) matrix, initialized with \code{NA_complex_}, to hold the eigenvectors.
+#' - \code{vectors}: A 3 x 3 matrix, initialized with \code{NA_complex_}, to hold the eigenvectors.
 #'
 #' This structure is designed to support three-channel antenna configurations typical in SeaSondeR applications.
 #'
@@ -640,7 +658,7 @@ SeaSondeRCS_doa_selection_end_step_text  <- function() {
 #### Setters ####
 
 #' @export
-seasonder_setSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object, MUSIC_options = seasonder_defaultMUSIC_options()) {
+seasonder_setMUSICOptions <- seasonder_setSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object, MUSIC_options = seasonder_defaultMUSIC_options()) {
 
   MUSIC_options <- modifyList(seasonder_defaultMUSIC_options(), MUSIC_options)
 
@@ -651,12 +669,10 @@ seasonder_setSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object, MUSIC_op
 
 
 }
-# Exportar alias de setter de opciones
-#' @export
-seasonder_setMUSICOptions <- seasonder_setSeaSondeRCS_MUSIC_options
+
 
 #' @export
-seasonder_setSeaSondeRCS_MUSIC_option <- function(seasonder_cs_object, option_name, option_value) {
+seasonder_setMUSICOption <- seasonder_setSeaSondeRCS_MUSIC_option <- function(seasonder_cs_object, option_name, option_value) {
   # Get the valid option names from the default MUSIC options
   valid_options <- names(seasonder_defaultMUSIC_options())
   
@@ -679,9 +695,6 @@ seasonder_setSeaSondeRCS_MUSIC_option <- function(seasonder_cs_object, option_na
   
   return(seasonder_cs_object)
 }
-# Exportar alias de setter de opción individual
-#' @export
-seasonder_setMUSICOption <- seasonder_setSeaSondeRCS_MUSIC_option
 
 seasonder_setSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object, MUSIC_parameters = seasonder_defaultMUSIC_parameters()) {
 
@@ -721,19 +734,43 @@ seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_c
 
 }
 
-#' @export
-seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_object, doppler_interpolation){
 
+#' Set the Doppler Interpolation Factor in a SeaSondeRCS Object
+#'
+#' This function validates and assigns the Doppler interpolation factor in the SeaSondeRCS object, updating the corresponding option in the \code{MUSIC_data} field.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing radar data and metadata.
+#' @param doppler_interpolation An integer specifying the Doppler interpolation factor. Must be 1, 2, 3, or 4.
+#'
+#' @details
+#' The function performs the following operations:
+#' \enumerate{
+#'   \item Validates the value of \code{doppler_interpolation} using the function \code{SeaSondeRCS_MUSIC_validate_doppler_interpolation}.
+#'   \item Updates the attribute \code{MUSIC_options$doppler_interpolation} of the SeaSondeRCS object with the validated value.
+#' }
+#'
+#' @return The SeaSondeRCS object with the updated Doppler interpolation option.
+#'
+#' @seealso
+#' \code{\link{SeaSondeRCS_MUSIC_validate_doppler_interpolation}} for Doppler interpolation factor validation.
+#'
+#' @examples
+#' \dontrun{
+#'   # Suppose 'cs_object' is a valid SeaSondeRCS object
+#'   cs_object <- seasonder_createSeaSondeRCS(...)
+#'   cs_object <- seasonder_setMUSICDopplerInterpolation(cs_object, 2)
+#'   # Now the object has the Doppler interpolation factor set to 2
+#' }
+#' @export
+seasonder_setMUSICDopplerInterpolation <- seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_object, doppler_interpolation){
+  
   doppler_interpolation <- SeaSondeRCS_MUSIC_validate_doppler_interpolation(doppler_interpolation, seasonder_cs_object)
-
+  
   attr(seasonder_cs_object, "MUSIC_data")$MUSIC_options$doppler_interpolation <- doppler_interpolation
-
+  
   return(seasonder_cs_object)
-
 }
-# Exportar alias de setter de doppler_interpolation
-#' @export
-seasonder_setMUSICDopplerInterpolation <- seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation
+
 
 seasonder_setSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object, interpolated_data){
 

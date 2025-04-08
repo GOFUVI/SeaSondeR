@@ -20,9 +20,7 @@ light and the radar's center frequency.
 }
 \details{
 The radar wavelength (\( \lambda \)) is calculated using the formula:
-[
-\lambda = \frac{c}{f}
-]
+\eqn{\lambda = \frac{c}{f}}
 where:
 \itemize{
 \item \( c \) is the speed of light (approximately \( 3 \times 10^8 \, \text{m/s} \)),

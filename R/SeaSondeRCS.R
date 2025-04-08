@@ -1251,9 +1251,7 @@ seasonder_getReceiverGain_dB <- function(seasonder_cs_object) {
 #'
 #' @details
 #' The center Doppler bin is computed as:
-#' \[
-#' \text{center\_bin} = \frac{\text{nDoppler}}{2}
-#' \]
+#' \eqn{\text{center\_bin} = \frac{\text{nDoppler}}{2}}
 #' where \(\text{nDoppler}\) is the total number of Doppler bins. This represents
 #' the bin at zero Doppler frequency in a zero-indexed system. Since R uses
 #' one-based indexing, users might observe an offset when comparing the output
@@ -1309,9 +1307,7 @@ seasonder_getCenterDopplerBin <- function(seasonder_cs_object) {
 #'
 #' @details
 #' The radar wavelength (\( \lambda \)) is calculated using the formula:
-#' \[
-#' \lambda = \frac{c}{f}
-#' \]
+#' \eqn{\lambda = \frac{c}{f}}
 #' where:
 #' - \( c \) is the speed of light (approximately \( 3 \times 10^8 \, \text{m/s} \)),
 #' - \( f \) is the radar's center frequency in Hz, retrieved from the SeaSondeRCS object.
@@ -1360,9 +1356,7 @@ seasonder_getRadarWaveLength <- function(seasonder_cs_object) {
 #'
 #' @details
 #' The radar wave number (\( k \)) is calculated using the formula:
-#' \[
-#' k = \frac{2 \pi}{\lambda}
-#' \]
+#' \eqn{k = \frac{2 \pi}{\lambda}}
 #' where:
 #' - \( \lambda \) is the radar wavelength in meters, calculated using
 #'   \code{\link{seasonder_getRadarWaveLength}}.
@@ -1408,9 +1402,7 @@ seasonder_getRadarWaveNumber <- function(seasonder_cs_object) {
 #'
 #' @details
 #' The Bragg wavelength (\( \lambda_B \)) is calculated as:
-#' \[
-#' \lambda_B = \frac{\lambda}{2}
-#' \]
+#' \eqn{\lambda_B = \frac{\lambda}{2}}
 #' where:
 #' - \( \lambda \) is the radar wavelength in meters, obtained using
 #'   \code{\link{seasonder_getRadarWaveLength}}.
@@ -1455,13 +1447,11 @@ seasonder_getBraggWaveLength <- function(seasonder_cs_object) {
 #'
 #' @details
 #' The Bragg Doppler angular frequency (\( \omega_B \)) is calculated using the formula:
-#' \[
-#' \omega_B = \pm \frac{\sqrt{2 \cdot g \cdot k}}{2 \pi}
-#' \]
+#' \eqn{\omega_B = \frac{\sqrt{2 \cdot g \cdot k}}{2\pi} \; \pm \; \text{(for negative and positive frequencies)}}
 #' where:
-#' - \( g \) is the gravitational acceleration (approximately \( 9.8 \, \text{m/s}^2 \)),
-#' - \( k \) is the radar wave number in radians per meter,
-#' - \( \pm \) represents the negative and positive directions of wave propagation.
+#' - \eqn{g} is the gravitational acceleration (approximately \( 9.8 \, \text{m/s}^2 \)),
+#' - \eqn{k} is the radar wave number in radians per meter,
+#' - \eqn{pm} represents the negative and positive directions of wave propagation.
 #'
 #' The returned vector contains the negative (\( -\omega_B \)) and positive (\( +\omega_B \)) angular frequencies.
 #'
@@ -2163,7 +2153,7 @@ seasonder_computeDopplerFreq2Bins <- function(seasonder_cs_object, doppler_value
 #'
 #' @details
 #' This function first retrieves the Doppler frequency bins from the given \code{SeaSondeR} object using \code{\link{seasonder_getDopplerBinsFrequency}} in non-normalized form.
-#' The spectral resolution, which defines the frequency step size (\(\Delta f\)), is obtained using \code{\link{seasonder_getDopplerSpectrumResolution}}.
+#' The spectral resolution, which defines the frequency step size (\eqn{\Delta f}), is obtained using \code{\link{seasonder_getDopplerSpectrumResolution}}.
 #'
 #' The number of Doppler bins is then determined using \code{\link{seasonder_getnDopplerCells}}.
 #'
@@ -2257,11 +2247,11 @@ seasonder_Bins2DopplerFreq <- function(seasonder_cs_object, bins) {
 #' }
 #'
 #' The normalized Doppler frequency is computed as:
-#' \deqn{f_{norm} = \frac{f_{doppler}}{f_{bragg}}}
+#' \deqn{f_{doppler} = f_{norm} \times f_{bragg}}
 #' where:
 #' \itemize{
+#'   \item \( f_{doppler} \) is the Doppler frequency in Hz,
 #'   \item \( f_{norm} \) is the normalized Doppler frequency,
-#'   \item \( f_{doppler} \) is the Doppler frequency of a given bin,
 #'   \item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
 #' }
 #'

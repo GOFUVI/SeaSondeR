@@ -21,9 +21,7 @@ of the radar wave.
 }
 \details{
 The radar wave number (\( k \)) is calculated using the formula:
-[
-k = \frac{2 \pi}{\lambda}
-]
+\eqn{k = \frac{2 \pi}{\lambda}}
 where:
 \itemize{
 \item \( \lambda \) is the radar wavelength in meters, calculated using

@@ -19,7 +19,7 @@ This function converts a set of Doppler frequency values into their correspondin
 }
 \details{
 This function first retrieves the Doppler frequency bins from the given \code{SeaSondeR} object using \code{\link{seasonder_getDopplerBinsFrequency}} in non-normalized form.
-The spectral resolution, which defines the frequency step size (\(\Delta f\)), is obtained using \code{\link{seasonder_getDopplerSpectrumResolution}}.
+The spectral resolution, which defines the frequency step size (\eqn{\Delta f}), is obtained using \code{\link{seasonder_getDopplerSpectrumResolution}}.
 
 The number of Doppler bins is then determined using \code{\link{seasonder_getnDopplerCells}}.
 
