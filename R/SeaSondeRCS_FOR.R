@@ -536,7 +536,35 @@ seasonder_setSeaSondeRCS_FOR_SS_Smoothed <- function(seasonder_cs_object, FOR_SS
   return(seasonder_cs_object)
 }
 
-
+#' Set First Order Region Processing Method for SeaSondeRCS Object
+#'
+#' This function sets the First Order Region (FOR) processing method for a SeaSondeRCS object.
+#' It validates the provided method using \code{seasonder_validateFORMethod} and assigns it to the 
+#' object's \code{FOR_data} attribute under \code{FOR_method}.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing spectral and metadata information.
+#' @param FOR_method A character string specifying the desired FOR processing method. Currently, only
+#'   \code{"SeaSonde"} is supported.
+#'
+#' @return The updated SeaSondeRCS object with the specified FOR processing method set.
+#'
+#' @details
+#' The function first validates the provided method. If the method is valid, it is stored in the 
+#' \code{FOR_data} attribute of the SeaSondeRCS object under the \code{FOR_method} field. This setting 
+#' is later used in the processing workflow to guide FOR computation.
+#'
+#' @examples
+#' \dontrun{
+#'   # Create a SeaSondeRCS object (assuming seasonder_createSeaSondeRCS is defined)
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'
+#'   # Set the FOR method to "SeaSonde"
+#'   cs_obj <- seasonder_setSeaSondeRCS_FOR_method(cs_obj, "SeaSonde")
+#'
+#'   # Retrieve and check the FOR method
+#'   for_method <- attr(cs_obj, "FOR_data")$FOR_method
+#'   print(for_method)
+#' }
 seasonder_setSeaSondeRCS_FOR_method <- function(seasonder_cs_object, FOR_method) {
 
   FOR_method <- seasonder_validateFORMethod(FOR_method)
@@ -627,7 +655,32 @@ seasonder_setSeaSondeRCS_FOR_MAXP.bin <- function(seasonder_cs_object, FOR_MAXP.
   return(seasonder_cs_object)
 }
 
-
+#' Set Noise Level for SeaSondeRCS Object
+#'
+#' This function updates the noise level for a specified antenna within a SeaSondeRCS object.
+#' It retrieves the current "NoiseLevel" attribute (or initializes it with the default if missing),
+#' updates the noise level for the given antenna, and stores it back in the object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object.
+#' @param NoiseLevel A numeric value representing the new noise level to be set.
+#' @param antenna An integer specifying the antenna for which the noise level is updated. Default is 3.
+#'
+#' @return The updated SeaSondeRCS object with the modified "NoiseLevel" attribute.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assume a SeaSondeRCS object is created using seasonder_createSeaSondeRCS()
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'
+#'   # Define a new noise level value
+#'   new_noise_level <- 0.05
+#'
+#'   # Update the noise level for antenna 3
+#'   cs_obj <- seasonder_setSeaSondeRCS_NoiseLevel(cs_obj, new_noise_level, antenna = 3)
+#'
+#'   # Verify the updated noise level in the object
+#'   print(attr(cs_obj, "NoiseLevel")[[3]])
+#' }
 seasonder_setSeaSondeRCS_NoiseLevel <- function(seasonder_cs_object, NoiseLevel, antenna = 3) {
 
   # TODO: validate
@@ -1057,7 +1110,8 @@ SeaSondeRCS_setFORParameters_step_text <- function(seasonder_cs_object) {
 #'   print(noise_limits)
 #'
 #'   # Estimate the reference noise limits with a modified lower limit (e.g., 56.5% of max frequency)
-#'   noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj, low_limit = 0.565, high_limit = 1.0)
+#'   noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj, 
+#' low_limit = 0.565, high_limit = 1.0)
 #'   print(noise_limits)
 #' }
 #'
@@ -1351,7 +1405,7 @@ seasonder_SmoothSS <- function(seasonder_cs_object, antenna, smoothing = NULL) {
 #'
 #' @seealso
 #' - \code{\link{seasonder_findFORNullsInSpectrum}} for locating nulls in a full spectrum.
-#' - \code{\link{pracma::findpeaks}} for peak detection.
+#' - \code{\link[pracma]{findpeaks}} for peak detection.
 #'
 #' @examples
 #' \dontrun{

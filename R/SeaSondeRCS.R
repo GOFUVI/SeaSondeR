@@ -221,7 +221,8 @@ seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 #' @examples
 #' \dontrun{
 #'   # Example header and data lists (replace with actual header and data content)
-#'   my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0, nFirstRangeCell = 1)
+#'   my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0, 
+#' nFirstRangeCell = 1)
 #'   my_data <- list(
 #'     SSA1 = matrix(NA_real_, nrow = 100, ncol = 256),
 #'     SSA2 = matrix(NA_real_, nrow = 100, ncol = 256),
@@ -1057,7 +1058,32 @@ seasonder_extractSeaSondeRCS_distRanges_from_SSdata <- function(SSmatrix, dist_r
 }
 
 
-
+#' Extract Doppler Ranges from Self-Spectra Data Matrix
+#'
+#' This function slices a self-spectra data matrix by selecting the columns corresponding to the specified Doppler cells.
+#'
+#' @param SSmatrix A matrix containing self-spectra data, where columns represent Doppler bins.
+#' @param doppler_cells A numeric vector specifying the indices of the Doppler bins to extract.
+#'
+#' @return A matrix containing only the columns corresponding to the selected Doppler cells.
+#'
+#' @details
+#' The function extracts a subset of columns from the self-spectra matrix. No explicit validation is currently 
+#' performed to verify that the provided Doppler cell indices fall within the range of the matrix columns.
+#'
+#' @examples
+#' \dontrun{
+#'   # Create a sample self-spectra matrix with 5 range cells and 10 Doppler bins
+#'   sample_matrix <- matrix(1:50, nrow = 5, ncol = 10)
+#'
+#'   # Suppose we want to extract Doppler bins 3 to 7
+#'   selected_bins <- 3:7
+#'
+#'   # Extract the corresponding subset of the self-spectra matrix
+#'   sliced_matrix <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(sample_matrix,
+#'  selected_bins)
+#'   print(sliced_matrix)
+#' }
 seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, doppler_cells) {
 
 
@@ -1117,11 +1143,13 @@ seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, dop
 #'   antennae <- c(1, 2)
 #'   dist_ranges <- list(10:20)
 #'   doppler_ranges <- list(5:15)
-#'   spectra_list <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, dist_ranges, doppler_ranges)
+#'   spectra_list <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, 
+#' dist_ranges, doppler_ranges)
 #'   print(spectra_list)
 #'
 #'   # Example: Extract and collapse the output into a flat list.
-#'   spectra_flat <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, dist_ranges, doppler_ranges, collapse = TRUE)
+#'   spectra_flat <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, 
+#' dist_ranges, doppler_ranges, collapse = TRUE)
 #'   print(spectra_flat)
 #' }
 #'
@@ -1856,10 +1884,12 @@ seasonder_getBraggLineBins <- function(seasonder_cs_object) {
 #' nDoppler <- 512
 #' center_bin <- seasonder_getCenterDopplerBin(cs_obj)
 #' spectra_res <- seasonder_getDopplerSpectrumResolution(cs_obj)
-#' freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, center_bin, spectra_res)
+#' freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, 
+#' center_bin, spectra_res)
 #'
 #' # Compute normalized frequencies
-#' norm_freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, center_bin, spectra_res, normalized = TRUE)
+#' norm_freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, 
+#' center_bin, spectra_res, normalized = TRUE)
 #' }
 #'
 seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_object, nDoppler, center_bin, spectra_res, normalized = FALSE) {
@@ -2215,9 +2245,9 @@ seasonder_SelfSpectra2dB <- function(seasonder_cs_object, spectrum_values) {
 #' \deqn{f_{norm} = \frac{f_{doppler}}{f_{bragg}}}
 #' where:
 #' \itemize{
-#'   \item \( f_{norm} \) is the normalized Doppler frequency,
-#'   \item \( f_{doppler} \) is the Doppler frequency of a given bin,
-#'   \item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
+#'   \item \eqn{f_{norm}} is the normalized Doppler frequency,
+#'   \item \eqn{f_{doppler}} is the Doppler frequency of a given bin,
+#'   \item \eqn{f_{bragg}} is the Bragg frequency, computed based on radar wavelength.
 #' }
 #'
 #' @seealso
@@ -2349,7 +2379,8 @@ seasonder_NormalizedDopplerFreq2Bins <- function(seasonder_cs_object, doppler_va
 #' doppler_freqs <- seq(-1, 1, length.out = 101) # Example Doppler bin frequencies
 #' delta_freq <- diff(doppler_freqs)[1]
 #' nDoppler <- length(doppler_freqs)
-#' bins <- seasonder_computeDopplerFreq2Bins(cs_obj, doppler_values, doppler_freqs, delta_freq, nDoppler)
+#' bins <- seasonder_computeDopplerFreq2Bins(cs_obj, doppler_values, doppler_freqs,
+#'  delta_freq, nDoppler)
 #' print(bins)
 #' }
 seasonder_computeDopplerFreq2Bins <- function(seasonder_cs_object, doppler_values, doppler_freqs, delta_freq, nDoppler){
@@ -2478,9 +2509,9 @@ seasonder_Bins2DopplerFreq <- function(seasonder_cs_object, bins) {
 #' \deqn{f_{doppler} = f_{norm} \times f_{bragg}}
 #' where:
 #' \itemize{
-#'   \item \( f_{doppler} \) is the Doppler frequency in Hz,
-#'   \item \( f_{norm} \) is the normalized Doppler frequency,
-#'   \item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
+#'   \item \eqn{f_{doppler}} is the Doppler frequency in Hz,
+#'   \item \eqn{f_{norm}} is the normalized Doppler frequency,
+#'   \item \eqn{f_{bragg}} is the Bragg frequency, computed based on radar wavelength.
 #' }
 #'
 #' This function ensures consistency by mapping input frequencies to their closest bin representation before normalization.
@@ -2531,9 +2562,9 @@ seasonder_DopplerFreq2NormalizedDopplerFreq <- function(seasonder_cs_object, dop
 #' \deqn{f_{doppler} = f_{norm} \times f_{bragg}}
 #' where:
 #' \itemize{
-#'   \item \( f_{doppler} \) is the Doppler frequency in Hz,
-#'   \item \( f_{norm} \) is the normalized Doppler frequency,
-#'   \item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
+#'   \item \eqn{f_{doppler}} is the Doppler frequency in Hz,
+#'   \item \eqn{f_{norm}} is the normalized Doppler frequency,
+#'   \item \eqn{f_{bragg}} is the Bragg frequency, computed based on radar wavelength.
 #' }
 #'
 #' @seealso
@@ -2616,7 +2647,8 @@ seasonder_NormalizedDopplerFreq2DopplerFreq <- function(seasonder_cs_object, dop
 #' # Convert Doppler frequencies (Hz) to normalized Doppler frequency
 #' cs_obj <- seasonder_createSeaSondeRCS(...)
 #' doppler_values <- c(-0.3, 0, 0.6)  # Doppler values in Hz
-#' normalized_freqs <- seasonder_SwapDopplerUnits(cs_obj, doppler_values, "doppler frequency", "normalized doppler frequency")
+#' normalized_freqs <- seasonder_SwapDopplerUnits(cs_obj, doppler_values, 
+#' "doppler frequency", "normalized doppler frequency")
 #' print(normalized_freqs)
 #'
 #' # Convert Doppler bins to Doppler frequency (Hz)
@@ -2715,7 +2747,7 @@ seasonder_SwapDopplerUnits <- function(seasonder_cs_object, values, in_units, ou
 #'
 #'   # Plot with Doppler frequencies in Hz and overlay FOR-related elements:
 #'   p <- seasonder_SeaSondeRCS_plotSelfSpectrum(cs_object, antenna = 2, range_cell = 10,
-#'                                                doppler_units = "doppler frequency", plot_FORs = TRUE)
+#'   doppler_units = "doppler frequency", plot_FORs = TRUE)
 #'   print(p)
 #' }
 #'

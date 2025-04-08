@@ -54,7 +54,8 @@ are numeric. It also checks that no element in \code{values} is non-numeric and 
 \dontrun{
 # Example usage:
 values <- list(c(1000, 0xFFFFFFFF, 2000))
-scaled <- seasonder_SeaSondeRCSSYApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, dbRef = -20)
+scaled <- seasonder_SeaSondeRCSSYApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, 
+dbRef = -20)
 print(scaled)
 }
 }

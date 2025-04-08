@@ -58,7 +58,7 @@ The function performs the following steps:
 
   # Plot with Doppler frequencies in Hz and overlay FOR-related elements:
   p <- seasonder_SeaSondeRCS_plotSelfSpectrum(cs_object, antenna = 2, range_cell = 10,
-                                               doppler_units = "doppler frequency", plot_FORs = TRUE)
+  doppler_units = "doppler frequency", plot_FORs = TRUE)
   print(p)
 }
 

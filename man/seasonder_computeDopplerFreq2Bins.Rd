@@ -49,7 +49,8 @@ doppler_values <- c(-0.2, 0, 0.5)
 doppler_freqs <- seq(-1, 1, length.out = 101) # Example Doppler bin frequencies
 delta_freq <- diff(doppler_freqs)[1]
 nDoppler <- length(doppler_freqs)
-bins <- seasonder_computeDopplerFreq2Bins(cs_obj, doppler_values, doppler_freqs, delta_freq, nDoppler)
+bins <- seasonder_computeDopplerFreq2Bins(cs_obj, doppler_values, doppler_freqs,
+ delta_freq, nDoppler)
 print(bins)
 }
 }

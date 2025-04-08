@@ -53,10 +53,12 @@ Normalization is based on the positive Bragg frequency calculated by
 nDoppler <- 512
 center_bin <- seasonder_getCenterDopplerBin(cs_obj)
 spectra_res <- seasonder_getDopplerSpectrumResolution(cs_obj)
-freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, center_bin, spectra_res)
+freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, 
+center_bin, spectra_res)
 
 # Compute normalized frequencies
-norm_freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, center_bin, spectra_res, normalized = TRUE)
+norm_freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, 
+center_bin, spectra_res, normalized = TRUE)
 }
 
 }

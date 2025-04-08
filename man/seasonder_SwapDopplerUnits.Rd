@@ -56,7 +56,8 @@ Overall, the functions used for Doppler units conversion mimic the implementatio
 # Convert Doppler frequencies (Hz) to normalized Doppler frequency
 cs_obj <- seasonder_createSeaSondeRCS(...)
 doppler_values <- c(-0.3, 0, 0.6)  # Doppler values in Hz
-normalized_freqs <- seasonder_SwapDopplerUnits(cs_obj, doppler_values, "doppler frequency", "normalized doppler frequency")
+normalized_freqs <- seasonder_SwapDopplerUnits(cs_obj, doppler_values, 
+"doppler frequency", "normalized doppler frequency")
 print(normalized_freqs)
 
 # Convert Doppler bins to Doppler frequency (Hz)

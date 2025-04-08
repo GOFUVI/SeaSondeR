@@ -31,9 +31,9 @@ The normalized Doppler frequency is computed as:
 \deqn{f_{doppler} = f_{norm} \times f_{bragg}}
 where:
 \itemize{
-\item \( f_{doppler} \) is the Doppler frequency in Hz,
-\item \( f_{norm} \) is the normalized Doppler frequency,
-\item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
+\item \eqn{f_{doppler}} is the Doppler frequency in Hz,
+\item \eqn{f_{norm}} is the normalized Doppler frequency,
+\item \eqn{f_{bragg}} is the Bragg frequency, computed based on radar wavelength.
 }
 
 This function ensures consistency by mapping input frequencies to their closest bin representation before normalization.

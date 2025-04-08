@@ -54,7 +54,8 @@ This approach is crucial for setting the signal-to-noise ratio (SNR) thresholds 
   print(noise_limits)
 
   # Estimate the reference noise limits with a modified lower limit (e.g., 56.5\% of max frequency)
-  noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj, low_limit = 0.565, high_limit = 1.0)
+  noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj, 
+low_limit = 0.565, high_limit = 1.0)
   print(noise_limits)
 }
 

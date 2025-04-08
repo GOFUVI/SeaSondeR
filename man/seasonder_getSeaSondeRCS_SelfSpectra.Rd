@@ -68,11 +68,13 @@ range cell numbers using \code{seasonder_rangeCellsDists2RangeNumber}.
   antennae <- c(1, 2)
   dist_ranges <- list(10:20)
   doppler_ranges <- list(5:15)
-  spectra_list <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, dist_ranges, doppler_ranges)
+  spectra_list <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, 
+dist_ranges, doppler_ranges)
   print(spectra_list)
 
   # Example: Extract and collapse the output into a flat list.
-  spectra_flat <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, dist_ranges, doppler_ranges, collapse = TRUE)
+  spectra_flat <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, 
+dist_ranges, doppler_ranges, collapse = TRUE)
   print(spectra_flat)
 }
 

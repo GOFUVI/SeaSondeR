@@ -44,7 +44,8 @@ initializes FOR parameters, and sets up the FOR configuration by calling
 \examples{
 \dontrun{
   # Example header and data lists (replace with actual header and data content)
-  my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0, nFirstRangeCell = 1)
+  my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0, 
+nFirstRangeCell = 1)
   my_data <- list(
     SSA1 = matrix(NA_real_, nrow = 100, ncol = 256),
     SSA2 = matrix(NA_real_, nrow = 100, ncol = 256),

@@ -425,7 +425,8 @@ seasonder_readCSSYFields <- function(connection, specs, endian, parent_key= NULL
 #' \dontrun{
 #' # Example usage:
 #' values <- list(c(1000, 0xFFFFFFFF, 2000))
-#' scaled <- seasonder_SeaSondeRCSSYApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, dbRef = -20)
+#' scaled <- seasonder_SeaSondeRCSSYApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, 
+#' dbRef = -20)
 #' print(scaled)
 #'}
 #' @details
@@ -883,6 +884,43 @@ seasonder_applyCSSYSigns <- function(cs_data) {
   return(cs_data)
 }
 
+#' Read SeaSonde RCSSY File and Create SeaSondeRCS Object
+#'
+#' This function reads a SeaSonde RCSSY file from a specified file path and parses its content
+#' into a SeaSondeRCS object. The file is processed by reading its header and body sections using
+#' CSSY specifications provided via a YAML file.
+#'
+#' @param filepath A character string specifying the path to the SeaSonde RCSSY file.
+#' @param specs_path A character string specifying the path to the YAML file containing CSSY specifications.
+#'   Defaults to the output of \code{seasonder_defaultSpecsFilePath("CSSY")}.
+#' @param endian A character string indicating the byte order used in the file. Defaults to \code{"big"}.
+#'
+#' @return A SeaSondeRCS object containing the parsed header and data.
+#'
+#' @details
+#' The function executes the following steps:
+#' \enumerate{
+#'   \item Sets up error handling parameters specific to the function.
+#'   \item Retrieves YAML specifications for the key size block from the CSSY spec file.
+#'   \item Attempts to open the file in binary mode ("rb") with warnings suppressed.
+#'   \item Reads the file key and uses it to extract file specs.
+#'   \item Reads the header key, retrieves header specs, and parses the CSSY header.
+#'   \item Converts the CSSY header into a valid SeaSondeRCS header.
+#'   \item Reads the body key, retrieves body specs, and parses the CSSY body.
+#'   \item Transforms the CSSY body into a SeaSondeRCS data structure.
+#'   \item Combines the header and data into a SeaSondeRCS object.
+#' }
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming "path/to/file.rcssy" is a valid SeaSonde RCSSY file and the specifications file exists:
+#'   cs_obj <- seasonder_readSeaSondeRCSSYFile("path/to/file.rcssy")
+#'
+#'   # Inspect the resulting SeaSondeRCS object:
+#'   print(attr(cs_obj, "header"))
+#'   print(attr(cs_obj, "data"))
+#' }
+#'
 seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSY"), endian = "big"){
 
   # Set up error handling parameters with function name, error class, and file path

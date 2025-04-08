@@ -53,7 +53,8 @@ Columns in the resulting tibble include:
 music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object)
 
 # Initialize for specific range cells and Doppler bins
-music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object, range_cells = c(1, 2), doppler_bins = c(5, 10))
+music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object, 
+range_cells = c(1, 2), doppler_bins = c(5, 10))
 print(music_data)
 }
 }

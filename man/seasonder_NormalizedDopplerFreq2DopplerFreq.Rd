@@ -31,9 +31,9 @@ The relationship between the normalized and absolute Doppler frequencies is defi
 \deqn{f_{doppler} = f_{norm} \times f_{bragg}}
 where:
 \itemize{
-\item \( f_{doppler} \) is the Doppler frequency in Hz,
-\item \( f_{norm} \) is the normalized Doppler frequency,
-\item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
+\item \eqn{f_{doppler}} is the Doppler frequency in Hz,
+\item \eqn{f_{norm}} is the normalized Doppler frequency,
+\item \eqn{f_{bragg}} is the Bragg frequency, computed based on radar wavelength.
 }
 }
 \examples{

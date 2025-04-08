@@ -24,7 +24,7 @@
 #' print(params)
 #' }
 #' @export
-seasonder_defaultMUSICParameters <- seasonder_defaultMUSIC_parameters <- function(){
+seasonder_defaultMUSIC_parameters <- seasonder_defaultMUSICParameters <- function(){
 
   c(40,20,2,20)
 
@@ -396,7 +396,8 @@ seasonder_NULLSeaSondeRCS_MUSIC <- function() {
 #' music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object)
 #'
 #' # Initialize for specific range cells and Doppler bins
-#' music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object, range_cells = c(1, 2), doppler_bins = c(5, 10))
+#' music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object, 
+#' range_cells = c(1, 2), doppler_bins = c(5, 10))
 #' print(music_data)
 #' }
 seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL) {
@@ -836,6 +837,33 @@ seasonder_setSeaSondeRCS_MUSIC <- function(seasonder_cs_object, MUSIC) {
 
 }
 
+#' Set Dual Solutions Proportion for MUSIC Analysis
+#'
+#' This function assigns the dual solutions proportion to the MUSIC data of a SeaSondeRCS object.
+#' The dual solutions proportion represents the fraction of solutions identified as dual in the MUSIC
+#' processing workflow. Currently, no explicit validation of the provided value is performed.
+#'
+#' @param seasonder_cs_object A \code{SeaSondeRCS} object containing MUSIC analysis results.
+#' @param dual_solutions_proportion A numeric value representing the proportion of dual solutions.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the dual solutions proportion stored in its MUSIC data.
+#'
+#' @details
+#' The function updates the \code{dual_solutions_proportion} field within the \code{MUSIC_data} attribute.
+#' This value is later used to assess the prevalence of dual bearing solutions in the MUSIC results.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object with MUSIC data already initialized
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'
+#'   # Set the dual solutions proportion (example value: 0.35)
+#'   cs_obj <- seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion(cs_obj, 0.35)
+#'
+#'   # Retrieve and inspect the proportion from the object's MUSIC data attribute
+#'   dual_prop <- attr(cs_obj, "MUSIC_data")$dual_solutions_proportion
+#'   print(dual_prop)
+#' }
 seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_cs_object, dual_solutions_proportion) {
 
   # TODO: validate dual_solutions_proportion
@@ -876,7 +904,7 @@ seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_c
 #'   # Now the object has the Doppler interpolation factor set to 2
 #' }
 #' @export
-seasonder_setMUSICDopplerInterpolation <- seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_object, doppler_interpolation){
+seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation <- seasonder_setMUSICDopplerInterpolation <- function(seasonder_cs_object, doppler_interpolation){
   
   doppler_interpolation <- SeaSondeRCS_MUSIC_validate_doppler_interpolation(doppler_interpolation, seasonder_cs_object)
   
@@ -886,7 +914,34 @@ seasonder_setMUSICDopplerInterpolation <- seasonder_setSeaSondeRCS_MUSIC_doppler
 }
 
 
-seasonder_setSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object, interpolated_data){
+#' Set Interpolated MUSIC Data in a SeaSondeRCS Object
+#'
+#' This function assigns the interpolated cross-spectral data to the MUSIC data attribute of a SeaSondeRCS object.
+#' It stores the provided interpolated data into the \code{interpolated_data} field of the MUSIC data.
+#' If no data is provided, it defaults to the output of \code{seasonder_MUSICInitInterpolatedData()}.
+#'
+#' @param seasonder_cs_object A \code{SeaSondeRCS} object containing cross-spectral and MUSIC data.
+#' @param interpolated_data A data structure (typically a list or tibble) representing the interpolated cross-spectral data.
+#'        If \code{NULL}, the function uses \code{seasonder_MUSICInitInterpolatedData()} to initialize the structure.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the \code{interpolated_data} field set in its MUSIC data attribute.
+#'
+#' @details
+#' The function assigns the provided interpolated data (or initializes a new data structure) to the
+#' \code{interpolated_data} field within the MUSIC data attribute. This structure is intended for use in further
+#' MUSIC processing steps, where interpolated cross-spectral data is required for refining the estimation of Doppler bins.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object and you have computed interpolated data:
+#'   interpolated <- my_interpolated_data  # Replace with actual interpolated data structure
+#'   cs_obj <- seasonder_setSeaSondeRCS_MUSIC_interpolated_data(cs_obj, interpolated)
+#'
+#'   # Alternatively, if no interpolated data is provided, the function initializes a 
+#' default structure:
+#'   cs_obj <- seasonder_setSeaSondeRCS_MUSIC_interpolated_data(cs_obj, NULL)
+#' }
+seasonder_setSeaSondeRCS_MUSIC_interpolated_data <- seasonder_setMUSICInterpolatedData <- function(seasonder_cs_object, interpolated_data){
 
   attr(seasonder_cs_object, "MUSIC_data")$interpolated_data <- interpolated_data %||% seasonder_MUSICInitInterpolatedData()
 
@@ -895,7 +950,7 @@ seasonder_setSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object
   return(seasonder_cs_object)
 
 }
-seasonder_setMUSICInterpolatedData <- seasonder_setSeaSondeRCS_MUSIC_interpolated_data
+
 
 seasonder_setSeaSondeRCS_MUSIC_interpolated_doppler_cells_index <- function(seasonder_cs_object, interpolated_doppler_cells_index){
 
@@ -931,7 +986,7 @@ seasonder_setMUSICInterpolatedDopplerCellsIndex <- seasonder_setSeaSondeRCS_MUSI
 #'   print(params)
 #' }
 #' @export
-seasonder_getMUSICParameters <- seasonder_getSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object) {
+seasonder_getSeaSondeRCS_MUSIC_parameters <- seasonder_getMUSICParameters <- function(seasonder_cs_object) {
 
 
   out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC_options$MUSIC_parameters %||% seasonder_defaultMUSIC_parameters()
@@ -1891,7 +1946,7 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
 #'   Ratio = P_off_diag / P_diag
 #'
 #' where P_diag is the product of the absolute values of the diagonal elements and
-#' P_off_diag is the square of the absolute value of the off-diagonal element at position [1,2].
+#' P_off_diag is the square of the absolute value of the upper-left off-diagonal element.
 #'
 #' The computed ratio is compared with the threshold parameter (the third element in the MUSIC parameters).
 #' For each dual-bearing solution (i.e. when exactly two bearings are present), if the ratio is less than
@@ -1911,7 +1966,7 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
 #' \enumerate{
 #'   \item Extracts the covariance matrix power from the dual DOA solution (\code{DOA_sol$dual$P}).
 #'   \item Computes the ratio by taking the product of the absolute diagonal elements and the square of the absolute
-#'         off-diagonal element at position [1,2].
+#'         off-diagonal element.
 #'   \item Retrieves the threshold parameter for the P3 test.
 #'   \item Validates each solution by checking that:
 #'       \itemize{
@@ -1930,7 +1985,8 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
 #' \dontrun{
 #'   # Assume cs_obj is a valid SeaSondeRCS object with MUSIC data already computed.
 #'   updated_obj <- seasonder_MUSICCheckSignalMatrix(cs_obj)
-#'   # The updated object now has an added diag_off_diag_power_ratio column and updated retained_solution fields.
+#'   # The updated object now has an added diag_off_diag_power_ratio column and 
+#' updated retained_solution fields.
 #'   print(updated_obj)
 #' }
 #'

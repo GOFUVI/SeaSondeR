@@ -1,6 +1,6 @@
 Package: SeaSondeR
-Title: Tools for Processing SeaSonde HF-Radar Data
-Version: 0.2.5.9000
+Title: Tools for Computing Radial Metrics from SeaSonde HF-Radar Data
+Version: 0.2.5
 Authors@R: c(
     person("Juan Luis", "Herrera Cortijo", , "juan.luis.herrera.cortijo@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0002-4206-2459")),
@@ -9,8 +9,7 @@ Authors@R: c(
            person("Adrián", "Fernández Baladrón", , "afbaladron@uvigo.es", role = c("ctb"),
            comment = c(ORCID = "https://orcid.org/0000-0001-6795-4261"))
            )
-Description: A comprehensive set of tools for processing SeaSonde High-Frequency Radar (HF-Radar) spectra. This package is intended to 
-    facilitate the handling of cross-spectra.
+Description: A comprehensive set of tools for processing SeaSonde High-Frequency Radar (HF-Radar) spectra and produce radial metrics files. The package includes functions for reading SeaSonde spectra files, computing radial metrics, and generating plots. 
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

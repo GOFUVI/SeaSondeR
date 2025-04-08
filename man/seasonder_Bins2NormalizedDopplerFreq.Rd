@@ -25,9 +25,9 @@ The normalized Doppler frequency is typically defined as:
 \deqn{f_{norm} = \frac{f_{doppler}}{f_{bragg}}}
 where:
 \itemize{
-\item \( f_{norm} \) is the normalized Doppler frequency,
-\item \( f_{doppler} \) is the Doppler frequency of a given bin,
-\item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
+\item \eqn{f_{norm}} is the normalized Doppler frequency,
+\item \eqn{f_{doppler}} is the Doppler frequency of a given bin,
+\item \eqn{f_{bragg}} is the Bragg frequency, computed based on radar wavelength.
 }
 }
 \examples{

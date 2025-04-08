@@ -26,7 +26,7 @@ elements of the signal covariance matrix. Specifically, the ratio is computed as
 Ratio = P_off_diag / P_diag
 
 where P_diag is the product of the absolute values of the diagonal elements and
-P_off_diag is the square of the absolute value of the off-diagonal element at position \link{1,2}.
+P_off_diag is the square of the absolute value of the upper-left off-diagonal element.
 
 The computed ratio is compared with the threshold parameter (the third element in the MUSIC parameters).
 For each dual-bearing solution (i.e. when exactly two bearings are present), if the ratio is less than
@@ -36,7 +36,7 @@ For each entry in the MUSIC data, the function:
 \enumerate{
 \item Extracts the covariance matrix power from the dual DOA solution (\code{DOA_sol$dual$P}).
 \item Computes the ratio by taking the product of the absolute diagonal elements and the square of the absolute
-off-diagonal element at position \link{1,2}.
+off-diagonal element.
 \item Retrieves the threshold parameter for the P3 test.
 \item Validates each solution by checking that:
 \itemize{
@@ -50,7 +50,8 @@ off-diagonal element at position \link{1,2}.
 \dontrun{
   # Assume cs_obj is a valid SeaSondeRCS object with MUSIC data already computed.
   updated_obj <- seasonder_MUSICCheckSignalMatrix(cs_obj)
-  # The updated object now has an added diag_off_diag_power_ratio column and updated retained_solution fields.
+  # The updated object now has an added diag_off_diag_power_ratio column and 
+updated retained_solution fields.
   print(updated_obj)
 }
 

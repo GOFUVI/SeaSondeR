@@ -53,6 +53,6 @@ print(null_bin)
 \seealso{
 \itemize{
 \item \code{\link{seasonder_findFORNullsInSpectrum}} for locating nulls in a full spectrum.
-\item \code{\link{pracma::findpeaks}} for peak detection.
+\item \code{\link[pracma]{findpeaks}} for peak detection.
 }
 }
