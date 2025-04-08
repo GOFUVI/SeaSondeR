@@ -4,16 +4,16 @@
 \alias{seasonder_SmoothSS}
 \title{Smooth Self-Spectra Matrix Using a Sliding Window}
 \usage{
-seasonder_SmoothSS(seasonder_cs_obj, antenna, smoothing = NULL)
+seasonder_SmoothSS(seasonder_cs_object, antenna, smoothing = NULL)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing self-spectra data.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing self-spectra data.}
 
 \item{antenna}{A character or numeric identifier of the antenna whose self-spectra will be smoothed.}
 
 \item{smoothing}{Optional. An integer specifying the number of Doppler bins used for smoothing.
 If \code{NULL}, the function retrieves the default smoothing factor (\code{nsm}) from
-\code{\link{seasonder_getSeaSondeRCS_FOR_parameters}}.}
+\code{\link{seasonder_getFOR_parameters}}.}
 }
 \value{
 A matrix with the same dimensions as the input self-spectra matrix, but with smoothed values.
@@ -46,7 +46,7 @@ print(smoothed_SS)
 }
 \seealso{
 \itemize{
-\item \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}} for retrieving default \code{nsm} values.
+\item \code{\link{seasonder_getFOR_parameters}} for retrieving default \code{nsm} values.
 \item \code{\link{seasonder_getSeaSondeRCS_antenna_SSdata}} for accessing self-spectra data.
 \item \code{\link[slider]{slide_mean}} for applying the sliding window mean operation.
 }

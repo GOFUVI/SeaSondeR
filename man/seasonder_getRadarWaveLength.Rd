@@ -4,10 +4,10 @@
 \alias{seasonder_getRadarWaveLength}
 \title{Calculate the Radar Wavelength}
 \usage{
-seasonder_getRadarWaveLength(seasonder_cs_obj)
+seasonder_getRadarWaveLength(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing metadata about
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing metadata about
 the radar system, including its center frequency.}
 }
 \value{
@@ -19,18 +19,16 @@ of the SeaSonde radar system. The wavelength is derived using the speed of
 light and the radar's center frequency.
 }
 \details{
-The radar wavelength (\( \lambda \)) is calculated using the formula:
-[
-\lambda = \frac{c}{f}
-]
+The radar wavelength \eqn{\lambda} is calculated using the formula:
+\eqn{\lambda = \frac{c}{f}}
 where:
 \itemize{
-\item \( c \) is the speed of light (approximately \( 3 \times 10^8 \, \text{m/s} \)),
-\item \( f \) is the radar's center frequency in Hz, retrieved from the SeaSondeRCS object.
+\item \eqn{c} is the speed of light (approximately \eqn{3 * 10^8} m/s),
+\item \eqn{f} is the radar's center frequency in Hz, retrieved from the SeaSondeRCS object.
 }
 
 The center frequency is initially stored in MHz and is converted to Hz by multiplying
-it by \( 10^6 \).
+it by \eqn{10^6}.
 }
 \examples{
 \dontrun{

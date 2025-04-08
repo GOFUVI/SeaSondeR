@@ -21,7 +21,7 @@ results used in the MUSIC algorithm.
 The function returns a list with the following components:
 \itemize{
 \item \code{values}: A vector of length 3, initialized with \code{NA_complex_}, to hold the eigenvalues.
-\item \code{vectors}: A \(3 \times 3\) matrix, initialized with \code{NA_complex_}, to hold the eigenvectors.
+\item \code{vectors}: A 3 x 3 matrix, initialized with \code{NA_complex_}, to hold the eigenvectors.
 }
 
 This structure is designed to support three-channel antenna configurations typical in SeaSondeR applications.

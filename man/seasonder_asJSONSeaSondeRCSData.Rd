@@ -4,10 +4,10 @@
 \alias{seasonder_asJSONSeaSondeRCSData}
 \title{Convert SeaSondeRCS Object to JSON}
 \usage{
-seasonder_asJSONSeaSondeRCSData(seasonder_cs_obj, path = NULL)
+seasonder_asJSONSeaSondeRCSData(seasonder_cs_object, path = NULL)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSondeRCS object from which the data will be extracted.}
+\item{seasonder_cs_object}{A SeaSondeRCS object from which the data will be extracted.}
 
 \item{path}{Optional path to a file where the JSON output should be saved. If provided, the function will write the JSON data to this file. If NULL, the function will only return the JSON data as a string without writing it to a file.}
 }
@@ -15,7 +15,7 @@ seasonder_asJSONSeaSondeRCSData(seasonder_cs_obj, path = NULL)
 A character string in JSON format representing the data of the provided SeaSondeRCS object. If a path is provided, the function also writes this data to the specified file.
 }
 \description{
-This function extracts the data from a \code{seasonder_cs_obj}, representing a SeaSondeRCS object, and converts it into a JSON format. Optionally, it can write this JSON data to a specified file path.
+This function extracts the data from a \code{seasonder_cs_object}, representing a SeaSondeRCS object, and converts it into a JSON format. Optionally, it can write this JSON data to a specified file path.
 }
 \note{
 If a path is provided and there is an issue writing to the file, the function logs an error message using \code{seasonder_logAndMessage} and returns the JSON data as a string.

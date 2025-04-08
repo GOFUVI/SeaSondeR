@@ -15,31 +15,34 @@ seasonder_readBodyRangeCell(
 \arguments{
 \item{connection}{A binary connection from which keys and data are read.}
 
-\item{specs}{A list that defines the expected keys and their formats.}
+\item{specs}{A list defining the expected keys and their formats.}
 
-\item{endian}{A string specifying the byte order ("big" or "little").}
+\item{dbRef}{A numeric value providing the dB reference used in scaling.}
+
+\item{endian}{A string specifying the byte order ("big" or "little"). Defaults to "big".}
 
 \item{specs_key_size}{Optional specification for the key size block.}
 }
 \value{
 A list with elements named after the keys read. For reduced data blocks, each element contains either
-raw decoded data or scaled voltage values if a 'scal' block was applied.
+the raw decoded data or the scaled voltage values if a 'scal' block had been applied.
 }
 \description{
-This function processes a block of keys from a binary connection according to a given specification ('specs').
-Each key is read using seasonder_readSeaSondeCSFileBlock and processed based on its name.
+This function processes a block of keys from a binary connection according to a provided specification
+('specs'). Each key is interpreted by reading it with \code{seasonder_readSeaSondeCSFileBlock} and processing
+it based on its key name. The key processing follows these rules:
 }
 \details{
-Key processing details:
 \itemize{
-\item 'scal': Reads scaling parameters (fmax, fmin, fscale, dbRef) via seasonder_readCSSYFields and stores
-them for use in scaling subsequent reduced data blocks.
-\item Reduced data keys (e.g., 'cs1a', 'cs2a', etc.): Reads the data using seasonder_read_reduced_encoded_data.
-If scaling parameters were set by a preceding 'scal' block, the raw data is transformed into voltage values
-using seasonder_SeaSondeRCSSYApplyScaling; otherwise, the raw data is returned as is.
-\item Other keys such as 'csgn' and 'asgn' invoke their own specialized read functions.
+\item \strong{Scaling Block ('scal')}: Reads scaling parameters (fmax, fmin, fscale, dbRef) using
+\code{seasonder_readCSSYFields} and stores them for later use.
+\item \strong{Reduced Data Blocks (e.g., 'cs1a', 'cs2a', 'cs3a', 'c13r', 'c13i', etc.)}:
+Reads the block using \code{seasonder_read_reduced_encoded_data}. If scaling parameters were set by a
+preceding 'scal' block, the raw data is converted to voltage values using \code{seasonder_SeaSondeRCSSYApplyScaling};
+otherwise, the raw data is returned.
+\item \strong{Other Keys (e.g., 'csgn' and 'asgn')}: These keys invoke their specialized read functions for processing.
 }
 
-The function terminates when the 'END ' key is encountered or when a repeated key (e.g., 'indx') signals the end of
-the block.
+The function continues reading keys until it detects the 'END ' marker or a repeated 'indx' key, which signals
+the end of the block.
 }

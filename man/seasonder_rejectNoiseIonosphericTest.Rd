@@ -5,14 +5,14 @@
 \title{Reject Bragg Peaks Due to Noise/Ionospheric Contamination}
 \usage{
 seasonder_rejectNoiseIonosphericTest(
-  seasonder_cs_obj,
+  seasonder_cs_object,
   peak,
   range = NA,
   peak_name = ""
 )
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
 
 \item{peak}{A numeric vector indicating the Doppler bin positions of the peak under evaluation.}
 

@@ -26,7 +26,7 @@ The function returns a list containing two sub-lists, one for \code{"single"} so
 \itemize{
 \item \code{bearing}: The bearing angle (\code{NA_real_} by default).
 \item \code{a}: The complex steering vector (\code{NA_complex_} by default).
-\item \code{P}: A \(2 \times 2\) complex matrix initialized to \code{NA_complex_}.
+\item \code{P}: A 2 x 2 complex matrix initialized to \code{NA_complex_}.
 }
 }
 }

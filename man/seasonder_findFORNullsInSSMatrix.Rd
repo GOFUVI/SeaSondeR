@@ -5,14 +5,14 @@
 \title{Identify Nulls in First Order Region (FOR) for a Self-Spectra Matrix}
 \usage{
 seasonder_findFORNullsInSSMatrix(
-  seasonder_cs_obj,
+  seasonder_cs_object,
   SS,
   doppler_bins,
   negative_Bragg_region = FALSE
 )
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
 
 \item{SS}{A numeric matrix representing the self-spectra data, where rows correspond to range cells
 and columns correspond to Doppler bins.}

@@ -38,8 +38,8 @@ The function appends the following processing steps to the \code{ProcessingSteps
 
 \examples{
 \dontrun{
-# Assuming `seasonder_cs_obj` is a valid SeaSondeRCS object with MUSIC results
-updated_obj <- seasonder_MUSICSelectDOA(seasonder_cs_obj)
+# Assuming `seasonder_cs_object` is a valid SeaSondeRCS object with MUSIC results
+updated_obj <- seasonder_MUSICSelectDOA(seasonder_cs_object)
 }
 }
 \seealso{

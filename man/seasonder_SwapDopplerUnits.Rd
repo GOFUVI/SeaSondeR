@@ -4,10 +4,10 @@
 \alias{seasonder_SwapDopplerUnits}
 \title{Convert Between Different Doppler Frequency Units}
 \usage{
-seasonder_SwapDopplerUnits(seasonder_cs_obj, values, in_units, out_units)
+seasonder_SwapDopplerUnits(seasonder_cs_object, values, in_units, out_units)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeR} cross-spectral object containing Doppler bin metadata.}
+\item{seasonder_cs_object}{A \code{SeaSondeR} cross-spectral object containing Doppler bin metadata.}
 
 \item{values}{A numeric vector specifying the Doppler values to be converted.}
 
@@ -56,7 +56,8 @@ Overall, the functions used for Doppler units conversion mimic the implementatio
 # Convert Doppler frequencies (Hz) to normalized Doppler frequency
 cs_obj <- seasonder_createSeaSondeRCS(...)
 doppler_values <- c(-0.3, 0, 0.6)  # Doppler values in Hz
-normalized_freqs <- seasonder_SwapDopplerUnits(cs_obj, doppler_values, "doppler frequency", "normalized doppler frequency")
+normalized_freqs <- seasonder_SwapDopplerUnits(cs_obj, doppler_values, 
+"doppler frequency", "normalized doppler frequency")
 print(normalized_freqs)
 
 # Convert Doppler bins to Doppler frequency (Hz)

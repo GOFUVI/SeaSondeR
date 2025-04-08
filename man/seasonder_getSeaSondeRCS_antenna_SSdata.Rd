@@ -4,10 +4,10 @@
 \alias{seasonder_getSeaSondeRCS_antenna_SSdata}
 \title{Retrieve Self-Spectra Data for a Specific Antenna from a SeaSondeRCS Object}
 \usage{
-seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_obj, antenna)
+seasonder_getSeaSondeRCS_antenna_SSdata(seasonder_cs_object, antenna)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSondeRCS object containing spectral data.}
+\item{seasonder_cs_object}{A SeaSondeRCS object containing spectral data.}
 
 \item{antenna}{An integer specifying the antenna number (1, 2, or 3).}
 }

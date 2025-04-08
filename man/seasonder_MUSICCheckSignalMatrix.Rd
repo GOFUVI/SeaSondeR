@@ -7,38 +7,57 @@
 seasonder_MUSICCheckSignalMatrix(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_object}{A SeaSondeRCS object containing the MUSIC solutions and related data.}
+\item{seasonder_cs_object}{A SeaSondeRCS object containing MUSIC data (including DOA solutions and power matrices).}
 }
 \value{
-The updated SeaSondeRCS object with the following modifications:
+The updated SeaSondeRCS object in which:
 \itemize{
-\item A new column \code{diag_off_diag_power_ratio} in the MUSIC data.
-\item A logical column \code{P3_check} indicating whether each solution passes the P3 test.
-\item Updated \code{retained_solution} values for solutions that fail the test.
+\item A new column \code{diag_off_diag_power_ratio} is added to the MUSIC data.
+\item A logical column \code{P3_check} indicates if each solution passes the P3 test.
+\item The \code{retained_solution} field of solutions that fail the test is updated to "single".
 }
 }
 \description{
 This function implements the P3 test for solutions derived using the MUSIC algorithm.
-The test evaluates the ratio between diagonal and off-diagonal powers in the signal covariance matrix.
+The test evaluates the ratio between the diagonal (P_diag) and off-diagonal (P_off-diag)
+elements of the signal covariance matrix. Specifically, the ratio is computed as:
 }
 \details{
-The P3 test evaluates the power ratio between diagonal (\(P_{\text{diag}}\)) and off-diagonal (\(P_{\text{off-diag}}\)) elements of the covariance matrix:
-[
-\text{Ratio} = \frac{P_{\text{diag}}}{P_{\text{off-diag}}}
-]
-This ratio is compared to a threshold defined in the MUSIC parameters. Only solutions that meet the following criteria are retained:
-\itemize{
-\item The solution has two bearings.
-\item The power ratio is above the threshold.
-}
+Ratio = P_off_diag / P_diag
 
-Solutions failing this test are marked as "single."
+where P_diag is the product of the absolute values of the diagonal elements and
+P_off_diag is the square of the absolute value of the upper-left off-diagonal element.
+
+The computed ratio is compared with the threshold parameter (the third element in the MUSIC parameters).
+For each dual-bearing solution (i.e. when exactly two bearings are present), if the ratio is less than
+the reciprocal of the threshold, the solution passes the P3 test; otherwise, it is marked as "single".
+
+For each entry in the MUSIC data, the function:
+\enumerate{
+\item Extracts the covariance matrix power from the dual DOA solution (\code{DOA_sol$dual$P}).
+\item Computes the ratio by taking the product of the absolute diagonal elements and the square of the absolute
+off-diagonal element.
+\item Retrieves the threshold parameter for the P3 test.
+\item Validates each solution by checking that:
+\itemize{
+\item The solution has exactly two bearings.
+\item The computed ratio is available (not NA) and less than 1 divided by the threshold.
+}
+\item Updates the \code{retained_solution} field to "single" for solutions that do not pass the test.
+}
 }
 \examples{
 \dontrun{
-updated_obj <- seasonder_MUSICCheckSignalMatrix(seasonder_cs_object)
+  # Assume cs_obj is a valid SeaSondeRCS object with MUSIC data already computed.
+  updated_obj <- seasonder_MUSICCheckSignalMatrix(cs_obj)
+  # The updated object now has an added diag_off_diag_power_ratio column and 
+updated retained_solution fields.
+  print(updated_obj)
 }
+
 }
 \seealso{
-\code{\link{seasonder_getSeaSondeRCS_MUSIC}}, \code{\link{seasonder_setSeaSondeRCS_MUSIC}}
+\code{\link{seasonder_getSeaSondeRCS_MUSIC}} to retrieve MUSIC data,
+\code{\link{seasonder_setSeaSondeRCS_MUSIC}} to update MUSIC data,
+and \code{\link{seasonder_getSeaSondeRCS_MUSIC_parameters}} to retrieve MUSIC parameters.
 }

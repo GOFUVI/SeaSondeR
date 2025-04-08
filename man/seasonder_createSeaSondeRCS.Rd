@@ -12,8 +12,6 @@ seasonder_createSeaSondeRCS(x, specs_path = NULL, ...)
 \item{specs_path}{A character string specifying the path to the YAML specifications for the CS file. Used only if \code{x} is a character string.}
 
 \item{...}{Additional parameters passed to the underlying functions.}
-
-\item{endian}{A character string indicating the byte order. Options are "big" (default) or "little".}
 }
 \value{
 A SeaSondeRCS object.

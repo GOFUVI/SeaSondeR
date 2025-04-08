@@ -4,10 +4,10 @@
 \alias{seasonder_MUSIC_DopplerFreq2Bins}
 \title{Map Doppler Frequencies to Doppler Bins}
 \usage{
-seasonder_MUSIC_DopplerFreq2Bins(seasonder_cs_obj, doppler_values)
+seasonder_MUSIC_DopplerFreq2Bins(seasonder_cs_object, doppler_values)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSondeRCS object representing the cross-spectral data structure.
+\item{seasonder_cs_object}{A SeaSondeRCS object representing the cross-spectral data structure.
 It contains metadata and configuration for Doppler frequency and bin mapping.}
 
 \item{doppler_values}{A numeric vector of Doppler frequency values to be mapped to Doppler bins.}
@@ -34,9 +34,9 @@ in further data processing or visualization.
 }
 \examples{
 \dontrun{
-# Assuming `seasonder_cs_obj` is a valid SeaSondeRCS object
+# Assuming `seasonder_cs_object` is a valid SeaSondeRCS object
 doppler_freqs <- c(0.1, 0.2, 0.3)
-doppler_bins <- seasonder_MUSIC_DopplerFreq2Bins(seasonder_cs_obj, doppler_freqs)
+doppler_bins <- seasonder_MUSIC_DopplerFreq2Bins(seasonder_cs_object, doppler_freqs)
 print(doppler_bins)
 }
 

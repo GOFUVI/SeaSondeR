@@ -4,10 +4,10 @@
 \alias{seasonder_computeBinsRadialVelocity}
 \title{Compute Radial Velocities for Doppler Bins}
 \usage{
-seasonder_computeBinsRadialVelocity(seasonder_cs_obj, freq)
+seasonder_computeBinsRadialVelocity(seasonder_cs_object, freq)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing data and metadata
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing data and metadata
 necessary for the calculation of Doppler bin frequencies and velocities.}
 
 \item{freq}{A numeric vector representing the Doppler frequencies for which
@@ -23,15 +23,13 @@ in a SeaSondeRCS object, based on the provided Doppler frequencies. The calculat
 uses the radar's wave number and Bragg angular frequencies.
 }
 \details{
-The radial velocity \( v \) for each Doppler bin is computed using the formula:
-[
-v = \frac{\text{Freq} - \text{BraggFreq}}{2 \cdot k_0}
-]
+The radial velocity \eqn{v} for each Doppler bin is computed using the formula:
+\deqn{v = \frac{\text{Freq} - \text{BraggFreq}}{2 \cdot k_0}}
 where:
 \itemize{
-\item \( \text{Freq} \) is the Doppler frequency of the bin.
-\item \( \text{BraggFreq} \) is the Bragg Doppler angular frequency for the bin.
-\item \( k_0 \) is the radar wave number divided by \( 2\pi \).
+\item \eqn{\text{Freq}} is the Doppler frequency of the bin.
+\item \eqn{\text{BraggFreq}} is the Bragg Doppler angular frequency for the bin.
+\item \eqn{k_0} is the radar wave number divided by \eqn{2\pi}.
 }
 
 The Bragg frequency is negative for bins with frequencies below zero and positive

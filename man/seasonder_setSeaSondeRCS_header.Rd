@@ -4,10 +4,10 @@
 \alias{seasonder_setSeaSondeRCS_header}
 \title{Setter for header}
 \usage{
-seasonder_setSeaSondeRCS_header(seasonder_cs_obj, header)
+seasonder_setSeaSondeRCS_header(seasonder_cs_object, header)
 }
 \arguments{
-\item{seasonder_cs_obj}{SeaSondeRCS object}
+\item{seasonder_cs_object}{SeaSondeRCS object}
 
 \item{header}{new value}
 }

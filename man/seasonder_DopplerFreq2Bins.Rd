@@ -4,10 +4,10 @@
 \alias{seasonder_DopplerFreq2Bins}
 \title{Convert Doppler Frequencies to Doppler Bins}
 \usage{
-seasonder_DopplerFreq2Bins(seasonder_cs_obj, doppler_values)
+seasonder_DopplerFreq2Bins(seasonder_cs_object, doppler_values)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.}
+\item{seasonder_cs_object}{A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.}
 
 \item{doppler_values}{A numeric vector specifying the Doppler frequencies to be converted into bin indices.}
 }
@@ -19,7 +19,7 @@ This function converts a set of Doppler frequency values into their correspondin
 }
 \details{
 This function first retrieves the Doppler frequency bins from the given \code{SeaSondeR} object using \code{\link{seasonder_getDopplerBinsFrequency}} in non-normalized form.
-The spectral resolution, which defines the frequency step size (\(\Delta f\)), is obtained using \code{\link{seasonder_getDopplerSpectrumResolution}}.
+The spectral resolution, which defines the frequency step size (\eqn{\Delta f}), is obtained using \code{\link{seasonder_getDopplerSpectrumResolution}}.
 
 The number of Doppler bins is then determined using \code{\link{seasonder_getnDopplerCells}}.
 

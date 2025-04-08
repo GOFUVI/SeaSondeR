@@ -4,28 +4,26 @@
 \alias{seasonder_getBraggWaveLength}
 \title{Calculate the Bragg Wavelength}
 \usage{
-seasonder_getBraggWaveLength(seasonder_cs_obj)
+seasonder_getBraggWaveLength(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the necessary data
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the necessary data
 to compute the radar wavelength.}
 }
 \value{
-A numeric value representing the Bragg wavelength (\( \lambda_B \)) in meters.
+A numeric value representing the Bragg wavelength (in meters).
 }
 \description{
-This function computes the Bragg wavelength (\( \lambda_B \)) for a SeaSonde radar
+This function computes the Bragg wavelength \eqn{\lambda_B} for a SeaSonde radar
 system. The Bragg wavelength is defined as half the radar wavelength and is used
 to identify the fundamental scattering mechanisms in oceanographic radar measurements.
 }
 \details{
-The Bragg wavelength (\( \lambda_B \)) is calculated as:
-[
-\lambda_B = \frac{\lambda}{2}
-]
+The Bragg wavelength \eqn{\lambda_B} is calculated as:
+\eqn{\lambda_B = \frac{\lambda}{2}}
 where:
 \itemize{
-\item \( \lambda \) is the radar wavelength in meters, obtained using
+\item \eqn{\lambda} is the radar wavelength in meters, obtained using
 \code{\link{seasonder_getRadarWaveLength}}.
 }
 

@@ -5,14 +5,14 @@
 \title{Identify Nulls in First Order Region (FOR) Spectrum}
 \usage{
 seasonder_findFORNullsInSpectrum(
-  seasonder_cs_obj,
+  seasonder_cs_object,
   spectrum,
   doppler_bins,
   negative_Bragg_region = FALSE
 )
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the spectral data.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the spectral data.}
 
 \item{spectrum}{A numeric vector representing the power spectrum to analyze.}
 
@@ -79,6 +79,6 @@ print(result)
 \itemize{
 \item \code{\link{seasonder_findFORNullsInFOR}} for detecting nulls within a selected region.
 \item \code{\link[pracma]{findpeaks}} for peak identification.
-\item \code{\link{seasonder_getSeaSondeRCS_FOR_parameters}} for retrieving FOR settings.
+\item \code{\link{seasonder_getFOR_parameters}} for retrieving FOR settings.
 }
 }

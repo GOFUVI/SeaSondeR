@@ -12,7 +12,7 @@ seasonder_MUSICBearing2GeographicalBearing(bearings, seasonder_apm_object)
 \item{seasonder_apm_object}{A \code{SeaSondeRAPM} object containing the antenna's metadata, including the antenna's bearing.}
 }
 \value{
-A list of numeric vectors containing the geographic bearings in degrees. Each vector corresponds to a set of geographic bearings derived from the input.
+A list of numeric vectors containing the geographic bearings in degrees.
 }
 \description{
 This function converts MUSIC bearings (relative to the antenna) into geographic bearings using the antenna's bearing information from a \code{SeaSondeRAPM} object.
@@ -25,10 +25,7 @@ The geographic bearing is calculated by:
 \item Adding the antenna bearing to each value and wrapping the result to the range [0, 360) again using modulo 360.
 }
 
-The formula for each bearing is:
-[
-\text{geo\_bearing} = ((-1 \times \text{music\_bearing} \mod 360) + \text{antenna\_bearing}) \mod 360
-]
+The formula for each bearing is: \eqn{geo_bearing = ((-1 * music_bearing \%\% 360) + antenna_bearing) \%\% 360}.
 }
 \examples{
 \dontrun{

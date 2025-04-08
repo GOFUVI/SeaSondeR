@@ -4,10 +4,10 @@
 \alias{seasonder_getRadialVelocityResolution}
 \title{Calculate Radial Velocity Resolution}
 \usage{
-seasonder_getRadialVelocityResolution(seasonder_cs_obj)
+seasonder_getRadialVelocityResolution(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSondeRCS object created using \code{seasonder_createSeaSondeRCS}. This object
+\item{seasonder_cs_object}{A SeaSondeRCS object created using \code{seasonder_createSeaSondeRCS}. This object
 contains the necessary data to calculate the Doppler spectrum resolution and, subsequently, the
 radial velocity resolution.}
 }
@@ -24,13 +24,11 @@ number, providing a crucial parameter for analyzing the radar's capability to
 distinguish between velocities.
 }
 \details{
-The radial velocity resolution (\(v_{res}\)) is determined using the formula:
-[
-v_{res} = \frac{\text{SpectraRes}}{2 \cdot k_0}
-]
-where \(v_{res}\) is the radial velocity resolution, \(\text{SpectraRes}\) is
-the Doppler spectrum resolution, and \(k_0\) is the radar wave number divided
-by \(2\pi\). This formula reflects the relationship between the
+The radial velocity resolution \eqn{v_{res}} is determined using the formula:
+\deqn{v_{res} = \frac{\text{SpectraRes}}{2 \cdot k_0}}
+where \eqn{v_{res}} is the radial velocity resolution, \eqn{\text{SpectraRes}} is
+the Doppler spectrum resolution, and \eqn{k_0} is the radar wave number divided
+by \eqn{2\pi}. This formula reflects the relationship between the
 frequency resolution of the radar's Doppler spectrum and the corresponding
 velocity resolution, taking into account the wave number which is a fundamental
 characteristic of the radar system.

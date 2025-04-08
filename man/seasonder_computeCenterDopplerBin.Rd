@@ -4,10 +4,10 @@
 \alias{seasonder_computeCenterDopplerBin}
 \title{Compute the Center Doppler Bin}
 \usage{
-seasonder_computeCenterDopplerBin(seasonder_cs_obj, nDoppler)
+seasonder_computeCenterDopplerBin(seasonder_cs_object, nDoppler)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing metadata about
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing metadata about
 Doppler bins and other radar parameters.}
 
 \item{nDoppler}{An integer representing the total number of Doppler bins.}
@@ -25,10 +25,8 @@ the bin representing zero Doppler frequency.
 }
 \details{
 The center Doppler bin is computed as:
-[
-\text{center\_bin} = \frac{\text{nDoppler}}{2}
-]
-where \(\text{nDoppler}\) is the total number of Doppler bins. This represents
+\eqn{center\_bin = nDoppler/2}
+where nDoppler is the total number of Doppler bins. This represents
 the bin at zero Doppler frequency in a zero-indexed system. Since R uses
 one-based indexing, users might observe an offset when comparing the output
 of this function to CODAR's Radia Suite programs.

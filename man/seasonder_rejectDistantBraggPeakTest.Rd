@@ -5,14 +5,14 @@
 \title{Reject Bragg Peaks Far from Expected Bragg Index}
 \usage{
 seasonder_rejectDistantBraggPeakTest(
-  seasonder_cs_obj,
+  seasonder_cs_object,
   peak,
   range = NA,
   peak_name = ""
 )
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the spectral data and Bragg indices.}
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the spectral data and Bragg indices.}
 
 \item{peak}{A numeric vector indicating the Doppler bin positions of the peak under evaluation.}
 

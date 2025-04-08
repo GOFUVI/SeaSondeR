@@ -11,14 +11,14 @@ seasonder_MUSICInitProjections(bearings = 0)
 Defaults to \code{0}.}
 }
 \value{
-A \(2 \times n\) matrix of complex values, each initialized to \code{NA_complex_}, with row names
+A 2 x n matrix of complex values, each initialized to \code{NA_complex_}, with row names
 \code{"single"} and \code{"dual"}. The input bearings are stored as an attribute.
 }
 \description{
 This function initializes a projection matrix for use in the MUSIC algorithm.
 }
 \details{
-The function creates a \(2 \times n\) complex matrix, where \(n\) is the number of bearings.
+The function creates a 2 x n complex matrix, where n is the number of bearings.
 The matrix rows are labeled:
 \itemize{
 \item \code{"single"}: For single projections.

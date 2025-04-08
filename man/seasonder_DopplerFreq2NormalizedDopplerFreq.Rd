@@ -4,10 +4,13 @@
 \alias{seasonder_DopplerFreq2NormalizedDopplerFreq}
 \title{Convert Doppler Frequencies to Normalized Doppler Frequencies}
 \usage{
-seasonder_DopplerFreq2NormalizedDopplerFreq(seasonder_cs_obj, doppler_values)
+seasonder_DopplerFreq2NormalizedDopplerFreq(
+  seasonder_cs_object,
+  doppler_values
+)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.}
+\item{seasonder_cs_object}{A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.}
 
 \item{doppler_values}{A numeric vector specifying the Doppler frequencies (in Hz) to be converted into normalized Doppler frequencies.}
 }
@@ -25,12 +28,12 @@ The function follows these steps:
 }
 
 The normalized Doppler frequency is computed as:
-\deqn{f_{norm} = \frac{f_{doppler}}{f_{bragg}}}
+\deqn{f_{doppler} = f_{norm} \times f_{bragg}}
 where:
 \itemize{
-\item \( f_{norm} \) is the normalized Doppler frequency,
-\item \( f_{doppler} \) is the Doppler frequency of a given bin,
-\item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
+\item \eqn{f_{doppler}} is the Doppler frequency in Hz,
+\item \eqn{f_{norm}} is the normalized Doppler frequency,
+\item \eqn{f_{bragg}} is the Bragg frequency, computed based on radar wavelength.
 }
 
 This function ensures consistency by mapping input frequencies to their closest bin representation before normalization.

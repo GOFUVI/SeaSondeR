@@ -52,29 +52,44 @@ seasonder_areMessagesEnabled <- function() seasonder_the$messages_enabled
 
 seasonder_the$debug_points_enabled <- c("none")
 
+#' Enable debug points in SeaSondeR
+#'
+#' This function adds one or more debug points to the list of enabled debug points.
+#'
+#' @param debug_points A character vector of debug point names to enable.
+#' @return Updated character vector of enabled debug points.
 #' @export
 seasonder_enable_debug_points <- function(debug_points) {
   seasonder_the$debug_points_enabled <- c(seasonder_the$debug_points_enabled, debug_points)
 }
 
+#' Get enabled debug points in SeaSondeR
+#'
+#' This function returns the currently enabled debug points.
+#'
+#' @return A character vector of enabled debug points.
 #' @export
 seasonder_get_enabled_debug_points <- function() seasonder_the$debug_points_enabled
 
+#' Check if a debug point is enabled in SeaSondeR
+#'
+#' This function checks whether the provided debug point is enabled.
+#'
+#' @param debug_point A character string specifying the debug point.
+#' @return Logical value indicating whether the debug point is enabled.
 #' @export
 seasonder_is_debug_point_enabled <- function(debug_point){
-
   debug_point %in% seasonder_get_enabled_debug_points()
-
-
 }
 
-
+#' Disable all debug points in SeaSondeR
+#'
+#' This function resets the debug points to the default state ("none").
+#'
+#' @return A character vector containing only the default debug point.
 #' @export
 seasonder_disable_all_debug_points <- function(){
-
   seasonder_the$debug_points_enabled <- c("none")
-
-
 }
 
 
@@ -83,23 +98,4 @@ seasonder_disable_all_debug_points <- function(){
 
 seasonder_the$config <- list()
 
-##### gshhg #####
 
-seasonder_the$config$gshhg_ver <- "latest"
-
-seasonder_the$config$gshhg_shp_path <-  file.path(tools::R_user_dir("SeaSondeR","cache"),"gshhg","GSHHS_shp","f","GSHHS_f_L1.shp")
-
-seasonder_the$config$shoreline_path <-  file.path(tools::R_user_dir("SeaSondeR","cache"), "shoreline.RData")
-
-seasonder_get_shoreline_path <- function(){
-
-  seasonder_the$config$shoreline_path
-
-}
-
-#' @export
-seasonder_set_shoreline_path <- function(path){
-
-  seasonder_the$config$shoreline_path <- path
-
-}

@@ -422,11 +422,13 @@ seasonder_readCSSYFields <- function(connection, specs, endian, parent_key= NULL
 #' voltage values. Special integer values equal to 0xFFFFFFFF are converted to NaN.
 #'
 #' @examples
+#' \dontrun{
 #' # Example usage:
 #' values <- list(c(1000, 0xFFFFFFFF, 2000))
-#' scaled <- seasonder_SeaSondeRCSSYApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, dbRef = -20)
+#' scaled <- seasonder_SeaSondeRCSSYApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, 
+#' dbRef = -20)
 #' print(scaled)
-#'
+#'}
 #' @details
 #' The scaling process performs the following steps for each input value:
 #'   1. Checks whether the value equals 0xFFFFFFFF. If so, it returns NaN immediately because this value indicates a
@@ -490,28 +492,32 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 
 #' Read a Body Range Cell and Apply Scaling if Required
 #'
-#' This function processes a block of keys from a binary connection according to a given specification ('specs').
-#' Each key is read using seasonder_readSeaSondeCSFileBlock and processed based on its name.
+#' This function processes a block of keys from a binary connection according to a provided specification
+#' ('specs'). Each key is interpreted by reading it with \code{seasonder_readSeaSondeCSFileBlock} and processing
+#' it based on its key name. The key processing follows these rules:
 #'
-#' Key processing details:
-#'   - 'scal': Reads scaling parameters (fmax, fmin, fscale, dbRef) via seasonder_readCSSYFields and stores
-#'             them for use in scaling subsequent reduced data blocks.
+#' - **Scaling Block ('scal')**: Reads scaling parameters (fmax, fmin, fscale, dbRef) using
+#'   \code{seasonder_readCSSYFields} and stores them for later use.
 #'
-#'   - Reduced data keys (e.g., 'cs1a', 'cs2a', etc.): Reads the data using seasonder_read_reduced_encoded_data.
-#'     If scaling parameters were set by a preceding 'scal' block, the raw data is transformed into voltage values
-#'     using seasonder_SeaSondeRCSSYApplyScaling; otherwise, the raw data is returned as is.
+#' - **Reduced Data Blocks (e.g., 'cs1a', 'cs2a', 'cs3a', 'c13r', 'c13i', etc.)**:
+#'   Reads the block using \code{seasonder_read_reduced_encoded_data}. If scaling parameters were set by a
+#'   preceding 'scal' block, the raw data is converted to voltage values using \code{seasonder_SeaSondeRCSSYApplyScaling};
+#'   otherwise, the raw data is returned.
 #'
-#'   - Other keys such as 'csgn' and 'asgn' invoke their own specialized read functions.
+#' - **Other Keys (e.g., 'csgn' and 'asgn')**: These keys invoke their specialized read functions for processing.
 #'
-#' The function terminates when the 'END ' key is encountered or when a repeated key (e.g., 'indx') signals the end of
-#' the block.
+#' The function continues reading keys until it detects the 'END ' marker or a repeated 'indx' key, which signals
+#' the end of the block.
 #'
 #' @param connection A binary connection from which keys and data are read.
-#' @param specs A list that defines the expected keys and their formats.
-#' @param endian A string specifying the byte order ("big" or "little").
+#' @param specs A list defining the expected keys and their formats.
+#' @param dbRef A numeric value providing the dB reference used in scaling.
+#' @param endian A string specifying the byte order ("big" or "little"). Defaults to "big".
 #' @param specs_key_size Optional specification for the key size block.
+#'
 #' @return A list with elements named after the keys read. For reduced data blocks, each element contains either
-#'         raw decoded data or scaled voltage values if a 'scal' block was applied.
+#'         the raw decoded data or the scaled voltage values if a 'scal' block had been applied.
+#'
 seasonder_readBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
   indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
   scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
@@ -878,6 +884,43 @@ seasonder_applyCSSYSigns <- function(cs_data) {
   return(cs_data)
 }
 
+#' Read SeaSonde RCSSY File and Create SeaSondeRCS Object
+#'
+#' This function reads a SeaSonde RCSSY file from a specified file path and parses its content
+#' into a SeaSondeRCS object. The file is processed by reading its header and body sections using
+#' CSSY specifications provided via a YAML file.
+#'
+#' @param filepath A character string specifying the path to the SeaSonde RCSSY file.
+#' @param specs_path A character string specifying the path to the YAML file containing CSSY specifications.
+#'   Defaults to the output of \code{seasonder_defaultSpecsFilePath("CSSY")}.
+#' @param endian A character string indicating the byte order used in the file. Defaults to \code{"big"}.
+#'
+#' @return A SeaSondeRCS object containing the parsed header and data.
+#'
+#' @details
+#' The function executes the following steps:
+#' \enumerate{
+#'   \item Sets up error handling parameters specific to the function.
+#'   \item Retrieves YAML specifications for the key size block from the CSSY spec file.
+#'   \item Attempts to open the file in binary mode ("rb") with warnings suppressed.
+#'   \item Reads the file key and uses it to extract file specs.
+#'   \item Reads the header key, retrieves header specs, and parses the CSSY header.
+#'   \item Converts the CSSY header into a valid SeaSondeRCS header.
+#'   \item Reads the body key, retrieves body specs, and parses the CSSY body.
+#'   \item Transforms the CSSY body into a SeaSondeRCS data structure.
+#'   \item Combines the header and data into a SeaSondeRCS object.
+#' }
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming "path/to/file.rcssy" is a valid SeaSonde RCSSY file and the specifications file exists:
+#'   cs_obj <- seasonder_readSeaSondeRCSSYFile("path/to/file.rcssy")
+#'
+#'   # Inspect the resulting SeaSondeRCS object:
+#'   print(attr(cs_obj, "header"))
+#'   print(attr(cs_obj, "data"))
+#' }
+#'
 seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSY"), endian = "big"){
 
   # Set up error handling parameters with function name, error class, and file path

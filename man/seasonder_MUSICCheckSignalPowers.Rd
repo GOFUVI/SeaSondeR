@@ -22,10 +22,10 @@ This function implements the P2 test for solutions derived using the MUSIC algor
 The test evaluates the ratio between the largest and smallest signal powers for dual-bearing solutions.
 }
 \details{
-The P2 test is based on the ratio of the largest signal power (\(P_{\text{max}}\)) to the smallest signal power (\(P_{\text{min}}\)):
-[
-\text{Ratio} = \frac{P_{\text{max}}}{P_{\text{min}}}
-]
+The P2 test is based on the ratio of the largest signal power (\eqn{P_{max}}) to the smallest signal power (\eqn{P_{min}}):
+
+\deqn{Ratio = \frac{P_{max}}{P_{min}}}
+
 This ratio is compared to a threshold defined in the MUSIC parameters. Only solutions that meet the following criteria are retained:
 \itemize{
 \item The solution has two bearings.

@@ -7,13 +7,13 @@
 seasonder_MUSICInitCov()
 }
 \value{
-A \(3 \times 3\) matrix of complex values, each initialized to \code{NA_complex_}.
+A 3 x 3 matrix of complex values, each initialized to \code{NA_complex_}.
 }
 \description{
 This function initializes a covariance matrix for use in the MUSIC algorithm.
 }
 \details{
-The covariance matrix is initialized as a \(3 \times 3\) matrix filled with complex \code{NA} values.
+The covariance matrix is initialized as a 3 x 3 matrix filled with complex \code{NA} values.
 This structure is specifically designed for three-channel antenna configurations commonly used
 in SeaSondeR applications.
 }

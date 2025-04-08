@@ -27,8 +27,8 @@ This function performs the following steps:
 }
 \examples{
 \dontrun{
-# Assuming `seasonder_cs_obj` is a valid `SeaSondeRCS` object
-seasonder_exportCSVMUSICTable(seasonder_cs_obj, "output/music_table.csv")
+# Assuming `seasonder_cs_object` is a valid `SeaSondeRCS` object
+seasonder_exportCSVMUSICTable(seasonder_cs_object, "output/music_table.csv")
 }
 
 }

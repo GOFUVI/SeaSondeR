@@ -4,10 +4,13 @@
 \alias{seasonder_NormalizedDopplerFreq2DopplerFreq}
 \title{Convert Normalized Doppler Frequencies to Doppler Frequencies}
 \usage{
-seasonder_NormalizedDopplerFreq2DopplerFreq(seasonder_cs_obj, doppler_values)
+seasonder_NormalizedDopplerFreq2DopplerFreq(
+  seasonder_cs_object,
+  doppler_values
+)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.}
+\item{seasonder_cs_object}{A \code{SeaSondeR} cross-spectral object containing metadata about the Doppler bins.}
 
 \item{doppler_values}{A numeric vector specifying the normalized Doppler frequencies to be converted into Doppler frequencies (Hz).}
 }
@@ -28,9 +31,9 @@ The relationship between the normalized and absolute Doppler frequencies is defi
 \deqn{f_{doppler} = f_{norm} \times f_{bragg}}
 where:
 \itemize{
-\item \( f_{doppler} \) is the Doppler frequency in Hz,
-\item \( f_{norm} \) is the normalized Doppler frequency,
-\item \( f_{bragg} \) is the Bragg frequency, computed based on radar wavelength.
+\item \eqn{f_{doppler}} is the Doppler frequency in Hz,
+\item \eqn{f_{norm}} is the normalized Doppler frequency,
+\item \eqn{f_{bragg}} is the Bragg frequency, computed based on radar wavelength.
 }
 }
 \examples{

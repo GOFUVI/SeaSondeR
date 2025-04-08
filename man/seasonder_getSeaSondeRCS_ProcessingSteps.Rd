@@ -4,10 +4,10 @@
 \alias{seasonder_getSeaSondeRCS_ProcessingSteps}
 \title{Getter for ProcessingSteps}
 \usage{
-seasonder_getSeaSondeRCS_ProcessingSteps(seasonder_cs_obj)
+seasonder_getSeaSondeRCS_ProcessingSteps(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{SeaSonderCS object}
+\item{seasonder_cs_object}{SeaSonderCS object}
 }
 \description{
 Getter for ProcessingSteps

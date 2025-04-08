@@ -5,7 +5,7 @@
 \title{Compute Doppler Bins Frequencies}
 \usage{
 seasonder_computeDopplerBinsFrequency(
-  seasonder_cs_obj,
+  seasonder_cs_object,
   nDoppler,
   center_bin,
   spectra_res,
@@ -13,7 +13,7 @@ seasonder_computeDopplerBinsFrequency(
 )
 }
 \arguments{
-\item{seasonder_cs_obj}{A SeaSonde CS object created by \code{seasonder_createSeaSondeRCS()}.
+\item{seasonder_cs_object}{A SeaSonde CS object created by \code{seasonder_createSeaSondeRCS()}.
 This object contains the necessary metadata, such as Doppler resolution and
 center bin, for frequency computation.}
 
@@ -53,10 +53,12 @@ Normalization is based on the positive Bragg frequency calculated by
 nDoppler <- 512
 center_bin <- seasonder_getCenterDopplerBin(cs_obj)
 spectra_res <- seasonder_getDopplerSpectrumResolution(cs_obj)
-freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, center_bin, spectra_res)
+freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, 
+center_bin, spectra_res)
 
 # Compute normalized frequencies
-norm_freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, center_bin, spectra_res, normalized = TRUE)
+norm_freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, 
+center_bin, spectra_res, normalized = TRUE)
 }
 
 }

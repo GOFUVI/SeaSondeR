@@ -4,10 +4,10 @@
 \alias{seasonder_getDopplerSpectrumResolution}
 \title{Calculate the Doppler Spectrum Resolution}
 \usage{
-seasonder_getDopplerSpectrumResolution(seasonder_cs_obj)
+seasonder_getDopplerSpectrumResolution(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_obj}{A \code{SeaSondeRCS} object containing the necessary data
+\item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing the necessary data
 and metadata for Doppler spectrum analysis.}
 }
 \value{
@@ -20,14 +20,12 @@ Doppler bins in the spectrum.
 }
 \details{
 The Doppler spectrum resolution is calculated using the formula:
-[
-\text{Spectral Resolution} = \frac{\text{Sweep Rate}}{\text{Number of Doppler Cells}}
-]
+\eqn{SpectralResolution = SweepRate / NumberOfDopplerCells}
 where:
 \itemize{
-\item \(\text{Sweep Rate}\) is the frequency repetition rate of the radar, obtained
+\item SweepRate is the frequency repetition rate of the radar, obtained
 from the field \code{fRepFreqHz} in the object's header.
-\item \(\text{Number of Doppler Cells}\) is the total number of Doppler bins in the spectrum.
+\item NumberOfDopplerCells is the total number of Doppler bins in the spectrum.
 }
 
 This calculation is fundamental for understanding the frequency spacing between
