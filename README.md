@@ -17,14 +17,6 @@ You can install the development version of SeaSondeR from [GitHub](https://githu
 devtools::install_github("GOFUVI/SeaSondeR")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(SeaSondeR)
-## basic example code
-```
 
 ## Package pages
 
