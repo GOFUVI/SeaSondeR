@@ -17,6 +17,11 @@ You can install the development version of SeaSondeR from [GitHub](https://githu
 devtools::install_github("GOFUVI/SeaSondeR")
 ```
 
+<!-->
+## Package pages
+
+https://gofuvi.github.io/SeaSondeR/
+-->
 ## Trademark Notice
 
 SeaSonde is a trademark of CODAR Ocean Sensors.
