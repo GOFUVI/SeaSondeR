@@ -7,9 +7,7 @@
 seasonder_runMUSICInFOR(seasonder_cs_object)
 }
 \arguments{
-\item{seasonder_cs_object}{A SeaSondeRCS object containing cross-spectra data and FOR information.}
-
-\item{doppler_interpolation}{An integer specifying the level of interpolation to apply to Doppler bins. Default is \code{2L}.
+\item{seasonder_cs_object}{A SeaSondeRCS object containing cross-spectra data and FOR information.
 (Note: Although this parameter is specified as an argument in the documentation, the actual Doppler interpolation factor is retrieved from
 the MUSIC options stored in the object.)}
 }

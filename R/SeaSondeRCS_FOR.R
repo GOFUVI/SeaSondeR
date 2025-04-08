@@ -449,6 +449,37 @@ seasonder_setFOR_currmax <- function(seasonder_cs_object, currmax) {
   return(seasonder_cs_object)
 }
 
+#' Set First Order Region Data in a SeaSondeRCS Object
+#'
+#' This function assigns First Order Region (FOR) data to a SeaSondeRCS object.
+#' The FOR data is stored within the object's attributes under the "FOR_data" element.
+#' Currently, no explicit validation is performed on the provided FOR data.
+#'
+#' @param seasonder_cs_object A \code{SeaSondeRCS} object containing spectral and metadata information.
+#' @param FOR A data structure containing the First Order Region (FOR) data. This is typically a list
+#'        with elements such as \code{negative_FOR} and \code{positive_FOR} representing Doppler bin indices.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the specified FOR data stored in its attributes.
+#'
+#' @details
+#' This low-level setter function updates the SeaSondeRCS object by assigning the provided FOR data
+#' to the "FOR" field within the object's "FOR_data" attribute. It is intended to be used internally
+#' as part of the FOR processing workflow.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming a function seasonder_createSeaSondeRCS() exists to create the SeaSondeRCS object:
+#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'
+#' # Define a sample FOR data structure
+#' sample_FOR <- list(
+#'   negative_FOR = c(1, 2, 3),
+#'   positive_FOR = c(10, 11, 12)
+#' )
+#'
+#' # Set the FOR data in the SeaSondeRCS object
+#' cs_obj <- seasonder_setSeaSondeRCS_FOR(cs_obj, sample_FOR)
+#' }
 seasonder_setSeaSondeRCS_FOR <- function(seasonder_cs_object, FOR) {
 
   # TODO: validate FOR

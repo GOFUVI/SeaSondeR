@@ -1360,6 +1360,22 @@ seasonder_getCellsDistKm <- function(seasonder_cs_object) {
   return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "CellsDistKm"))
 }
 
+#' Retrieve Center Frequency in MHz
+#'
+#' This function extracts the center frequency (in MHz) from the header of a
+#' SeaSondeRCS object. It accesses the header field named "CenterFreq" using
+#' \code{seasonder_getSeaSondeRCS_headerField}.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing header information.
+#'
+#' @return A numeric value representing the center frequency in MHz.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object with a "CenterFreq" header field
+#'   center_freq <- seasonder_getCenterFreqMHz(cs_obj)
+#'   print(center_freq)
+#' }
 seasonder_getCenterFreqMHz <- function(seasonder_cs_object) {
   return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "CenterFreq"))
 }
@@ -1480,7 +1496,30 @@ seasonder_computeCenterDopplerBin <- function(seasonder_cs_object, nDoppler) {
 }
 
 
-
+#' Retrieve Center Doppler Bin
+#'
+#' This function calculates the center Doppler bin index for a SeaSondeRCS object.
+#' It obtains the total number of Doppler cells from the object using
+#' \code{seasonder_getnDopplerCells} and computes the center bin with
+#' \code{seasonder_computeCenterDopplerBin}.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing metadata about Doppler bins.
+#'
+#' @return A numeric value representing the center Doppler bin.
+#'
+#' @details
+#' The center Doppler bin is computed by retrieving the total number of Doppler cells
+#' (via \code{seasonder_getnDopplerCells}) and then processing that value with
+#' \code{seasonder_computeCenterDopplerBin}. Note that while CODAR data files might use
+#' zero-based indexing, R uses one-based indexing.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object:
+#'   center_bin <- seasonder_getCenterDopplerBin(cs_obj)
+#'   print(center_bin)
+#' }
+#'
 seasonder_getCenterDopplerBin <- function(seasonder_cs_object) {
 
   nDoppler <- seasonder_getnDopplerCells(seasonder_cs_object)

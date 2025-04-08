@@ -745,6 +745,41 @@ seasonder_setMUSICOption <- seasonder_setSeaSondeRCS_MUSIC_option <- function(se
   return(seasonder_cs_object)
 }
 
+
+#' Set MUSIC Parameters for a SeaSondeRCS Object
+#'
+#' This function updates the MUSIC algorithm parameters stored in a SeaSondeRCS object's
+#' MUSIC data attribute. The parameters are updated in the MUSIC options under the
+#' \code{MUSIC_parameters} field. Currently, no explicit validation of the provided parameters is performed.
+#'
+#' @param seasonder_cs_object A \code{SeaSondeRCS} object containing cross-spectral data and metadata.
+#' @param MUSIC_parameters A numeric vector of parameters for the MUSIC algorithm. Defaults to the result of \code{seasonder_defaultMUSIC_parameters()}.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the new MUSIC parameters stored in its MUSIC options.
+#'
+#' @details
+#' The function assigns the provided \code{MUSIC_parameters} vector to the
+#' \code{MUSIC_parameters} field within the \code{MUSIC_options} list, which is stored
+#' in the object's \code{MUSIC_data} attribute. These parameters are used in various
+#' steps of the MUSIC processing workflow.
+#'
+#' @examples
+#' \dontrun{
+#'   # Create a SeaSondeRCS object (assume cs_obj is already created)
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'
+#'   # Retrieve default MUSIC parameters
+#'   default_params <- seasonder_defaultMUSIC_parameters()
+#'
+#'   # Optionally modify the default parameters
+#'   new_params <- default_params * 1.5
+#'
+#'   # Update the SeaSondeRCS object with the new MUSIC parameters
+#'   cs_obj <- seasonder_setSeaSondeRCS_MUSIC_parameters(cs_obj, new_params)
+#'
+#'   # Verify the update
+#'   print(attr(cs_obj, "MUSIC_data")$MUSIC_options$MUSIC_parameters)
+#' }
 seasonder_setSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object, MUSIC_parameters = seasonder_defaultMUSIC_parameters()) {
 
   # TODO: validate MUSIC parameters
@@ -758,7 +793,37 @@ seasonder_setSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object, MUSIC
 }
 
 
-
+#' Set MUSIC Data in a SeaSondeRCS Object
+#'
+#' This function assigns MUSIC analysis results to a SeaSondeRCS object. The MUSIC data is stored
+#' within the object's \code{MUSIC_data} attribute under the field \code{MUSIC}. Currently, no explicit
+#' validation is performed on the provided MUSIC data.
+#'
+#' @param seasonder_cs_object A \code{SeaSondeRCS} object containing cross-spectral data and metadata.
+#' @param MUSIC A data structure containing the MUSIC algorithm results. This is typically a list or tibble
+#'        produced during the MUSIC processing workflow.
+#'
+#' @return The updated \code{SeaSondeRCS} object with the specified MUSIC data stored in its attributes.
+#'
+#' @details
+#' This low-level setter function updates the SeaSondeRCS object's MUSIC data by assigning the provided
+#' MUSIC results to the \code{MUSIC} field within the \code{MUSIC_data} attribute. It is intended for use
+#' during the MUSIC processing workflow.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object and music_results contains MUSIC analysis results:
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'
+#'   # Example MUSIC data (placeholder)
+#'   music_results <- list(result1 = 1, result2 = 2)  # Replace with actual MUSIC results structure
+#'
+#'   # Set the MUSIC data in the SeaSondeRCS object
+#'   cs_obj <- seasonder_setSeaSondeRCS_MUSIC(cs_obj, music_results)
+#'
+#'   # Retrieve and inspect the MUSIC data
+#'   print(attr(cs_obj, "MUSIC_data")$MUSIC)
+#' }
 seasonder_setSeaSondeRCS_MUSIC <- function(seasonder_cs_object, MUSIC) {
 
   # TODO: validate MUSIC
@@ -926,7 +991,7 @@ seasonder_getMUSICOptions <- seasonder_getSeaSondeRCS_MUSIC_options <- function(
 #'   print(music_data)
 #' }
 #' @export
-seasonder_getMUSIC <- seasonder_getSeaSondeRCS_MUSIC <- function(seasonder_cs_object) {
+seasonder_getSeaSondeRCS_MUSIC <- seasonder_getMUSIC <-  function(seasonder_cs_object) {
 
 
   out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC %||% seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object)
@@ -988,7 +1053,7 @@ seasonder_getMUSICDualSolutionsProportion <- seasonder_getSeaSondeRCS_MUSIC_dual
 #'   print(interp_factor)
 #' }
 #' @export
-seasonder_getMUSICDopplerInterpolation <- seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_object){
+seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation <- seasonder_getMUSICDopplerInterpolation <-  function(seasonder_cs_object){
 
 
   out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC_options$doppler_interpolation %||% 1L
@@ -3131,7 +3196,6 @@ if(discard_no_solution){
 #' the MUSIC data structure and invokes the full MUSIC algorithm to update the SeaSondeRCS object.
 #'
 #' @param seasonder_cs_object A SeaSondeRCS object containing cross-spectra data and FOR information.
-#' @param doppler_interpolation An integer specifying the level of interpolation to apply to Doppler bins. Default is \code{2L}. 
 #'   (Note: Although this parameter is specified as an argument in the documentation, the actual Doppler interpolation factor is retrieved from 
 #'   the MUSIC options stored in the object.)
 #'
