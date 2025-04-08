@@ -10,14 +10,63 @@ new_SeaSondeRCS(header, data, seasonder_apm_object = NULL)
 \item{header}{A list containing header information for the SeaSondeRCS object.}
 
 \item{data}{A list containing the data fields for the SeaSondeRCS object.}
+
+\item{seasonder_apm_object}{An optional object representing the APM (Antenna Pattern Matrix or similar metadata).
+If provided, it is assigned to the SeaSondeRCS object; otherwise, the APM attribute is set to NULL.}
 }
 \value{
-A SeaSondeRCS object with the specified header, data, and version.
+A SeaSondeRCS object with version 1 containing the specified header, data, and default-initialized attributes.
 }
 \description{
-This function constructs a new SeaSondeRCS object with the provided header, data, and version information.
+This function constructs a new SeaSondeRCS object with the provided header and data information,
+initializing default values for various attributes including processing steps, FOR and MUSIC data,
+noise level, APM, and reference noise normalized limits estimation interval.
+}
+\details{
+The object is created with the following components:
+\itemize{
+\item \code{header}: Initially set to an empty list, then populated by \code{seasonder_setSeaSondeRCS_header}.
+\item \code{data}: Initially set to an empty list, then populated by \code{seasonder_setSeaSondeRCS_data}.
+\item \code{version}: Set to \code{1}.
+\item \code{ProcessingSteps}: A character vector to log processing steps.
+\item \code{FOR_data} and \code{MUSIC_data}: Initialized as empty lists.
+\item \code{NoiseLevel}: Set using \code{seasonder_defaultCSNoiseLevel()}.
+\item \code{APM}: Set to \code{seasonder_apm_object} if provided.
+\item \code{interpolated_doppler_cells_index}: An integer vector initialized as empty.
+\item \code{reference_noise_normalized_limits_estimation_interval}: Set using \code{seasonder_defaultCSReference_noise_normalized_limits_estimation_interval()}.
+\item The object's class is set to \code{c("SeaSondeRCS", "list")}.
+}
+
+After constructing the base object, the function updates the header and data attributes,
+initializes FOR parameters, and sets up the FOR configuration by calling
+\code{seasonder_initSeaSondeRCS_FOR}. A processing step message is logged to indicate successful creation.
+}
+\examples{
+\dontrun{
+  # Example header and data lists (replace with actual header and data content)
+  my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0, nFirstRangeCell = 1)
+  my_data <- list(
+    SSA1 = matrix(NA_real_, nrow = 100, ncol = 256),
+    SSA2 = matrix(NA_real_, nrow = 100, ncol = 256),
+    SSA3 = matrix(NA_real_, nrow = 100, ncol = 256),
+    CS12 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
+    CS13 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
+    CS23 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
+    QC = matrix(NA_real_, nrow = 100, ncol = 256)
+  )
+
+  # Create a new SeaSondeRCS object (optionally, an APM object can be provided)
+  rcs_object <- new_SeaSondeRCS(my_header, my_data)
+
+  # Check the header and APM attributes
+  print(seasonder_getSeaSondeRCS_header(rcs_object))
+  print(attr(rcs_object, "APM"))
+}
+
 }
 \seealso{
-\code{\link{seasonder_setSeaSondeRCS_header}}
-\code{\link{seasonder_setSeaSondeRCS_data}}
+\code{\link{seasonder_setSeaSondeRCS_header}},
+\code{\link{seasonder_setSeaSondeRCS_data}},
+\code{\link{seasonder_setFOR_parameters}},
+\code{\link{seasonder_setSeaSondeRCS_FOR}}
 }

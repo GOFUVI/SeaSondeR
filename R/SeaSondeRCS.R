@@ -182,17 +182,63 @@ seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 
 #' Create a New SeaSondeRCS Object
 #'
-#' This function constructs a new SeaSondeRCS object with the provided header, data, and version information.
+#' This function constructs a new SeaSondeRCS object with the provided header and data information,
+#' initializing default values for various attributes including processing steps, FOR and MUSIC data,
+#' noise level, APM, and reference noise normalized limits estimation interval.
 #'
 #' @param header A list containing header information for the SeaSondeRCS object.
 #' @param data A list containing the data fields for the SeaSondeRCS object.
+#' @param seasonder_apm_object An optional object representing the APM (Antenna Pattern Matrix or similar metadata).
+#'   If provided, it is assigned to the SeaSondeRCS object; otherwise, the APM attribute is set to NULL.
 #'
 #' @seealso
-#' \code{\link{seasonder_setSeaSondeRCS_header}}
-#' \code{\link{seasonder_setSeaSondeRCS_data}}
+#' \code{\link{seasonder_setSeaSondeRCS_header}},
+#' \code{\link{seasonder_setSeaSondeRCS_data}},
+#' \code{\link{seasonder_setFOR_parameters}},
+#' \code{\link{seasonder_setSeaSondeRCS_FOR}}
 #'
-#' @return A SeaSondeRCS object with the specified header, data, and version.
+#' @return A SeaSondeRCS object with version 1 containing the specified header, data, and default-initialized attributes.
 #'
+#' @details
+#' The object is created with the following components:
+#' \itemize{
+#'   \item \code{header}: Initially set to an empty list, then populated by \code{seasonder_setSeaSondeRCS_header}.
+#'   \item \code{data}: Initially set to an empty list, then populated by \code{seasonder_setSeaSondeRCS_data}.
+#'   \item \code{version}: Set to \code{1}.
+#'   \item \code{ProcessingSteps}: A character vector to log processing steps.
+#'   \item \code{FOR_data} and \code{MUSIC_data}: Initialized as empty lists.
+#'   \item \code{NoiseLevel}: Set using \code{seasonder_defaultCSNoiseLevel()}.
+#'   \item \code{APM}: Set to \code{seasonder_apm_object} if provided.
+#'   \item \code{interpolated_doppler_cells_index}: An integer vector initialized as empty.
+#'   \item \code{reference_noise_normalized_limits_estimation_interval}: Set using \code{seasonder_defaultCSReference_noise_normalized_limits_estimation_interval()}.
+#'   \item The object's class is set to \code{c("SeaSondeRCS", "list")}.
+#' }
+#'
+#' After constructing the base object, the function updates the header and data attributes,
+#' initializes FOR parameters, and sets up the FOR configuration by calling
+#' \code{seasonder_initSeaSondeRCS_FOR}. A processing step message is logged to indicate successful creation.
+#'
+#' @examples
+#' \dontrun{
+#'   # Example header and data lists (replace with actual header and data content)
+#'   my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0, nFirstRangeCell = 1)
+#'   my_data <- list(
+#'     SSA1 = matrix(NA_real_, nrow = 100, ncol = 256),
+#'     SSA2 = matrix(NA_real_, nrow = 100, ncol = 256),
+#'     SSA3 = matrix(NA_real_, nrow = 100, ncol = 256),
+#'     CS12 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
+#'     CS13 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
+#'     CS23 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
+#'     QC = matrix(NA_real_, nrow = 100, ncol = 256)
+#'   )
+#'
+#'   # Create a new SeaSondeRCS object (optionally, an APM object can be provided)
+#'   rcs_object <- new_SeaSondeRCS(my_header, my_data)
+#'
+#'   # Check the header and APM attributes
+#'   print(seasonder_getSeaSondeRCS_header(rcs_object))
+#'   print(attr(rcs_object, "APM"))
+#' }
 #'
 new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 
@@ -243,7 +289,6 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 #'
 #' @param x Either a character string specifying the path to the SeaSonde CS file or a list containing header and data.
 #' @param specs_path A character string specifying the path to the YAML specifications for the CS file. Used only if \code{x} is a character string.
-#' @param endian A character string indicating the byte order. Options are "big" (default) or "little".
 #' @param ... Additional parameters passed to the underlying functions.
 #'
 #' @return A SeaSondeRCS object.
@@ -641,6 +686,30 @@ seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_object, proces
   return(out)
 }
 
+#' Set APM for a SeaSondeRCS Object
+#'
+#' This function assigns the provided APM object to the SeaSondeRCS object by setting its "APM" attribute.
+#' (Note: Validation of the APM object is to be implemented.)
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object.
+#' @param seasonder_apm_object An object representing the APM (Antenna Pattern Matrix or similar metadata)
+#'   to be assigned to the SeaSondeRCS object.
+#'
+#' @return The updated SeaSondeRCS object with the new APM attribute set.
+#'
+#' @details
+#' The function simply sets the "APM" attribute of the provided SeaSondeRCS object to the given
+#' APM object. Further validation of the APM object should be performed (TODO).
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object and apm_obj is a valid APM object:
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/file.cs")
+#'   apm_obj <- list(param1 = "value1", param2 = "value2")  # Example APM object
+#'   cs_obj <- seasonder_setSeaSondeRCS_APM(cs_obj, apm_obj)
+#'   print(attr(cs_obj, "APM"))
+#' }
+#'
 #' @export
 seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_object){
 
@@ -653,8 +722,46 @@ seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_obje
 
 }
 
-# Setter for reference_noise_normalized_limits_estimation_interval
-#' @export 
+
+#' Set Noise Level Estimation Interval for a SeaSondeRCS Object
+#'
+#' This function sets the noise level estimation interval for a SeaSondeRCS object by updating the object's
+#' attribute and recalculating the reference noise normalized limits. It then updates the FOR parameters with the new noise limits.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object.
+#' @param interval_value A list containing the noise level estimation interval with two elements:
+#'   \itemize{
+#'     \item \code{low_limit}: A numeric value between 0 and 1 representing the lower limit.
+#'     \item \code{high_limit}: A numeric value between 0 and 1 representing the upper limit.
+#'   }
+#'   The \code{low_limit} should be less than \code{high_limit}.
+#'
+#' @return The updated SeaSondeRCS object with the new noise level estimation interval and reference noise normalized limits.
+#'
+#' @details
+#' The function updates the attribute \code{"reference_noise_normalized_limits_estimation_interval"} of the SeaSondeRCS
+#' object with \code{interval_value}. It then computes new reference noise normalized limits by calling
+#' \code{seasonder_estimateReferenceNoiseNormalizedLimits} with the provided lower and upper limits.
+#' Finally, it sets the new noise limits in the FOR parameters using \code{seasonder_setFORParameter}.
+#'
+#' @examples
+#' \dontrun{
+#'   # Define a new noise level estimation interval
+#'   new_interval <- list(low_limit = 0.9, high_limit = 1.0)
+#'
+#'   # Create or load a SeaSondeRCS object (cs_obj)
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
+#'
+#'   # Set the noise level estimation interval
+#'   cs_obj <- seasonder_setNoiseLevelEstimationInterval(cs_obj, new_interval)
+#'
+#'   # Verify the update by checking the attribute and FOR parameter
+#'   print(attr(cs_obj, "reference_noise_normalized_limits_estimation_interval"))
+#'   noise_limits <- seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
+#'   print(noise_limits)
+#' }
+#'
+#' @export
 seasonder_setNoiseLevelEstimationInterval <- seasonder_setSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <- function(seasonder_cs_object, interval_value) {
   # TODO: Validate interval_value to be of length 2 and each value between 0 and 1. The low_limit value should be less than high_limit value.
   out <- seasonder_cs_object
@@ -751,6 +858,25 @@ seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_object, path = NULL) {
   return(out)
 }
 
+#' Retrieve the APM Attribute from a SeaSondeRCS Object
+#'
+#' This function extracts the APM (Antenna Pattern Matrix or similar metadata) attribute from
+#' a SeaSondeRCS object. This attribute is stored as an attribute named "APM" within the object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object.
+#'
+#' @return The value of the "APM" attribute from the SeaSondeRCS object.
+#'
+#' @details
+#' The function uses \code{attr(..., exact = TRUE)} to ensure that the correct attribute is retrieved.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object with an "APM" attribute
+#'   apm_value <- seasonder_getSeaSondeRCS_APM(cs_obj)
+#'   print(apm_value)
+#' }
+#'
 #' @export
 seasonder_getSeaSondeRCS_APM <- function(seasonder_cs_object){
 
@@ -760,8 +886,28 @@ seasonder_getSeaSondeRCS_APM <- function(seasonder_cs_object){
 
 }
 
-# Getter for reference_noise_normalized_limits_estimation_interval
-#' @export 
+
+#' Retrieve the Reference Noise Normalized Limits Estimation Interval
+#'
+#' This function extracts the reference noise normalized limits estimation interval from a 
+#' SeaSondeRCS object's attributes. These limits are stored under the attribute name 
+#' \code{"reference_noise_normalized_limits_estimation_interval"}.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object.
+#'
+#' @return The reference noise normalized limits estimation interval as stored in the object.
+#'
+#' @details
+#' This interval is typically used during the noise level estimation process for the SeaSondeRCS object.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object with noise limits estimation interval set
+#'   interval <- seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval(cs_obj)
+#'   print(interval)
+#' }
+#'
+#' @export
 seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <- function(seasonder_cs_object) {
   return(attr(seasonder_cs_object,"reference_noise_normalized_limits_estimation_interval", exact = TRUE))
 }
@@ -924,7 +1070,61 @@ seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, dop
 }
 
 
-#'  returns a list of power spectra for each combination of antenna, dist_range and doppler_range
+#' Retrieve Self-Spectra Power Matrices for Specified Antenna, Range, and Doppler Intervals
+#'
+#' This function returns a list of power spectra extracted from a SeaSondeRCS object for each combination
+#' of the specified antennae, range intervals, and Doppler intervals. It allows users to focus on subregions
+#' of the self-spectra data. Additionally, the resulting nested list can be collapsed into a single-level list.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing spectral data.
+#' @param antennae A vector specifying the antenna(s) from which to extract self-spectra. If not named,
+#'   the antennae will be automatically named as "A1", "A2", etc.
+#' @param dist_ranges Optional. A list (or vector) of range cell indices or ranges of interest.
+#'   If not provided, it defaults to using the full range available.
+#' @param doppler_ranges Optional. A list (or vector) of Doppler bin indices or ranges of interest.
+#'   If not provided, defaults to the complete Doppler range.
+#' @param dist_in_km Logical; if \code{TRUE}, the distance ranges provided in kilometers are converted
+#'   into range cell numbers.
+#' @param collapse Logical; if \code{TRUE}, the nested list structure of the output is flattened into a single list.
+#' @param smoothed Logical; if \code{TRUE}, smoothed self-spectra data is used (via \code{seasonder_SmoothSS});
+#'   otherwise, raw self-spectra data is used.
+#'
+#' @return A (potentially nested) list of self-spectra power matrices corresponding to each combination
+#'   of antenna, range interval, and Doppler interval. If \code{collapse = TRUE}, the list is flattened.
+#'
+#' @details
+#' The function operates as follows:
+#' \enumerate{
+#'   \item If \code{doppler_ranges} is not provided, it sets a default list with the full Doppler range,
+#'         using the total number of Doppler cells.
+#'   \item If \code{dist_ranges} is not provided, it sets a default list with the full range, using the total number
+#'         of range cells.
+#'   \item If any of \code{antennae}, \code{dist_ranges}, or \code{doppler_ranges} are not named,
+#'         they are automatically named using a default naming scheme.
+#'   \item Based on the \code{smoothed} flag, the function retrieves either smoothed self-spectra data
+#'         via \code{seasonder_SmoothSS} or raw self-spectra data via \code{seasonder_getSeaSondeRCS_antenna_SSdata}.
+#'   \item If \code{dist_in_km} is \code{TRUE}, the distance ranges provided in kilometers are converted to
+#'         range cell numbers using \code{seasonder_rangeCellsDists2RangeNumber}.
+#'   \item For each self-spectra matrix, the function slices the matrix over the specified range and Doppler intervals.
+#'   \item Finally, if \code{collapse = TRUE}, the nested list is flattened into a single-level list.
+#' }
+#'
+#' @examples
+#' \dontrun{
+#'   # Example: Extract self-spectra for antennas 1 and 2, for range cells 10 to 20,
+#'   # and Doppler bins 5 to 15 using raw data.
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
+#'   antennae <- c(1, 2)
+#'   dist_ranges <- list(10:20)
+#'   doppler_ranges <- list(5:15)
+#'   spectra_list <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, dist_ranges, doppler_ranges)
+#'   print(spectra_list)
+#'
+#'   # Example: Extract and collapse the output into a flat list.
+#'   spectra_flat <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, dist_ranges, doppler_ranges, collapse = TRUE)
+#'   print(spectra_flat)
+#' }
+#'
 seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_object, antennae, dist_ranges = NULL, doppler_ranges = NULL, dist_in_km = FALSE, collapse = FALSE, smoothed = F) {
 
 
@@ -2435,6 +2635,51 @@ seasonder_SwapDopplerUnits <- function(seasonder_cs_object, values, in_units, ou
 
 ##### Plot #####
 
+#' Plot Self-Spectrum for a SeaSondeRCS Object
+#'
+#' This function generates a plot of the self-spectrum (in dB) for a specified antenna and range cell
+#' from a SeaSondeRCS object. The Doppler frequencies are converted to the desired units before plotting.
+#' Optionally, it overlays additional elements such as smoothed self-spectrum lines, first-order region (FOR)
+#' vertical lines, and noise level lines.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing spectral and metadata.
+#' @param antenna An integer or vector specifying the antenna(s) to extract the self-spectrum from.
+#' @param range_cell An integer indicating the range cell to extract the spectrum.
+#' @param doppler_units A character string specifying the desired Doppler units for the plot.
+#'        Commonly "normalized doppler frequency" or "doppler frequency" (Hz). Default is "normalized doppler frequency".
+#' @param plot_FORs Logical. If \code{TRUE}, the function overlays elements related to the first order region (FOR)
+#'        such as vertical lines at the FOR boundaries and the smoothed self-spectrum. Default is \code{FALSE}.
+#'
+#' @return A ggplot object representing the self-spectrum plot.
+#'
+#' @details
+#' The function performs the following steps:
+#' \enumerate{
+#'   \item Retrieves the self-spectrum data for the given antenna and range cell using \code{seasonder_getSeaSondeRCS_SelfSpectra}.
+#'   \item Converts the Doppler bin frequencies to the specified units using \code{seasonder_SwapDopplerUnits}.
+#'   \item Converts the self-spectrum to dB using \code{seasonder_SelfSpectra2dB} and combines it with the Doppler values.
+#'   \item Retrieves the Bragg Doppler angular frequency for plotting a reference vertical line.
+#'   \item If \code{plot_FORs} is \code{TRUE}, overlays:
+#'      \itemize{
+#'         \item An orange line for the smoothed self-spectrum.
+#'         \item Blue vertical lines for FOR boundaries.
+#'         \item Red lines indicating the noise level across the Doppler spectrum.
+#'      }
+#'   \item Finally, returns the ggplot object.
+#' }
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_object is a valid SeaSondeRCS object and antenna 1, range cell 5 are valid:
+#'   p <- seasonder_SeaSondeRCS_plotSelfSpectrum(cs_object, antenna = 1, range_cell = 5)
+#'   print(p)
+#'
+#'   # Plot with Doppler frequencies in Hz and overlay FOR-related elements:
+#'   p <- seasonder_SeaSondeRCS_plotSelfSpectrum(cs_object, antenna = 2, range_cell = 10,
+#'                                                doppler_units = "doppler frequency", plot_FORs = TRUE)
+#'   print(p)
+#' }
+#'
 #' @export
 seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_object, antenna, range_cell, doppler_units = "normalized doppler frequency", plot_FORs = FALSE) {
 

@@ -12,43 +12,52 @@ seasonder_estimateReferenceNoiseNormalizedLimits(
 }
 \arguments{
 \item{seasonder_cs_object}{A SeaSondeRCS object containing Doppler frequency metadata.}
+
+\item{low_limit}{Optional. A numeric value representing the fraction of the maximum normalized
+Doppler frequency to be used as the lower bound for noise estimation. Default is 0.95.}
+
+\item{high_limit}{Optional. A numeric value representing the fraction of the maximum normalized
+Doppler frequency to be used as the upper bound for noise estimation. Default is 1.0.}
 }
 \value{
-A numeric vector of length two, representing the lower and upper reference
-noise limits in normalized Doppler frequency.
+A numeric vector of length two, representing the lower and upper reference noise limits in
+normalized Doppler frequency.
 }
 \description{
 This function estimates the reference noise limits for normalized Doppler frequencies
-in a SeaSondeR cross-spectral object. These limits are used to define the frequency range
-where the noise level is assessed for first-order region (FOR) detection.
+in a SeaSondeR cross-spectral object. These limits define the frequency range over which
+the noise floor is assessed for first-order region (FOR) detection.
 }
 \details{
-The function computes the noise limits based on the maximum normalized Doppler frequency
-from \code{\link{seasonder_getDopplerBinsFrequency}}. The limits are scaled using fixed
-factors to set a reference range for noise analysis:
+The function operates as follows:
+\enumerate{
+\item Retrieves the Doppler bin frequencies in normalized units (relative to the Bragg frequency)
+via \code{seasonder_getDopplerBinsFrequency}.
+\item Computes the noise limits by scaling the maximum normalized Doppler frequency using the
+provided \code{low_limit} and \code{high_limit} factors:
 \itemize{
-\item The lower bound is 56.5\% of the maximum normalized Doppler frequency.
-\item The upper bound is 100\% of the maximum normalized Doppler frequency.
+\item The lower bound is given by \code{max(freq) * low_limit}.
+\item The upper bound is given by \code{max(freq) * high_limit}.
+}
+\item The default empirical choice for the lower bound (56.5\% in the original calibration process)
+is adjustable via the \code{low_limit} parameter. This parameter was determined through an iterative
+process where the initial lower bound was decreased in increments (e.g., 0.5\%) until the computed noise
+floor closely matched the reference provided by the AnalyseSpectra Tool in Radial Suite R8.
 }
 
-The lower bound value of 56.5\% was determined through an empirical process involving
-multiple sample spectra. The procedure began with an initial lower bound set at 100\%,
-and in each iteration, this value was decreased by 0.5\%. The noise floor was
-calculated repeatedly and compared with the temporal NoiseFloor.txt file generated
-by the AnalyseSpectra Tool in Radial Suite R8. The final lower bound percentage
-was established as the value that closely matched the corresponding noise floor
-in the NoiseFloor.txt file. After this, several percentages were averaged and
-rounded to the nearest 0.5\%.
-
-The function is used in first-order detection processes where noise reference levels
-are required for signal-to-noise ratio (SNR) calculations.
+This approach is crucial for setting the signal-to-noise ratio (SNR) thresholds used in FOR detection.
 }
 \examples{
 \dontrun{
-# Estimate reference noise limits for a SeaSondeRCS object
-noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj)
-print(noise_limits)
+  # Estimate the reference noise limits for a SeaSondeRCS object using default scaling factors
+  noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj)
+  print(noise_limits)
+
+  # Estimate the reference noise limits with a modified lower limit (e.g., 56.5\% of max frequency)
+  noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj, low_limit = 0.565, high_limit = 1.0)
+  print(noise_limits)
 }
+
 }
 \seealso{
 \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving Doppler bin frequencies.

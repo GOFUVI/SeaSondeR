@@ -2,7 +2,7 @@
 % Please edit documentation in R/SeaSondeRCS_MUSIC.R
 \name{seasonder_MUSICExtractDOASolutions}
 \alias{seasonder_MUSICExtractDOASolutions}
-\title{Extract Direction of Arrival (DOA) Solutions Using MUSIC Algorithm}
+\title{Extract Direction of Arrival (DOA) Solutions Using the MUSIC Algorithm}
 \usage{
 seasonder_MUSICExtractDOASolutions(
   projections,
@@ -11,40 +11,65 @@ seasonder_MUSICExtractDOASolutions(
 )
 }
 \arguments{
-\item{projections}{A matrix of projections where each column corresponds to a set of MUSIC spectra for single and dual solutions.
-The matrix should have the attribute \code{"bearings"} indicating the corresponding bearing angles in degrees.}
+\item{projections}{A numeric matrix of projection data where each column represents a set of MUSIC spectra
+for single and dual solutions. The matrix must have an attribute named \code{"bearings"} that contains
+the corresponding bearing angles (in degrees) for each column.}
+
+\item{valid_bearings}{A numeric vector of valid bearing values (in degrees) that are acceptable.
+Detected bearing peaks falling outside this set will be disregarded.}
+
+\item{seasonder_apm_obj}{A matrix or similar object representing the Antenna Pattern Matrix (APM).
+The columns of \code{seasonder_apm_obj} correspond to bearings and are used to extract antenna response
+information for the detected peaks.}
 }
 \value{
-A list containing the extracted single and dual DOA solutions, each with:
+A list with two components corresponding to single and dual DOA solutions. Each component is a list
+containing:
 \itemize{
-\item \code{bearing}: The bearing(s) corresponding to the detected peak(s).
-\item \code{a}: The associated antenna pattern matrix values for the detected peak(s).
-\item \code{peak_resp}: The response levels at the detected peak(s) in dB.
+\item \code{bearing}: The detected bearing(s) for the solution (in degrees).
+\item \code{a}: A subset of the APM data (columns) corresponding to the detected peak.
+\item \code{peak_resp}: The peak response value(s) at the detected peak(s), expressed in dB.
+\item \code{peak_width}: The width of the peak(s) calculated from the 3 dB limit, in degrees.
 }
 }
 \description{
-This function analyzes projection data using the Multiple Signal Classification (MUSIC) algorithm
-to identify Direction of Arrival (DOA) solutions for radar signals. It implements the methodology
-described by Paolo and Terril (2007) for HF radar signal analysis.
+This function processes a set of MUSIC projection data to extract Direction of Arrival (DOA)
+solutions for radar signals. It implements the approach described in Paolo and Terril (2007) for HF radar
+analysis by first reversing the projection distances to enhance peak visibility, then detecting peaks for both
+single and dual solution cases. Finally, it maps the detected peak locations back to bearing values.
 }
 \details{
-The function performs the following steps:
+The function proceeds as follows:
 \enumerate{
-\item Reverses the distances for single and dual solution projections to enhance peak detectability.
-\item Detects peaks in the reversed single solution projection, retaining the highest peak.
-\item Detects peaks in the reversed dual solution projection, retaining the two highest peaks.
-\item Maps the identified peak positions back to their corresponding bearings.
+\item It retrieves the bearing angles from the attribute \code{"bearings"} of the \code{projections} matrix.
+\item It computes the inverse of the absolute projection values for both 'single' and 'dual' solution modes to
+enhance peaks.
+\item For single solutions, it detects the highest peak using \code{\link[pracma]{findpeaks}},
+then checks if the corresponding bearing is within the set of valid bearings.
+\item If a valid single peak is found, it calculates the response in dB and determines the peak width by finding
+the indices where the response exceeds the (peak response - 3 dB) threshold.
+\item For dual solutions, it similarly detects up to two peaks, filters them by valid bearings, and computes the
+response and peak width for each.
+\item Finally, the function populates and returns a DOA solutions structure containing both single and dual solution fields.
 }
-
-The identification of DOA solutions using MUSIC relies on the inversion of spectral distances, as detailed in Paolo and Terril (2007),
-to emphasize potential peaks corresponding to source directions.
 }
 \examples{
 \dontrun{
-projections <- matrix(runif(100), nrow = 2, ncol = 50)
-attr(projections, "bearings") <- seq(0, 359, length.out = 50)
-result <- seasonder_MUSICExtractDOASolutions(projections)
-print(result)
+  # Example usage:
+  # Generate a dummy projections matrix with 50 columns and 2 rows for single and dual solutions
+  projections <- matrix(runif(100), nrow = 2, ncol = 50)
+  # Assign bearing angles as an attribute (0 to 359 degrees)
+  attr(projections, "bearings") <- seq(0, 359, length.out = 50)
+
+  # Define valid bearings (for example, all bearings between 0 and 359)
+  valid_bearings <- seq(0, 359, length.out = 50)
+
+  # Create a dummy APM object with the same number of columns as projections
+  seasonder_apm_obj <- matrix(runif(150), nrow = 3, ncol = 50)
+
+  # Extract DOA solutions using the MUSIC algorithm
+  result <- seasonder_MUSICExtractDOASolutions(projections, valid_bearings, seasonder_apm_obj)
+  print(result)
 }
 
 }
@@ -53,5 +78,5 @@ Paolo, S., & Terril, E. (2007). Detection and characterization of signals in HF 
 \emph{Journal of Atmospheric and Oceanic Technology}.
 }
 \seealso{
-\code{\link{seasonder_MUSICExtractPeaks}}, \code{\link{pracma::findpeaks}}
+\code{\link{seasonder_MUSICExtractPeaks}}, \code{\link[pracma]{findpeaks}}
 }

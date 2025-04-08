@@ -2,7 +2,7 @@
 % Please edit documentation in R/SeaSondeRCS.R
 \name{seasonder_getSeaSondeRCS_SelfSpectra}
 \alias{seasonder_getSeaSondeRCS_SelfSpectra}
-\title{returns a list of power spectra for each combination of antenna, dist_range and doppler_range}
+\title{Retrieve Self-Spectra Power Matrices for Specified Antenna, Range, and Doppler Intervals}
 \usage{
 seasonder_getSeaSondeRCS_SelfSpectra(
   seasonder_cs_object,
@@ -14,6 +14,66 @@ seasonder_getSeaSondeRCS_SelfSpectra(
   smoothed = F
 )
 }
+\arguments{
+\item{seasonder_cs_object}{A SeaSondeRCS object containing spectral data.}
+
+\item{antennae}{A vector specifying the antenna(s) from which to extract self-spectra. If not named,
+the antennae will be automatically named as "A1", "A2", etc.}
+
+\item{dist_ranges}{Optional. A list (or vector) of range cell indices or ranges of interest.
+If not provided, it defaults to using the full range available.}
+
+\item{doppler_ranges}{Optional. A list (or vector) of Doppler bin indices or ranges of interest.
+If not provided, defaults to the complete Doppler range.}
+
+\item{dist_in_km}{Logical; if \code{TRUE}, the distance ranges provided in kilometers are converted
+into range cell numbers.}
+
+\item{collapse}{Logical; if \code{TRUE}, the nested list structure of the output is flattened into a single list.}
+
+\item{smoothed}{Logical; if \code{TRUE}, smoothed self-spectra data is used (via \code{seasonder_SmoothSS});
+otherwise, raw self-spectra data is used.}
+}
+\value{
+A (potentially nested) list of self-spectra power matrices corresponding to each combination
+of antenna, range interval, and Doppler interval. If \code{collapse = TRUE}, the list is flattened.
+}
 \description{
-returns a list of power spectra for each combination of antenna, dist_range and doppler_range
+This function returns a list of power spectra extracted from a SeaSondeRCS object for each combination
+of the specified antennae, range intervals, and Doppler intervals. It allows users to focus on subregions
+of the self-spectra data. Additionally, the resulting nested list can be collapsed into a single-level list.
+}
+\details{
+The function operates as follows:
+\enumerate{
+\item If \code{doppler_ranges} is not provided, it sets a default list with the full Doppler range,
+using the total number of Doppler cells.
+\item If \code{dist_ranges} is not provided, it sets a default list with the full range, using the total number
+of range cells.
+\item If any of \code{antennae}, \code{dist_ranges}, or \code{doppler_ranges} are not named,
+they are automatically named using a default naming scheme.
+\item Based on the \code{smoothed} flag, the function retrieves either smoothed self-spectra data
+via \code{seasonder_SmoothSS} or raw self-spectra data via \code{seasonder_getSeaSondeRCS_antenna_SSdata}.
+\item If \code{dist_in_km} is \code{TRUE}, the distance ranges provided in kilometers are converted to
+range cell numbers using \code{seasonder_rangeCellsDists2RangeNumber}.
+\item For each self-spectra matrix, the function slices the matrix over the specified range and Doppler intervals.
+\item Finally, if \code{collapse = TRUE}, the nested list is flattened into a single-level list.
+}
+}
+\examples{
+\dontrun{
+  # Example: Extract self-spectra for antennas 1 and 2, for range cells 10 to 20,
+  # and Doppler bins 5 to 15 using raw data.
+  cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
+  antennae <- c(1, 2)
+  dist_ranges <- list(10:20)
+  doppler_ranges <- list(5:15)
+  spectra_list <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, dist_ranges, doppler_ranges)
+  print(spectra_list)
+
+  # Example: Extract and collapse the output into a flat list.
+  spectra_flat <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, dist_ranges, doppler_ranges, collapse = TRUE)
+  print(spectra_flat)
+}
+
 }

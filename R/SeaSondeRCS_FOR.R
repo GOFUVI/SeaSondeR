@@ -259,6 +259,28 @@ seasonder_validateFOR_parameters <- function(seasonder_cs_object, FOR_parameters
 ##### Setters #####
 
 
+#' Set First Order Region (FOR) Parameters for a SeaSondeRCS Object
+#'
+#' This function validates and sets the FOR parameters in the SeaSondeRCS object.
+#' It updates the "FOR_data" attribute with validated parameters and, if the noise factor
+#' has changed, recomputes the noise level for all three antennas.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing FOR-related metadata.
+#' @param FOR_parameters A named list of parameters for first-order region detection.
+#'
+#' @return The updated SeaSondeRCS object with the new FOR parameters.
+#'
+#' @details
+#' The provided parameters are validated using \code{seasonder_validateFOR_parameters()},
+#' and then stored in the object's "FOR_data" attribute under \code{FOR_parameters}.
+#' If the \code{noisefact} parameter changes, the noise level is recomputed for antennas 1, 2, and 3.
+#'
+#' @examples
+#' \dontrun{
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'   new_params <- list(nsm = 3, noisefact = 4, fdown = 12, flim = 80, currmax = 2.5)
+#'   cs_obj <- seasonder_setFOR_parameters(cs_obj, new_params)
+#' }
 #' @export
 seasonder_setFOR_parameters <- function(seasonder_cs_object, FOR_parameters) {
 
@@ -283,6 +305,22 @@ if(!is.null(FOR_parameters$noisefact) && (is.null(old_parameters$noisefact)  || 
 
 }
 
+#' Set a Specific FOR Parameter for a SeaSondeRCS Object
+#'
+#' This function updates a single First Order Region (FOR) parameter in the SeaSondeRCS object.
+#' It creates a single-parameter list and passes it to \code{seasonder_setFOR_parameters()}.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing FOR-related metadata.
+#' @param FOR_parameter A character string specifying the name of the parameter to set.
+#' @param value The value to assign to the specified FOR parameter.
+#'
+#' @return The updated SeaSondeRCS object with the new parameter value.
+#'
+#' @examples
+#' \dontrun{
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'   cs_obj <- seasonder_setFORParameter(cs_obj, "nsm", 4)
+#' }
 #' @export
 seasonder_setFORParameter <- function(seasonder_cs_object, FOR_parameter, value){
 
@@ -296,12 +334,42 @@ return(seasonder_cs_object)
 
 
 
+#' Set FOR Doppler Smoothing Factor (nsm)
+#'
+#' This function sets the Doppler smoothing factor (\code{nsm}) in the SeaSondeRCS object
+#' for FOR processing.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing FOR-related information.
+#' @param nsm A numeric value specifying the new smoothing factor.
+#'
+#' @return The updated SeaSondeRCS object with the new \code{nsm} value.
+#'
+#' @examples
+#' \dontrun{
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'   cs_obj <- seasonder_setFOR_nsm(cs_obj, 3)
+#' }
 #' @export
 seasonder_setFOR_nsm <- function(seasonder_cs_object, nsm) {
   seasonder_cs_object %<>% seasonder_setFORParameter(FOR_parameter = "nsm", value = nsm)
   return(seasonder_cs_object)
 }
 
+#' Set FOR Noise Factor (noisefact)
+#'
+#' This function sets the noise factor (\code{noisefact}) used in FOR processing
+#' for the given SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object with FOR parameters.
+#' @param noisefact A numeric value that specifies the noise factor.
+#'
+#' @return The updated SeaSondeRCS object with the new \code{noisefact} value.
+#'
+#' @examples
+#' \dontrun{
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'   cs_obj <- seasonder_setFOR_noisefact(cs_obj, 4)
+#' }
 #' @export
 seasonder_setFOR_noisefact <- function(seasonder_cs_object, noisefact){
 
@@ -312,6 +380,20 @@ seasonder_setFOR_noisefact <- function(seasonder_cs_object, noisefact){
 
 }
 
+#' Set FOR Null Limit (flim)
+#'
+#' This function sets the null limit (\code{flim}) used for defining the first-order region in the SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object with FOR parameters.
+#' @param flim A numeric value specifying the new null limit.
+#'
+#' @return The updated SeaSondeRCS object with the new \code{flim} value.
+#'
+#' @examples
+#' \dontrun{
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'   cs_obj <- seasonder_setFOR_flim(cs_obj, 100)
+#' }
 #' @export
 seasonder_setFOR_flim <- function(seasonder_cs_object, flim){
 
@@ -322,6 +404,20 @@ seasonder_setFOR_flim <- function(seasonder_cs_object, flim){
 
 }
 
+#' Set FOR Dropoff Threshold (fdown)
+#'
+#' This function sets the power dropoff threshold (\code{fdown}) used to define the lower limit of the first-order region.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object with FOR parameters.
+#' @param fdown A numeric value specifying the new dropoff threshold.
+#'
+#' @return The updated SeaSondeRCS object with the new \code{fdown} value.
+#'
+#' @examples
+#' \dontrun{
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'   cs_obj <- seasonder_setFOR_fdown(cs_obj, 12)
+#' }
 #' @export
 seasonder_setFOR_fdown <- function(seasonder_cs_object, fdown){
 
@@ -332,6 +428,21 @@ seasonder_setFOR_fdown <- function(seasonder_cs_object, fdown){
 
 }
 
+#' Set FOR Maximum Velocity (currmax)
+#'
+#' This function sets the maximum radial velocity (\code{currmax}) allowed in the first-order region
+#' for the SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object with FOR parameters.
+#' @param currmax A numeric value specifying the new maximum radial velocity.
+#'
+#' @return The updated SeaSondeRCS object with the new \code{currmax} value.
+#'
+#' @examples
+#' \dontrun{
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#'   cs_obj <- seasonder_setFOR_currmax(cs_obj, 2.5)
+#' }
 #' @export
 seasonder_setFOR_currmax <- function(seasonder_cs_object, currmax) {
   seasonder_cs_object %<>% seasonder_setFORParameter(FOR_parameter = "currmax", value = currmax)
@@ -801,6 +912,31 @@ seasonder_getSeaSondeRCS_FOR_reject_noise_ionospheric_threshold <- function(seas
   return(out)
 }
 
+#' Retrieve First Order Region (FOR) Configuration from a SeaSondeRCS Object
+#'
+#' This function extracts the configuration related to the First Order Region (FOR) from a SeaSondeRCS object.
+#' It returns a list containing the FOR parameters and the noise level assigned to the object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing FOR-related metadata.
+#'
+#' @return A list with two components:
+#' \itemize{
+#'   \item \code{FOR_parameters}: A list of parameters used for FOR processing.
+#'   \item \code{NoiseLevel}: The noise level values retrieved from the object.
+#' }
+#'
+#' @details
+#' The FOR configuration is composed of parameters that define the first order region and the noise level used during
+#' FOR processing. This function aggregates these components by calling \code{seasonder_getFOR_parameters()} and
+#' \code{seasonder_getSeaSondeRCS_NoiseLevel()}.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object with configured FOR parameters and noise level
+#'   config <- seasonder_getSeaSondeRCS_FORConfig(cs_obj)
+#'   print(config)
+#' }
+#'
 #' @export
 seasonder_getSeaSondeRCS_FORConfig <- function(seasonder_cs_object){
 
@@ -849,42 +985,51 @@ SeaSondeRCS_setFORParameters_step_text <- function(seasonder_cs_object) {
 #' Estimate Reference Noise Limits in Normalized Doppler Frequency
 #'
 #' This function estimates the reference noise limits for normalized Doppler frequencies
-#' in a SeaSondeR cross-spectral object. These limits are used to define the frequency range
-#' where the noise level is assessed for first-order region (FOR) detection.
+#' in a SeaSondeR cross-spectral object. These limits define the frequency range over which
+#' the noise floor is assessed for first-order region (FOR) detection.
 #'
 #' @param seasonder_cs_object A SeaSondeRCS object containing Doppler frequency metadata.
+#' @param low_limit Optional. A numeric value representing the fraction of the maximum normalized 
+#'   Doppler frequency to be used as the lower bound for noise estimation. Default is 0.95.
+#' @param high_limit Optional. A numeric value representing the fraction of the maximum normalized 
+#'   Doppler frequency to be used as the upper bound for noise estimation. Default is 1.0.
 #'
 #' @details
-#' The function computes the noise limits based on the maximum normalized Doppler frequency
-#' from \code{\link{seasonder_getDopplerBinsFrequency}}. The limits are scaled using fixed
-#' factors to set a reference range for noise analysis:
-#' - The lower bound is 56.5% of the maximum normalized Doppler frequency.
-#' - The upper bound is 100% of the maximum normalized Doppler frequency.
+#' The function operates as follows:
+#' \enumerate{
+#'   \item Retrieves the Doppler bin frequencies in normalized units (relative to the Bragg frequency)
+#'         via \code{seasonder_getDopplerBinsFrequency}.
+#'   \item Computes the noise limits by scaling the maximum normalized Doppler frequency using the
+#'         provided \code{low_limit} and \code{high_limit} factors:
+#'         \itemize{
+#'           \item The lower bound is given by \code{max(freq) * low_limit}.
+#'           \item The upper bound is given by \code{max(freq) * high_limit}.
+#'         }
+#'   \item The default empirical choice for the lower bound (56.5% in the original calibration process)
+#'         is adjustable via the \code{low_limit} parameter. This parameter was determined through an iterative
+#'         process where the initial lower bound was decreased in increments (e.g., 0.5%) until the computed noise
+#'         floor closely matched the reference provided by the AnalyseSpectra Tool in Radial Suite R8.
+#' }
 #'
-#' The lower bound value of 56.5% was determined through an empirical process involving
-#' multiple sample spectra. The procedure began with an initial lower bound set at 100%,
-#' and in each iteration, this value was decreased by 0.5%. The noise floor was
-#' calculated repeatedly and compared with the temporal NoiseFloor.txt file generated
-#' by the AnalyseSpectra Tool in Radial Suite R8. The final lower bound percentage
-#' was established as the value that closely matched the corresponding noise floor
-#' in the NoiseFloor.txt file. After this, several percentages were averaged and
-#' rounded to the nearest 0.5%.
+#' This approach is crucial for setting the signal-to-noise ratio (SNR) thresholds used in FOR detection.
 #'
-#' The function is used in first-order detection processes where noise reference levels
-#' are required for signal-to-noise ratio (SNR) calculations.
-#'
-#' @return A numeric vector of length two, representing the lower and upper reference
-#' noise limits in normalized Doppler frequency.
+#' @return A numeric vector of length two, representing the lower and upper reference noise limits in 
+#' normalized Doppler frequency.
 #'
 #' @seealso
 #' \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving Doppler bin frequencies.
 #'
 #' @examples
 #' \dontrun{
-#' # Estimate reference noise limits for a SeaSondeRCS object
-#' noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj)
-#' print(noise_limits)
+#'   # Estimate the reference noise limits for a SeaSondeRCS object using default scaling factors
+#'   noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj)
+#'   print(noise_limits)
+#'
+#'   # Estimate the reference noise limits with a modified lower limit (e.g., 56.5% of max frequency)
+#'   noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj, low_limit = 0.565, high_limit = 1.0)
+#'   print(noise_limits)
 #' }
+#'
 seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_object, low_limit = 0.95, high_limit = 1.0) {
 
   # Retrieve Doppler bin frequencies in normalized units (relative to Bragg frequency)
@@ -905,45 +1050,57 @@ seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_object
 
 #' Compute Noise Level for First Order Region (FOR) Processing
 #'
-#' This function estimates the noise level in the self-spectra of a SeaSondeR cross-spectral object.
-#' The noise level is computed by averaging the spectral power within a predefined frequency range
-#' where no first-order Bragg signal is expected.
+#' This function estimates the noise level in the self-spectra of a SeaSondeR cross‐spectral object.
+#' The noise level is determined by averaging the spectral power over a predefined frequency range
+#' where no first-order Bragg signal is expected. This value is later used in setting signal-to-noise
+#' thresholds for FOR detection.
 #'
 #' @param seasonder_cs_object A \code{SeaSondeRCS} object containing spectral data and FOR parameters.
+#' @param antenna A numeric value specifying the antenna from which to extract self-spectra (default is 3).
+#' @param smoothed Logical; if \code{TRUE}, the function uses a smoothed version of the self-spectra.
 #'
 #' @details
-#' **Steps in Noise Level Computation:**
-#' 1. **Determine Noise Reference Limits:**
-#'    - Retrieves the normalized Doppler frequency limits for noise reference from \code{\link{seasonder_getFOR_parameters}}.
-#'    - Converts these limits into Doppler bin indices using \code{\link{seasonder_SwapDopplerUnits}}.
-#'    - Ensures that missing values are replaced with appropriate boundary values.
+#' The noise level is computed via the following steps:
 #'
-#' 2. **Extract Spectral Data for Noise Estimation:**
-#'    - The function extracts self-spectra (SSA3) from antenna 3 using \code{\link{seasonder_getSeaSondeRCS_SelfSpectra}}.
-#'    - The extraction is limited to the Doppler bins within the computed noise reference range.
+#' 1. **Determine Noise Reference Limits:**  
+#'    - Retrieves the normalized Doppler frequency limits for noise reference from the FOR parameters 
+#'      (using \code{seasonder_getFOR_parameters}).  
+#'    - Converts these normalized limits into Doppler bin indices using \code{seasonder_SwapDopplerUnits}.  
+#'    - If any of the resulting bin indices are missing, they are replaced with appropriate default boundaries 
+#'      (i.e., upper limit set to the total number of Doppler cells and lower limit set to 1).
 #'
-#' 3. **Compute the Average Noise Level:**
-#'    - The extracted spectral data from both negative and positive Doppler regions is concatenated.
-#'    - The row-wise mean is computed to estimate the average noise level.
+#' 2. **Extract Spectral Data for Noise Estimation:**  
+#'    - The function extracts the self-spectra from the specified antenna (using \code{seasonder_getSeaSondeRCS_SelfSpectra}), 
+#'      limiting the extraction to the Doppler bins within the computed noise reference range (both negative and positive regions).
 #'
-#' 4. **Store the Noise Level in the Object:**
-#'    - The computed noise level is assigned to the \code{NoiseLevel} attribute of the SeaSondeRCS object.
+#' 3. **Compute the Average Noise Level:**  
+#'    - The spectral data from both the negative and positive Doppler regions are concatenated, and 
+#'      the row-wise mean is calculated to estimate the average noise level.
 #'
-#' The computed noise level is crucial in setting signal-to-noise thresholds used in first-order Bragg region detection.
+#' 4. **Store the Noise Level:**  
+#'    - The computed average noise level is stored in the object's \code{NoiseLevel} attribute by calling 
+#'      \code{seasonder_setSeaSondeRCS_NoiseLevel}.  
+#'    - A processing step message is logged using \code{SeaSondeRCS_computeNoiseLevel_step_text}.
+#'
+#' The resulting noise level is essential for setting accurate thresholds during FOR detection.
 #'
 #' @return The updated \code{SeaSondeRCS} object with the computed noise level stored in its attributes.
 #'
 #' @seealso
-#' - \code{\link{seasonder_getFOR_parameters}} for retrieving reference noise limits.
-#' - \code{\link{seasonder_SwapDopplerUnits}} for converting frequency limits into Doppler bins.
-#' - \code{\link{seasonder_getSeaSondeRCS_SelfSpectra}} for extracting self-spectra.
+#' - \code{\link{seasonder_getFOR_parameters}} for retrieving noise reference limits.  
+#' - \code{\link{seasonder_SwapDopplerUnits}} for converting normalized Doppler frequencies into bin indices.  
+#' - \code{\link{seasonder_getSeaSondeRCS_SelfSpectra}} for extracting self-spectra.  
 #' - \code{\link{seasonder_setSeaSondeRCS_NoiseLevel}} for storing the computed noise level.
 #'
 #' @examples
 #' \dontrun{
-#' # Compute noise level for a SeaSondeRCS object
-#' cs_obj <- seasonder_computeNoiseLevel(cs_obj)
+#'   # Compute the noise level for a SeaSondeRCS object using antenna 3 and unsmoothed spectra
+#'   cs_obj <- seasonder_computeNoiseLevel(cs_obj)
+#'
+#'   # Alternatively, compute using smoothed self-spectra
+#'   cs_obj <- seasonder_computeNoiseLevel(cs_obj, antenna = 3, smoothed = TRUE)
 #' }
+#'
 seasonder_computeNoiseLevel <- function(seasonder_cs_object, antenna = 3, smoothed = F) {
 
   # Retrieve the normalized Doppler frequency limits for noise reference

@@ -491,28 +491,32 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 
 #' Read a Body Range Cell and Apply Scaling if Required
 #'
-#' This function processes a block of keys from a binary connection according to a given specification ('specs').
-#' Each key is read using seasonder_readSeaSondeCSFileBlock and processed based on its name.
+#' This function processes a block of keys from a binary connection according to a provided specification
+#' ('specs'). Each key is interpreted by reading it with \code{seasonder_readSeaSondeCSFileBlock} and processing
+#' it based on its key name. The key processing follows these rules:
 #'
-#' Key processing details:
-#'   - 'scal': Reads scaling parameters (fmax, fmin, fscale, dbRef) via seasonder_readCSSYFields and stores
-#'             them for use in scaling subsequent reduced data blocks.
+#' - **Scaling Block ('scal')**: Reads scaling parameters (fmax, fmin, fscale, dbRef) using
+#'   \code{seasonder_readCSSYFields} and stores them for later use.
 #'
-#'   - Reduced data keys (e.g., 'cs1a', 'cs2a', etc.): Reads the data using seasonder_read_reduced_encoded_data.
-#'     If scaling parameters were set by a preceding 'scal' block, the raw data is transformed into voltage values
-#'     using seasonder_SeaSondeRCSSYApplyScaling; otherwise, the raw data is returned as is.
+#' - **Reduced Data Blocks (e.g., 'cs1a', 'cs2a', 'cs3a', 'c13r', 'c13i', etc.)**:
+#'   Reads the block using \code{seasonder_read_reduced_encoded_data}. If scaling parameters were set by a
+#'   preceding 'scal' block, the raw data is converted to voltage values using \code{seasonder_SeaSondeRCSSYApplyScaling};
+#'   otherwise, the raw data is returned.
 #'
-#'   - Other keys such as 'csgn' and 'asgn' invoke their own specialized read functions.
+#' - **Other Keys (e.g., 'csgn' and 'asgn')**: These keys invoke their specialized read functions for processing.
 #'
-#' The function terminates when the 'END ' key is encountered or when a repeated key (e.g., 'indx') signals the end of
-#' the block.
+#' The function continues reading keys until it detects the 'END ' marker or a repeated 'indx' key, which signals
+#' the end of the block.
 #'
 #' @param connection A binary connection from which keys and data are read.
-#' @param specs A list that defines the expected keys and their formats.
-#' @param endian A string specifying the byte order ("big" or "little").
+#' @param specs A list defining the expected keys and their formats.
+#' @param dbRef A numeric value providing the dB reference used in scaling.
+#' @param endian A string specifying the byte order ("big" or "little"). Defaults to "big".
 #' @param specs_key_size Optional specification for the key size block.
+#'
 #' @return A list with elements named after the keys read. For reduced data blocks, each element contains either
-#'         raw decoded data or scaled voltage values if a 'scal' block was applied.
+#'         the raw decoded data or the scaled voltage values if a 'scal' block had been applied.
+#'
 seasonder_readBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
   indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
   scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
