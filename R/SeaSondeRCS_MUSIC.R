@@ -41,7 +41,8 @@ seasonder_defaultMUSIC_options <- function(){
        smoothNoiseLevel = F,
        doppler_interpolation = 2,
        MUSIC_parameters = seasonder_defaultMUSIC_parameters(),
-       discard = c("low_SNR", "no_solution")
+       discard_low_SNR = TRUE,
+       discard_no_solution = TRUE
        )
 
 }
@@ -2770,8 +2771,9 @@ seasonder_runMUSIC <- function(seasonder_cs_object){
   seasonder_logAndMessage("seasonder_runMUSIC: MUSIC algorithm started.", "info")
 options <- seasonder_getSeaSondeRCS_MUSIC_options(seasonder_cs_object)
   
+discard_low_SNR <- options$discard_low_SNR
+discard_no_solution <- options$discard_no_solution
 
-discard <- options$discard
 doppler_interpolation <- options$doppler_interpolation
   # Create a copy of the input object to store the results of the processing.
   out <- seasonder_cs_object
@@ -2800,9 +2802,6 @@ out %<>% seasonder_computeNoiseLevel(antenna = 1,smoothed= MUSIC_options$smoothN
   out %<>% seasonder_computeSignalSNR()
 
 
-
-  out %<>% seasonder_SNRCheck(discard_low_SNR = "low_SNR" %in% discard)
-
 out %<>% seasonder_computeNoiseLevel(antenna = 1,smoothed= MUSIC_options$smoothNoiseLevel)
   out %<>% seasonder_computeNoiseLevel(antenna = 2,smoothed= MUSIC_options$smoothNoiseLevel)
   out %<>% seasonder_computeNoiseLevel(antenna = 3,smoothed= MUSIC_options$smoothNoiseLevel)
@@ -2811,7 +2810,7 @@ out %<>% seasonder_computeNoiseLevel(antenna = 1,smoothed= MUSIC_options$smoothN
 
 
 
-  out %<>% seasonder_SNRCheck(discard_low_SNR = "low_SNR" %in% discard)
+  out %<>% seasonder_SNRCheck(discard_low_SNR = discard_low_SNR)
 
   # Perform eigen decomposition of the covariance matrix.
   out %<>% seasonder_MUSICCovDecomposition()
@@ -2822,7 +2821,7 @@ out %<>% seasonder_computeNoiseLevel(antenna = 1,smoothed= MUSIC_options$smoothN
   # Extract peaks from the DOA functions, representing potential signal directions.
   out %<>% seasonder_MUSICExtractPeaks()
 
-if("no_solution" %in% discard){
+if(discard_no_solution){
   out %<>% seasonder_MUSIC_remove_no_solutions()
 }
 
