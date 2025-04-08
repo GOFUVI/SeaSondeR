@@ -11,22 +11,22 @@ seasonder_getRadarWaveNumber(seasonder_cs_object)
 to compute the radar wavelength.}
 }
 \value{
-A numeric value representing the radar wave number (\( k \)) in
-radians per meter (\( \text{rad/m} \)).
+A numeric value representing the radar wave number \eqn{k} in
+radians per meter.
 }
 \description{
-This function computes the radar wave number (\( k \)) for a SeaSonde radar
+This function computes the radar wave number \eqn{k} for a SeaSonde radar
 system based on its wavelength. The wave number represents the spatial frequency
 of the radar wave.
 }
 \details{
-The radar wave number (\( k \)) is calculated using the formula:
+The radar wave number \eqn{k} is calculated using the formula:
 \eqn{k = \frac{2 \pi}{\lambda}}
 where:
 \itemize{
-\item \( \lambda \) is the radar wavelength in meters, calculated using
+\item \eqn{\lambda} is the radar wavelength in meters, calculated using
 \code{\link{seasonder_getRadarWaveLength}}.
-\item \( 2 \pi \) represents the relationship between the wavelength and wave number.
+\item \eqn{2 \pi} represents the relationship between the wavelength and wave number.
 }
 
 The wave number is an essential parameter for analyzing radar signals and

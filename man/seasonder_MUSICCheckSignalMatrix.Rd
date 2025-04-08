@@ -6,9 +6,6 @@
 \usage{
 seasonder_MUSICCheckSignalMatrix(seasonder_cs_object)
 }
-\arguments{
-\item{seasonder_cs_object}{A SeaSondeRCS object containing the MUSIC solutions and related data.}
-}
 \value{
 The updated SeaSondeRCS object with the following modifications:
 \itemize{
@@ -19,14 +16,17 @@ The updated SeaSondeRCS object with the following modifications:
 }
 \description{
 This function implements the P3 test for solutions derived using the MUSIC algorithm.
-The test evaluates the ratio between diagonal and off-diagonal powers in the signal covariance matrix.
+The test evaluates the ratio between diagonal (P_diag) and off-diagonal (P_off-diag) elements
+of the signal covariance matrix.
 }
 \details{
-The P3 test evaluates the power ratio between diagonal (\(P_{\text{diag}}\)) and off-diagonal (\(P_{\text{off-diag}}\)) elements of the covariance matrix:
-[
-\text{Ratio} = \frac{P_{\text{diag}}}{P_{\text{off-diag}}}
-]
-This ratio is compared to a threshold defined in the MUSIC parameters. Only solutions that meet the following criteria are retained:
+The P3 test computes the power ratio as:
+Ratio = P_diag / P_off-diag
+where P_diag is the product of the absolute values of the diagonal elements and
+P_off-diag is the square of the absolute value of the off-diagonal element (position \link{1,2}).
+
+This ratio is compared to a threshold defined in the MUSIC parameters. Only solutions that meet
+the following criteria are retained:
 \itemize{
 \item The solution has two bearings.
 \item The power ratio is above the threshold.

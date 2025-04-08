@@ -12,7 +12,7 @@ to compute the radar wave number.}
 }
 \value{
 A numeric vector of length two, containing the negative and positive
-Bragg Doppler angular frequencies (\( \omega_B \)), in radians per second.
+Bragg Doppler angular frequencies (in radians per second).
 }
 \description{
 This function computes the Bragg Doppler angular frequencies for a SeaSonde radar
@@ -20,16 +20,14 @@ system. These frequencies represent the characteristic Doppler shifts due to
 wave resonance at the Bragg wavelength.
 }
 \details{
-The Bragg Doppler angular frequency (\( \omega_B \)) is calculated using the formula:
-\eqn{\omega_B = \frac{\sqrt{2 \cdot g \cdot k}}{2\pi} \; \pm \; \text{(for negative and positive frequencies)}}
-where:
+The Bragg Doppler angular frequency \eqn{\omega_B} is calculated using the formula:
+\eqn{\omega_B = \frac{\sqrt{2 \cdot g \cdot k}}{2\pi} \; \pm \;} where:
 \itemize{
-\item \eqn{g} is the gravitational acceleration (approximately \( 9.8 \, \text{m/s}^2 \)),
-\item \eqn{k} is the radar wave number in radians per meter,
-\item \eqn{pm} represents the negative and positive directions of wave propagation.
+\item \eqn{g} is the gravitational acceleration (approximately \eqn{9.8 \, m/s^2}),
+\item \eqn{k} is the radar wave number in radians per meter.
 }
 
-The returned vector contains the negative (\( -\omega_B \)) and positive (\( +\omega_B \)) angular frequencies.
+The returned vector contains the negative (\eqn{-\omega_B}) and positive (\eqn{+\omega_B}) angular frequencies.
 }
 \examples{
 \dontrun{

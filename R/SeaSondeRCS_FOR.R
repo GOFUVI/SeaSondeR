@@ -548,6 +548,25 @@ seasonder_getFOR_parameters <- function(seasonder_cs_object) {
   return(out)
 }
 
+#' Retrieve a Specific FOR Parameter
+#'
+#' This function extracts a specified First Order Region (FOR) parameter from a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing FOR parameters.
+#' @param FOR_parameter A character string specifying the name of the FOR parameter to retrieve.
+#'
+#' @return The value of the specified FOR parameter if found; otherwise, an error message is logged.
+#'
+#' @details
+#' The function retrieves the list of FOR parameters using \code{seasonder_getFOR_parameters()} and extracts
+#' the value associated with \code{FOR_parameter}. If the parameter is not found, an error is logged.
+#'
+#' @examples
+#' \dontrun{
+#'   # Retrieve the 'nsm' parameter from a SeaSondeRCS object
+#'   nsm_value <- seasonder_getFORParameter(cs_obj, "nsm")
+#'   print(nsm_value)
+#' }
 #' @export
 seasonder_getFORParameter <- function(seasonder_cs_object, FOR_parameter){
 
@@ -557,6 +576,20 @@ seasonder_getFORParameter <- function(seasonder_cs_object, FOR_parameter){
 }
 
 
+#' Retrieve FOR Doppler Smoothing Factor (nsm)
+#'
+#' This function retrieves the Doppler smoothing factor ('nsm') from the FOR parameters
+#' in a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing FOR parameters.
+#'
+#' @return The value of the 'nsm' parameter.
+#'
+#' @examples
+#' \dontrun{
+#'   smoothing_factor <- seasonder_getFOR_nsm(cs_obj)
+#'   print(smoothing_factor)
+#' }
 #' @export
 seasonder_getFOR_nsm <- function(seasonder_cs_object){
 
@@ -564,6 +597,19 @@ seasonder_getFOR_nsm <- function(seasonder_cs_object){
 
 }
 
+#' Retrieve FOR Noise Factor (noisefact)
+#'
+#' This function retrieves the noise factor ('noisefact') used in FOR processing from a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing FOR parameters.
+#'
+#' @return The value of the 'noisefact' parameter.
+#'
+#' @examples
+#' \dontrun{
+#'   noise_factor <- seasonder_getFOR_noisefact(cs_obj)
+#'   print(noise_factor)
+#' }
 #' @export
 seasonder_getFOR_noisefact <- function(seasonder_cs_object){
 
@@ -571,6 +617,20 @@ seasonder_getFOR_noisefact <- function(seasonder_cs_object){
 
 }
 
+#' Retrieve FOR Power Dropoff Threshold (fdown)
+#'
+#' This function retrieves the power dropoff threshold ('fdown') for First Order Region detection
+#' from a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing FOR parameters.
+#'
+#' @return The value of the 'fdown' parameter.
+#'
+#' @examples
+#' \dontrun{
+#'   fdown_value <- seasonder_getFOR_fdown(cs_obj)
+#'   print(fdown_value)
+#' }
 #' @export
 seasonder_getFOR_fdown <- function(seasonder_cs_object){
 
@@ -578,6 +638,20 @@ seasonder_getFOR_fdown <- function(seasonder_cs_object){
 
 }
 
+#' Retrieve FOR Null Limit (flim)
+#'
+#' This function retrieves the null limit ('flim') parameter for FIRST Order Region processing
+#' from a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing FOR parameters.
+#'
+#' @return The value of the 'flim' parameter.
+#'
+#' @examples
+#' \dontrun{
+#'   flim_value <- seasonder_getFOR_flim(cs_obj)
+#'   print(flim_value)
+#' }
 #' @export
 seasonder_getFOR_flim <- function(seasonder_cs_object){
 
@@ -585,6 +659,20 @@ seasonder_getFOR_flim <- function(seasonder_cs_object){
 
 }
 
+#' Retrieve FOR Maximum Radial Velocity Limit (currmax)
+#'
+#' This function retrieves the maximum radial velocity ('currmax') parameter from the FOR parameters
+#' in a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing FOR parameters.
+#'
+#' @return The value of the 'currmax' parameter.
+#'
+#' @examples
+#' \dontrun{
+#'   currmax_value <- seasonder_getFOR_currmax(cs_obj)
+#'   print(currmax_value)
+#' }
 #' @export
 seasonder_getFOR_currmax <- function(seasonder_cs_object) {
   seasonder_getFORParameter(seasonder_cs_object, "currmax")
@@ -596,6 +684,25 @@ seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits <- function(seaso
   return(out)
 }
 
+#' Retrieve First Order Region (FOR) Data from SeaSondeRCS Object
+#'
+#' This function extracts the First Order Region (FOR) data from a SeaSondeRCS object.
+#' If the FOR data is not found in the object's attributes, it is initialized using
+#' \code{seasonder_initSeaSondeRCS_FOR()}.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing FOR-related data.
+#'
+#' @return The FOR data structure.
+#'
+#' @details
+#' The function attempts to retrieve the 'FOR' element from the object's "FOR_data" attribute.
+#' If it does not exist, it calls \code{seasonder_initSeaSondeRCS_FOR()} to initialize the FOR data.
+#'
+#' @examples
+#' \dontrun{
+#'   FOR_data <- seasonder_getSeaSondeRCS_FOR(cs_obj)
+#'   print(FOR_data)
+#' }
 #' @export
 seasonder_getSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 

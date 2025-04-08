@@ -11,19 +11,19 @@ seasonder_getBraggWaveLength(seasonder_cs_object)
 to compute the radar wavelength.}
 }
 \value{
-A numeric value representing the Bragg wavelength (\( \lambda_B \)) in meters.
+A numeric value representing the Bragg wavelength (in meters).
 }
 \description{
-This function computes the Bragg wavelength (\( \lambda_B \)) for a SeaSonde radar
+This function computes the Bragg wavelength \eqn{\lambda_B} for a SeaSonde radar
 system. The Bragg wavelength is defined as half the radar wavelength and is used
 to identify the fundamental scattering mechanisms in oceanographic radar measurements.
 }
 \details{
-The Bragg wavelength (\( \lambda_B \)) is calculated as:
+The Bragg wavelength \eqn{\lambda_B} is calculated as:
 \eqn{\lambda_B = \frac{\lambda}{2}}
 where:
 \itemize{
-\item \( \lambda \) is the radar wavelength in meters, obtained using
+\item \eqn{\lambda} is the radar wavelength in meters, obtained using
 \code{\link{seasonder_getRadarWaveLength}}.
 }
 

@@ -20,14 +20,12 @@ Doppler bins in the spectrum.
 }
 \details{
 The Doppler spectrum resolution is calculated using the formula:
-[
-\text{Spectral Resolution} = \frac{\text{Sweep Rate}}{\text{Number of Doppler Cells}}
-]
+\eqn{SpectralResolution = SweepRate / NumberOfDopplerCells}
 where:
 \itemize{
-\item \(\text{Sweep Rate}\) is the frequency repetition rate of the radar, obtained
+\item SweepRate is the frequency repetition rate of the radar, obtained
 from the field \code{fRepFreqHz} in the object's header.
-\item \(\text{Number of Doppler Cells}\) is the total number of Doppler bins in the spectrum.
+\item NumberOfDopplerCells is the total number of Doppler bins in the spectrum.
 }
 
 This calculation is fundamental for understanding the frequency spacing between

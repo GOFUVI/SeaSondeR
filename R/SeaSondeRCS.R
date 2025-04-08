@@ -1251,8 +1251,8 @@ seasonder_getReceiverGain_dB <- function(seasonder_cs_object) {
 #'
 #' @details
 #' The center Doppler bin is computed as:
-#' \eqn{\text{center\_bin} = \frac{\text{nDoppler}}{2}}
-#' where \(\text{nDoppler}\) is the total number of Doppler bins. This represents
+#' \eqn{center\_bin = nDoppler/2}
+#' where nDoppler is the total number of Doppler bins. This represents
 #' the bin at zero Doppler frequency in a zero-indexed system. Since R uses
 #' one-based indexing, users might observe an offset when comparing the output
 #' of this function to CODAR's Radia Suite programs.
@@ -1306,14 +1306,14 @@ seasonder_getCenterDopplerBin <- function(seasonder_cs_object) {
 #' @return A numeric value representing the radar wavelength in meters (m).
 #'
 #' @details
-#' The radar wavelength (\( \lambda \)) is calculated using the formula:
+#' The radar wavelength \eqn{\lambda} is calculated using the formula:
 #' \eqn{\lambda = \frac{c}{f}}
 #' where:
-#' - \( c \) is the speed of light (approximately \( 3 \times 10^8 \, \text{m/s} \)),
-#' - \( f \) is the radar's center frequency in Hz, retrieved from the SeaSondeRCS object.
+#' - \eqn{c} is the speed of light (approximately \eqn{3 * 10^8} m/s),
+#' - \eqn{f} is the radar's center frequency in Hz, retrieved from the SeaSondeRCS object.
 #'
 #' The center frequency is initially stored in MHz and is converted to Hz by multiplying
-#' it by \( 10^6 \).
+#' it by \eqn{10^6}.
 #'
 #' @seealso
 #' \code{\link{seasonder_getCenterFreqMHz}} to retrieve the radar's center frequency.
@@ -1344,23 +1344,23 @@ seasonder_getRadarWaveLength <- function(seasonder_cs_object) {
 
 #' Calculate the Radar Wave Number
 #'
-#' This function computes the radar wave number (\( k \)) for a SeaSonde radar
+#' This function computes the radar wave number \eqn{k} for a SeaSonde radar
 #' system based on its wavelength. The wave number represents the spatial frequency
 #' of the radar wave.
 #'
 #' @param seasonder_cs_object A `SeaSondeRCS` object containing the necessary data
 #'        to compute the radar wavelength.
 #'
-#' @return A numeric value representing the radar wave number (\( k \)) in
-#'         radians per meter (\( \text{rad/m} \)).
+#' @return A numeric value representing the radar wave number \eqn{k} in
+#'         radians per meter.
 #'
 #' @details
-#' The radar wave number (\( k \)) is calculated using the formula:
+#' The radar wave number \eqn{k} is calculated using the formula:
 #' \eqn{k = \frac{2 \pi}{\lambda}}
 #' where:
-#' - \( \lambda \) is the radar wavelength in meters, calculated using
+#' - \eqn{\lambda} is the radar wavelength in meters, calculated using
 #'   \code{\link{seasonder_getRadarWaveLength}}.
-#' - \( 2 \pi \) represents the relationship between the wavelength and wave number.
+#' - \eqn{2 \pi} represents the relationship between the wavelength and wave number.
 #'
 #' The wave number is an essential parameter for analyzing radar signals and
 #' their interaction with the medium being measured.
@@ -1391,20 +1391,20 @@ seasonder_getRadarWaveNumber <- function(seasonder_cs_object) {
 
 #' Calculate the Bragg Wavelength
 #'
-#' This function computes the Bragg wavelength (\( \lambda_B \)) for a SeaSonde radar
+#' This function computes the Bragg wavelength \eqn{\lambda_B} for a SeaSonde radar
 #' system. The Bragg wavelength is defined as half the radar wavelength and is used
 #' to identify the fundamental scattering mechanisms in oceanographic radar measurements.
 #'
 #' @param seasonder_cs_object A `SeaSondeRCS` object containing the necessary data
 #'        to compute the radar wavelength.
 #'
-#' @return A numeric value representing the Bragg wavelength (\( \lambda_B \)) in meters.
+#' @return A numeric value representing the Bragg wavelength (in meters).
 #'
 #' @details
-#' The Bragg wavelength (\( \lambda_B \)) is calculated as:
+#' The Bragg wavelength \eqn{\lambda_B} is calculated as:
 #' \eqn{\lambda_B = \frac{\lambda}{2}}
 #' where:
-#' - \( \lambda \) is the radar wavelength in meters, obtained using
+#' - \eqn{\lambda} is the radar wavelength in meters, obtained using
 #'   \code{\link{seasonder_getRadarWaveLength}}.
 #'
 #' The Bragg wavelength is a critical parameter in interpreting the resonance
@@ -1443,17 +1443,15 @@ seasonder_getBraggWaveLength <- function(seasonder_cs_object) {
 #'        to compute the radar wave number.
 #'
 #' @return A numeric vector of length two, containing the negative and positive
-#'         Bragg Doppler angular frequencies (\( \omega_B \)), in radians per second.
+#'         Bragg Doppler angular frequencies (in radians per second).
 #'
 #' @details
-#' The Bragg Doppler angular frequency (\( \omega_B \)) is calculated using the formula:
-#' \eqn{\omega_B = \frac{\sqrt{2 \cdot g \cdot k}}{2\pi} \; \pm \; \text{(for negative and positive frequencies)}}
-#' where:
-#' - \eqn{g} is the gravitational acceleration (approximately \( 9.8 \, \text{m/s}^2 \)),
-#' - \eqn{k} is the radar wave number in radians per meter,
-#' - \eqn{pm} represents the negative and positive directions of wave propagation.
+#' The Bragg Doppler angular frequency \eqn{\omega_B} is calculated using the formula:
+#' \eqn{\omega_B = \frac{\sqrt{2 \cdot g \cdot k}}{2\pi} \; \pm \;} where:
+#' - \eqn{g} is the gravitational acceleration (approximately \eqn{9.8 \, m/s^2}),
+#' - \eqn{k} is the radar wave number in radians per meter.
 #'
-#' The returned vector contains the negative (\( -\omega_B \)) and positive (\( +\omega_B \)) angular frequencies.
+#' The returned vector contains the negative (\eqn{-\omega_B}) and positive (\eqn{+\omega_B}) angular frequencies.
 #'
 #' @seealso
 #' \code{\link{seasonder_getRadarWaveNumber}} to compute the radar wave number.
@@ -1495,18 +1493,14 @@ seasonder_getBraggDopplerAngularFrequency <- function(seasonder_cs_object) {
 #'
 #' @details
 #' The Doppler spectrum resolution is calculated using the formula:
-#' \[
-#' \text{Spectral Resolution} = \frac{\text{Sweep Rate}}{\text{Number of Doppler Cells}}
-#' \]
+#' \eqn{SpectralResolution = SweepRate / NumberOfDopplerCells}
 #' where:
-#' - \(\text{Sweep Rate}\) is the frequency repetition rate of the radar, obtained
+#' - SweepRate is the frequency repetition rate of the radar, obtained
 #'   from the field \code{fRepFreqHz} in the object's header.
-#' - \(\text{Number of Doppler Cells}\) is the total number of Doppler bins in the spectrum.
+#' - NumberOfDopplerCells is the total number of Doppler bins in the spectrum.
 #'
 #' This calculation is fundamental for understanding the frequency spacing between
 #' adjacent Doppler bins in the radar spectrum.
-#'
-#'
 #'
 #' @seealso
 #' \code{\link{seasonder_getnDopplerCells}} to retrieve the number of Doppler cells.
@@ -1697,14 +1691,12 @@ seasonder_getDopplerBinsFrequency <- function(seasonder_cs_object, normalized = 
 #'         corresponding to the provided Doppler frequencies.
 #'
 #' @details
-#' The radial velocity \( v \) for each Doppler bin is computed using the formula:
-#' \[
-#' v = \frac{\text{Freq} - \text{BraggFreq}}{2 \cdot k_0}
-#' \]
+#' The radial velocity \eqn{v} for each Doppler bin is computed using the formula:
+#' \deqn{v = \frac{\text{Freq} - \text{BraggFreq}}{2 \cdot k_0}}
 #' where:
-#' - \( \text{Freq} \) is the Doppler frequency of the bin.
-#' - \( \text{BraggFreq} \) is the Bragg Doppler angular frequency for the bin.
-#' - \( k_0 \) is the radar wave number divided by \( 2\pi \).
+#' - \eqn{\text{Freq}} is the Doppler frequency of the bin.
+#' - \eqn{\text{BraggFreq}} is the Bragg Doppler angular frequency for the bin.
+#' - \eqn{k_0} is the radar wave number divided by \eqn{2\pi}.
 #'
 #' The Bragg frequency is negative for bins with frequencies below zero and positive
 #' for bins with frequencies above zero.
@@ -1743,20 +1735,19 @@ seasonder_computeBinsRadialVelocity <- function(seasonder_cs_object, freq) {
 #' for a SeaSonde radar cross-section (CS) object, as typically visualized in
 #' SpectraPlotterMap. This function utilizes the Doppler shift frequency alongside
 #' the radar's wave number and Bragg frequency to transform frequency measurements
-#' into radial velocities. The calculation is grounded on the relationship
-#' between the Doppler shift frequency and the velocity of the surface currents
+#' into radial velocities. The calculation is based on the relationship
+#' between the Doppler shift frequency and the velocity of surface currents
 #' within the radar's field of view.
 #'
-#' Specifically, the radial velocity \(v\) for each Doppler bin is calculated using the formula:
-#' \[
-#' v = \frac{\text{Freq} - \text{BraggFreq}}{2 \cdot k_0}
-#' \]
-#' where \(v\) is the radial velocity, \(\text{Freq}\) is the Doppler shift frequency for the bin, \(\text{BraggFreq}\) is the Bragg
-#' frequency (negative for frequencies below 0 and positive for frequencies equal or above 0), and \(k_0\) is the radar wave number
-#' divided by \(2\pi\).
+#' Specifically, the radial velocity \eqn{v = (Freq - BraggFreq)/(2 * k_0)}
+#' is used, where \eqn{v} is the radial velocity, \eqn{Freq} is the Doppler
+#' shift frequency for the bin, \eqn{BraggFreq} is the Bragg frequency
+#' (negative for frequencies below 0 and positive for frequencies equal or above 0),
+#' and \eqn{k_0} is the radar wave number divided by 2\eqn{\pi}.
 #'
-#' @param seasonder_cs_object A SeaSondeRCS object created using `seasonder_createSeaSondeRCS`. This object
-#'        contains the necessary data for calculating the Doppler bins frequencies and, subsequently, radial velocities.
+#' @param seasonder_cs_object A SeaSondeRCS object created using `seasonder_createSeaSondeRCS`.
+#'        This object contains the necessary data for calculating the Doppler bins
+#'        frequencies and, subsequently, radial velocities.
 #'
 #' @return A numeric vector containing the radial velocities (in m/s) for each
 #' Doppler bin, calculated for the high boundary of each Doppler bin interval.
@@ -1785,13 +1776,11 @@ seasonder_getBinsRadialVelocity <- function(seasonder_cs_object) {
 #' number, providing a crucial parameter for analyzing the radar's capability to
 #' distinguish between velocities.
 #'
-#' The radial velocity resolution (\(v_{res}\)) is determined using the formula:
-#' \[
-#' v_{res} = \frac{\text{SpectraRes}}{2 \cdot k_0}
-#' \]
-#' where \(v_{res}\) is the radial velocity resolution, \(\text{SpectraRes}\) is
-#' the Doppler spectrum resolution, and \(k_0\) is the radar wave number divided
-#' by \(2\pi\). This formula reflects the relationship between the
+#' The radial velocity resolution \eqn{v_{res}} is determined using the formula:
+#' \deqn{v_{res} = \frac{\text{SpectraRes}}{2 \cdot k_0}}
+#' where \eqn{v_{res}} is the radial velocity resolution, \eqn{\text{SpectraRes}} is
+#' the Doppler spectrum resolution, and \eqn{k_0} is the radar wave number divided
+#' by \eqn{2\pi}. This formula reflects the relationship between the
 #' frequency resolution of the radar's Doppler spectrum and the corresponding
 #' velocity resolution, taking into account the wave number which is a fundamental
 #' characteristic of the radar system.

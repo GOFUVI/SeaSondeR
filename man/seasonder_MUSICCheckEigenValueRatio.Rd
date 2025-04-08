@@ -23,10 +23,10 @@ The test checks the ratio between the largest and the second-largest eigenvalues
 serves as an indicator of signal quality.
 }
 \details{
-The P1 test is based on the ratio of the largest eigenvalue (\(\lambda_1\)) to the second-largest eigenvalue (\(\lambda_2\)):
-[
-\text{Ratio} = \frac{\lambda_1}{\lambda_2}
-]
+The P1 test is based on the ratio of the largest eigenvalue (lambda1) to the second-largest eigenvalue (lambda2):
+
+Ratio = lambda1 / lambda2
+
 This ratio is compared to a threshold defined in the MUSIC parameters to determine whether the solution
 is considered valid. Solutions failing this test are marked as "single."
 }
@@ -36,5 +36,5 @@ updated_obj <- seasonder_MUSICCheckEigenValueRatio(seasonder_cs_object)
 }
 }
 \seealso{
-\code{\link{seasonder_getSeaSondeRCS_MUSIC}}, \code{\link{seasonder_setSeaSondeRCS_MUSIC}}
+\code{seasonder_getSeaSondeRCS_MUSIC}, \code{seasonder_setSeaSondeRCS_MUSIC}
 }

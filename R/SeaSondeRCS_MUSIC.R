@@ -49,10 +49,11 @@ seasonder_defaultMUSICParameters <- seasonder_defaultMUSIC_parameters <- functio
 #' @return A list containing the default options for the MUSIC algorithm.
 #'
 #' @examples
+#' \dontrun{
 #' # Retrieve the default options for the MUSIC algorithm
 #' opts <- seasonder_defaultMUSIC_options()
 #' print(opts)
-#'
+#' }
 #' @export
 seasonder_defaultMUSICOptions <- seasonder_defaultMUSIC_options <- function(){
   
@@ -798,7 +799,26 @@ seasonder_setMUSICInterpolatedDopplerCellsIndex <- seasonder_setSeaSondeRCS_MUSI
 #### Getters ####
 
 
-seasonder_getSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object) {
+#' Retrieve MUSIC Parameters from a SeaSondeRCS Object
+#'
+#' This function extracts the MUSIC algorithm parameters from a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing MUSIC data as an attribute.
+#'
+#' @return A numeric vector of MUSIC parameters.
+#'
+#' @details
+#' The function checks for the presence of MUSIC parameters in the object's MUSIC_data attribute.
+#' If not found, it defaults to the values returned by \code{seasonder_defaultMUSIC_parameters()}.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_object is a valid SeaSondeRCS object.
+#'   params <- seasonder_getMUSICParameters(cs_object)
+#'   print(params)
+#' }
+#' @export
+seasonder_getMUSICParameters <- seasonder_getSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object) {
 
 
   out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC_options$MUSIC_parameters %||% seasonder_defaultMUSIC_parameters()
@@ -808,12 +828,28 @@ seasonder_getSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object) {
 
 
 }
-# Exportar alias de getter de parámetros
+
+
+#' Retrieve MUSIC Options from a SeaSondeRCS Object
+#'
+#' This function extracts the MUSIC options from a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing MUSIC data as an attribute.
+#'
+#' @return A list of MUSIC options.
+#'
+#' @details
+#' The function retrieves the MUSIC options from the object's MUSIC_data attribute.
+#' In the absence of user-defined options, it returns the default options provided by \code{seasonder_defaultMUSIC_options()}.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_object is a valid SeaSondeRCS object.
+#'   opts <- seasonder_getMUSICOptions(cs_object)
+#'   print(opts)
+#' }
 #' @export
-seasonder_getMUSICParameters <- seasonder_getSeaSondeRCS_MUSIC_parameters
-
-
-seasonder_getSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object) {
+seasonder_getMUSICOptions <- seasonder_getSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object) {
 
 
   out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC_options %||% seasonder_defaultMUSIC_options()
@@ -823,11 +859,26 @@ seasonder_getSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object) {
 
 
 }
-# Exportar alias de getter de opciones
-#' @export
-seasonder_getMUSICOptions <- seasonder_getSeaSondeRCS_MUSIC_options
 
-seasonder_getSeaSondeRCS_MUSIC <- function(seasonder_cs_object) {
+#' Retrieve MUSIC Data from a SeaSondeRCS Object
+#'
+#' This function extracts the MUSIC data structure from a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing MUSIC data as an attribute.
+#'
+#' @return The MUSIC data structure, typically a data frame or tibble with MUSIC results.
+#'
+#' @details
+#' If the MUSIC data does not exist in the object, the function initializes it via \code{seasonder_initSeaSondeRCS_MUSIC()}.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_object is a valid SeaSondeRCS object.
+#'   music_data <- seasonder_getMUSIC(cs_object)
+#'   print(music_data)
+#' }
+#' @export
+seasonder_getMUSIC <- seasonder_getSeaSondeRCS_MUSIC <- function(seasonder_cs_object) {
 
 
   out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC %||% seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object)
@@ -837,12 +888,28 @@ seasonder_getSeaSondeRCS_MUSIC <- function(seasonder_cs_object) {
 
 
 }
-# Exportar alias de getter de MUSIC
-#' @export
-seasonder_getMUSIC <- seasonder_getSeaSondeRCS_MUSIC
 
+
+#' Retrieve Proportion of Dual Solutions from MUSIC Data
+#'
+#' This function extracts the proportion of dual solutions from the MUSIC data in a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing MUSIC data.
+#'
+#' @return A numeric value representing the dual solutions proportion, or NA if not set.
+#'
+#' @details
+#' The function checks the MUSIC_data attribute for a dual_solutions_proportion value.
+#' If not available, it defaults to NA_real_.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_object is a valid SeaSondeRCS object.
+#'   dual_prop <- seasonder_getMUSICDualSolutionsProportion(cs_object)
+#'   print(dual_prop)
+#' }
 #' @export
-seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_cs_object) {
+seasonder_getMUSICDualSolutionsProportion <- seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_cs_object) {
 
 
   out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$dual_solutions_proportion %||% NA_real_
@@ -852,12 +919,28 @@ seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_c
 
 
 }
-# Exportar alias de getter de dual solutions proportion
-#' @export
-seasonder_getMUSICDualSolutionsProportion <- seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion
 
+
+#' Retrieve the Doppler Interpolation Factor from MUSIC Options
+#'
+#' This function obtains the Doppler interpolation factor used in the MUSIC algorithm from a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing MUSIC data and options.
+#'
+#' @return An integer representing the Doppler interpolation factor.
+#'
+#' @details
+#' The function accesses the MUSIC_data attribute under MUSIC_options and retrieves the doppler_interpolation parameter.
+#' If absent, it defaults to 1L.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_object is a valid SeaSondeRCS object.
+#'   interp_factor <- seasonder_getMUSICDopplerInterpolation(cs_object)
+#'   print(interp_factor)
+#' }
 #' @export
-seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_object){
+seasonder_getMUSICDopplerInterpolation <- seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_object){
 
 
   out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC_options$doppler_interpolation %||% 1L
@@ -865,12 +948,29 @@ seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation <- function(seasonder_cs_ob
   return(out)
 
 }
-# Exportar alias de getter de doppler interpolation
+
+
+
+#' Retrieve Interpolated MUSIC Data from a SeaSondeRCS Object
+#'
+#' This function extracts the interpolated MUSIC cross-spectra data from a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing interpolated MUSIC data as an attribute.
+#'
+#' @return A list representing the interpolated cross-spectra data.
+#'
+#' @details
+#' The function first checks if the interpolated data is set in the MUSIC_data attribute.
+#' If absent, it initializes the data with \code{seasonder_MUSICInitInterpolatedData()}.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_object is a valid SeaSondeRCS object.
+#'   interp_data <- seasonder_getMUSICInterpolatedData(cs_object)
+#'   str(interp_data)
+#' }
 #' @export
-seasonder_getMUSICDopplerInterpolation <- seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation
-
-
-seasonder_getSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object){
+seasonder_getMUSICInterpolatedData <- seasonder_getSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object){
 
 
 
@@ -878,23 +978,59 @@ seasonder_getSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object
 
   return(out)
 }
-# Exportar alias de getter de interpolated data
-#' @export
-seasonder_getMUSICInterpolatedData <- seasonder_getSeaSondeRCS_MUSIC_interpolated_data
 
-seasonder_getSeaSondeRCS_MUSIC_interpolated_doppler_cells_index <- function(seasonder_cs_object){
+
+#' Retrieve Interpolated Doppler Cells Index from a SeaSondeRCS Object
+#'
+#' This function extracts the index of interpolated Doppler cells, stored in the MUSIC_data attribute of a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing MUSIC data.
+#'
+#' @return A vector of indices corresponding to the interpolated Doppler cells.
+#'
+#' @details
+#' The interpolated doppler cells index is part of the MUSIC_data and is used to identify
+#' which Doppler bins were introduced during the interpolation process.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_object is a valid SeaSondeRCS object.
+#'   doppler_index <- seasonder_getMUSICInterpolatedDopplerCellsIndex(cs_object)
+#'   print(doppler_index)
+#' }
+#' @export
+seasonder_getMUSICInterpolatedDopplerCellsIndex <- seasonder_getSeaSondeRCS_MUSIC_interpolated_doppler_cells_index <- function(seasonder_cs_object){
 
   out <-  attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$interpolated_doppler_cells_index
 
   return(out)
 
 }
-# Exportar alias de getter de interpolated doppler cells index
-#' @export
-seasonder_getMUSICInterpolatedDopplerCellsIndex <- seasonder_getSeaSondeRCS_MUSIC_interpolated_doppler_cells_index
 
+
+#' Retrieve the MUSIC Configuration from a SeaSondeRCS Object
+#'
+#' This function returns the key configuration parameters for the MUSIC algorithm from a SeaSondeRCS object.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing MUSIC data and options.
+#'
+#' @return A list containing:
+#' \itemize{
+#'   \item \code{doppler_interpolation}: The Doppler interpolation factor.
+#'   \item \code{MUSIC_parameters}: The numeric vector of MUSIC parameters.
+#' }
+#'
+#' @details
+#' The configuration is aggregated from the MUSIC_data attribute of the object for easy access.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_object is a valid SeaSondeRCS object.
+#'   config <- seasonder_getMUSICConfig(cs_object)
+#'   print(config)
+#' }
 #' @export
-seasonder_getSeaSondeRCS_MUSICConfig <- function(seasonder_cs_object){
+seasonder_getMUSICConfig <- seasonder_getSeaSondeRCS_MUSICConfig <- function(seasonder_cs_object){
 
   out <- list(doppler_interpolation = seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_cs_object),
               MUSIC_parameters = seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object))
@@ -902,9 +1038,6 @@ seasonder_getSeaSondeRCS_MUSICConfig <- function(seasonder_cs_object){
 
   return(out)
 }
-# Exportar alias de getter de configuración
-#' @export
-seasonder_getMUSICConfig <- seasonder_getSeaSondeRCS_MUSICConfig
 
 #### Derived quantities ####
 
@@ -1517,20 +1650,20 @@ seasonder_MUSICCheckTwoSolutions <- function(seasonder_cs_object){
 #' @param seasonder_cs_object A SeaSondeRCS object containing the MUSIC solutions and related data.
 #'
 #' @details
-#' The P1 test is based on the ratio of the largest eigenvalue (\(\lambda_1\)) to the second-largest eigenvalue (\(\lambda_2\)):
-#' \[
-#' \text{Ratio} = \frac{\lambda_1}{\lambda_2}
-#' \]
+#' The P1 test is based on the ratio of the largest eigenvalue (lambda1) to the second-largest eigenvalue (lambda2):
+#' 
+#'   Ratio = lambda1 / lambda2
+#'
 #' This ratio is compared to a threshold defined in the MUSIC parameters to determine whether the solution
 #' is considered valid. Solutions failing this test are marked as "single."
 #'
 #' @return The updated SeaSondeRCS object with the following modifications:
-#' - A new column \code{eigen_values_ratio} in the MUSIC data.
-#' - A logical column \code{P1_check} indicating whether each solution passes the P1 test.
-#' - Updated \code{retained_solution} values for solutions that fail the test.
+#' - A new column `eigen_values_ratio` in the MUSIC data.
+#' - A logical column `P1_check` indicating whether each solution passes the P1 test.
+#' - Updated `retained_solution` values for solutions that fail the test.
 #'
 #' @seealso
-#' \code{\link{seasonder_getSeaSondeRCS_MUSIC}}, \code{\link{seasonder_setSeaSondeRCS_MUSIC}}
+#' `seasonder_getSeaSondeRCS_MUSIC`, `seasonder_setSeaSondeRCS_MUSIC`
 #'
 #' @importFrom dplyr pull
 #' @importFrom purrr map list_c
@@ -1580,10 +1713,10 @@ seasonder_MUSICCheckEigenValueRatio <- function(seasonder_cs_object){
 #' @param seasonder_cs_object A SeaSondeRCS object containing the MUSIC solutions and related data.
 #'
 #' @details
-#' The P2 test is based on the ratio of the largest signal power (\(P_{\text{max}}\)) to the smallest signal power (\(P_{\text{min}}\)):
-#' \[
-#' \text{Ratio} = \frac{P_{\text{max}}}{P_{\text{min}}}
-#' \]
+#' The P2 test is based on the ratio of the largest signal power (\eqn{P_{max}}) to the smallest signal power (\eqn{P_{min}}):
+#'
+#' \deqn{Ratio = \frac{P_{max}}{P_{min}}}
+#'
 #' This ratio is compared to a threshold defined in the MUSIC parameters. Only solutions that meet the following criteria are retained:
 #' - The solution has two bearings.
 #' - The signal power ratio is below the threshold.
@@ -1639,25 +1772,26 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
 #' Validate Signal Matrix Power Ratios Using MUSIC Algorithm
 #'
 #' This function implements the P3 test for solutions derived using the MUSIC algorithm.
-#' The test evaluates the ratio between diagonal and off-diagonal powers in the signal covariance matrix.
-#'
-#' @param seasonder_cs_object A SeaSondeRCS object containing the MUSIC solutions and related data.
+#' The test evaluates the ratio between diagonal (P_diag) and off-diagonal (P_off-diag) elements
+#' of the signal covariance matrix.
 #'
 #' @details
-#' The P3 test evaluates the power ratio between diagonal (\(P_{\text{diag}}\)) and off-diagonal (\(P_{\text{off-diag}}\)) elements of the covariance matrix:
-#' \[
-#' \text{Ratio} = \frac{P_{\text{diag}}}{P_{\text{off-diag}}}
-#' \]
-#' This ratio is compared to a threshold defined in the MUSIC parameters. Only solutions that meet the following criteria are retained:
+#' The P3 test computes the power ratio as:
+#'   Ratio = P_diag / P_off-diag
+#' where P_diag is the product of the absolute values of the diagonal elements and
+#' P_off-diag is the square of the absolute value of the off-diagonal element (position [1,2]).
+#'
+#' This ratio is compared to a threshold defined in the MUSIC parameters. Only solutions that meet
+#' the following criteria are retained:
 #' - The solution has two bearings.
 #' - The power ratio is above the threshold.
 #'
 #' Solutions failing this test are marked as "single."
 #'
 #' @return The updated SeaSondeRCS object with the following modifications:
-#' - A new column \code{diag_off_diag_power_ratio} in the MUSIC data.
-#' - A logical column \code{P3_check} indicating whether each solution passes the P3 test.
-#' - Updated \code{retained_solution} values for solutions that fail the test.
+#' - A new column `diag_off_diag_power_ratio` in the MUSIC data.
+#' - A logical column `P3_check` indicating whether each solution passes the P3 test.
+#' - Updated `retained_solution` values for solutions that fail the test.
 #'
 #' @seealso
 #' \code{\link{seasonder_getSeaSondeRCS_MUSIC}}, \code{\link{seasonder_setSeaSondeRCS_MUSIC}}
@@ -3011,12 +3145,9 @@ seasonder_runMUSICInFOR <- seasonder_runMUSIC_in_FOR
 #' 2. Adjusting the angles to the range [0, 360) using modulo 360.
 #' 3. Adding the antenna bearing to each value and wrapping the result to the range [0, 360) again using modulo 360.
 #'
-#' The formula for each bearing is:
-#' \[
-#' \text{geo\_bearing} = ((-1 \times \text{music\_bearing} \mod 360) + \text{antenna\_bearing}) \mod 360
-#' \]
+#' The formula for each bearing is: \eqn{geo_bearing = ((-1 * music_bearing %% 360) + antenna_bearing) %% 360}.
 #'
-#' @return A list of numeric vectors containing the geographic bearings in degrees. Each vector corresponds to a set of geographic bearings derived from the input.
+#' @return A list of numeric vectors containing the geographic bearings in degrees.
 #'
 #' @seealso
 #' - \code{\link{seasonder_getSeaSondeRAPM_AntennaBearing}}
@@ -3596,6 +3727,39 @@ if(length(seg) == 3 && seg[1] %in% result$SPRC && seg[2] <= seg[3]){
 }
 
 
+#' Export LLUV Radial Metrics to a File
+#'
+#' This function extracts radial metrics from a SeaSondeRCS object and formats them for export using
+#' defined mustache templates. The formatted output, which includes MUSIC parameters, antenna pattern corrections,
+#' noise thresholds, and other spectral metrics, is written to a specified file. Additionally, the function
+#' returns the computed radial metrics as a data frame.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing MUSIC detection data and related metadata.
+#' @param LLUV_path A character string specifying the output file path for the LLUV radial metrics.
+#' @param ... Additional arguments passed to \code{seasonder_exportRadialMetrics}.
+#'
+#' @details
+#' The function performs the following steps:
+#' \enumerate{
+#'   \item Retrieves the radial metrics from the SeaSondeRCS object using \code{seasonder_exportRadialMetrics}.
+#'   \item Obtains MUSIC parameters and antenna pattern attributes from the object.
+#'   \item Formats numeric values using predefined formats for each column.
+#'   \item Renders a data template (from "LLUV_RDM1_data.mustache") with the formatted radial metrics.
+#'   \item Generates a deterministic UUID from the rendered data.
+#'   \item Renders an overall LLUV template (from "LLUV_RDM1.mustache") that incorporates the radial parameters,
+#'       formatted data, header information, and the generated UUID.
+#'   \item Writes the rendered LLUV content to the file specified by \code{LLUV_path}.
+#' }
+#'
+#' @return Invisibly returns a data frame containing the radial metrics used in the export.
+#'
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_object is a valid SeaSondeRCS object with MUSIC data:
+#'   radial_metrics <- seasonder_exportLLUVRadialMetrics(cs_object, "output/LLUV.txt")
+#'   print(radial_metrics)
+#' }
+#'
 #' @export
 seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object, LLUV_path,...) {
 
@@ -3797,6 +3961,27 @@ seasonder_exportCTFRangeInfo_string <- function(seasonder_cs_object, tableStart 
   return(list(out_str = out_str, range_info = range_info))
 }
 
+#' Export CTF Range Information to a File
+#'
+#' This function writes the formatted CTF range information, generated from a SeaSondeRCS object, to a specified file.
+#'
+#' @param seasonder_cs_object A SeaSondeRCS object containing the relevant MUSIC processing data.
+#' @param file A character string specifying the output file path where the range information will be written.
+#' @param tableStart A character string to prepend to the table output. Defaults to an empty string.
+#'
+#' @details
+#' The function internally calls \code{seasonder_exportCTFRangeInfo_string} to obtain a formatted string of range information.
+#' It then writes this output string to the specified file. Additionally, it returns the extracted range information
+#' invisibly, allowing further processing if necessary.
+#'
+#' @return Invisibly returns a data frame containing the range information.
+#'
+#' @examples
+#' \dontrun{
+#'   cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file")
+#'   range_info <- seasonder_exportCTFRangeInfo(cs_obj, "range_info.txt")
+#' }
+#'
 #' @export
 seasonder_exportCTFRangeInfo <- function(seasonder_cs_object, file, tableStart = "") {
   res <- seasonder_exportCTFRangeInfo_string(seasonder_cs_object, tableStart)
