@@ -4,9 +4,9 @@ Version: 0.2.5
 Authors@R: c(
     person("Juan Luis", "Herrera Cortijo", , "juan.luis.herrera.cortijo@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0002-4206-2459")),
-           person("Ramiro A.", "Varela Benvenuto", , "rvarela@uvigo.es", role = c("ctb"),
+           person("Ramiro A.", "Varela Benvenuto", , "rvarela@uvigo.es", role = c("aut"),
            comment = c(ORCID = "https://orcid.org/0000-0002-9212-577X")),
-           person("Adrián", "Fernández Baladrón", , "afbaladron@uvigo.es", role = c("ctb"),
+           person("Adrián", "Fernández Baladrón", , "afbaladron@uvigo.es", role = c("aut"),
            comment = c(ORCID = "https://orcid.org/0000-0001-6795-4261"))
            )
 Description: A comprehensive set of tools for processing SeaSonde High-Frequency Radar (HF-Radar) spectra and produce radial metrics files. The package includes functions for reading SeaSonde spectra files, computing radial metrics, and generating plots. 
