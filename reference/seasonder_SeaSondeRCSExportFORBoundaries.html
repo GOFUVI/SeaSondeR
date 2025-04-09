@@ -11,7 +11,7 @@ negative and positive Bragg regions."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,12 +20,6 @@ negative and positive Bragg regions."></head><body>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">SeaSondeR</a></li>
-    <li><a class="dropdown-item" href="../articles/SeaSondeAPM.html">APM</a></li>
-    <li><a class="dropdown-item" href="../articles/SeaSondeCS.html">Cross-Spectra Files</a></li>
-  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/GOFUVI/SeaSondeR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -74,7 +68,7 @@ the boundary Doppler bins for each range cell. The result is a data frame with t
 <li><p><code>last_neg_doppler_cell</code>: The last Doppler bin in the negative Bragg region.</p></li>
 <li><p><code>first_pos_doppler_cell</code>: The first Doppler bin in the positive Bragg region.</p></li>
 <li><p><code>last_pos_doppler_cell</code>: The last Doppler bin in the positive Bragg region.</p></li>
-</ul><p><strong>Steps:</strong></p><ol><li><p>Retrieve the FOR data using <code>seasonder_getSeaSondeRCS_FOR</code>.</p></li>
+</ul><p><strong>Steps:</strong></p><ol><li><p>Retrieve the FOR data using <code><a href="seasonder_getSeaSondeRCS_FOR.html">seasonder_getSeaSondeRCS_FOR</a></code>.</p></li>
 <li><p>Iterate through each range cell and extract the Doppler bins for both negative and positive Bragg regions.</p></li>
 <li><p>Determine the range (first and last bins) for each region.</p></li>
 <li><p>Combine the results into a single data frame, omitting empty entries.</p></li>
@@ -85,7 +79,7 @@ be further analyzed or visualized.</p>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index">
-<ul><li><p><code>seasonder_getSeaSondeRCS_FOR</code> for retrieving the FOR data.</p></li>
+<ul><li><p><code><a href="seasonder_getSeaSondeRCS_FOR.html">seasonder_getSeaSondeRCS_FOR</a></code> for retrieving the FOR data.</p></li>
 </ul></div>
     </div>
 

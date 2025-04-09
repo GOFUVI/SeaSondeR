@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,12 +16,6 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">SeaSondeR</a></li>
-    <li><a class="dropdown-item" href="../articles/SeaSondeAPM.html">APM</a></li>
-    <li><a class="dropdown-item" href="../articles/SeaSondeCS.html">Cross-Spectra Files</a></li>
-  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/GOFUVI/SeaSondeR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -262,7 +256,7 @@
           <code><a href="seasonder_MUSICExtractDOASolutions.html">seasonder_MUSICExtractDOASolutions()</a></code>
 
         </dt>
-        <dd>Extract Direction of Arrival (DOA) Solutions Using MUSIC Algorithm</dd>
+        <dd>Extract Direction of Arrival (DOA) Solutions Using the MUSIC Algorithm</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_MUSICExtractPeaks.html">seasonder_MUSICExtractPeaks()</a></code>
@@ -371,6 +365,12 @@
 
         </dt>
         <dd>Apply Scaling to SeaSondeRCSSY Data</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_SeaSondeRCS_plotSelfSpectrum.html">seasonder_SeaSondeRCS_plotSelfSpectrum()</a></code>
+
+        </dt>
+        <dd>Plot Self-Spectrum for a SeaSondeRCS Object</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_SelfSpectra2dB.html">seasonder_SelfSpectra2dB()</a></code>
@@ -523,6 +523,12 @@
         <dd>Default First-Order Radial Processing Parameters</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_defaultMUSICOptions.html">seasonder_defaultMUSICOptions()</a></code>
+
+        </dt>
+        <dd>Default Options for the MUSIC Algorithm</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_defaultMUSIC_parameters.html">seasonder_defaultMUSIC_parameters()</a></code>
 
         </dt>
@@ -553,6 +559,12 @@
         <dd>Disable message logging in SeaSondeR</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_disable_all_debug_points.html">seasonder_disable_all_debug_points()</a></code>
+
+        </dt>
+        <dd>Disable all debug points in SeaSondeR</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_enableLogs.html">seasonder_enableLogs()</a></code>
 
         </dt>
@@ -563,6 +575,12 @@
 
         </dt>
         <dd>Enable message logging in SeaSondeR</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_enable_debug_points.html">seasonder_enable_debug_points()</a></code>
+
+        </dt>
+        <dd>Enable debug points in SeaSondeR</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_estimateReferenceNoiseNormalizedLimits.html">seasonder_estimateReferenceNoiseNormalizedLimits()</a></code>
@@ -577,16 +595,52 @@
         <dd>Export MUSIC Table to CSV</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_exportCTFRangeInfo.html">seasonder_exportCTFRangeInfo()</a></code>
+
+        </dt>
+        <dd>Export CTF Range Information to a File</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_exportLLUVRadialMetrics.html">seasonder_exportLLUVRadialMetrics()</a></code>
+
+        </dt>
+        <dd>Export LLUV Radial Metrics to a File</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_exportMUSICTable.html">seasonder_exportMUSICTable()</a></code>
 
         </dt>
         <dd>Export MUSIC Table from SeaSondeRCS Object</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_exportRadialMetrics.html">seasonder_exportRadialMetrics()</a></code>
+
+        </dt>
+        <dd>Export Radial Metrics from a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_exportRangeInfo.html">seasonder_exportRangeInfo()</a></code>
+
+        </dt>
+        <dd>Export Range Information from a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_extractFOR.html">seasonder_extractFOR()</a></code>
 
         </dt>
         <dd>Extract First Order Region (FOR) Spectral Data</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata.html">seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata()</a></code>
+
+        </dt>
+        <dd>Extract Doppler Ranges from Self-Spectra Data Matrix</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_extrapolateAPM.html">seasonder_extrapolateAPM()</a></code>
+
+        </dt>
+        <dd>Extrapolate SeaSondeR APM Matrix</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_filterFORAmplitudes.html">seasonder_filterFORAmplitudes()</a></code>
@@ -655,6 +709,18 @@
         <dd>Retrieve a value from the SeaSondeRCS header by a specific path</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_getCenterDopplerBin.html">seasonder_getCenterDopplerBin()</a></code>
+
+        </dt>
+        <dd>Retrieve Center Doppler Bin</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getCenterFreqMHz.html">seasonder_getCenterFreqMHz()</a></code>
+
+        </dt>
+        <dd>Retrieve Center Frequency in MHz</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_getDopplerBinsFrequency.html">seasonder_getDopplerBinsFrequency()</a></code>
 
         </dt>
@@ -667,10 +733,82 @@
         <dd>Calculate the Doppler Spectrum Resolution</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_getFORParameter.html">seasonder_getFORParameter()</a></code>
+
+        </dt>
+        <dd>Retrieve a Specific FOR Parameter</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getFOR_currmax.html">seasonder_getFOR_currmax()</a></code>
+
+        </dt>
+        <dd>Retrieve FOR Maximum Radial Velocity Limit (currmax)</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getFOR_fdown.html">seasonder_getFOR_fdown()</a></code>
+
+        </dt>
+        <dd>Retrieve FOR Power Dropoff Threshold (fdown)</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getFOR_flim.html">seasonder_getFOR_flim()</a></code>
+
+        </dt>
+        <dd>Retrieve FOR Null Limit (flim)</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getFOR_noisefact.html">seasonder_getFOR_noisefact()</a></code>
+
+        </dt>
+        <dd>Retrieve FOR Noise Factor (noisefact)</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getFOR_nsm.html">seasonder_getFOR_nsm()</a></code>
+
+        </dt>
+        <dd>Retrieve FOR Doppler Smoothing Factor (nsm)</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getFOR_parameters.html">seasonder_getFOR_parameters()</a></code>
+
+        </dt>
+        <dd>Retrieve First Order Region (FOR) Parameters</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_getLog.html">seasonder_getLog()</a></code>
 
         </dt>
         <dd>Retrieve the Last Logs</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getMUSICConfig.html">seasonder_getMUSICConfig()</a></code>
+
+        </dt>
+        <dd>Retrieve the MUSIC Configuration from a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getMUSICDualSolutionsProportion.html">seasonder_getMUSICDualSolutionsProportion()</a></code>
+
+        </dt>
+        <dd>Retrieve Proportion of Dual Solutions from MUSIC Data</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getMUSICInterpolatedData.html">seasonder_getMUSICInterpolatedData()</a></code>
+
+        </dt>
+        <dd>Retrieve Interpolated MUSIC Data from a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getMUSICInterpolatedDopplerCellsIndex.html">seasonder_getMUSICInterpolatedDopplerCellsIndex()</a></code>
+
+        </dt>
+        <dd>Retrieve Interpolated Doppler Cells Index from a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getMUSICOptions.html">seasonder_getMUSICOptions()</a></code>
+
+        </dt>
+        <dd>Retrieve MUSIC Options from a SeaSondeRCS Object</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_getRadarWaveLength.html">seasonder_getRadarWaveLength()</a></code>
@@ -799,16 +937,34 @@
         <dd>Getter for quality_matrix</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_getSeaSondeRCS_APM.html">seasonder_getSeaSondeRCS_APM()</a></code>
+
+        </dt>
+        <dd>Retrieve the APM Attribute from a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getSeaSondeRCS_FOR.html">seasonder_getSeaSondeRCS_FOR()</a></code>
+
+        </dt>
+        <dd>Retrieve First Order Region (FOR) Data from SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getSeaSondeRCS_FORConfig.html">seasonder_getSeaSondeRCS_FORConfig()</a></code>
+
+        </dt>
+        <dd>Retrieve First Order Region (FOR) Configuration from a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_getSeaSondeRCS_FOR_SS_Smoothed.html">seasonder_getSeaSondeRCS_FOR_SS_Smoothed()</a></code>
 
         </dt>
         <dd>Retrieve Smoothed Self-Spectra for First Order Region (FOR)</dd>
       </dl><dl><dt>
 
-          <code><a href="seasonder_getSeaSondeRCS_FOR_parameters.html">seasonder_getSeaSondeRCS_FOR_parameters()</a></code>
+          <code><a href="seasonder_getSeaSondeRCS_MUSIC.html">seasonder_getSeaSondeRCS_MUSIC()</a></code>
 
         </dt>
-        <dd>Retrieve First Order Region (FOR) Parameters</dd>
+        <dd>Retrieve MUSIC Data from a SeaSondeRCS Object</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity.html">seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity()</a></code>
@@ -835,10 +991,22 @@
         <dd>Retrieve the Adjusted Doppler Spectrum Resolution for MUSIC Analysis</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation.html">seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation()</a></code>
+
+        </dt>
+        <dd>Retrieve the Doppler Interpolation Factor from MUSIC Options</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_getSeaSondeRCS_MUSIC_nDopplerCells.html">seasonder_getSeaSondeRCS_MUSIC_nDopplerCells()</a></code>
 
         </dt>
         <dd>Retrieve the Interpolated Number of Doppler Cells for MUSIC</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_getSeaSondeRCS_MUSIC_parameters.html">seasonder_getSeaSondeRCS_MUSIC_parameters()</a></code>
+
+        </dt>
+        <dd>Retrieve MUSIC Parameters from a SeaSondeRCS Object</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_getSeaSondeRCS_ProcessingSteps.html">seasonder_getSeaSondeRCS_ProcessingSteps()</a></code>
@@ -850,7 +1018,7 @@
           <code><a href="seasonder_getSeaSondeRCS_SelfSpectra.html">seasonder_getSeaSondeRCS_SelfSpectra()</a></code>
 
         </dt>
-        <dd>returns a list of power spectra for each combination of antenna, dist_range and doppler_range</dd>
+        <dd>Retrieve Self-Spectra Power Matrices for Specified Antenna, Range, and Doppler Intervals</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_getSeaSondeRCS_antenna_SSdata.html">seasonder_getSeaSondeRCS_antenna_SSdata()</a></code>
@@ -883,6 +1051,12 @@
         <dd>Retrieve a Specific Field from a SeaSondeRCS Header</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval.html">seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval()</a></code>
+
+        </dt>
+        <dd>Retrieve the Reference Noise Normalized Limits Estimation Interval</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_getVersion.html">seasonder_getVersion()</a></code>
 
         </dt>
@@ -899,6 +1073,12 @@
 
         </dt>
         <dd>Get the version value from a SeaSondeRCS object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_get_enabled_debug_points.html">seasonder_get_enabled_debug_points()</a></code>
+
+        </dt>
+        <dd>Get enabled debug points in SeaSondeR</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_getnDopplerCells.html">seasonder_getnDopplerCells()</a></code>
@@ -941,6 +1121,12 @@
 
         </dt>
         <dd>Convert an integer to raw bytes using a 64-bit representation</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_is_debug_point_enabled.html">seasonder_is_debug_point_enabled()</a></code>
+
+        </dt>
+        <dd>Check if a debug point is enabled in SeaSondeR</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_lastLog.html">seasonder_lastLog()</a></code>
@@ -1081,6 +1267,12 @@
         <dd>Read and Parse a SeaSonde APM File</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_readSeaSondeRCSSYFile.html">seasonder_readSeaSondeRCSSYFile()</a></code>
+
+        </dt>
+        <dd>Read SeaSonde RCSSY File and Create SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_readYAMLSpecs.html">seasonder_readYAMLSpecs()</a></code>
 
         </dt>
@@ -1141,10 +1333,70 @@
         <dd>Execute the MUSIC Algorithm on a SeaSondeRCS Object</dd>
       </dl><dl><dt>
 
-          <code><a href="seasonder_runMUSIC_in_FOR.html">seasonder_runMUSIC_in_FOR()</a></code>
+          <code><a href="seasonder_runMUSICInFOR.html">seasonder_runMUSICInFOR()</a></code>
 
         </dt>
         <dd>Run MUSIC Algorithm on FOR Data</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setFORParameter.html">seasonder_setFORParameter()</a></code>
+
+        </dt>
+        <dd>Set a Specific FOR Parameter for a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setFOR_currmax.html">seasonder_setFOR_currmax()</a></code>
+
+        </dt>
+        <dd>Set FOR Maximum Velocity (currmax)</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setFOR_fdown.html">seasonder_setFOR_fdown()</a></code>
+
+        </dt>
+        <dd>Set FOR Dropoff Threshold (fdown)</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setFOR_flim.html">seasonder_setFOR_flim()</a></code>
+
+        </dt>
+        <dd>Set FOR Null Limit (flim)</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setFOR_noisefact.html">seasonder_setFOR_noisefact()</a></code>
+
+        </dt>
+        <dd>Set FOR Noise Factor (noisefact)</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setFOR_nsm.html">seasonder_setFOR_nsm()</a></code>
+
+        </dt>
+        <dd>Set FOR Doppler Smoothing Factor (nsm)</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setFOR_parameters.html">seasonder_setFOR_parameters()</a></code>
+
+        </dt>
+        <dd>Set First Order Region (FOR) Parameters for a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setMUSICOption.html">seasonder_setMUSICOption()</a></code>
+
+        </dt>
+        <dd>Set a Specific MUSIC Option for a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setMUSICOptions.html">seasonder_setMUSICOptions()</a></code>
+
+        </dt>
+        <dd>Set MUSIC Options for a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setNoiseLevelEstimationInterval.html">seasonder_setNoiseLevelEstimationInterval()</a></code>
+
+        </dt>
+        <dd>Set Noise Level Estimation Interval for a SeaSondeRCS Object</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_setSeaSondeRAPM_AmplitudeFactors.html">seasonder_setSeaSondeRAPM_AmplitudeFactors()</a></code>
@@ -1249,6 +1501,18 @@
         <dd>Setter for quality_matrix</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_setSeaSondeRCS_APM.html">seasonder_setSeaSondeRCS_APM()</a></code>
+
+        </dt>
+        <dd>Set APM for a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setSeaSondeRCS_FOR.html">seasonder_setSeaSondeRCS_FOR()</a></code>
+
+        </dt>
+        <dd>Set First Order Region Data in a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_setSeaSondeRCS_FOR_MAXP.html">seasonder_setSeaSondeRCS_FOR_MAXP()</a></code>
 
         </dt>
@@ -1265,6 +1529,48 @@
 
         </dt>
         <dd>Set Smoothed Self-Spectra for First Order Region (FOR)</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setSeaSondeRCS_FOR_method.html">seasonder_setSeaSondeRCS_FOR_method()</a></code>
+
+        </dt>
+        <dd>Set First Order Region Processing Method for SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setSeaSondeRCS_MUSIC.html">seasonder_setSeaSondeRCS_MUSIC()</a></code>
+
+        </dt>
+        <dd>Set MUSIC Data in a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation.html">seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation()</a></code>
+
+        </dt>
+        <dd>Set the Doppler Interpolation Factor in a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion.html">seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion()</a></code>
+
+        </dt>
+        <dd>Set Dual Solutions Proportion for MUSIC Analysis</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setSeaSondeRCS_MUSIC_interpolated_data.html">seasonder_setSeaSondeRCS_MUSIC_interpolated_data()</a></code>
+
+        </dt>
+        <dd>Set Interpolated MUSIC Data in a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setSeaSondeRCS_MUSIC_parameters.html">seasonder_setSeaSondeRCS_MUSIC_parameters()</a></code>
+
+        </dt>
+        <dd>Set MUSIC Parameters for a SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_setSeaSondeRCS_NoiseLevel.html">seasonder_setSeaSondeRCS_NoiseLevel()</a></code>
+
+        </dt>
+        <dd>Set Noise Level for SeaSondeRCS Object</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_setSeaSondeRCS_ProcessingSteps.html">seasonder_setSeaSondeRCS_ProcessingSteps()</a></code>

@@ -9,7 +9,7 @@ for a given SeaSondeR cross-spectral object."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,12 +18,6 @@ for a given SeaSondeR cross-spectral object."></head><body>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">SeaSondeR</a></li>
-    <li><a class="dropdown-item" href="../articles/SeaSondeAPM.html">APM</a></li>
-    <li><a class="dropdown-item" href="../articles/SeaSondeCS.html">Cross-Spectra Files</a></li>
-  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/GOFUVI/SeaSondeR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -108,7 +102,8 @@ parameters such as covariance matrices, eigen decompositions, projections, DOA s
 <span class="r-in"><span><span class="va">music_data</span> <span class="op">&lt;-</span> <span class="fu">seasonder_initSeaSondeRCS_MUSIC</span><span class="op">(</span><span class="va">seasonder_cs_object</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Initialize for specific range cells and Doppler bins</span></span></span>
-<span class="r-in"><span><span class="va">music_data</span> <span class="op">&lt;-</span> <span class="fu">seasonder_initSeaSondeRCS_MUSIC</span><span class="op">(</span><span class="va">seasonder_cs_object</span>, range_cells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, doppler_bins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">music_data</span> <span class="op">&lt;-</span> <span class="fu">seasonder_initSeaSondeRCS_MUSIC</span><span class="op">(</span><span class="va">seasonder_cs_object</span>, </span></span>
+<span class="r-in"><span>range_cells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, doppler_bins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">music_data</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>

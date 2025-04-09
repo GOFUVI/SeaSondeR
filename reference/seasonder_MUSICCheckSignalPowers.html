@@ -9,7 +9,7 @@ The test evaluates the ratio between the largest and smallest signal powers for 
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,12 +18,6 @@ The test evaluates the ratio between the largest and smallest signal powers for 
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">SeaSondeR</a></li>
-    <li><a class="dropdown-item" href="../articles/SeaSondeAPM.html">APM</a></li>
-    <li><a class="dropdown-item" href="../articles/SeaSondeCS.html">Cross-Spectra Files</a></li>
-  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/GOFUVI/SeaSondeR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -66,17 +60,15 @@ The test evaluates the ratio between the largest and smallest signal powers for 
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The P2 test is based on the ratio of the largest signal power (\(P_max\)) to the smallest signal power (\(P_min\)):
-[
-Ratio = P_maxP_min
-]
-This ratio is compared to a threshold defined in the MUSIC parameters. Only solutions that meet the following criteria are retained:</p><ul><li><p>The solution has two bearings.</p></li>
+    <p>The P2 test is based on the ratio of the largest signal power (\(P_{max}\)) to the smallest signal power (\(P_{min}\)):</p>
+<p>$$Ratio = \frac{P_{max}}{P_{min}}$$</p>
+<p>This ratio is compared to a threshold defined in the MUSIC parameters. Only solutions that meet the following criteria are retained:</p><ul><li><p>The solution has two bearings.</p></li>
 <li><p>The signal power ratio is below the threshold.</p></li>
 </ul><p>Solutions failing this test are marked as "single."</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code>seasonder_getSeaSondeRCS_MUSIC</code>, <code>seasonder_setSeaSondeRCS_MUSIC</code></p></div>
+    <div class="dont-index"><p><code><a href="seasonder_getSeaSondeRCS_MUSIC.html">seasonder_getSeaSondeRCS_MUSIC</a></code>, <code><a href="seasonder_setSeaSondeRCS_MUSIC.html">seasonder_setSeaSondeRCS_MUSIC</a></code></p></div>
     </div>
 
     <div class="section level2">
