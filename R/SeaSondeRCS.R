@@ -1351,13 +1351,15 @@ seasonder_getSeaSondeRCS_headerField <- function(seasonder_cs_object, field) {
 
   # Retrieve the header from the SeaSondeRCS object
   header <- seasonder_getSeaSondeRCS_header(seasonder_cs_object)
-
+if(field %in% names(header)){
+  value <- header[[field]]
+}else{
   # Flatten the header structure to allow direct access to nested fields
   header_flattened <- purrr::list_flatten(header, name_spec = "{inner}")
 
   # Extract the requested field using purrr::pluck
   value <- purrr::pluck(header_flattened, field)
-
+}
   return(value)
 }
 

@@ -3870,80 +3870,152 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
   # List to collect output rows
   out_rows <- list()
 
-  data <- seasonder_getSeaSondeRCS_data(seasonder_cs_object)
+receiver_gain <- seasonder_getReceiverGain_dB(seasonder_cs_object)
+
+out <- music
+
+out <- out %>% dplyr::rename(
+  c(
+    RNGE = "range",
+    SPRC = "range_cell",
+    MEGR = "eigen_values_ratio",
+    MPKR = "signal_power_ratio"
+    )
+    ) %>% 
+dplyr::mutate(
+  length_single = purrr::map_int(DOA_solutions, \(x) length(x$single$bearing)),
+  length_dual = purrr::map_int(DOA_solutions, \(x) length(x$dual$bearing)),
+  VELO = radial_v * 100,
+  SPDC = doppler_bin -1,
+  MOFR = tidyr::replace_na(diag_off_diag_power_ratio, 0),
+  MEI1 = purrr::map_dbl(eigen, \(x) x$values[1]),
+  MEI2 = purrr::map_dbl(eigen, \(x) x$values[2]),
+  MEI3 = purrr::map_dbl(eigen, \(x) x$values[3]),
+  MSA1 = purrr::map_dbl(DOA_solutions, \(x) x$single$bearing %||% NA),
+  MDA1 = purrr::map_dbl(DOA_solutions, \(x) x$dual$bearing[1] %||% NA),
+  MDA2 = purrr::map_dbl(DOA_solutions, \(x) x$dual$bearing[2] %||% NA),
+  MSA1 = dplyr::case_when(!is.na(MSA1) ~ unlist(seasonder_MUSICBearing2GeographicalBearing(MSA1,seasonder_apm_obj)), TRUE ~ 1440),
+  MDA1 = dplyr::case_when(!is.na(MDA1) ~ unlist(seasonder_MUSICBearing2GeographicalBearing(MDA1,seasonder_apm_obj)), TRUE ~ 1440),
+  MDA2 = dplyr::case_when(!is.na(MDA2) ~ unlist(seasonder_MUSICBearing2GeographicalBearing(MDA2,seasonder_apm_obj)), TRUE ~ 1440),
+  MSR1 = purrr::map_dbl(DOA_solutions, \(x) 10^(x$single$peak_resp/10)),
+  MDR1 = purrr::map_dbl(DOA_solutions, \(x) 10^(x$dual$peak_resp[1]/10)),
+  MDR2 = purrr::map_dbl(DOA_solutions, \(x) 10^(x$dual$peak_resp[2]/10)),
+  MSW1 = purrr::map_dbl(DOA_solutions, \(x) x$single$peak_width),
+  MDW1 = purrr::map_dbl(DOA_solutions, \(x) x$dual$peak_width[1]),
+  MDW2 = purrr::map_dbl(DOA_solutions, \(x) x$dual$peak_width[2]),
+  MSP1 = purrr::map_dbl(DOA_solutions, \(x) 10*log10(abs(x$single$P))),
+  MDP1 = purrr::map_dbl(DOA_solutions, \(x) 10*log10(abs(x$dual$P[1,1]))),
+  MDP2 = purrr::map2_dbl(DOA_solutions,length_dual, \(x,y) ifelse(y>1,10*log10(abs(x$dual$P[2,2])),NA)),
+  MPKR = tidyr::replace_na(MPKR, 0),
+  MDP1 = tidyr::replace_na(MDP1, 0),
+  MDP2 = tidyr::replace_na(MDP2, 0),
+  MDR1 = tidyr::replace_na(MDR1, 0),
+  MDR2 = tidyr::replace_na(MDR2, 0),
+  MDW1 = tidyr::replace_na(MDW1, 0),
+  MDW2 = tidyr::replace_na(MDW2, 0),
+  MP13 = purrr::map_dbl(cov, \(x) Arg(x[1,3])*180/pi),
+  MP23 = purrr::map_dbl(cov, \(x) Arg(x[2,3])*180/pi),
+  Noise_3 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T, antenna = 3)[SPRC],
+  Noise_2 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T, antenna = 2)[SPRC],
+  Noise_1 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T, antenna = 1)[SPRC],
+  MAXS = purrr::map(cov, \(x) self_spectra_to_dB(c(x[1,1], x[2,2], x[3,3]), receiver_gain)),
+  MAS3 = purrr::map2_dbl(MAXS, Noise_3, \(x,y, cs=seasonder_cs_object) x[3]- y),
+  MAS2 = purrr::map2_dbl(MAXS, Noise_2, \(x,y, cs=seasonder_cs_object) x[2]- y),
+  MAS1 = purrr::map2_dbl(MAXS, Noise_1, \(x,y, cs=seasonder_cs_object) x[1]- y)
+)
+
+out$MDRJ <- seasonder_computeMDRJ(out)
+
+ out %>% 
+ dplyr::mutate(data = purrr::pmap(list(lonlat, DOA, MSA1, MDA1, MDA2, retained_solution), \(ll,d,ms,md1,md2,sol){
+    if (sol == "single") {
+      data.frame(
+        LOND = ll$lon[1],
+        LATD = ll$lat[1],
+        MSEL = 1,
+        BEAR = ms
+      )
+    } else if (sol == "dual") {
+      
+    } else {
+      data.frame(LOND = NA_real_, LATD = NA_real_, VFLG = NA_integer_)
+    }
+ } )) %>% dplyr::pull("data")
+
+browser()  
   # Iterate over each row of the MUSIC table
   for (i in seq_len(nrow(music))) {
     row_music <- music[i, ]
 
     # Create a template row with all columns initialized to NA
     row_template <- as.list(setNames(rep(NA, length(cols)), cols))
-    row_template$MSA1 <- 1440L
-    row_template$MDA1 <- 1440L
-    row_template$MDA2 <- 1440L
+    # row_template$MSA1 <- 1440L
+    # row_template$MDA1 <- 1440L
+    # row_template$MDA2 <- 1440L
 
 
 
     
 
-    row_template$VFLG <- row_music$VFLG
+    # row_template$VFLG <- row_music$VFLG
 
     # Copy basic numeric fields from MUSIC
-    row_template$VELO <- row_music$radial_v * 100
-    row_template$RNGE <- row_music$range
+    # row_template$VELO <- row_music$radial_v * 100
+    # row_template$RNGE <- row_music$range
 
     # Fill additional columns from MUSIC table if available
-    row_template$SPRC <- row_music$range_cell
-    row_template$SPDC <- row_music$doppler_bin -1
-    row_template$MEGR <- row_music$eigen_values_ratio
-    row_template$MPKR <- row_music$signal_power_ratio
-    row_template$MOFR <- tidyr::replace_na(row_music$diag_off_diag_power_ratio, 0)
+    # row_template$SPRC <- row_music$range_cell
+    # row_template$SPDC <- row_music$doppler_bin -1
+    # row_template$MEGR <- row_music$eigen_values_ratio
+    # row_template$MPKR <- row_music$signal_power_ratio
+    # row_template$MOFR <- tidyr::replace_na(row_music$diag_off_diag_power_ratio, 0)
 
-row_template$MDRJ <- seasonder_computeMDRJ(row_music)
+# row_template$MDRJ <- seasonder_computeMDRJ(row_music)
 
-    eig_all <- music$eigen[[i]]
+    # eig_all <- music$eigen[[i]]
 
-    row_template$MEI1 <- eig_all$values[1]
-    row_template$MEI2 <- eig_all$values[2]
-    row_template$MEI3 <- eig_all$values[3]
+    # row_template$MEI1 <- eig_all$values[1]
+    # row_template$MEI2 <- eig_all$values[2]
+    # row_template$MEI3 <- eig_all$values[3]
 
-    ds_all <- music$DOA_solutions[[i]]
+    # ds_all <- music$DOA_solutions[[i]]
 
-    if(length(ds_all$single$bearing) >0){
-      row_template$MSA1 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$single$bearing,seasonder_apm_obj)[[1]]
-    }
-    if(length(ds_all$dual$bearing) >0){
-      row_template$MDA1 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$dual$bearing[1],seasonder_apm_obj)[[1]]
-      if(length(ds_all$dual$bearing) >1){
-        row_template$MDA2 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$dual$bearing[2],seasonder_apm_obj)[[1]]
-      }
-    }
-    row_template$MSR1 <- 10^(ds_all$single$peak_resp/10)
-    row_template$MDR1 <- 10^(ds_all$dual$peak_resp[1]/10)
-    row_template$MDR2 <- 10^(ds_all$dual$peak_resp[2]/10)
+    # if(length(ds_all$single$bearing) >0){
+    #   row_template$MSA1 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$single$bearing,seasonder_apm_obj)[[1]]
+    # }
+    # if(length(ds_all$dual$bearing) >0){
+    #   row_template$MDA1 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$dual$bearing[1],seasonder_apm_obj)[[1]]
+    #   if(length(ds_all$dual$bearing) >1){
+    #     row_template$MDA2 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$dual$bearing[2],seasonder_apm_obj)[[1]]
+    #   }
+    # }
+    # row_template$MSR1 <- 10^(ds_all$single$peak_resp/10)
+    # row_template$MDR1 <- 10^(ds_all$dual$peak_resp[1]/10)
+    # row_template$MDR2 <- 10^(ds_all$dual$peak_resp[2]/10)
 
-    row_template$MSW1 <- ds_all$single$peak_width
-    row_template$MDW1 <- ds_all$dual$peak_width[1]
-    row_template$MDW2 <- ds_all$dual$peak_width[2]
+    # row_template$MSW1 <- ds_all$single$peak_width
+    # row_template$MDW1 <- ds_all$dual$peak_width[1]
+    # row_template$MDW2 <- ds_all$dual$peak_width[2]
 
 
-    row_template$MSP1 <- as.numeric(10*log10(abs(ds_all$single$P)))
-    row_template$MDP1 <- as.numeric(10*log10(abs(ds_all$dual$P[1,1])))
-    if(length(ds_all$dual$bearing) >1){
-      row_template$MDP2 <- as.numeric(10*log10(abs(ds_all$dual$P[2,2])))
+    # row_template$MSP1 <- as.numeric(10*log10(abs(ds_all$single$P)))
+    # row_template$MDP1 <- as.numeric(10*log10(abs(ds_all$dual$P[1,1])))
+    # if(length(ds_all$dual$bearing) >1){
+    #   row_template$MDP2 <- as.numeric(10*log10(abs(ds_all$dual$P[2,2])))
 
-    }
-    row_template$MP13 <-  Arg(row_music$cov[[1]][1,3])*180/pi
-    row_template$MP23 <-  Arg(row_music$cov[[1]][2,3])*180/pi
+    # }
+    # row_template$MP13 <-  Arg(row_music$cov[[1]][1,3])*180/pi
+    # row_template$MP23 <-  Arg(row_music$cov[[1]][2,3])*180/pi
     # row_template$MA13 <-  abs(row_music$cov[[1]][1,3])#abs(row_music$cov[[1]][1,1])/abs(row_music$cov[[1]][3,3])
     # row_template$MA23 <-  abs(row_music$cov[[1]][2,3])#abs(row_music$cov[[1]][2,2])/abs(row_music$cov[[1]][3,3])
-row_template$MA3S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][3,3])) -
-(seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 3))[row_template$SPRC]
+# row_template$MA3S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][3,3])) -
+# (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 3))[row_template$SPRC]
 
-row_template$MA2S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][2,2])) -
-  (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 2))[row_template$SPRC]
+# row_template$MA2S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][2,2])) -
+#   (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 2))[row_template$SPRC]
 
-row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][1,1])) -
-  (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1))[row_template$SPRC]
+# row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][1,1])) -
+#   (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1))[row_template$SPRC]
 
 
     # Check for DOA solutions and output all available ones: single and dual
@@ -4006,14 +4078,14 @@ row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$co
     result <- do.call(rbind, lapply(out_rows, as.data.frame))
     result %<>% dplyr::mutate( VFLG = VFLG + 4096L * as.integer(! PPFG %in% c(1,9) | !PWFG %in% c(1,9)),
                                VELU = VELO * sin(HEAD * pi / 180),
-                               VELV = VELO * cos(HEAD * pi / 180),
-                               MPKR = tidyr::replace_na(MPKR, 0),
-                               MDP1 = tidyr::replace_na(MDP1, 0),
-                               MDP2 = tidyr::replace_na(MDP2, 0),
-                               MDR1 = tidyr::replace_na(MDR1, 0),
-                               MDR2 = tidyr::replace_na(MDR2, 0),
-                               MDW1 = tidyr::replace_na(MDW1, 0),
-                               MDW2 = tidyr::replace_na(MDW2, 0)
+                               VELV = VELO * cos(HEAD * pi / 180)#,
+                              #  MPKR = tidyr::replace_na(MPKR, 0),
+                              #  MDP1 = tidyr::replace_na(MDP1, 0),
+                              #  MDP2 = tidyr::replace_na(MDP2, 0),
+                              #  MDR1 = tidyr::replace_na(MDR1, 0),
+                              #  MDR2 = tidyr::replace_na(MDR2, 0),
+                              #  MDW1 = tidyr::replace_na(MDW1, 0),
+                              #  MDW2 = tidyr::replace_na(MDW2, 0)
                                )
 
 
