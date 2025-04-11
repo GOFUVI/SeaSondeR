@@ -16,7 +16,8 @@ seasonder_cs_obj <- SeaSondeR::seasonder_setMUSICOptions(seasonder_cs_obj, MUSIC
 seasonder_cs_obj <- SeaSondeR::seasonder_runMUSICInFOR(seasonder_cs_obj)
 AngSeg <- purrr::list_c(lapply(45:61, function(i) list(c(i, 313, 360), c(i, 0, 31))))
 
+x <- profvis::profvis({
 radial_metrics <- SeaSondeR::seasonder_exportLLUVRadialMetrics(seasonder_cs_obj, LLUV_path = "tools/CSS_TORA_24_04_04_0700.ruv", AngSeg = AngSeg)
-
+})
 
 range_info <- SeaSondeR::seasonder_exportCTFRangeInfo(seasonder_cs_obj, file = "tools/RangeInfo.ctf")
