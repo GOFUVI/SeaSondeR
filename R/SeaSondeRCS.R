@@ -1304,7 +1304,7 @@ seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj) {
 #' }
 #'
 #' @export
-seasonder_getCSHeaderByPath <- function(seasonder_obj, path) {
+seasonder_getCSHeaderByPath <- function(seasonder_obj, path, warn_missing = T) {
 
   header <- seasonder_getSeaSondeRCS_header(seasonder_obj)
 
@@ -1312,7 +1312,7 @@ seasonder_getCSHeaderByPath <- function(seasonder_obj, path) {
   result <- rlang::inject(purrr::pluck(header, !!!path))
 
   # If the result is NULL, log a warning
-  if (is.null(result)) {
+  if (is.null(result) && warn_missing) {
     path_str <- paste0(path, collapse = "/")
     warning_msg <- glue::glue("Field '{path_str}' not found in header.", path_str = path_str)
     seasonder_logAndMessage(warning_msg, "error", calling_function = "seasonder_getCSHeaderByPath", class = "seasonder_SeaSonderCS_field_not_found_in_header")
@@ -1473,7 +1473,7 @@ seasonder_getReceiverGain_dB <- function(seasonder_cs_object) {
 
   # Retrieve the receiver gain from the SeaSondeRCS object's header field "fReferenceGainDB".
   # If the field is missing or NULL, a default value of -34.2 dB is used.
-  receiver_gain <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fReferenceGainDB") %||% 34.2
+  receiver_gain <- seasonder_getCSHeaderByPath(seasonder_cs_object, c("RCVI","fReferenceGainDB"),warn_missing = F) %||% 34.2
 
   # Return the receiver gain in decibels.
   return(receiver_gain)

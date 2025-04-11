@@ -13,11 +13,22 @@ MUSIC_options <- list(
 
 seasonder_cs_obj <- SeaSondeR::seasonder_setMUSICOptions(seasonder_cs_obj, MUSIC_options)
 
+
 seasonder_cs_obj <- SeaSondeR::seasonder_runMUSICInFOR(seasonder_cs_obj)
+
 AngSeg <- purrr::list_c(lapply(45:61, function(i) list(c(i, 313, 360), c(i, 0, 31))))
+radial_metrics <- SeaSondeR::seasonder_exportLLUVRadialMetrics(seasonder_cs_obj, LLUV_path = "tools/CSS_TORA_24_04_04_0700.ruv", AngSeg = AngSeg)
+# x <- profvis::profvis({
+# radial_metrics <- SeaSondeR::seasonder_exportRadialMetrics(seasonder_cs_obj, AngSeg = AngSeg)
+# })
+
+# x <- profvis::profvis({
+# radial_metrics <- SeaSondeR::seasonder_exportLLUVRadialMetrics(seasonder_cs_obj, LLUV_path = "tools/CSS_TORA_24_04_04_0700.ruv", AngSeg = AngSeg)
+# })
+# x <- profvis::profvis({
+# range_info <- SeaSondeR::seasonder_exportCTFRangeInfo(seasonder_cs_obj, file = "tools/RangeInfo.ctf")
+# })
 
 x <- profvis::profvis({
-radial_metrics <- SeaSondeR::seasonder_exportLLUVRadialMetrics(seasonder_cs_obj, LLUV_path = "tools/CSS_TORA_24_04_04_0700.ruv", AngSeg = AngSeg)
+out %<>% seasonder_SNRCheck(discard_low_SNR = discard_low_SNR)
 })
-
-range_info <- SeaSondeR::seasonder_exportCTFRangeInfo(seasonder_cs_obj, file = "tools/RangeInfo.ctf")
