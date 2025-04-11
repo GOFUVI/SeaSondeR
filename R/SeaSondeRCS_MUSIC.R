@@ -3870,85 +3870,114 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
   # List to collect output rows
   out_rows <- list()
 
-receiver_gain <- seasonder_getReceiverGain_dB(seasonder_cs_object)
+  receiver_gain <- seasonder_getReceiverGain_dB(seasonder_cs_object)
 
-out <- music
+  out <- music
 
-out <- out %>% dplyr::rename(
-  c(
-    RNGE = "range",
-    SPRC = "range_cell",
-    MEGR = "eigen_values_ratio",
-    MPKR = "signal_power_ratio"
-    )
-    ) %>% 
-dplyr::mutate(
-  length_single = purrr::map_int(DOA_solutions, \(x) length(x$single$bearing)),
-  length_dual = purrr::map_int(DOA_solutions, \(x) length(x$dual$bearing)),
-  VELO = radial_v * 100,
-  SPDC = doppler_bin -1,
-  MOFR = tidyr::replace_na(diag_off_diag_power_ratio, 0),
-  MEI1 = purrr::map_dbl(eigen, \(x) x$values[1]),
-  MEI2 = purrr::map_dbl(eigen, \(x) x$values[2]),
-  MEI3 = purrr::map_dbl(eigen, \(x) x$values[3]),
-  MSA1 = purrr::map_dbl(DOA_solutions, \(x) x$single$bearing %||% NA),
-  MDA1 = purrr::map_dbl(DOA_solutions, \(x) x$dual$bearing[1] %||% NA),
-  MDA2 = purrr::map_dbl(DOA_solutions, \(x) x$dual$bearing[2] %||% NA),
-  MSA1 = dplyr::case_when(!is.na(MSA1) ~ unlist(seasonder_MUSICBearing2GeographicalBearing(MSA1,seasonder_apm_obj)), TRUE ~ 1440),
-  MDA1 = dplyr::case_when(!is.na(MDA1) ~ unlist(seasonder_MUSICBearing2GeographicalBearing(MDA1,seasonder_apm_obj)), TRUE ~ 1440),
-  MDA2 = dplyr::case_when(!is.na(MDA2) ~ unlist(seasonder_MUSICBearing2GeographicalBearing(MDA2,seasonder_apm_obj)), TRUE ~ 1440),
-  MSR1 = purrr::map_dbl(DOA_solutions, \(x) 10^(x$single$peak_resp/10)),
-  MDR1 = purrr::map_dbl(DOA_solutions, \(x) 10^(x$dual$peak_resp[1]/10)),
-  MDR2 = purrr::map_dbl(DOA_solutions, \(x) 10^(x$dual$peak_resp[2]/10)),
-  MSW1 = purrr::map_dbl(DOA_solutions, \(x) x$single$peak_width),
-  MDW1 = purrr::map_dbl(DOA_solutions, \(x) x$dual$peak_width[1]),
-  MDW2 = purrr::map_dbl(DOA_solutions, \(x) x$dual$peak_width[2]),
-  MSP1 = purrr::map_dbl(DOA_solutions, \(x) 10*log10(abs(x$single$P))),
-  MDP1 = purrr::map_dbl(DOA_solutions, \(x) 10*log10(abs(x$dual$P[1,1]))),
-  MDP2 = purrr::map2_dbl(DOA_solutions,length_dual, \(x,y) ifelse(y>1,10*log10(abs(x$dual$P[2,2])),NA)),
-  MPKR = tidyr::replace_na(MPKR, 0),
-  MDP1 = tidyr::replace_na(MDP1, 0),
-  MDP2 = tidyr::replace_na(MDP2, 0),
-  MDR1 = tidyr::replace_na(MDR1, 0),
-  MDR2 = tidyr::replace_na(MDR2, 0),
-  MDW1 = tidyr::replace_na(MDW1, 0),
-  MDW2 = tidyr::replace_na(MDW2, 0),
-  MP13 = purrr::map_dbl(cov, \(x) Arg(x[1,3])*180/pi),
-  MP23 = purrr::map_dbl(cov, \(x) Arg(x[2,3])*180/pi),
-  Noise_3 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T, antenna = 3)[SPRC],
-  Noise_2 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T, antenna = 2)[SPRC],
-  Noise_1 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T, antenna = 1)[SPRC],
-  MAXS = purrr::map(cov, \(x) self_spectra_to_dB(c(x[1,1], x[2,2], x[3,3]), receiver_gain)),
-  MAS3 = purrr::map2_dbl(MAXS, Noise_3, \(x,y, cs=seasonder_cs_object) x[3]- y),
-  MAS2 = purrr::map2_dbl(MAXS, Noise_2, \(x,y, cs=seasonder_cs_object) x[2]- y),
-  MAS1 = purrr::map2_dbl(MAXS, Noise_1, \(x,y, cs=seasonder_cs_object) x[1]- y)
-)
-
-out$MDRJ <- seasonder_computeMDRJ(out)
-
- out %>% 
- dplyr::mutate(data = purrr::pmap(list(lonlat, DOA, MSA1, MDA1, MDA2, retained_solution), \(ll,d,ms,md1,md2,sol){
-    if (sol == "single") {
-      data.frame(
-        LOND = ll$lon[1],
-        LATD = ll$lat[1],
-        MSEL = 1,
-        BEAR = ms
+  out <- out %>% 
+  dplyr::rename(
+    c(
+      RNGE = "range",
+      SPRC = "range_cell",
+      MEGR = "eigen_values_ratio",
+      MPKR = "signal_power_ratio"
       )
-    } else if (sol == "dual") {
-      
-    } else {
-      data.frame(LOND = NA_real_, LATD = NA_real_, VFLG = NA_integer_)
-    }
- } )) %>% dplyr::pull("data")
+    ) %>% 
+  dplyr::mutate(
+    length_single = purrr::map_int(DOA_solutions, \(x) length(x$single$bearing)),
+    length_dual = purrr::map_int(DOA_solutions, \(x) length(x$dual$bearing)),
+    VELO = radial_v * 100,
+    SPDC = doppler_bin -1,
+    MOFR = tidyr::replace_na(diag_off_diag_power_ratio, 0),
+    MEI1 = purrr::map_dbl(eigen, \(x) x$values[1]),
+    MEI2 = purrr::map_dbl(eigen, \(x) x$values[2]),
+    MEI3 = purrr::map_dbl(eigen, \(x) x$values[3]),
+    MSA1 = purrr::map_dbl(DOA_solutions, \(x) x$single$bearing %||% NA),
+    MDA1 = purrr::map_dbl(DOA_solutions, \(x) x$dual$bearing[1] %||% NA),
+    MDA2 = purrr::map_dbl(DOA_solutions, \(x) x$dual$bearing[2] %||% NA),
+    MSA1 = dplyr::case_when(!is.na(MSA1) ~ unlist(seasonder_MUSICBearing2GeographicalBearing(MSA1,seasonder_apm_obj)), TRUE ~ 1440),
+    MDA1 = dplyr::case_when(!is.na(MDA1) ~ unlist(seasonder_MUSICBearing2GeographicalBearing(MDA1,seasonder_apm_obj)), TRUE ~ 1440),
+    MDA2 = dplyr::case_when(!is.na(MDA2) ~ unlist(seasonder_MUSICBearing2GeographicalBearing(MDA2,seasonder_apm_obj)), TRUE ~ 1440),
+    MSR1 = purrr::map_dbl(DOA_solutions, \(x) 10^(x$single$peak_resp/10)),
+    MDR1 = purrr::map_dbl(DOA_solutions, \(x) 10^(x$dual$peak_resp[1]/10)),
+    MDR2 = purrr::map_dbl(DOA_solutions, \(x) 10^(x$dual$peak_resp[2]/10)),
+    MSW1 = purrr::map_dbl(DOA_solutions, \(x) x$single$peak_width),
+    MDW1 = purrr::map_dbl(DOA_solutions, \(x) x$dual$peak_width[1]),
+    MDW2 = purrr::map_dbl(DOA_solutions, \(x) x$dual$peak_width[2]),
+    MSP1 = purrr::map_dbl(DOA_solutions, \(x) 10*log10(abs(x$single$P))),
+    MDP1 = purrr::map_dbl(DOA_solutions, \(x) 10*log10(abs(x$dual$P[1,1]))),
+    MDP2 = purrr::map2_dbl(DOA_solutions,length_dual, \(x,y) ifelse(y>1,10*log10(abs(x$dual$P[2,2])),NA)),
+    MPKR = tidyr::replace_na(MPKR, 0),
+    MDP1 = tidyr::replace_na(MDP1, 0),
+    MDP2 = tidyr::replace_na(MDP2, 0),
+    MDR1 = tidyr::replace_na(MDR1, 0),
+    MDR2 = tidyr::replace_na(MDR2, 0),
+    MDW1 = tidyr::replace_na(MDW1, 0),
+    MDW2 = tidyr::replace_na(MDW2, 0),
+    MP13 = purrr::map_dbl(cov, \(x) Arg(x[1,3])*180/pi),
+    MP23 = purrr::map_dbl(cov, \(x) Arg(x[2,3])*180/pi),
+    Noise_3 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T, antenna = 3)[SPRC],
+    Noise_2 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T, antenna = 2)[SPRC],
+    Noise_1 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T, antenna = 1)[SPRC],
+    MAXS = purrr::map(cov, \(x) self_spectra_to_dB(c(x[1,1], x[2,2], x[3,3]), receiver_gain)),
+    MAS3 = purrr::map2_dbl(MAXS, Noise_3, \(x,y, cs=seasonder_cs_object) x[3]- y),
+    MAS2 = purrr::map2_dbl(MAXS, Noise_2, \(x,y, cs=seasonder_cs_object) x[2]- y),
+    MAS1 = purrr::map2_dbl(MAXS, Noise_1, \(x,y, cs=seasonder_cs_object) x[1]- y)
+  )
 
-browser()  
+  out$MDRJ <- seasonder_computeMDRJ(out)
+
+  out <- out %>% 
+  dplyr::mutate(data = purrr::pmap(list(lonlat, DOA, MSA1, MDA1, MDA2, retained_solution), \(ll,d,ms,md1,md2,sol){
+    o <- data.frame(LOND = NA_real_, LATD = NA_real_,MSEL= NA_integer_,BEAR = NA_real_, PPFG = NA_real_, PWFG = NA_real_)
+    # browser(expr = sol == "single")
+    if(sol %in% c("single","dual")){
+      
+          o$MSEL <- ifelse(sol == "single", 1L, 2L)
+          o$BEAR <- ifelse(sol == "single", ms, md1)
+          o$PPFG <- d$PPFG[1]
+          o$PWFG <- d$PWFG[1]
+        
+      if(!is.null(ll) && nrow(ll)>0){
+
+          o$LOND = ll$lon[1]
+          o$LATD = ll$lat[1]
+        
+      }
+      if (sol == "dual") {
+        o2 <- data.frame(
+          LOND = NA_real_,
+          LATD = NA_real_,
+          MSEL = 3L,
+          BEAR = md2,
+          PPFG = d$PPFG[2],
+          PWFG = d$PWFG[2]
+        )
+        if(!is.null(ll) && nrow(ll)>1){
+
+            o2$LOND = ll$lon[2]
+            o2$LATD = ll$lat[2]
+          
+        }
+        o <- dplyr::bind_rows(o, o2)
+      }
+    }
+    return(o)
+  } )) 
+
+  
+  out <- out %>% 
+  tidyr::unnest(data)
+
+  out <- out %>% dplyr::mutate(HEAD = (BEAR -180) %% 360)
+
+  
   # Iterate over each row of the MUSIC table
-  for (i in seq_len(nrow(music))) {
-    row_music <- music[i, ]
+  # for (i in seq_len(nrow(music))) {
+    # row_music <- music[i, ]
 
     # Create a template row with all columns initialized to NA
-    row_template <- as.list(setNames(rep(NA, length(cols)), cols))
+    # row_template <- as.list(setNames(rep(NA, length(cols)), cols))
     # row_template$MSA1 <- 1440L
     # row_template$MDA1 <- 1440L
     # row_template$MDA2 <- 1440L
@@ -4020,63 +4049,63 @@ browser()
 
     # Check for DOA solutions and output all available ones: single and dual
 
-    if (row_music$retained_solution == "single") {
+    # if (row_music$retained_solution == "single") {
       
-      row_single <- row_template
+      # row_single <- row_template
 
 # Assign location data if available
-    if (!is.null(row_music$lonlat[[1]]) && nrow(row_music$lonlat[[1]]) > 0) {
-      row_single$LOND <- row_music$lonlat[[1]]$lon[1]
-      row_single$LATD <- row_music$lonlat[[1]]$lat[1]
-    }
+    # if (!is.null(row_music$lonlat[[1]]) && nrow(row_music$lonlat[[1]]) > 0) {
+    #   row_single$LOND <- row_music$lonlat[[1]]$lon[1]
+    #   row_single$LATD <- row_music$lonlat[[1]]$lat[1]
+    # }
 
-      row_single$MSEL <- 1
-      row_single$BEAR <- row_single$MSA1
-      row_single$HEAD <- (row_single$BEAR -180) %% 360
-      row_single$PPFG <-  row_music$DOA[[1]]$PPFG
-      row_single$PWFG <-  row_music$DOA[[1]]$PWFG
-      out_rows[[length(out_rows) + 1]] <- row_single
-    }else if (row_music$retained_solution == "dual") {
-      ds <- ds_all$dual
+      # row_single$MSEL <- 1
+      # row_single$BEAR <- row_single$MSA1
+      # row_single$HEAD <- (row_single$BEAR -180) %% 360
+      # row_single$PPFG <-  row_music$DOA[[1]]$PPFG
+      # row_single$PWFG <-  row_music$DOA[[1]]$PWFG
+      # out_rows[[length(out_rows) + 1]] <- row_single
+    # }else if (row_music$retained_solution == "dual") {
+      # ds <- ds_all$dual
 
-      row_dual1 <- row_template
+      # row_dual1 <- row_template
 
 # Assign location data if available
-    if (!is.null(row_music$lonlat[[1]]) && nrow(row_music$lonlat[[1]]) > 0) {
-      row_dual1$LOND <- row_music$lonlat[[1]]$lon[1]
-      row_dual1$LATD <- row_music$lonlat[[1]]$lat[1]
-    }
+    # if (!is.null(row_music$lonlat[[1]]) && nrow(row_music$lonlat[[1]]) > 0) {
+    #   row_dual1$LOND <- row_music$lonlat[[1]]$lon[1]
+    #   row_dual1$LATD <- row_music$lonlat[[1]]$lat[1]
+    # }
 
-      row_dual1$MSEL <- 2
+    #   row_dual1$MSEL <- 2
 
-      row_dual1$BEAR <- row_dual1$MDA1
-      row_dual1$HEAD <- (row_dual1$BEAR -180) %% 360
-      row_dual1$PPFG <-  row_music$DOA[[1]]$PPFG[1]
-      row_dual1$PWFG <-  row_music$DOA[[1]]$PWFG[1]
-      out_rows[[length(out_rows) + 1]] <- row_dual1
+    #   row_dual1$BEAR <- row_dual1$MDA1
+    #   row_dual1$HEAD <- (row_dual1$BEAR -180) %% 360
+    #   row_dual1$PPFG <-  row_music$DOA[[1]]$PPFG[1]
+    #   row_dual1$PWFG <-  row_music$DOA[[1]]$PWFG[1]
+    #   out_rows[[length(out_rows) + 1]] <- row_dual1
 
 
-      row_dual2 <- row_template
+    #   row_dual2 <- row_template
 
-      row_dual2$MSEL <- 3
+      # row_dual2$MSEL <- 3
 # Assign location data if available
-    if (!is.null(row_music$lonlat[[1]]) && nrow(row_music$lonlat[[1]]) > 1) {
-      row_dual2$LOND <- row_music$lonlat[[1]]$lon[2]
-      row_dual2$LATD <- row_music$lonlat[[1]]$lat[2]
-    }
-      row_dual2$BEAR <- row_dual1$MDA2
-      row_dual2$HEAD <- (row_dual2$BEAR -180) %% 360
-      row_dual2$PPFG <-  row_music$DOA[[1]]$PPFG[2]
-      row_dual2$PWFG <-  row_music$DOA[[1]]$PWFG[2]
-      out_rows[[length(out_rows) + 1]] <- row_dual2
+    # if (!is.null(row_music$lonlat[[1]]) && nrow(row_music$lonlat[[1]]) > 1) {
+    #   row_dual2$LOND <- row_music$lonlat[[1]]$lon[2]
+    #   row_dual2$LATD <- row_music$lonlat[[1]]$lat[2]
+    # }
+      # row_dual2$BEAR <- row_dual1$MDA2
+      # row_dual2$HEAD <- (row_dual2$BEAR -180) %% 360
+      # row_dual2$PPFG <-  row_music$DOA[[1]]$PPFG[2]
+      # row_dual2$PWFG <-  row_music$DOA[[1]]$PWFG[2]
+      # out_rows[[length(out_rows) + 1]] <- row_dual2
 
-    }
-  }
+    # }
+  # }
 
   # Combine rows into a data.frame; if no rows, return empty data.frame with correct columns
-  if (length(out_rows) > 0) {
-    result <- do.call(rbind, lapply(out_rows, as.data.frame))
-    result %<>% dplyr::mutate( VFLG = VFLG + 4096L * as.integer(! PPFG %in% c(1,9) | !PWFG %in% c(1,9)),
+  if (nrow(out) > 0) {
+    # result <- do.call(rbind, lapply(out_rows, as.data.frame))
+    out <- out %>% dplyr::mutate( VFLG = VFLG + 4096L * as.integer(! PPFG %in% c(1,9) | !PWFG %in% c(1,9)),
                                VELU = VELO * sin(HEAD * pi / 180),
                                VELV = VELO * cos(HEAD * pi / 180)#,
                               #  MPKR = tidyr::replace_na(MPKR, 0),
@@ -4089,23 +4118,23 @@ browser()
                                )
 
 
-                               if(length(AngSeg) > 0){
-result <- purrr::reduce(AngSeg,\(result_so_far,seg){
-if(length(seg) == 3 && seg[1] %in% result$SPRC && seg[2] <= seg[3]){
-  result_so_far <- result_so_far %>% dplyr::mutate(VFLG = VFLG + 128L * as.integer(SPRC ==seg[1] & dplyr::between(BEAR,seg[2], seg[3])))
-}
-  return(result_so_far)
-},.init = result)
-}
+    if(length(AngSeg) > 0){
+      out <- purrr::reduce(AngSeg,\(result_so_far,seg){
+        if(length(seg) == 3 && seg[1] %in% out$SPRC && seg[2] <= seg[3]){
+          result_so_far <- result_so_far %>% dplyr::mutate(VFLG = VFLG + 128L * as.integer(SPRC ==seg[1] & dplyr::between(BEAR,seg[2], seg[3])))
+        }
+        return(result_so_far)
+      },.init = out)
+    }
 
   } else {
-    result <- data.frame(matrix(ncol = length(cols), nrow = 0))
-    colnames(result) <- cols
+    out <- data.frame(matrix(ncol = length(cols), nrow = 0))
+    colnames(out) <- cols
   }
 
+  out <- out %>% dplyr::select(dplyr::all_of(cols))
 
-
-  return(result)
+  return(out)
 }
 
 
