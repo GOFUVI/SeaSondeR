@@ -1,0 +1,120 @@
+---
+title: "Exporting Radial Metrics"
+output: rmarkdown::html_vignette
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{Exporting Radial Metrics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  error = TRUE
+)
+```
+
+```{r setup}
+library(SeaSondeR)
+```
+
+# Exporting Radial Metrics in SeaSondeR
+
+This vignette demonstrates how to export radial metrics from HF-Radar spectra using the SeaSondeR package. The exported radial metrics table contains key parameters (e.g. DOAs, FOR limits, signal strengths) that can be used with tools such as Sea Display.
+
+## Example
+
+```{r}
+# Set sample file paths
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+
+# Read the antenna pattern file to create a SeaSondeRAPM object
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+
+# Create a SeaSondeRCS object from a spectral file
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+
+# Compute first-order regions and run the MUSIC algorithm if needed:
+
+cs_obj <- seasonder_computeFORs(cs_obj, FOR_control = list(nsm = 2, fdown = 10^(10/10), flim = 10^(20/10),
+                                                            noisefact = 10^(6/10), currmax = 2,
+                                                            reject_distant_bragg = TRUE, reject_noise_ionospheric = FALSE,
+                                                            reject_noise_ionospheric_threshold = 0))
+ cs_obj <- seasonder_runMUSICInFOR(cs_obj)
+
+# Define a land mask (AngSeg) to remove onshore data
+AngSeg <- purrr::list_c(lapply(45:61, function(i) list(c(i, 313, 360), c(i, 0, 31))))
+
+# Export the radial metrics in LLUV format
+radial_metrics <- seasonder_exportLLUVRadialMetrics(cs_obj,
+                                                    LLUV_path = "CSS_TORA_24_04_04_0700.ruv",
+                                                    AngSeg = AngSeg)
+
+# Display the first few rows of the exported radial metrics
+head(radial_metrics)
+```
+
+The example above exports the radial metrics into a file (LLUV format) that can later be reviewed using visualization applications such as Sea Display.
+
+## Description of the Radial Metrics Table
+
+Below are the columns of the exported Radial Metrics table in SeaSondeR.
+
+| Column               | Description                                                                                              |
+| -------------------- | -------------------------------------------------------------------------------------------------------- |
+| LOND, LATD           | Longitude and latitude (decimal degrees)                                                                 |
+| VELU, VELV           | East and north components of velocity (cm/s)                                                             |
+| VFLG                 | Vector validity (see below)                                                                              |
+| RNGE                 | Distance from the antenna (km)                                                                           |
+| BEAR                 | Bearing of the vector (counter-clockwise from true north)                                                |
+| VELO                 | Radial velocity (cm/s)                                                                                   |
+| HEAD                 | Velocity direction (counter-clockwise from true north)                                                   |
+| SPRC                 | Range cell                                                                                               |
+| SPDC                 | Doppler bin                                                                                              |
+| MSEL                 | Selected solution (1 = single, 2 = dual 1, 3 = dual 2)                                                     |
+| MSA1                 | Bearing of the single solution (1440 if invalid)                                                         |
+| MDA1, MDA2           | Bearing of the first and second dual solutions (1440 if invalid)                                         |
+| MEGR                 | Ratio of the first and second eigenvalue                                                                 |
+| MPKR                 | Signal power ratio                                                                                       |
+| MOFR                 | Off-diagonal ratio                                                                                       |
+| MP13                 | Phase between antennas 1 and 3                                                                           |
+| MP23                 | Phase between antennas 2 and 3                                                                           |
+| MSP1                 | Signal power of the single solution (dB)                                                                 |
+| MDP1, MDP2           | Signal power of the first and second dual solutions (dB)                                                 |
+| MSW1                 | 3-dB width of the DOA function below the peak for the single solution                                     |
+| MDW1, MDW2           | 3-dB width of the DOA function below the peak for the first and second dual solutions                      |
+| MSR1                 | Value of DOA function at the peak of the single solution                                                 |
+| MDR1                 | Value of DOA function at the peak of the first dual solution                                              |
+| MDR2                 | Value of DOA function at the peak of the second dual solution                                              |
+| MA1S, MA2S, MA3S     | SNR of the self-spectrum of antennas 1, 2, and 3 for this Doppler bin                                      |
+| MEI1, MEI2, MEI3     | First, second, and third eigenvalue of the covariance matrix                                               |
+| MDRJ                 | Reason for dual-solution rejection (see below)                                                           |
+| PPFG, PWFG           | Flags for QARTOD tests 103 and 104 (1 = pass, 4 = fail)                                                   |
+
+### VFLG
+
+The value is composed as a sum of powers of 2, representing a binary number where each bit indicates a specific flag.
+
+| Value   | Description                      |
+| ------- | -------------------------------- |
+| 0       | Valid vector                     |
+| +64     | Low SNR                          |
+| +4096   | Either PPFG or PWFG is not equal to 1 |
+
+### MDRJ
+
+This value is also composed as a sum of powers of 2, where each bit represents a flag.
+
+| Value   | Description                                                                         |
+| ------- | ----------------------------------------------------------------------------------- |
+| 0       | Dual solution not rejected                                                          |
+| +1      | P1 test failure                                                                     |
+| +2      | P2 test failure                                                                     |
+| +4      | P3 test failure                                                                     |
+| +8      | The angle difference between both solutions is less than 20 degrees                 |
+| +16     | Only one peak was found in the dual solution                                          |
+
