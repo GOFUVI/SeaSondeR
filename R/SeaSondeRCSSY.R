@@ -252,11 +252,11 @@ seasonder_read_reduced_encoded_data <- function(connection, key, endian = "big")
 #' # Create a raw connection with sample data:
 #' con <- rawConnection(as.raw(c(0x42, 0x29, 0xa3, 0xd7, 0xFF, 0x00)))
 #' key <- list(size = 6, key = "csign")
-#' result <- seasonder_read_csign(con, key)
+#' result <- seasonder_CSSY_read_csign(con, key)
 #' print(result)
 #' close(con)
 #' }
-seasonder_read_csign <- function(connection, key) {
+seasonder_CSSY_read_csign <- function(connection, key) {
   # Store the number of bytes to read based on the key list.
   total_bytes <- key$size
 
@@ -333,7 +333,7 @@ seasonder_read_csign <- function(connection, key) {
 #'     \item Converts each byte into its 8-bit binary representation (using \code{rawToBits}) and flattens the results for each group.
 #'   }
 #'
-seasonder_read_asign <- function(connection, key) {
+seasonder_CSSY_read_asign <- function(connection, key) {
   # Determine the total number of bytes to read from the connection based on key$size.
   total_bytes <- key$size
 
@@ -518,7 +518,7 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 #' @return A list with elements named after the keys read. For reduced data blocks, each element contains either
 #'         the raw decoded data or the scaled voltage values if a 'scal' block had been applied.
 #'
-seasonder_readBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
+seasonder_readCSSYBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
   indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
   scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
   out <- list()
@@ -553,10 +553,10 @@ seasonder_readBodyRangeCell <- function(connection, specs, dbRef, endian = "big"
       out <- append(out, list(data_block) %>% magrittr::set_names(key$key))
     } else if(key$key %in% c("csgn")){
       # Process complex spectral sign information
-      out <- append(out, list(seasonder_read_csign(connection, key)) %>% magrittr::set_names(key$key))
+      out <- append(out, list(seasonder_CSSY_read_csign(connection, key)) %>% magrittr::set_names(key$key))
     } else if(key$key %in% c("asgn")){
       # Process self spectra sign information
-      out <- append(out, list(seasonder_read_asign(connection, key)) %>% magrittr::set_names(key$key))
+      out <- append(out, list(seasonder_CSSY_read_asign(connection, key)) %>% magrittr::set_names(key$key))
     } else {
       # For all other keys, process them as simple field blocks
       out <- append(out, list(seasonder_readCSSYFields(connection, purrr::chuck(specs, key$key),
@@ -582,7 +582,7 @@ seasonder_readCSSYBody <- function(connection, specs, size, dbRef, endian = "big
   out <- list()
   while(seek(connection) < end_point){
 
-    out <- append(out, list(seasonder_readBodyRangeCell(connection, specs,  dbRef,endian = endian, specs_key_size = specs_key_size)))
+    out <- append(out, list(seasonder_readCSSYBodyRangeCell(connection, specs,  dbRef,endian = endian, specs_key_size = specs_key_size)))
 
   }
   out <- seasonder_applyCSSYSigns(out)
@@ -682,7 +682,7 @@ seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", 
 
         out <- seasonder_readCSSYHeader(connection, purrr::chuck(current_specs, key$key), endian, parent_key = key, keys_so_far = keys_so_far, specs_key_size = specs_key_size)
 
-        out$lims <- seasonder_readCSSYLims(connection, out$nRange,endian = endian)
+        out$lims <- seasonder_readCSSYLims(connection, out$nRange*4,endian = endian)
 
         out <- list(out) %>% magrittr::set_names(key$key)
 
@@ -702,19 +702,19 @@ seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", 
 #' Transform CSSY Header to SeaSondeRCS Header
 #'
 #' This helper function extracts the 'cs4h' component from a CSSY header, removes it from the original header,
-#' and embeds the remaining header information within the 'header_cssy' field of the CS header.
+#' and embeds the remaining header information within the 'header_csr' field of the CS header.
 #'
 #' @param header A list representing the CSSY header. Must contain a 'cs4h' component.
 #' @return A transformed header where the primary CS header is taken from 'cs4h' and the remaining CSSY header fields
-#'         are stored in the 'header_cssy' element.
+#'         are stored in the 'header_csr' element.
 seasonder_CSSY2CSHeader <- function(header) {
   if (is.null(header$cs4h)) {
     seasonder_logAndAbort("CSSY header does not contain a cs4h component")
   }
   header_cs <- header$cs4h  # Extract the valid CS header
-  header_cssy <- header    # Copy the original header
-  header_cssy$cs4h <- NULL  # Remove the cs4h component from the original header
-  header_cs$header_cssy <- header_cssy  # Embed the remaining header
+  header_csr <- header    # Copy the original header
+  header_csr$cs4h <- NULL  # Remove the cs4h component from the original header
+  header_cs$header_csr <- header_csr  # Embed the remaining header
   return(header_cs)
 }
 

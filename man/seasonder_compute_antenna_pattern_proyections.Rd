@@ -4,7 +4,7 @@
 \alias{seasonder_compute_antenna_pattern_proyections}
 \title{Compute Antenna Pattern Projections for the MUSIC Algorithm}
 \usage{
-seasonder_compute_antenna_pattern_proyections(En, a)
+seasonder_compute_antenna_pattern_proyections(En, a, Conj_t_a)
 }
 \arguments{
 \item{En}{A matrix containing the eigenvectors of the noise subspace, derived from the
@@ -12,6 +12,8 @@ covariance matrix of the signals.}
 
 \item{a}{A complex-valued vector representing the antenna manifold response for a specific
 bearing. Each element corresponds to the response of an antenna element.}
+
+\item{Conj_t_a}{The conjugate transpose of the antenna manifold vector \code{a}.}
 }
 \value{
 A complex scalar representing the magnitude of the projection of the antenna
@@ -53,7 +55,8 @@ as it corresponds to the direction where the signal is strongest relative to the
 # Assume En is a 3x3 noise subspace eigenvector matrix and a is the antenna manifold vector.
 En <- matrix(c(0.5+0.5i, -0.3i, 0, 0.4, 0.6-0.2i, -0.4i, 0, 0.3+0.3i, -0.1i), nrow = 3)
 a <- c(1+1i, -0.5+0.5i, 0.2-0.3i)
-projection <- seasonder_compute_antenna_pattern_proyections(En, a)
+Conj_t_a <- Conj(t(a))
+projection <- seasonder_compute_antenna_pattern_proyections(En, a, Conj_t_a)
 }
 
 }

@@ -15,40 +15,40 @@ key_size_block:
       qc_params:
         expected_type: "numeric"
 
-CSSY:
+CSSW:
     HEAD:
         sign:
             FileVersion:
-                type: Char4
+                type: UInt32
                 qc_fun: qc_check_type
                 qc_params:
-                    expected_type: "character"
-            SiteCode:
-                type: Char4
+                    expected_type: "numeric"
+            nFileType:
+                type: UInt32
                 qc_fun: qc_check_type
                 qc_params:
-                    expected_type: "character"
-            FileType:
-                type: Char4
+                    expected_type: "numeric"
+            nOwner:
+                type: UInt32
                 qc_fun: qc_check_type
                 qc_params:
-                    expected_type: "character"
-            UserFlags:
+                    expected_type: "numeric"
+            nUserFlags:
                 type: UInt32
                 qc_fun: qc_check_unsigned
                 qc_params:
                     expected_type: "numeric"
-            FileDescription:
+            szFileName:
                 type: Char64
                 qc_fun: qc_check_type
                 qc_params:
                     expected_type: "character"
-            OwnerName:
+            szOwnerName:
                 type: Char64
                 qc_fun: qc_check_type
                 qc_params:
                     expected_type: "character"
-            Comment:
+            szComment:
                 type: Char64
                 qc_fun: qc_check_type
                 qc_params:

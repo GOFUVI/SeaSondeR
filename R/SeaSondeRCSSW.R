@@ -1,225 +1,3 @@
-' Read Reduced Encoded Data from a Binary Connection
-#'
-#' This function reads an array of numbers from a binary connection using a custom command-based protocol.
-#' A block of data is processed according to its size specified in \code{key$size}. Within the block, the first byte read
-#' is a command byte that determines how the subsequent bytes are interpreted. The function updates a running "tracking
-#' value" based on the commands encountered and returns a vector of decoded numbers. The supported commands are:
-#'
-#' \describe{
-#'   \item{0x9C}{Read 4 bytes as an unsigned 32-bit integer.}
-#'   \item{0x94}{Read one count byte, then (count+1) unsigned 32-bit integers.}
-#'   \item{0xAC}{Read 3 bytes as a 24-bit signed integer; add its value to the current tracking value.}
-#'   \item{0xA4}{Read one count byte, then (count+1) 24-bit signed integers; sequentially add each to the tracking value.}
-#'   \item{0x89}{Read 1 byte as a signed 8-bit integer; add it to the tracking value.}
-#'   \item{0x8A}{Read 2 bytes as a signed 16-bit integer; add it to the tracking value.}
-#'   \item{0x82}{Read one count byte, then (count+1) signed 16-bit integers; sequentially add each to the tracking value.}
-#'   \item{0x81}{Read one count byte, then (count+1) signed 8-bit integers; sequentially add each to the tracking value.}
-#' }
-#'
-#' A 24-bit signed integer is computed by reading 3 bytes and then adjusting the value by subtracting 16777216 if the
-#' computed value is greater than or equal to 8388608 to account for the two's complement representation.
-#'
-#' @param connection A binary connection from which the encoded data is read.
-#' @param key A list containing a field \code{size} that indicates how many bytes of data to process.
-#' @param endian A character string specifying the byte order; either \code{"big"} or \code{"little"}. The default is \code{"big"}.
-#'
-#' @return An integer vector containing the decoded numbers.
-#'
-#' @importFrom purrr accumulate
-#' @importFrom dplyr last
-#'
-#' @examples
-#' \dontrun{
-#'   # Example for processing command 0x9C (unsigned 32-bit integer):
-#'   # 0x9C is followed by 4 bytes that represent 1000 (big endian: 0x00, 0x00, 0x03, 0xE8).
-#'   raw_vec <- as.raw(c(0x9C, 0x00, 0x00, 0x03, 0xE8))
-#'   con <- rawConnection(raw_vec, open = "rb")
-#'   key <- list(size = length(raw_vec))
-#'   result <- seasonder_read_reduced_encoded_data(con, key, endian = "big")
-#'   close(con)
-#'   print(result)  # Expected output: 1000
-#' }
-seasonder_read_reduced_encoded_data <- function(connection, key, endian = "big") {
-
-  # Helper function to read a 32-bit unsigned integer from the binary connection.
-  # It reads 4 bytes and computes the integer value based on the specified endianness.
-  read_uint32 <- function(connection, endian) {
-    # Read 4 raw bytes from the connection.
-    bytes <- readBin(connection, what = "raw", n = 4, size = 1)
-    if (endian == "big") {
-      # Compute the 32-bit value using big endian order.
-      value <- as.integer(bytes[1]) * 256^3 +
-        as.integer(bytes[2]) * 256^2 +
-        as.integer(bytes[3]) * 256 +
-        as.integer(bytes[4])
-    } else {
-      # Compute the 32-bit value using little endian order.
-      value <- as.integer(bytes[4]) * 256^3 +
-        as.integer(bytes[3]) * 256^2 +
-        as.integer(bytes[2]) * 256 +
-        as.integer(bytes[1])
-    }
-    return(value)
-  }
-
-  # Helper function to read a 24-bit signed integer from the binary connection.
-  # It reads 3 bytes and, based on the specified endianness, returns the correctly signed integer.
-  read_sint24 <- function(connection, endian) {
-    # Read 3 bytes as unsigned integers.
-    bytes <- readBin(connection, what = "integer", n = 3, size = 1, endian = endian, signed = FALSE)
-    if (endian == "big") {
-      # Compute using big endian order.
-      value <- bytes[1] * 256^2 + bytes[2] * 256 + bytes[3]
-    } else {
-      # Compute using little endian order.
-      value <- bytes[3] * 256^2 + bytes[2] * 256 + bytes[1]
-    }
-    # Adjust for negative numbers using two's complement.
-    if (value >= 8388608) value <- value - 16777216
-    return(value)
-  }
-
-  # Command 0x9C: Read 4 bytes as an unsigned 32-bit integer.
-  .command_byte_9C <- function(connection, endian, tracking_value) {
-    # Invoke helper to read the 32-bit unsigned integer and return its value.
-    value <- read_uint32(connection, endian)
-    return(value)
-  }
-
-  # Command 0x94: Read one count byte, then (count+1) unsigned 32-bit integers.
-  .command_byte_94 <- function(connection, endian, tracking_value) {
-    # Read the count byte (unsigned 8-bit integer).
-    count <- readBin(connection, what = "integer", n = 1, size = 1, endian = endian, signed = FALSE)
-    num_integers <- count + 1  # Determine the number of integers to read.
-    # Read each unsigned 32-bit integer sequentially.
-    values <- sapply(seq_len(num_integers), function(i) {
-      read_uint32(connection, endian)
-    })
-    return(values)
-  }
-
-  # Command 0xAC: Read 3 bytes as a 24-bit signed integer and add the result to the tracking value.
-  .command_byte_AC <- function(connection, endian, tracking_value) {
-    # Read the 24-bit signed integer delta.
-    delta <- read_sint24(connection, endian)
-    # Update tracking value and return the new value.
-    new_value <- tracking_value + delta
-    return(new_value)
-  }
-
-  # Command 0xA4: Read one count byte, then (count+1) 24-bit signed integers.
-  # Each integer is added sequentially to the tracking value.
-  .command_byte_A4 <- function(connection, endian, tracking_value) {
-    # Read the count byte.
-    count <- readBin(connection, what = "integer", n = 1, size = 1, endian = endian, signed = FALSE)
-    num_values <- count + 1  # Determine how many values are to be processed.
-    results <- integer(num_values)  # Initialize the results vector.
-    for (i in seq_len(num_values)) {
-      # Read each 24-bit delta and update the tracking value.
-      delta <- read_sint24(connection, endian)
-      tracking_value <- tracking_value + delta
-      results[i] <- tracking_value  # Store the updated tracking value.
-    }
-    return(results)
-  }
-
-  # Command 0x89: Read 1 byte as a signed 8-bit integer and add it to the tracking value.
-  .command_byte_89 <- function(connection, endian, tracking_value) {
-    # Read a signed 8-bit integer.
-    x <- readBin(connection, what = "integer", n = 1, size = 1, endian = endian, signed = TRUE)
-    # Compute the new tracking value.
-    out <- tracking_value + x
-    return(out)
-  }
-
-  # Command 0x8A: Read 2 bytes as a signed 16-bit integer and add it to the tracking value.
-  .command_byte_8A <- function(connection, endian, tracking_value) {
-    # Read a signed 16-bit integer.
-    x <- readBin(connection, what = "integer", n = 1, size = 2, endian = endian, signed = TRUE)
-    # Update and return the tracking value.
-    out <- tracking_value + x
-    return(out)
-  }
-
-  # Command 0x82: Read one count byte, then (count+1) signed 16-bit integers.
-  # Each value is used to update the tracking value via cumulative addition.
-  .command_byte_82 <- function(connection, endian, tracking_value) {
-    # Read the count byte.
-    count <- readBin(connection, what = "integer", n = 1, size = 1, endian = endian, signed = FALSE)
-    n <- count + 1  # Determine the total number of 16-bit integers.
-    # Accumulate tracking values for each integer read.
-    out <- purrr::accumulate(1:n, function(track, i) {
-      val <- readBin(connection, what = "integer", n = 1, size = 2, endian = endian, signed = TRUE)
-      track + val
-    }, .init = tracking_value)
-    out <- out[-1]  # Remove the seed value.
-    return(out)
-  }
-
-  # Command 0x81: Read one count byte, then (count+1) signed 8-bit integers.
-  # Each value is added sequentially to update the tracking value.
-  .command_byte_81 <- function(connection, endian, tracking_value) {
-    # Read the count byte.
-    count <- readBin(connection, what = "integer", n = 1, size = 1, endian = endian, signed = FALSE)
-    n <- count + 1  # Calculate the number of 8-bit integers to process.
-    # Cumulatively add each 8-bit integer to the tracking value.
-    out <- purrr::accumulate(1:n, function(track, i) {
-      val <- readBin(connection, what = "integer", n = 1, size = 1, endian = endian, signed = TRUE)
-      track + val
-    }, .init = tracking_value)
-    out <- out[-1]  # Exclude the initial tracking value.
-    return(out)
-  }
-
-  # Initialize the tracking value to 0.
-  tracking_value <- 0L
-  # Get the current position in the connection; this marks the start of the data block.
-  start_point <- seek(connection, origin = "current")
-  # Compute the final position based on the size provided in key.
-  final_point <- start_point + key$size
-  # Initialize an empty vector to accumulate the decoded output.
-  out <- integer(0)
-
-  # Process the data block until the current position reaches the final position.
-  while (seek(connection, origin = "current") < final_point) {
-    # Read the next command byte from the connection.
-    command_byte <- readBin(connection, what = "raw", n = 1, size = 1, endian = endian)
-
-    # Select the appropriate command handler based on the command byte.
-    if (command_byte == as.raw(0x9C)) {
-      cmd_function <- .command_byte_9C
-    } else if (command_byte == as.raw(0x94)) {
-      cmd_function <- .command_byte_94
-    } else if (command_byte == as.raw(0xAC)) {
-      cmd_function <- .command_byte_AC
-    } else if (command_byte == as.raw(0xA4)) {
-      cmd_function <- .command_byte_A4
-    } else if (command_byte == as.raw(0x89)) {
-      cmd_function <- .command_byte_89
-    } else if (command_byte == as.raw(0x8A)) {
-      cmd_function <- .command_byte_8A
-    } else if (command_byte == as.raw(0x82)) {
-      cmd_function <- .command_byte_82
-    } else if (command_byte == as.raw(0x81)) {
-      cmd_function <- .command_byte_81
-    } else {
-      # Log the error and abort processing when an invalid command is encountered.
-      seasonder_logAndAbort("Invalid command encountered")
-    }
-
-    # Execute the appropriate command function and update the output.
-    result_piece <- cmd_function(connection, endian, tracking_value)
-    out <- append(out, result_piece)
-    # Update the tracking value with the last value from the output vector.
-    tracking_value <- dplyr::last(out)
-  }
-
-  # Return the decoded integer vector.
-  return(out)
-}
-
-
-
 #' Read Complex Spectral Sign Information from a Connection
 #'
 #' This function reads a raw binary stream from a provided connection, expecting a specific format
@@ -252,11 +30,11 @@ seasonder_read_reduced_encoded_data <- function(connection, key, endian = "big")
 #' # Create a raw connection with sample data:
 #' con <- rawConnection(as.raw(c(0x42, 0x29, 0xa3, 0xd7, 0xFF, 0x00)))
 #' key <- list(size = 6, key = "csign")
-#' result <- seasonder_read_csign(con, key)
+#' result <- seasonder_CSSW_read_csign(con, key)
 #' print(result)
 #' close(con)
 #' }
-seasonder_read_csign <- function(connection, key) {
+seasonder_CSSW_read_csign <- function(connection, key) {
   # Store the number of bytes to read based on the key list.
   total_bytes <- key$size
 
@@ -333,7 +111,7 @@ seasonder_read_csign <- function(connection, key) {
 #'     \item Converts each byte into its 8-bit binary representation (using \code{rawToBits}) and flattens the results for each group.
 #'   }
 #'
-seasonder_read_asign <- function(connection, key) {
+seasonder_CSSW_read_asign <- function(connection, key) {
   # Determine the total number of bytes to read from the connection based on key$size.
   total_bytes <- key$size
 
@@ -518,7 +296,7 @@ seasonder_SeaSondeRCSSWApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 #' @return A list with elements named after the keys read. For reduced data blocks, each element contains either
 #'         the raw decoded data or the scaled voltage values if a 'scal' block had been applied.
 #'
-seasonder_readBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
+seasonder_readCSSWBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
   indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
   scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
   out <- list()
@@ -553,10 +331,10 @@ seasonder_readBodyRangeCell <- function(connection, specs, dbRef, endian = "big"
       out <- append(out, list(data_block) %>% magrittr::set_names(key$key))
     } else if(key$key %in% c("csgn")){
       # Process complex spectral sign information
-      out <- append(out, list(seasonder_read_csign(connection, key)) %>% magrittr::set_names(key$key))
+      out <- append(out, list(seasonder_CSSW_read_csign(connection, key)) %>% magrittr::set_names(key$key))
     } else if(key$key %in% c("asgn")){
       # Process self spectra sign information
-      out <- append(out, list(seasonder_read_asign(connection, key)) %>% magrittr::set_names(key$key))
+      out <- append(out, list(seasonder_CSSW_read_asign(connection, key)) %>% magrittr::set_names(key$key))
     } else {
       # For all other keys, process them as simple field blocks
       out <- append(out, list(seasonder_readCSSWFields(connection, purrr::chuck(specs, key$key),
@@ -582,7 +360,7 @@ seasonder_readCSSWBody <- function(connection, specs, size, dbRef, endian = "big
   out <- list()
   while(seek(connection) < end_point){
 
-    out <- append(out, list(seasonder_readBodyRangeCell(connection, specs,  dbRef,endian = endian, specs_key_size = specs_key_size)))
+    out <- append(out, list(seasonder_readCSSWBodyRangeCell(connection, specs,  dbRef,endian = endian, specs_key_size = specs_key_size)))
 
   }
   out <- seasonder_applyCSSWSigns(out)
@@ -678,11 +456,12 @@ seasonder_readCSSWHeader <- function(connection, current_specs, endian = "big", 
         # Special handling: for key 'cs4h', read the CS file header using its respective specifications
         CSHSpecs <- seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CS"), "header")
         out <- list(seasonder_readSeaSondeCSFileHeader(CSHSpecs, connection, endian)) %>% magrittr::set_names(key$key)
+        
       } else if(key$key %in% c("alim","wlim")){
 
         out <- seasonder_readCSSWHeader(connection, purrr::chuck(current_specs, key$key), endian, parent_key = key, keys_so_far = keys_so_far, specs_key_size = specs_key_size)
 
-        out$lims <- seasonder_readCSSWLims(connection, out$nRange,endian = endian)
+        out$lims <- seasonder_readCSSWLims(connection, out$nRange*4,endian = endian)
 
         out <- list(out) %>% magrittr::set_names(key$key)
 
@@ -702,19 +481,19 @@ seasonder_readCSSWHeader <- function(connection, current_specs, endian = "big", 
 #' Transform CSSW Header to SeaSondeRCS Header
 #'
 #' This helper function extracts the 'cs4h' component from a CSSW header, removes it from the original header,
-#' and embeds the remaining header information within the 'header_cssy' field of the CS header.
+#' and embeds the remaining header information within the 'header_csr' field of the CS header.
 #'
 #' @param header A list representing the CSSW header. Must contain a 'cs4h' component.
 #' @return A transformed header where the primary CS header is taken from 'cs4h' and the remaining CSSW header fields
-#'         are stored in the 'header_cssy' element.
+#'         are stored in the 'header_csr' element.
 seasonder_CSSW2CSHeader <- function(header) {
   if (is.null(header$cs4h)) {
     seasonder_logAndAbort("CSSW header does not contain a cs4h component")
   }
   header_cs <- header$cs4h  # Extract the valid CS header
-  header_cssy <- header    # Copy the original header
-  header_cssy$cs4h <- NULL  # Remove the cs4h component from the original header
-  header_cs$header_cssy <- header_cssy  # Embed the remaining header
+  header_csr <- header    # Copy the original header
+  header_csr$cs4h <- NULL  # Remove the cs4h component from the original header
+  header_cs$header_csr <- header_csr  # Embed the remaining header
   return(header_cs)
 }
 
@@ -827,13 +606,13 @@ seasonder_CSSW2CSData <- function(body) {
 
     # For cross spectra, combine the real and imaginary parts to create complex numbers
     if (!is.null(cell$c12m) && !is.null(cell$c12a)) {
-      CS12[row, ] <- c12m * exp(1i * c12a)
+      CS12[row, ] <- cell$c12m * exp(1i * cell$c12a)
     }
     if (!is.null(cell$c13m) && !is.null(cell$c13a)) {
-      CS13[row, ] <- c13m * exp(1i * c13a)
+      CS13[row, ] <- cell$c13m * exp(1i * cell$c13a)
     }
     if (!is.null(cell$c23m) && !is.null(cell$c23a)) {
-      CS23[row, ] <- c23m * exp(1i * c23a)
+      CS23[row, ] <- cell$c23m * exp(1i * cell$c23a)
     }
   }
 
@@ -964,7 +743,6 @@ seasonder_readSeaSondeRCSSWFile <- function(filepath, specs_path = seasonder_def
 
 
 
-
   header <- seasonder_readCSSWHeader(connection, header_specs,endian, specs_key_size = specs_key_size)
 
   dbRef <- header$dbrf$dBmReference
@@ -979,7 +757,6 @@ seasonder_readSeaSondeRCSSWFile <- function(filepath, specs_path = seasonder_def
 
 
   body <- seasonder_readCSSWBody(connection, body_specs, size = body_key$size, dbRef = dbRef, endian = endian, specs_key_size = specs_key_size)
-
 
 data <- seasonder_CSSW2CSData(body)
 
