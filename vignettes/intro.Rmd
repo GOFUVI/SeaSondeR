@@ -1,0 +1,36 @@
+---
+title: "SeaSondeR"
+output: rmarkdown::html_vignette
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{SeaSondeR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Instrument Introduction: SeaSonde
+SeaSonde is a compact HF radar system designed for coastal and regional monitoring of surface currents. It provides near real‐time measurements by exploiting the Bragg resonance phenomenon to detect Doppler shifts from ocean waves. SeaSondeR enables processing of both raw and averaged radar spectra and antenna pattern files to extract key oceanographic parameters.
+
+## Existing SeaSonde Data Processing Software
+Several software solutions exist for processing SeaSonde data:
+- **Radial Suite:** A proprietary tool developed by CODAR for computing radial metrics.
+- **Radiowave Operators Working Group Repositories:** Open-source Python scripts for cleaning and preprocessing SeaSonde spectra available at [spectra_tools](https://github.com/rowg/spectra_tools).
+- **hfr_cs_processing by Bryan Emery:** A MATLAB-based package for generating radar radials based on SeaSonde spectra.
+  
+## Tasks that Can be Performed with This R Package
+SeaSondeR is designed to:
+- Read and validate SeaSonde spectrum (CS) and antenna pattern files.
+- Compute the first order region by applying methods similar to those used by CODAR.
+- Apply the MUSIC algorithm for directional signal detection.
+- Calculate derived physical parameters (e.g., radial velocities, spectral resolutions).
+- Export radial metrics in formats compatible with CODAR tools.
+- Integrate with Docker and AWS for scalable and automated processing pipelines.
+
+
