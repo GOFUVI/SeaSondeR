@@ -110,18 +110,22 @@ seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_object, FOR) {
 
   nRanges <- seasonder_getnRangeCells(seasonder_cs_object)
 
-  nNegBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nNegBraggLeftIndex")$data %||% rep(0,nRanges)
+  nNegBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nNegBraggLeftIndex")$data %||% seasonder_getCSHeaderByPath(seasonder_cs_object,c("header_csr","alim","lims"))[,"LeftBraggLeftLimit"] %||% rep(0,nRanges)
 
   if (any(nNegBraggLeftIndex > 0)) {
-    nNegBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object,"nNegBraggRightIndex")$data %||% rep(0,nRanges)
+    nNegBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object,"nNegBraggRightIndex")$data %||% seasonder_getCSHeaderByPath(seasonder_cs_object,c("header_csr","alim","lims"))[,"LeftBraggRightLimit"] %||% rep(0,nRanges)
 
     if (any(nNegBraggRightIndex > 0 & nNegBraggLeftIndex > 0)) {
       out <-  1:nRanges %>% purrr::reduce(\(result,i) {
-        left_index <- nNegBraggLeftIndex[i]
-        right_index <- nNegBraggRightIndex[i]
+        if(i <= length(nNegBraggLeftIndex)){
 
-        if (left_index > 0 && right_index > 0 && left_index <= right_index) {
-          result[[i]]$negative_FOR <- seq(left_index+1, right_index+1)
+        
+          left_index <- nNegBraggLeftIndex[i]
+          right_index <- nNegBraggRightIndex[i]
+  
+          if (left_index > 0 && right_index > 0 && left_index <= right_index) {
+            result[[i]]$negative_FOR <- seq(left_index+1, right_index+1)
+          }
         }
         return(result)
       },.init = out)
@@ -129,18 +133,20 @@ seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_object, FOR) {
 
   }
 
-  nPosBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object,"nPosBraggLeftIndex")$data %||% rep(0,nRanges)
+  nPosBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object,"nPosBraggLeftIndex")$data %||% seasonder_getCSHeaderByPath(seasonder_cs_object,c("header_csr","alim","lims"))[,"RightBraggLeftLimit"] %||% rep(0,nRanges)
 
   if (any(nPosBraggLeftIndex > 0)) {
-    nPosBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object,"nPosBraggRightIndex")$data %||% rep(0,nRanges)
+    nPosBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object,"nPosBraggRightIndex")$data %||% seasonder_getCSHeaderByPath(seasonder_cs_object,c("header_csr","alim","lims"))[,"RightBraggRightLimit"] %||% rep(0,nRanges)
 
     if (any(nPosBraggRightIndex > 0 & nPosBraggLeftIndex > 0)) {
       out <-  1:nRanges %>% purrr::reduce(\(result,i) {
-        left_index <- nPosBraggLeftIndex[i]
-        right_index <- nPosBraggRightIndex[i]
+        if(i <= length(nNegBraggLeftIndex)){
+          left_index <- nPosBraggLeftIndex[i]
+          right_index <- nPosBraggRightIndex[i]
 
-        if (left_index > 0 && right_index > 0 && left_index <= right_index) {
-          result[[i]]$positive_FOR <- seq(left_index+1, right_index+1)
+          if (left_index > 0 && right_index > 0 && left_index <= right_index) {
+            result[[i]]$positive_FOR <- seq(left_index+1, right_index+1)
+          }
         }
         return(result)
       },.init = out)
@@ -284,7 +290,7 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 #'
 #' This generic function creates a SeaSondeRCS object either from a file path or directly from a list
 #' containing header and data. When \code{x} is a character string, the function determines the file type
-#' (either "CS" or "CSSY") by analyzing the spectra file and reads it using the appropriate reading function.
+#' (either "CS", "CSSY" or "CSSW") by analyzing the spectra file and reads it using the appropriate reading function.
 #' If \code{specs_path} is not provided (or set to \code{rlang::zap()}), the default YAML specifications path
 #' corresponding to the detected file type is used.
 #'
@@ -303,6 +309,7 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 #' \itemize{
 #'   \item \code{seasonder_readSeaSondeCSFile} for CS files.
 #'   \item \code{seasonder_readSeaSondeRCSSYFile} for CSSY files.
+#'   \item \code{seasonder_readSeaSondeRCSSWFile} for CSSW files.
 #' }
 #' For list inputs, the SeaSondeRCS object is created directly from the provided header and data.
 #' Additionally, a processing step is appended to the object using \code{seasonder_setSeaSondeRCS_ProcessingSteps}
@@ -311,7 +318,7 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 #' @seealso
 #' \code{\link{new_SeaSondeRCS}},
 #' \code{\link{seasonder_readSeaSondeCSFile}},
-#' \code{\link{seasonder_readSeaSondeRCSSYFile}},
+#' \code{\link{seasonder_readSeaSondeRCSSWFile}},
 #' \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}}
 #'
 #' @importFrom rlang zap
@@ -376,7 +383,7 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL, ...) {
 #' Create a SeaSondeRCS object from a file path
 #'
 #' This method creates a SeaSondeRCS object by reading a file from the specified file path.
-#' It verifies the file's existence, determines the file type ("CS" or "CSSY") using
+#' It verifies the file's existence, determines the file type ("CS", "CSSY" or "CSSW") using
 #' \code{seasonder_find_spectra_file_type}, and then reads the file using the appropriate function.
 #' If \code{specs_path} is not provided (or is set to \code{rlang::zap()}), the default YAML specifications
 #' file path is retrieved using \code{seasonder_defaultSpecsFilePath} based on the detected file type.
@@ -400,6 +407,7 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL, ...) {
 #'         \itemize{
 #'           \item \code{seasonder_readSeaSondeCSFile} for CS files.
 #'           \item \code{seasonder_readSeaSondeRCSSYFile} for CSSY files.
+#'           \item \code{seasonder_readSeaSondeRCSSWFile} for CSSW files.
 #'         }
 #'   \item Creates a SeaSondeRCS object using \code{new_SeaSondeRCS} with the header and data obtained from the file.
 #'   \item Appends a processing step indicating the creation source via \code{seasonder_setSeaSondeRCS_ProcessingSteps}
@@ -412,6 +420,7 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL, ...) {
 #' \code{\link{seasonder_defaultSpecsFilePath}},
 #' \code{\link{seasonder_readSeaSondeCSFile}},
 #' \code{\link{seasonder_readSeaSondeRCSSYFile}},
+#' \code{\link{seasonder_readSeaSondeRCSSWFile}},
 #' \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}},
 #' \code{\link{SeaSondeRCS_creation_step_text}}
 #'
@@ -438,7 +447,7 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path = rlang::zap(), 
     )
   }
 
-  # Determine the file type ("CS" or "CSSY") by analyzing the spectra file
+  # Determine the file type ("CS", "CSSY" or "CSSW") by analyzing the spectra file
   file_type <- seasonder_find_spectra_file_type(x, endian = endian)
 
   if (rlang::is_zap(specs_path)) {
@@ -449,7 +458,8 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path = rlang::zap(), 
   # Select the appropriate read function based on the file type
   read_fun <- switch(file_type,
                      CS = seasonder_readSeaSondeCSFile,
-                     CSSY = seasonder_readSeaSondeRCSSYFile)
+                     CSSY = seasonder_readSeaSondeRCSSYFile,
+                     CSSW = seasonder_readSeaSondeRCSSWFile)
 
   # Read the SeaSonde file using the chosen function
   result <- read_fun(x, specs_path, endian = endian)
@@ -4235,10 +4245,6 @@ seasonder_readSeaSondeCSFileData <- function(connection, header, endian = "big")
   return(out)
 }
 
-#### Read CSSY file ####
-
-
-#
 
 #### Transform functions ####
 

@@ -2,9 +2,9 @@ test_that("Related functions are defined",{
 
   expect_true(is.function(seasonder_read_reduced_encoded_data),
               info = "seasonder_read_reduced_encoded_data must be defined")
-  expect_true(is.function(seasonder_read_csign), info = "The function seasonder_read_csign must be implemented")
-  expect_true(is.function(seasonder_read_asign),
-              info = "The function seasonder_read_asign should exist")
+  expect_true(is.function(seasonder_CSSY_read_csign), info = "The function seasonder_CSSY_read_csign must be implemented")
+  expect_true(is.function(seasonder_CSSY_read_asign),
+              info = "The function seasonder_CSSY_read_asign should exist")
   expect_true(exists("seasonder_SeaSondeRCSSYApplyScaling", mode = "function"),
               info = "seasonder_SeaSondeRCSSYApplyScaling should be defined")
 
@@ -164,7 +164,7 @@ describe("Tests for seasonder_read_reduced_encoded_data function", {
 
 })
 
-describe("seasonder_read_csign", {
+describe("seasonder_CSSY_read_csign", {
 
   it("returns a list with 6 groups for valid input with nDopplers = 8", {
     # For nDopplers = 8, key$size should be 6 bytes (6 * (8/8) = 6)
@@ -174,7 +174,7 @@ describe("seasonder_read_csign", {
     con <- rawConnection(raw_data, "rb")
     on.exit(close(con), add = TRUE)
 
-    result <- seasonder_read_csign(con, key)
+    result <- seasonder_CSSY_read_csign(con, key)
 
     # Check that the result is a list and has 6 elements
     expect_true(is.list(result), info = "The function should return a list")
@@ -218,7 +218,7 @@ describe("seasonder_read_csign", {
     con <- rawConnection(raw_data, "rb")
     on.exit(close(con), add = TRUE)
 
-    result <- seasonder_read_csign(con, key)
+    result <- seasonder_CSSY_read_csign(con, key)
 
     # Each group should have 2 bytes worth of bits, i.e., 16 bits in total.
     for (group in result) {
@@ -244,7 +244,7 @@ describe("seasonder_read_csign", {
     on.exit(close(con), add = TRUE)
 
     expect_error(
-      seasonder_read_csign(con, key),
+      seasonder_CSSY_read_csign(con, key),
       regexp = "([Nn]ot enough|insufficient)",
       info = "The function should error when the connection does not provide enough bytes"
     )
@@ -255,7 +255,7 @@ describe("seasonder_read_csign", {
 
 
 
-describe("seasonder_read_asign", {
+describe("seasonder_CSSY_read_asign", {
 
   it("returns a list with 3 groups for valid input with nDopplers = 8", {
     # For nDopplers = 8, the size should be 3 * (8/8) = 3 bytes
@@ -265,7 +265,7 @@ describe("seasonder_read_asign", {
     con <- rawConnection(raw_data, "rb")
     on.exit(close(con), add = TRUE)
 
-    result <- seasonder_read_asign(con, key)
+    result <- seasonder_CSSY_read_asign(con, key)
 
     # Verify that the result is a list with 3 groups
     expect_true(is.list(result),
@@ -311,7 +311,7 @@ describe("seasonder_read_asign", {
     con <- rawConnection(raw_data, "rb")
     on.exit(close(con), add = TRUE)
 
-    result <- seasonder_read_asign(con, key)
+    result <- seasonder_CSSY_read_asign(con, key)
 
     # Each group should have 16 bits after conversion (2 bytes * 8 bits)
     for (group in result) {
@@ -346,21 +346,21 @@ describe("seasonder_read_asign", {
     on.exit(close(con), add = TRUE)
 
     expect_error(
-      seasonder_read_asign(con, key),
+      seasonder_CSSY_read_asign(con, key),
       regexp = "([Nn]ot enough|insufficient)",
       info = "The function should error when the connection does not provide enough bytes"
     )
   })
 
   it("errors when key$size is not divisible by 3", {
-    # For seasonder_read_asign, the total size should be divisible by 3.
+    # For seasonder_CSSY_read_asign, the total size should be divisible by 3.
     key <- list(key = "asign", size = 5)  # 5 is not divisible by 3
     raw_data <- as.raw(c(0xFF, 0x00, 0xAA, 0x55, 0x11))
     con <- rawConnection(raw_data, "rb")
     on.exit(close(con), add = TRUE)
 
     expect_error(
-      seasonder_read_asign(con, key),
+      seasonder_CSSY_read_asign(con, key),
       regexp = "Invalid total size",
       info = "The function should error when key$size is not divisible by 3"
     )
@@ -447,7 +447,7 @@ describe("seasonder_SeaSondeRCSSYApplyScaling", {
 })
 
 
-describe("seasonder_readBodyRangeCell",{
+describe("seasonder_readCSSYBodyRangeCell",{
 
   # Test: Verify that when a scaling block is provided, the reduced data block is scaled correctly
 
@@ -485,7 +485,7 @@ describe("seasonder_readBodyRangeCell",{
       seasonder_read_reduced_encoded_data = function(connection, key, endian) {
         return(c(1000, 2000, 3000))
       },
-    result <- seasonder_readBodyRangeCell(con, specs, dbRef = -20, endian = "big", specs_key_size = NULL)
+    result <- seasonder_readCSSYBodyRangeCell(con, specs, dbRef = -20, endian = "big", specs_key_size = NULL)
 )
     expected <- sapply(c(1000, 2000, 3000), function(val){
       if(val == 0xFFFFFFFF) return(NaN)
@@ -524,7 +524,7 @@ describe("seasonder_readBodyRangeCell",{
         return(res)
       },
 
-      result <- seasonder_readBodyRangeCell(con, specs, endian = "big", specs_key_size = NULL)
+      result <- seasonder_readCSSYBodyRangeCell(con, specs, endian = "big", specs_key_size = NULL)
     )
 
 
