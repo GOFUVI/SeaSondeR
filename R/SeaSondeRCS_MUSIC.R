@@ -2535,6 +2535,7 @@ seasonder_MUSICCovDecomposition <- function(seasonder_cs_object){
 #'           covariance matrix of the signals.
 #' @param a A complex-valued vector representing the antenna manifold response for a specific
 #'          bearing. Each element corresponds to the response of an antenna element.
+#' @param Conj_t_a The conjugate transpose of the antenna manifold vector \code{a}.
 #'
 #' @return A complex scalar representing the magnitude of the projection of the antenna
 #'         manifold vector onto the noise subspace. This value indicates how close the
@@ -2564,16 +2565,18 @@ seasonder_MUSICCovDecomposition <- function(seasonder_cs_object){
 #' # Assume En is a 3x3 noise subspace eigenvector matrix and a is the antenna manifold vector.
 #' En <- matrix(c(0.5+0.5i, -0.3i, 0, 0.4, 0.6-0.2i, -0.4i, 0, 0.3+0.3i, -0.1i), nrow = 3)
 #' a <- c(1+1i, -0.5+0.5i, 0.2-0.3i)
-#' projection <- seasonder_compute_antenna_pattern_proyections(En, a)
+#' Conj_t_a <- Conj(t(a))
+#' projection <- seasonder_compute_antenna_pattern_proyections(En, a, Conj_t_a)
 #' }
 #'
-seasonder_compute_antenna_pattern_proyections <- function(En, a){
+seasonder_compute_antenna_pattern_proyections <- function(En, a, Conj_t_a){
   # Computes the projection of the antenna pattern onto the noise subspace.
   # This function is used to calculate the Euclidean distance in the MUSIC algorithm.
   # En: A matrix containing eigenvectors corresponding to the noise subspace.
   # a: A vector representing the antenna pattern response for a specific bearing.
+  # Conj_t_a: The conjugate transpose of the antenna pattern vector.
   # The formula used is a conjugate transpose of 'a' times En, times En's conjugate transpose, times 'a'.
-  Conj(t(a)) %*% (En %*% Conj(t(En))) %*% a
+  Conj_t_a %*% (En %*% Conj(t(En))) %*% a
 }
 
 
@@ -2637,6 +2640,18 @@ seasonder_MUSICComputeDOAProjections <- function(seasonder_cs_object){
   # Retrieves the MUSIC-related data associated with the CS object.
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
+  a_list <- purrr::map(seq_along(bearings), \(i){
+    # Extracts the antenna pattern response for the current bearing.
+    a <- seasonder_apm_obj[,i, drop = F]
+    names(a) <- NULL
+    return(a)
+  })
+
+  Conj_t_a_list <- purrr::map(a_list, \(a){
+    # Computes the conjugate transpose of the antenna pattern response.
+    Conj(t(a))
+  })
+
   # Updates the MUSIC object by calculating proyections of the antenna pattern into the noise sub-space for each Doppler bin.
   MUSIC %<>% dplyr::mutate(projections = purrr::map(eigen, \(eigen_analysis){
     # Initializes an empty matrix to store the projections for single and dual solutions.
@@ -2648,13 +2663,10 @@ seasonder_MUSICComputeDOAProjections <- function(seasonder_cs_object){
       En <- eigen_analysis$vectors[,(i+1):3, drop = F]
 
       # Iterates over all bearings to calculate the projection.
-      for(j in 1:length(bearings)){
-        # Extracts the antenna pattern response for the current bearing.
-        a <- seasonder_apm_obj[,j, drop = F]
-        names(a) <- NULL
+      for(j in seq_along(bearings)){
 
         # Calculates the projection for the current solution and bearing.
-        out[i,j] <- seasonder_compute_antenna_pattern_proyections(En,a)
+        out[i,j] <- seasonder_compute_antenna_pattern_proyections(En,a_list[[j]],Conj_t_a_list[[j]])
       }
     }
 
@@ -3214,7 +3226,9 @@ out %<>% seasonder_computeNoiseLevel(antenna = 1,smoothed= MUSIC_options$smoothN
   # Extract peaks from the DOA functions, representing potential signal directions.
   out %<>% seasonder_MUSICExtractPeaks()
 
+
 if(discard_no_solution){
+  # Remove entries with no valid solutions from the MUSIC results.
   out %<>% seasonder_MUSIC_remove_no_solutions()
 }
 
@@ -4001,149 +4015,13 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
   out <- out %>% dplyr::mutate(HEAD = (BEAR -180) %% 360)
 
   
-  # Iterate over each row of the MUSIC table
-  # for (i in seq_len(nrow(music))) {
-    # row_music <- music[i, ]
-
-    # Create a template row with all columns initialized to NA
-    # row_template <- as.list(setNames(rep(NA, length(cols)), cols))
-    # row_template$MSA1 <- 1440L
-    # row_template$MDA1 <- 1440L
-    # row_template$MDA2 <- 1440L
-
-
-
-    
-
-    # row_template$VFLG <- row_music$VFLG
-
-    # Copy basic numeric fields from MUSIC
-    # row_template$VELO <- row_music$radial_v * 100
-    # row_template$RNGE <- row_music$range
-
-    # Fill additional columns from MUSIC table if available
-    # row_template$SPRC <- row_music$range_cell
-    # row_template$SPDC <- row_music$doppler_bin -1
-    # row_template$MEGR <- row_music$eigen_values_ratio
-    # row_template$MPKR <- row_music$signal_power_ratio
-    # row_template$MOFR <- tidyr::replace_na(row_music$diag_off_diag_power_ratio, 0)
-
-# row_template$MDRJ <- seasonder_computeMDRJ(row_music)
-
-    # eig_all <- music$eigen[[i]]
-
-    # row_template$MEI1 <- eig_all$values[1]
-    # row_template$MEI2 <- eig_all$values[2]
-    # row_template$MEI3 <- eig_all$values[3]
-
-    # ds_all <- music$DOA_solutions[[i]]
-
-    # if(length(ds_all$single$bearing) >0){
-    #   row_template$MSA1 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$single$bearing,seasonder_apm_obj)[[1]]
-    # }
-    # if(length(ds_all$dual$bearing) >0){
-    #   row_template$MDA1 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$dual$bearing[1],seasonder_apm_obj)[[1]]
-    #   if(length(ds_all$dual$bearing) >1){
-    #     row_template$MDA2 <- seasonder_MUSICBearing2GeographicalBearing(ds_all$dual$bearing[2],seasonder_apm_obj)[[1]]
-    #   }
-    # }
-    # row_template$MSR1 <- 10^(ds_all$single$peak_resp/10)
-    # row_template$MDR1 <- 10^(ds_all$dual$peak_resp[1]/10)
-    # row_template$MDR2 <- 10^(ds_all$dual$peak_resp[2]/10)
-
-    # row_template$MSW1 <- ds_all$single$peak_width
-    # row_template$MDW1 <- ds_all$dual$peak_width[1]
-    # row_template$MDW2 <- ds_all$dual$peak_width[2]
-
-
-    # row_template$MSP1 <- as.numeric(10*log10(abs(ds_all$single$P)))
-    # row_template$MDP1 <- as.numeric(10*log10(abs(ds_all$dual$P[1,1])))
-    # if(length(ds_all$dual$bearing) >1){
-    #   row_template$MDP2 <- as.numeric(10*log10(abs(ds_all$dual$P[2,2])))
-
-    # }
-    # row_template$MP13 <-  Arg(row_music$cov[[1]][1,3])*180/pi
-    # row_template$MP23 <-  Arg(row_music$cov[[1]][2,3])*180/pi
-    # row_template$MA13 <-  abs(row_music$cov[[1]][1,3])#abs(row_music$cov[[1]][1,1])/abs(row_music$cov[[1]][3,3])
-    # row_template$MA23 <-  abs(row_music$cov[[1]][2,3])#abs(row_music$cov[[1]][2,2])/abs(row_music$cov[[1]][3,3])
-# row_template$MA3S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][3,3])) -
-# (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 3))[row_template$SPRC]
-
-# row_template$MA2S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][2,2])) -
-#   (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 2))[row_template$SPRC]
-
-# row_template$MA1S <- (seasonder_SelfSpectra2dB(seasonder_cs_object, row_music$cov[[1]][1,1])) -
-#   (seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1))[row_template$SPRC]
-
-
-    # Check for DOA solutions and output all available ones: single and dual
-
-    # if (row_music$retained_solution == "single") {
-      
-      # row_single <- row_template
-
-# Assign location data if available
-    # if (!is.null(row_music$lonlat[[1]]) && nrow(row_music$lonlat[[1]]) > 0) {
-    #   row_single$LOND <- row_music$lonlat[[1]]$lon[1]
-    #   row_single$LATD <- row_music$lonlat[[1]]$lat[1]
-    # }
-
-      # row_single$MSEL <- 1
-      # row_single$BEAR <- row_single$MSA1
-      # row_single$HEAD <- (row_single$BEAR -180) %% 360
-      # row_single$PPFG <-  row_music$DOA[[1]]$PPFG
-      # row_single$PWFG <-  row_music$DOA[[1]]$PWFG
-      # out_rows[[length(out_rows) + 1]] <- row_single
-    # }else if (row_music$retained_solution == "dual") {
-      # ds <- ds_all$dual
-
-      # row_dual1 <- row_template
-
-# Assign location data if available
-    # if (!is.null(row_music$lonlat[[1]]) && nrow(row_music$lonlat[[1]]) > 0) {
-    #   row_dual1$LOND <- row_music$lonlat[[1]]$lon[1]
-    #   row_dual1$LATD <- row_music$lonlat[[1]]$lat[1]
-    # }
-
-    #   row_dual1$MSEL <- 2
-
-    #   row_dual1$BEAR <- row_dual1$MDA1
-    #   row_dual1$HEAD <- (row_dual1$BEAR -180) %% 360
-    #   row_dual1$PPFG <-  row_music$DOA[[1]]$PPFG[1]
-    #   row_dual1$PWFG <-  row_music$DOA[[1]]$PWFG[1]
-    #   out_rows[[length(out_rows) + 1]] <- row_dual1
-
-
-    #   row_dual2 <- row_template
-
-      # row_dual2$MSEL <- 3
-# Assign location data if available
-    # if (!is.null(row_music$lonlat[[1]]) && nrow(row_music$lonlat[[1]]) > 1) {
-    #   row_dual2$LOND <- row_music$lonlat[[1]]$lon[2]
-    #   row_dual2$LATD <- row_music$lonlat[[1]]$lat[2]
-    # }
-      # row_dual2$BEAR <- row_dual1$MDA2
-      # row_dual2$HEAD <- (row_dual2$BEAR -180) %% 360
-      # row_dual2$PPFG <-  row_music$DOA[[1]]$PPFG[2]
-      # row_dual2$PWFG <-  row_music$DOA[[1]]$PWFG[2]
-      # out_rows[[length(out_rows) + 1]] <- row_dual2
-
-    # }
-  # }
-
-  # Combine rows into a data.frame; if no rows, return empty data.frame with correct columns
+  # If no rows, return empty data.frame with correct columns
   if (nrow(out) > 0) {
     # result <- do.call(rbind, lapply(out_rows, as.data.frame))
     out <- out %>% dplyr::mutate( VFLG = VFLG + 4096L * as.integer(! PPFG %in% c(1,9) | !PWFG %in% c(1,9)),
                                VELU = VELO * sin(HEAD * pi / 180),
                                VELV = VELO * cos(HEAD * pi / 180)#,
-                              #  MPKR = tidyr::replace_na(MPKR, 0),
-                              #  MDP1 = tidyr::replace_na(MDP1, 0),
-                              #  MDP2 = tidyr::replace_na(MDP2, 0),
-                              #  MDR1 = tidyr::replace_na(MDR1, 0),
-                              #  MDR2 = tidyr::replace_na(MDR2, 0),
-                              #  MDW1 = tidyr::replace_na(MDW1, 0),
-                              #  MDW2 = tidyr::replace_na(MDW2, 0)
+                             
                                )
 
 
