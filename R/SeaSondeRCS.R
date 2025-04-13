@@ -454,7 +454,6 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path = rlang::zap(), 
     # Retrieve the default specifications file path based on the detected file type
     specs_path <- seasonder_defaultSpecsFilePath(type = file_type)
   }
-
   # Select the appropriate read function based on the file type
   read_fun <- switch(file_type,
                      CS = seasonder_readSeaSondeCSFile,

@@ -1,4 +1,4 @@
-' Read Reduced Encoded Data from a Binary Connection
+#' Read Reduced Encoded Data from a Binary Connection
 #'
 #' This function reads an array of numbers from a binary connection using a custom command-based protocol.
 #' A block of data is processed according to its size specified in \code{key$size}. Within the block, the first byte read
