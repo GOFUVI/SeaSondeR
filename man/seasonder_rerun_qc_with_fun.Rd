@@ -14,7 +14,7 @@ seasonder_rerun_qc_with_fun(cond, qc_fun)
 the value from the field as its sole argument and return a QC-applied value.}
 }
 \value{
-The value returned by the alternate QC function \code{qc_fun}.
+The value returned by the alternate quality control function.
 }
 \description{
 Provides a structured restart mechanism to rerun the quality control (QC) function

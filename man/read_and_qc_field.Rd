@@ -23,9 +23,7 @@ this function should be present in the shared environment \code{seasonder_the} a
 \item{endian}{A character string indicating the byte order. Options are "big" and "little" (default is "big").}
 }
 \value{
-The value of the field after quality control. Can be the original value, a transformed value,
-or NULL if the value fails quality control. The exact behavior of the quality control function, including
-the handling of NULL values, is detailed in \code{seasonder_readSeaSondeCSFileBlock}.
+The value of the field after applying quality control.
 }
 \description{
 This auxiliary function reads a field from a binary file using a provided specification and

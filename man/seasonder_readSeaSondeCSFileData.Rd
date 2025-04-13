@@ -15,7 +15,7 @@ of the \code{seasonder_readSeaSondeCSFileHeader} function.}
 \item{endian}{Character string indicating the byte order. Options are "big" (default) or "little".}
 }
 \value{
-A list containing the matrices for \verb{SSA*}, \code{CSxy}, and \code{QC} (when applicable).
+A list containing the processed CS file data including matrices for SSA*, CSxy, and QC (if applicable).
 }
 \description{
 This function reads the SeaSonde CS file data based on the provided header information.

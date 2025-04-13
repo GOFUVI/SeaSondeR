@@ -515,12 +515,6 @@ validate_SeaSondeRCS_ProcessingSteps <- function(steps) {
 #'   \item \code{seasonder_CS_missing_nRange_nDoppler_error}: Triggered when either nRangeCells or nDopplerCells is missing from the header.
 #' }
 #'
-#' \strong{Condition Cases}:
-#' \itemize{
-#'   \item When the header is not a list, the function throws an error with the class `seasonder_CS_header_is_not_a_list`.
-#'   \item If either nRangeCells or nDopplerCells is missing, an error with the class `seasonder_CS_missing_nRange_nDoppler_error` is thrown.
-#' }
-#'
 #' @return Invisible NULL if the header structure is valid. Otherwise, an error is thrown.
 #'
 #' @export
@@ -2979,7 +2973,7 @@ seasonder_validateCSFileData <- function(filepath, header) {
 #' 2. The calling function (`seasonder_readSeaSondeCSFile`) will immediately return a list with `header = NULL` and `data = NULL`.
 #'
 #'
-#' @return If invoked, the function returns a list with both `header` and `data` set to NULL.
+#' @return A list with header = NULL and data = NULL.
 #' @examples
 #' \dontrun{
 #'   tryCatch({
@@ -3203,7 +3197,7 @@ seasonder_raw_to_int <- function(r,signed = F) {
 #'
 #' The `seasonder_skip_cs_field` function provides an easy way to invoke this restart. When called within a custom condition handler, it signals the intention to skip the current CSField reading due to an error and specifies a return value.
 #'
-#' @return Returns the value specified by the `value` parameter.
+#' @return The value specified in the 'value' parameter.
 #'
 #'
 #' @examples
@@ -3224,7 +3218,7 @@ seasonder_skip_cs_field <- function(cond,value) {
 #' @param con A connection object to a binary file.
 #' @param type A character string identifying the type of data to read.
 #' @param endian A character string indicating the byte order. Options are "big" and "little" (default is "big").
-#' @return The value read from the connection.
+#' @return The value obtained from reading the CSField according to the specified type.
 #' @importFrom rlang !!!
 #' @examples
 #' \dontrun{
@@ -3404,7 +3398,7 @@ seasonder_readCSField <- function(con, type, endian = "big") {
 #' @param qc_fun An alternate quality control function to apply. This function should accept
 #' the value from the field as its sole argument and return a QC-applied value.
 #'
-#' @return The value returned by the alternate QC function `qc_fun`.
+#' @return The value returned by the alternate quality control function.
 #' @examples
 #' \dontrun{
 #'   val <- seasonder_rerun_qc_with_fun(list(seasonder_value = 42), function(x) x * 2)
@@ -3433,9 +3427,7 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun) {
 #' @param endian A character string indicating the byte order. Options are "big" and "little" (default is "big").
 #'
 #'
-#' @return The value of the field after quality control. Can be the original value, a transformed value,
-#'   or NULL if the value fails quality control. The exact behavior of the quality control function, including
-#'   the handling of NULL values, is detailed in `seasonder_readSeaSondeCSFileBlock`.
+#' @return The value of the field after applying quality control.
 #'
 #'
 #' @section Condition Management:
@@ -3652,6 +3644,7 @@ seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian = "big") {
 #' }
 #'
 #'
+#' @return Invisibly returns NULL.
 #' @examples
 #' \dontrun{
 #'   specs <- list(field1 = "spec1", field2 = "spec2")
@@ -4056,8 +4049,7 @@ readV6BlockData <- function(specs, connection, endian = "big", prev_data = NULL,
 #' an option to skip the problematic transformation and proceed with a fallback value.
 #'
 #'
-#' @return This function does not have a standard return value. Instead, it triggers a restart
-#' that can be caught by an enclosing context to handle the error and decide how to proceed.
+#' @return This function triggers a restart and does not return a usual value.
 #' @examples
 #' \dontrun{
 #'   tryCatch({
@@ -4371,7 +4363,7 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
 #'   \item Non-numeric values encountered where numeric spectra data is expected.
 #' }
 #'
-#' @return A list containing the matrices for `SSA*`, `CSxy`, and `QC` (when applicable).
+#' @return A list containing the processed CS file data including matrices for SSA*, CSxy, and QC (if applicable).
 #'
 #'
 #' @examples

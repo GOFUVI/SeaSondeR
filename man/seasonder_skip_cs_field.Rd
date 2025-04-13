@@ -12,7 +12,7 @@ seasonder_skip_cs_field(cond, value)
 \item{value}{The desired return value to use in place of the CSField reading that encountered an error.}
 }
 \value{
-Returns the value specified by the \code{value} parameter.
+The value specified in the 'value' parameter.
 }
 \description{
 This function is a convenience mechanism to invoke the \code{seasonder_skip_cs_field} restart option. It can be used in custom condition handlers when reading a CSField from a binary connection encounters an error or condition. When called, it indicates the intention to skip reading the current CSField and return a specific value.

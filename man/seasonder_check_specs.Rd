@@ -11,6 +11,9 @@ seasonder_check_specs(specs, fields)
 
 \item{fields}{A character vector of field names to be checked in the \code{specs}.}
 }
+\value{
+Invisibly returns NULL.
+}
 \description{
 This function checks if the provided specifications (\code{specs}) contain entries for all the required fields listed in \code{fields}.
 }
