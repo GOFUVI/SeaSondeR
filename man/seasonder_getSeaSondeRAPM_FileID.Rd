@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_FileID(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The FileID attribute from the object.
+}
 \description{
 Getter for FileID
+}
+\examples{
+\dontrun{
+  file_id <- seasonder_getSeaSondeRAPM_FileID(obj)
+}
 }

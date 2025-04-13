@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_BEAR(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated BEAR.
+}
 \description{
 Setter for BEAR
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_BEAR(obj, new_bear)
+}
 }

@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_AntennaBearing(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated AntennaBearing.
+}
 \description{
 Setter for AntennaBearing
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_AntennaBearing(obj, new_antenna_bearing)
+}
 }

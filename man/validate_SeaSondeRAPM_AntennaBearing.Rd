@@ -15,3 +15,8 @@ Returns TRUE if the validation passes.
 \description{
 This function validates if the provided AntennaBearing is a numeric value.
 }
+\examples{
+\dontrun{
+  valid <- validate_SeaSondeRAPM_AntennaBearing(45)
+}
+}

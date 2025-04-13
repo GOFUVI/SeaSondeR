@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_PhaseCorrections(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated PhaseCorrections.
+}
 \description{
 Setter for PhaseCorrections
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_PhaseCorrections(obj, new_phase_corrections)
+}
 }

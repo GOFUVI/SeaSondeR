@@ -67,6 +67,19 @@ Using the \code{seasonder_v6_skip_transformation} restart:
 Proper error management ensures the integrity of the reading process and provides detailed feedback to users regarding issues and potential resolutions.
 }
 
+\examples{
+\dontrun{
+  con <- rawConnection(as.raw(rep(0, 300)))
+  specs <- list(
+    nCS6ByteSize = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
+    block_spec = list( /* block spec details placeholder */ ),
+    blocks = list()
+  )
+  header <- seasonder_readSeaSondeCSFileHeaderV6(specs, con, endian = "big")
+  print(header)
+  close(con)
+}
+}
 \seealso{
 \code{\link{seasonder_check_specs}}
 \code{\link{seasonder_readSeaSondeCSFileBlock}}

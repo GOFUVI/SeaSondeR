@@ -10,8 +10,13 @@ SeaSondeRAPM_creation_step_text(file_path)
 \item{file_path}{A character string specifying the path to the file.}
 }
 \value{
-A character string with the formatted message indicating the time of creation and the file path.
+A character string with the formatted creation message.
 }
 \description{
 This function generates a text message indicating the time an APM object was created based on the current system time and the provided file path.
+}
+\examples{
+\dontrun{
+  msg <- SeaSondeRAPM_creation_step_text("path/to/file")
+}
 }

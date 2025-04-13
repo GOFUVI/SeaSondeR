@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_StationCode(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The StationCode attribute from the object.
+}
 \description{
 Getter for StationCode
+}
+\examples{
+\dontrun{
+  station_code <- seasonder_getSeaSondeRAPM_StationCode(obj)
+}
 }

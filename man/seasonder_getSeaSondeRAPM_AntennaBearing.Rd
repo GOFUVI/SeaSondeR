@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_AntennaBearing(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The AntennaBearing attribute from the object.
+}
 \description{
 Getter for AntennaBearing
+}
+\examples{
+\dontrun{
+  antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(obj)
+}
 }

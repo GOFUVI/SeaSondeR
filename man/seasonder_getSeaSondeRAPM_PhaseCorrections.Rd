@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_PhaseCorrections(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The PhaseCorrections attribute from the object.
+}
 \description{
 Getter for PhaseCorrections
+}
+\examples{
+\dontrun{
+  phase_corrections <- seasonder_getSeaSondeRAPM_PhaseCorrections(obj)
+}
 }

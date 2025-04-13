@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_Type(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The Type attribute from the object.
+}
 \description{
 Getter for Type
+}
+\examples{
+\dontrun{
+  type <- seasonder_getSeaSondeRAPM_Type(obj)
+}
 }

@@ -21,6 +21,19 @@ This function reads and processes the header of a SeaSonde CS file. It initially
 the general header (Version 1) to determine the file version. Subsequent headers are processed
 based on the file version.
 }
+\examples{
+\dontrun{
+  con <- rawConnection(as.raw(rep(0, 300)))
+  specs <- list(
+    V1 = list(...),
+    V2 = list(...),
+    V3 = list(...)
+  )
+  header <- seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
+  print(header)
+  close(con)
+}
+}
 \seealso{
 \code{\link{seasonder_readSeaSondeCSFileHeaderV1}}
 \code{\link{process_version_header}}

@@ -21,3 +21,8 @@ This function reads a row of numbers from a matrix that is represented
 as an array of text lines. It is used to facilitate reading data from
 SeaSonde APM files.
 }
+\examples{
+\dontrun{
+  row <- read_matrix_row(lines, 1, 3)
+}
+}

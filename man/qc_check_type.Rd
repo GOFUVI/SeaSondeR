@@ -17,3 +17,9 @@ The original field_value if it matches the expected_type; otherwise, an error is
 \description{
 This function verifies if a given value is of the expected type.
 }
+\examples{
+\dontrun{
+  result <- qc_check_type(42, "numeric")
+  print(result)
+}
+}

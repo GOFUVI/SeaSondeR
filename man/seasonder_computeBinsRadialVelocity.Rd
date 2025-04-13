@@ -37,9 +37,10 @@ for bins with frequencies above zero.
 }
 \examples{
 \dontrun{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object and `freq` contains Doppler frequencies
-radial_velocities <- seasonder_computeBinsRadialVelocity(cs_object, freq)
-print(radial_velocities)
+  cs_obj <- seasonder_createSeaSondeRCS(...)
+  freq <- seq(-10, 10, length.out = 128)
+  rv <- seasonder_computeBinsRadialVelocity(cs_obj, freq)
+  print(rv)
 }
 }
 \seealso{

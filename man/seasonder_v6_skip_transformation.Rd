@@ -35,3 +35,10 @@ the transformation process of a specific block, the restart provides users with
 an option to skip the problematic transformation and proceed with a fallback value.
 }
 
+\examples{
+\dontrun{
+  tryCatch({
+    seasonder_v6_skip_transformation(simpleError("test error"), "default")
+  }, seasonder_v6_block_transformacion_skipped = function(e) NULL)
+}
+}

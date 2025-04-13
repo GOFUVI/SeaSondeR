@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_quality_matrix(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated quality_matrix.
+}
 \description{
 Setter for quality_matrix
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_quality_matrix(obj, new_quality_matrix)
+}
 }

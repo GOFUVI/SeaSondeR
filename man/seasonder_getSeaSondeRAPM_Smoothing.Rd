@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_Smoothing(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The Smoothing attribute from the object.
+}
 \description{
 Getter for Smoothing
+}
+\examples{
+\dontrun{
+  smoothing <- seasonder_getSeaSondeRAPM_Smoothing(obj)
+}
 }

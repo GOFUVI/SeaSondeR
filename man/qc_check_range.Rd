@@ -22,3 +22,9 @@ The original field_value if it's within range and matches the expected_type; oth
 This function verifies if a given value lies within a specified range
 and matches the expected type, if provided.
 }
+\examples{
+\dontrun{
+  result <- qc_check_range(5, 0, 10)
+  print(result)
+}
+}

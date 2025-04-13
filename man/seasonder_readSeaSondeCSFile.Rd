@@ -62,6 +62,12 @@ This function provides a structured mechanism to recover from errors during its 
 }
 }
 
+\examples{
+\dontrun{
+  cs <- seasonder_readSeaSondeCSFile("path/to/csfile", "path/to/specs.yml", endian = "big")
+  print(cs)
+}
+}
 \references{
 Cross Spectra File Format Version 6. CODAR. 2016
 }

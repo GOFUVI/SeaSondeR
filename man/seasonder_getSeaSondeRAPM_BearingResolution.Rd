@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_BearingResolution(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The BearingResolution attribute from the object.
+}
 \description{
 Getter for BearingResolution
+}
+\examples{
+\dontrun{
+  bearing_resolution <- seasonder_getSeaSondeRAPM_BearingResolution(obj)
+}
 }

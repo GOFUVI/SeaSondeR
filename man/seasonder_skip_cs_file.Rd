@@ -28,3 +28,10 @@ The effect of invoking this restart is twofold:
 \item The calling function (\code{seasonder_readSeaSondeCSFile}) will immediately return a list with \code{header = NULL} and \code{data = NULL}.
 }
 }
+\examples{
+\dontrun{
+  tryCatch({
+    seasonder_skip_cs_file(simpleError("test error"))
+  }, seasonder_cs_file_skipped = function(e) NULL)
+}
+}

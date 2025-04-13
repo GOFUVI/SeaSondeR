@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_SiteName(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated SiteName.
+}
 \description{
 Setter for SiteName
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_SiteName(obj, new_site_name)
+}
 }

@@ -20,3 +20,10 @@ This function calculates the frequency limits for each Doppler bin within a SeaS
 \details{
 The function internally utilizes several helper functions such as \code{seasonder_getCenterDopplerBin()}, \code{seasonder_getnDopplerCells()}, and \code{seasonder_getDopplerSpectrumResolution()} to calculate the Doppler bin frequencies. Furthermore, when normalization is requested, it uses \code{seasonder_getBraggDopplerAngularFrequency()} to obtain the second Bragg frequency for normalization purposes.
 }
+\examples{
+\dontrun{
+  cs_obj <- seasonder_createSeaSondeRCS(...)
+  freqs <- seasonder_getDopplerBinsFrequency(cs_obj)
+  print(freqs)
+}
+}

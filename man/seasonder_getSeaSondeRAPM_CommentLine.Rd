@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_CommentLine(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The CommentLine attribute from the object.
+}
 \description{
 Getter for CommentLine
+}
+\examples{
+\dontrun{
+  comment_line <- seasonder_getSeaSondeRAPM_CommentLine(obj)
+}
 }

@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_CreateTimeStamp(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The CreateTimeStamp attribute from the object.
+}
 \description{
 Getter for CreateTimeStamp
+}
+\examples{
+\dontrun{
+  create_time_stamp <- seasonder_getSeaSondeRAPM_CreateTimeStamp(obj)
+}
 }
