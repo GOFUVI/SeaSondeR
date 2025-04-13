@@ -1283,7 +1283,7 @@ seasonder_extrapolateAPM <- function(seasonder_apm_object, n = 1) {
   # left_new: sequence of new bearings to the left of the original (decreasing values)
   # right_new: sequence of new bearings to the right of the original (increasing values)
   left_new <- seq(from = BEAR[1] - n * res, to = BEAR[1] - res, by = res)
-  right_new <- seq(from = tail(BEAR, 1) + res, to = tail(BEAR, 1) + n * res, by = res)
+  right_new <- seq(from = utils::tail(BEAR, 1) + res, to = utils::tail(BEAR, 1) + n * res, by = res)
   new_BEAR <- c(left_new, BEAR, right_new)
 
   # Store the original measurement matrix in M
@@ -1573,6 +1573,7 @@ seasonder_readPhaseFile <- function(file_path) {
 #'
 #' @export
 seasonder_plotAPMLoops <- function(seasonder_apm_obj) {
+  loop <- rlang::zap()
   # Convert the BEAR attribute to geographical bearings using a helper function and unlist the result
   bearings <- seasonder_MUSICBearing2GeographicalBearing(attr(seasonder_apm_obj, "BEAR", exact = TRUE), seasonder_apm_obj) %>%
     unlist

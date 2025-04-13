@@ -402,6 +402,9 @@ seasonder_NULLSeaSondeRCS_MUSIC <- function() {
 #' }
 seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL) {
 
+  # Initialize globals for seasonder_initSeaSondeRCS_MUSIC
+  range_cell <- doppler_bin <- rlang::zap()
+
   # Default to all range cells and Doppler bins if not specified
   if (is.null(range_cells) || is.null(doppler_bins)) {
 
@@ -685,7 +688,7 @@ SeaSondeRCS_doa_selection_end_step_text  <- function() {
 #' @export
 seasonder_setMUSICOptions <- seasonder_setSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object, MUSIC_options = seasonder_defaultMUSIC_options()) {
 
-  MUSIC_options <- modifyList(seasonder_defaultMUSIC_options(), MUSIC_options)
+  MUSIC_options <- utils::modifyList(seasonder_defaultMUSIC_options(), MUSIC_options)
 
   attr(seasonder_cs_object, "MUSIC_data")$MUSIC_options <- MUSIC_options
 
@@ -1792,7 +1795,8 @@ seasonder_MUSIC_Bins2DopplerFreq <- function(seasonder_cs_object, bins) {
 
 
 seasonder_MUSICCheckTwoSolutions <- function(seasonder_cs_object){
-
+# Initialize globals for seasonder_MUSICCheckTwoSolutions
+  DOA_solutions <- rlang::zap()
   # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
@@ -1912,6 +1916,8 @@ seasonder_MUSICCheckEigenValueRatio <- function(seasonder_cs_object){
 #' updated_obj <- seasonder_MUSICCheckSignalPowers(seasonder_cs_object)
 #' }
 seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
+  # Initialize globals for seasonder_MUSICCheckSignalPowers
+  DOA_solutions <- signal_power_ratio <- rlang::zap()
   # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
@@ -1996,6 +2002,8 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
 #' }
 #'
 seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
+  # Initialize globals for seasonder_MUSICCheckSignalMatrix
+DOA_solutions <- diag_off_diag_power_ratio <- rlang::zap()
   # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
   # Compute the ratio of diagonal to off-diagonal power for dual-bearing solutions
@@ -2028,7 +2036,7 @@ seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
 
 
 seasonder_MUSICCheckBearingDistance <- function(seasonder_cs_object){
-
+  DOA_solutions <- bearing_separation <- rlang::zap()
   # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
@@ -2200,7 +2208,7 @@ seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_object){
     interpolated_cells <- dplyr::setdiff(1:nDoppler, index_mapping$mapped)
 
     # Perform the interpolation for each matrix in the cross-spectra data structure
-    interpolated_data %<>% purrr::map2(names(.), \(matrix, name){
+    interpolated_data %<>% purrr::map2(names(interpolated_data), \(matrix, name){
 
       # Validate that the matrix name exists in the original data
       if(!name %in% names(data)){
@@ -2306,6 +2314,8 @@ seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_object){
 #' }
 seasonder_MUSICComputeCov <- function(seasonder_cs_object) {
 
+  # Initialize globals for seasonder_MUSICComputeCov
+  range_cell <- doppler_bin <- rlang::zap()
   # Log the start of the MUSIC covariance matrix computation
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(
     SeaSondeRCS_MUSIC_compute_cov_start_step_text()
@@ -2375,7 +2385,8 @@ CS23 <- seasonder_getSeaSondeRCS_MUSIC_interpolated_dataMatrix(seasonder_cs_obje
 
 seasonder_computeSignalSNR <- function(seasonder_cs_object){
 
-
+  # Initialize globals for seasonder_computeSignalSNR
+  MA1S <- MA2S <- MA3S <- rlang::zap()
   # Retrieve the MUSIC data object from the input
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 NL1 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1)
@@ -2404,7 +2415,8 @@ new_columns <-  purrr::map2(MUSIC$cov, MUSIC$range_cell, \(C, rc,n1 = NL1, n2 = 
 }
 
 seasonder_SNRCheck <- function(seasonder_cs_object, discard_low_SNR  = T){
-
+  # Initialize globals for seasonder_SNRCheck
+  MA1S <- MA2S <- MA3S <- VFLG <- rlang::zap()
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
   noisefact <- seasonder_getFOR_noisefact(seasonder_cs_object)
 
@@ -2503,6 +2515,9 @@ seasonder_eigen_decomp_C <- function(C){
 #' cs_object <- seasonder_MUSICCovDecomposition(cs_object)
 #' }
 seasonder_MUSICCovDecomposition <- function(seasonder_cs_object){
+
+  # Initialize globals for seasonder_MUSICCovDecomposition
+  cov <- rlang::zap()
   # Add a processing step entry indicating the start of the MUSIC covariance decomposition
   seasonder_cs_object  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_MUSIC_covariance_decomposition_start_step_text())
 
@@ -2980,10 +2995,12 @@ seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
 
 seasonder_MUSIC_remove_no_solutions <- function(seasonder_cs_object){
 
+  # Initialize globals for seasonder_MUSIC_remove_no_solutions
+  retained_solution <- rlang::zap()
+
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
-
-
-MUSIC %>% dplyr::filter(retained_solution != "none")
+  # Remove entries with no retained solution
+  MUSIC %>% dplyr::filter(retained_solution != "none")
 
   seasonder_cs_object %<>%
     seasonder_setSeaSondeRCS_MUSIC(MUSIC)
@@ -3076,7 +3093,8 @@ seasonder_MUSICSelectDOA <- function(seasonder_cs_object) {
 
 seasonder_checkPPMIN <- function(seasonder_cs_object) {
 
-
+  # Initialize globals for seasonder_checkPPMIN
+  DOA <- retained_solution <- rlang::zap()
   PPMIN <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_MUSIC_options() %>% purrr::pluck("PPMIN",.default = NULL)
  if(!is.null(PPMIN)){
    MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
@@ -3097,7 +3115,8 @@ seasonder_checkPPMIN <- function(seasonder_cs_object) {
 }
 
 seasonder_checkPWMAX <- function(seasonder_cs_object) {
-
+  # Initialize globals for seasonder_checkPWMAX
+  DOA <- retained_solution <- rlang::zap()  
 
   PWMAX <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_MUSIC_options() %>% purrr::pluck("PWMAX",.default = NULL)
   if(!is.null(PWMAX)){
@@ -3608,7 +3627,11 @@ seasonder_MUSICLonLat <- seasonder_MUSIC_LonLat
 #' print(music_table)
 #' }
 seasonder_exportMUSICTable <- function(seasonder_cs_object) {
-
+  # Initialize globals for seasonder_exportMUSICTable
+  range_cell <- doppler_bin <- freq <- radial_v <- DOA <- lonlat <- 
+  signal_power <- signal_power_db <- noise_level <- lon <- lat <- 
+  doppler_freq <- radial_velocity <- bearing <- bearing_raw <- SNR <- 
+  DOA_peak_resp_db <- rlang::zap()
   # Retrieve timestamp from the header; default to POSIXct(0) if unavailable
   datetime <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nDateTime") %||% as.POSIXct(0)
 
@@ -3803,7 +3826,8 @@ out <- out + as.integer(!music$P0_check) * 16
 #'
 #' @export
 seasonder_exportRangeInfo <- function(seasonder_cs_object){
-
+  # Initialize globals for seasonder_exportRangeInfo
+  range_cell <- retained_solution <- MSEL <- is_single <- is_dual <- NVSC <- NVDC <- SPRC <- RNGC <- rlang::zap()
   cols <- c("SPRC", "RNGC", "NF01", "NF02", "NF03", "ALM1", "ALM2", "ALM3", "ALM4", "NVSC", "NVDC", "NVAC")
 
   rm <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object) %>% dplyr::select(SPRC = range_cell, RNGC = range, MSEL = retained_solution)
@@ -3880,6 +3904,12 @@ return(out)
 #'
 #' @export
 seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) {
+  # Initialize globals for seasonder_exportRadialMetrics
+  DOA_solutions <- radial_v <- doppler_bin <- diag_off_diag_power_ratio <- length_dual <- 
+  MPKR <- MDP1 <- MDP2 <- MDR1 <- MDR2 <- MDW1 <- MDW2 <- cov <- 
+  SPRC <- MAXS <- Noise_3 <- Noise_2 <- Noise_1 <- .id <- lonlat <- DOA <- 
+  MSA1 <- MDA1 <- MDA2 <- retained_solution <- BEAR <- VFLG <- PPFG <- PWFG <- 
+  VELO <- HEAD <- rlang::zap()
   # Obtain the MUSIC table using the function seasonder_getSeaSondeRCS_MUSIC from the global environment. This allows the function to be overridden using local_redefs.
   music <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
@@ -4080,7 +4110,7 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
 #'
 #' @export
 seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object, LLUV_path,...) {
-
+  
   apm_object <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_APM()
 
   radial_metrics <- seasonder_exportRadialMetrics(seasonder_cs_object,...)
@@ -4233,7 +4263,7 @@ data_string <- radial_metrics_fmt %>% purrr::map_chr(\(x) paste0(x[c("LOND","LAT
     CurrentVelocityLimit = sprintf("%0.1f", seasonder_getFOR_currmax(seasonder_cs_object)),
     range_info_table = rangeInfo$out_str,
     ProcessedTimeStamp = format(Sys.time(), "%Y %m %d  %H %M %S"),
-    SeaSondeRVersion = packageVersion("SeaSondeR")
+    SeaSondeRVersion = utils::packageVersion("SeaSondeR")
   )
 
   template <- system.file("templates", "LLUV_RDM1.mustache", package = "SeaSondeR") %>%

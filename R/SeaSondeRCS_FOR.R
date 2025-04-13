@@ -2109,7 +2109,7 @@ seasonder_rejectDistantBragg <- function(seasonder_cs_object) {
     1:length(FORs), # Iterate over the range cells
     \(FOR, FOR_range) {
       FOR %>% purrr::map2(
-        names(.), # Iterate over positive and negative Bragg regions
+        names(FOR), # Iterate over positive and negative Bragg regions
         \(peak, peak_name) {
           # Apply the peak rejection test
           seasonder_rejectDistantBraggPeakTest(seasonder_cs_object, peak, FOR_range, peak_name)
@@ -2295,7 +2295,7 @@ seasonder_rejectNoiseIonospheric <- function(seasonder_cs_object) {
     1:length(FORs), # Iterate over the range cells
     \(FOR, FOR_range) { # FOR contains the peaks for a single range cell
       FOR %>% purrr::map2(
-        names(.), # Iterate over positive and negative Bragg regions
+        names(FOR), # Iterate over positive and negative Bragg regions
         \(peak, peak_name) {
           # Test each peak for noise/ionospheric contamination
           seasonder_rejectNoiseIonosphericTest(seasonder_cs_object, peak, FOR_range, peak_name)

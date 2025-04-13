@@ -10,6 +10,8 @@ seasonder_getCSHeaderByPath(seasonder_obj, path, warn_missing = T)
 \item{seasonder_obj}{A SeaSondeRCS object.}
 
 \item{path}{A character vector specifying the field or nested fields to retrieve.}
+
+\item{warn_missing}{Logical; if \code{TRUE}, a warning is issued if the specified path is not found in the header.}
 }
 \value{
 The value at the specified path in the header. If the path is not found, NULL is returned and a warning is thrown.

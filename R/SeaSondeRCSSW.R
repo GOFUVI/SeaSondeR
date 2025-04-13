@@ -60,7 +60,7 @@ seasonder_CSSW_read_csign <- function(connection, key) {
   group_names <- c("c13m", "c13a", "c23m", "c23a", "c12m", "c12a")
 
   # Initialize the result list with names set for each group.
-  result <- setNames(vector("list", length(group_names)), group_names)
+  result <- stats::setNames(vector("list", length(group_names)), group_names)
 
   # Loop through each group to extract and process the relevant bytes.
   for (i in seq_along(group_names)) {
@@ -135,7 +135,7 @@ seasonder_CSSW_read_asign <- function(connection, key) {
   group_names <- c("cs1a", "cs2a", "cs3a")
 
   # Initialize an empty list to store each group's bit vectors, assigning the group names.
-  result <- setNames(vector("list", length(group_names)), group_names)
+  result <- stats::setNames(vector("list", length(group_names)), group_names)
 
   # Loop over each group to extract its corresponding bytes and convert them to bit vectors.
   for (i in seq_along(group_names)) {

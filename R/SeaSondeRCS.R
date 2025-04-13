@@ -1297,6 +1297,7 @@ seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj) {
 #'
 #' @param seasonder_obj A SeaSondeRCS object.
 #' @param path A character vector specifying the field or nested fields to retrieve.
+#' @param warn_missing Logical; if \code{TRUE}, a warning is issued if the specified path is not found in the header.
 #'
 #' @return The value at the specified path in the header. If the path is not found, NULL is returned and a warning is thrown.
 #'
@@ -2766,7 +2767,7 @@ seasonder_SwapDopplerUnits <- function(seasonder_cs_object, values, in_units, ou
 #' @export
 seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_object, antenna, range_cell, doppler_units = "normalized doppler frequency", plot_FORs = FALSE) {
 
-  SS <- NULL
+  SS <- doppler <- xintercept <- rlang::zap()
 
   spectrum <- seasonder_getSeaSondeRCS_SelfSpectra(seasonder_cs_object = seasonder_cs_object, antennae = antenna,dist_ranges = c(range_cell,range_cell), collapse = TRUE)[[1]] %>% t() %>% as.data.frame() %>% magrittr::set_colnames("SS")
 
