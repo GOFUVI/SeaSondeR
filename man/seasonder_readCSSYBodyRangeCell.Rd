@@ -24,8 +24,7 @@ seasonder_readCSSYBodyRangeCell(
 \item{specs_key_size}{Optional specification for the key size block.}
 }
 \value{
-A list with elements named after the keys read. For reduced data blocks, each element contains either
-the raw decoded data or the scaled voltage values if a 'scal' block had been applied.
+A list representing a cell in the CSSY body.
 }
 \description{
 This function processes a block of keys from a binary connection according to a provided specification
@@ -45,4 +44,12 @@ otherwise, the raw data is returned.
 
 The function continues reading keys until it detects the 'END ' marker or a repeated 'indx' key, which signals
 the end of the block.
+}
+\examples{
+\dontrun{
+  con <- rawConnection(as.raw(c(0x00)))
+  specs <- list(indx = list(type = "int"))
+  result <- seasonder_readCSSYBodyRangeCell(con, specs, dbRef = 0, endian = "big")
+  close(con)
+}
 }

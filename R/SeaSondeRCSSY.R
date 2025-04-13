@@ -324,15 +324,13 @@ seasonder_CSSY_read_csign <- function(connection, key) {
 #' @return A named list of 3 vectors. Each vector represents one group (i.e., \code{cs1a}, \code{cs2a}, \code{cs3a})
 #'   and contains integers (0 or 1) corresponding to the bits (in little-endian order) extracted from the raw data.
 #'
-#' @details The function performs the following steps:
-#'   \itemize{
-#'     \item Reads \code{key$size} bytes from the specified connection.
-#'     \item Verifies that the number of bytes read matches the expected size.
-#'     \item Checks that the total number of bytes is divisible by 3, allowing equal distribution among the groups.
-#'     \item Splits the raw byte vector into 3 groups based on the calculated number of bytes per group.
-#'     \item Converts each byte into its 8-bit binary representation (using \code{rawToBits}) and flattens the results for each group.
-#'   }
-#'
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(c(0x01, 0x02, 0x03)))
+#'   key <- list(size = 3, key = "asgn")
+#'   result <- seasonder_CSSY_read_asign(con, key)
+#'   close(con)
+#' }
 seasonder_CSSY_read_asign <- function(connection, key) {
   # Determine the total number of bytes to read from the connection based on key$size.
   total_bytes <- key$size
@@ -515,9 +513,15 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 #' @param endian A string specifying the byte order ("big" or "little"). Defaults to "big".
 #' @param specs_key_size Optional specification for the key size block.
 #'
-#' @return A list with elements named after the keys read. For reduced data blocks, each element contains either
-#'         the raw decoded data or the scaled voltage values if a 'scal' block had been applied.
+#' @return A list representing a cell in the CSSY body.
 #'
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(c(0x00)))
+#'   specs <- list(indx = list(type = "int"))
+#'   result <- seasonder_readCSSYBodyRangeCell(con, specs, dbRef = 0, endian = "big")
+#'   close(con)
+#' }
 seasonder_readCSSYBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
   indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
   scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
@@ -707,6 +711,12 @@ seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", 
 #' @param header A list representing the CSSY header. Must contain a 'cs4h' component.
 #' @return A transformed header where the primary CS header is taken from 'cs4h' and the remaining CSSY header fields
 #'         are stored in the 'header_csr' element.
+#'
+#' @examples
+#' \dontrun{
+#'   header <- list(cs4h = list(dummy = "data"), other_field = "info")
+#'   result <- seasonder_CSSY2CSHeader(header)
+#' }
 seasonder_CSSY2CSHeader <- function(header) {
   if (is.null(header$cs4h)) {
     seasonder_logAndAbort("CSSY header does not contain a cs4h component")

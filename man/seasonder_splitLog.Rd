@@ -27,3 +27,8 @@ A list of log blocks, each block being a vector of log entries.
 The function splits the log entries into blocks based on time gaps between timestamps. The threshold
 for splitting can be provided or calculated based on the gaps in the log timestamps.
 }
+\examples{
+\dontrun{
+  seasonder_splitLog()
+}
+}

@@ -7,17 +7,17 @@
 seasonder_logAndAbort(msg, calling_function = NULL, ...)
 }
 \arguments{
-\item{msg}{A character string indicating the message}
+\item{msg}{A character string indicating the message.}
 
-\item{calling_function}{function where the condition happened. If NULL (default), the code tries to determine which one was.}
+\item{calling_function}{Function where the condition occurred. If NULL (default), the code determines the caller.}
 
-\item{...}{passed to \code{rlang::abort}}
+\item{...}{Additional arguments passed to \code{rlang::abort}.}
 }
 \value{
-An invisible NULL. The function modifies the shared environment \code{seasonder_the} in place if logs are enabled.
+This function does not return as it always aborts execution.
 }
 \description{
-This function logs a message to the SeaSondeR logging system and also aborts the execution.
+This function logs a message to the SeaSondeR logging system and aborts execution.
 It prefixes the abort message with the name of the calling function.
 }
 \examples{

@@ -7,12 +7,13 @@
 seasonder_areMessagesEnabled()
 }
 \value{
-Logical indicating whether messages are enabled or disabled.
+Logical value indicating whether messages are enabled.
 }
 \description{
-This function checks whether message logging is currently enabled
-in the SeaSondeR package.
+This function checks whether message logging is currently enabled.
 }
 \examples{
-seasonder_areMessagesEnabled()
+\dontrun{
+  seasonder_areMessagesEnabled()
+}
 }

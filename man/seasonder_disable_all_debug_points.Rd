@@ -7,8 +7,13 @@
 seasonder_disable_all_debug_points()
 }
 \value{
-A character vector containing only the default debug point.
+A character vector containing only the default debug point "none".
 }
 \description{
 This function resets the debug points to the default state ("none").
+}
+\examples{
+\dontrun{
+  seasonder_disable_all_debug_points()
+}
 }

@@ -2009,7 +2009,8 @@ seasonder_plotAPMLoops <- function(seasonder_apm_obj) {
 
 #### print ####
 
-
+#' Print a SeaSondeRAPM Object
+#' 
 #' @method print SeaSondeRAPM
 #' @export
 #' @examples

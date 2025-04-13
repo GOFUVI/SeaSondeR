@@ -17,3 +17,9 @@ are stored in the 'header_csr' element.
 This helper function extracts the 'cs4h' component from a CSSY header, removes it from the original header,
 and embeds the remaining header information within the 'header_csr' field of the CS header.
 }
+\examples{
+\dontrun{
+  header <- list(cs4h = list(dummy = "data"), other_field = "info")
+  result <- seasonder_CSSY2CSHeader(header)
+}
+}

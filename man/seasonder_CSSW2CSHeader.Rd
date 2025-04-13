@@ -2,18 +2,24 @@
 % Please edit documentation in R/SeaSondeRCSSW.R
 \name{seasonder_CSSW2CSHeader}
 \alias{seasonder_CSSW2CSHeader}
-\title{Transform CSSW Header to SeaSondeRCS Header}
+\title{Transform CSSW Header to SeaSonde CS Header}
 \usage{
 seasonder_CSSW2CSHeader(header)
 }
 \arguments{
-\item{header}{A list representing the CSSW header. Must contain a 'cs4h' component.}
+\item{header}{A list representing the CSSW header, which must contain a 'cs4h' component.}
 }
 \value{
-A transformed header where the primary CS header is taken from 'cs4h' and the remaining CSSW header fields
-are stored in the 'header_csr' element.
+A transformed list representing a valid SeaSonde CS header with embedded CSSW header information.
 }
 \description{
-This helper function extracts the 'cs4h' component from a CSSW header, removes it from the original header,
-and embeds the remaining header information within the 'header_csr' field of the CS header.
+Extracts the 'cs4h' component from a CSSW header and reorganizes the remaining header information under 'header_csr'.
+}
+\examples{
+\dontrun{
+# Example usage:
+header <- list(cs4h = list(field = 1), someField = 42)
+cs_header <- seasonder_CSSW2CSHeader(header)
+print(cs_header)
+}
 }

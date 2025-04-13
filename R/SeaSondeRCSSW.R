@@ -99,8 +99,7 @@ seasonder_CSSW_read_csign <- function(connection, key) {
 #'     \item{key}{A string identifier (expected to be \code{"asign"}).}
 #'   }
 #'
-#' @return A named list of 3 vectors. Each vector represents one group (i.e., \code{cs1a}, \code{cs2a}, \code{cs3a})
-#'   and contains integers (0 or 1) corresponding to the bits (in little-endian order) extracted from the raw data.
+#' @return A named list of 3 vectors, each containing bits as integers (0 or 1) for self spectra sign data.
 #'
 #' @details The function performs the following steps:
 #'   \itemize{
@@ -111,6 +110,15 @@ seasonder_CSSW_read_csign <- function(connection, key) {
 #'     \item Converts each byte into its 8-bit binary representation (using \code{rawToBits}) and flattens the results for each group.
 #'   }
 #'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' con <- rawConnection(as.raw(c(0xFF, 0x00, 0xAA, 0x55, 0xCC, 0x33, 0x77, 0x88, 0x99)))
+#' key <- list(size = 9, key = "asign")
+#' result <- seasonder_CSSW_read_asign(con, key)
+#' print(result)
+#' close(con)
+#' }
 seasonder_CSSW_read_asign <- function(connection, key) {
   # Determine the total number of bytes to read from the connection based on key$size.
   total_bytes <- key$size
@@ -158,6 +166,25 @@ seasonder_CSSW_read_asign <- function(connection, key) {
   return(result)
 }
 
+#' Read CSSW Fields
+#'
+#' Processes a block of keys from the binary connection according to provided specifications.
+#'
+#' @param connection A binary connection.
+#' @param specs A list specifying the expected keys.
+#' @param endian A character indicating byte order.
+#' @param parent_key Optional parent key information.
+#' @return A named list as returned by seasonder_readSeaSondeCSFileBlock consistent with the provided specifications.
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' con <- rawConnection(as.raw(1:10))
+#' specs <- list(field = list(type = "integer"))
+#' result <- seasonder_readCSSWFields(con, specs, "big")
+#' print(result)
+#' close(con)
+#' }
 seasonder_readCSSWFields <- function(connection, specs, endian, parent_key= NULL){
   variable_char_types <- purrr::map_lgl(specs, \(x) x$type == "CharX")
   if(any(variable_char_types)){
@@ -296,6 +323,15 @@ seasonder_SeaSondeRCSSWApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 #' @return A list with elements named after the keys read. For reduced data blocks, each element contains either
 #'         the raw decoded data or the scaled voltage values if a 'scal' block had been applied.
 #'
+#' @examples
+#' \dontrun{
+#'   # Example usage:
+#'   con <- rawConnection(as.raw(1:100))
+#'   specs <- list(sampleKey = list(type = "double"))
+#'   result <- seasonder_readCSSWBodyRangeCell(con, specs, dbRef = -20, endian = "big")
+#'   print(result)
+#'   close(con)
+#' }
 seasonder_readCSSWBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
   indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
   scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
@@ -350,9 +386,27 @@ seasonder_readCSSWBodyRangeCell <- function(connection, specs, dbRef, endian = "
 }
 
 
-
-
-
+#' Read CSSW Body
+#'
+#' Reads the body section of a CSSW file, processing each cell block until the designated endpoint.
+#'
+#' @param connection A binary connection from which the body is read.
+#' @param specs A list specifying the body keys and formats.
+#' @param size The total number of bytes to read for the body section.
+#' @param dbRef Numeric decibel reference used for scaling.
+#' @param endian A character specifying byte order.
+#' @param specs_key_size Optional specification for the key size block.
+#' @return A list of processed body cells with applied sign corrections.
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' con <- rawConnection(as.raw(1:100))
+#' specs <- list(sampleKey = list(type = "double"))
+#' result <- seasonder_readCSSWBody(con, specs, 100, dbRef = -20, endian = "big")
+#' print(result)
+#' close(con)
+#' }
 seasonder_readCSSWBody <- function(connection, specs, size, dbRef, endian = "big", specs_key_size = NULL){
 
   end_point <- seek(connection) + size
@@ -367,6 +421,23 @@ seasonder_readCSSWBody <- function(connection, specs, size, dbRef, endian = "big
   return(out)
 }
 
+#' Read CSSW Limits
+#'
+#' Reads a specified number of 32-bit unsigned integers from a binary connection and reshapes them into a matrix representing CSSW limits.
+#'
+#' @param connection A binary connection.
+#' @param n_values The number of 32-bit unsigned integers to read.
+#' @param endian A string specifying byte order ("big" or "little").
+#' @return A numeric matrix with four columns: LeftBraggLeftLimit, LeftBraggRightLimit, RightBraggLeftLimit, and RightBraggRightLimit.
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' con <- rawConnection(as.raw(rep(0x01, 16)))
+#' lims <- seasonder_readCSSWLims(con, 4, endian = "big")
+#' print(lims)
+#' close(con)
+#' }
 seasonder_readCSSWLims <- function(connection, n_values, endian = "big") {
 
   # Read n_values of 32-bit unsigned integers
@@ -478,14 +549,20 @@ seasonder_readCSSWHeader <- function(connection, current_specs, endian = "big", 
 }
 
 
-#' Transform CSSW Header to SeaSondeRCS Header
+#' Transform CSSW Header to SeaSonde CS Header
 #'
-#' This helper function extracts the 'cs4h' component from a CSSW header, removes it from the original header,
-#' and embeds the remaining header information within the 'header_csr' field of the CS header.
+#' Extracts the 'cs4h' component from a CSSW header and reorganizes the remaining header information under 'header_csr'.
 #'
-#' @param header A list representing the CSSW header. Must contain a 'cs4h' component.
-#' @return A transformed header where the primary CS header is taken from 'cs4h' and the remaining CSSW header fields
-#'         are stored in the 'header_csr' element.
+#' @param header A list representing the CSSW header, which must contain a 'cs4h' component.
+#' @return A transformed list representing a valid SeaSonde CS header with embedded CSSW header information.
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' header <- list(cs4h = list(field = 1), someField = 42)
+#' cs_header <- seasonder_CSSW2CSHeader(header)
+#' print(cs_header)
+#' }
 seasonder_CSSW2CSHeader <- function(header) {
   if (is.null(header$cs4h)) {
     seasonder_logAndAbort("CSSW header does not contain a cs4h component")
@@ -628,7 +705,24 @@ seasonder_CSSW2CSData <- function(body) {
   )
 }
 
-
+#' Apply CSSW Sign Corrections
+#'
+#' Applies sign corrections to both cross-spectra and auto-spectra fields within a list of CSSW data cells.
+#'
+#' @param cs_data A list of CSSW data cells, where each cell may include fields for cross-spectra ('c12m', 'c12a', 'c13m', 'c13a', 'c23m', 'c23a') and auto-spectra ('cs1a', 'cs2a', 'cs3a') signs.
+#' @return The modified list of CSSW data cells with sign corrections applied.
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' cs_data <- list(
+#'   list(csgn = list(c12m = 1, c12a = 0, c13m = 1, c13a = 0, c23m = 1, c23a = 0),
+#'        c12m = c(1,2), c12a = c(0,0),
+#'        cs1a = c(3,4))
+#' )
+#' corrected <- seasonder_applyCSSWSigns(cs_data)
+#' print(corrected)
+#' }
 seasonder_applyCSSWSigns <- function(cs_data) {
   for (i in seq_along(cs_data)) {
     cell <- cs_data[[i]]

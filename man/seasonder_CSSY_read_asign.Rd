@@ -25,13 +25,11 @@ This function reads a raw binary stream from a provided connection, expecting a 
 that contains the sign bits for self spectra values. The data is divided into 3 groups corresponding
 to: \code{cs1a}, \code{cs2a}, and \code{cs3a}.
 }
-\details{
-The function performs the following steps:
-\itemize{
-\item Reads \code{key$size} bytes from the specified connection.
-\item Verifies that the number of bytes read matches the expected size.
-\item Checks that the total number of bytes is divisible by 3, allowing equal distribution among the groups.
-\item Splits the raw byte vector into 3 groups based on the calculated number of bytes per group.
-\item Converts each byte into its 8-bit binary representation (using \code{rawToBits}) and flattens the results for each group.
+\examples{
+\dontrun{
+  con <- rawConnection(as.raw(c(0x01, 0x02, 0x03)))
+  key <- list(size = 3, key = "asgn")
+  result <- seasonder_CSSY_read_asign(con, key)
+  close(con)
 }
 }

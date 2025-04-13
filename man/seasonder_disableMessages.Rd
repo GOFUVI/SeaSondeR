@@ -6,11 +6,16 @@
 \usage{
 seasonder_disableMessages()
 }
+\value{
+logical FALSE indicating that message logging was disabled.
+}
 \description{
 This function disables message logging in the SeaSondeR package.
 Once disabled, various SeaSondeR functions will no longer output
 informational messages.
 }
 \examples{
-seasonder_disableMessages()
+\dontrun{
+  seasonder_disableMessages()
+}
 }

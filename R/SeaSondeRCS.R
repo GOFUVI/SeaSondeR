@@ -4605,7 +4605,8 @@ seasonder_load_qc_functions()
 
 #### print ####
 
-
+#' Print Method for SeaSondeRCS Object
+#' 
 #' @method print SeaSondeRCS
 #' @export
 #' @examples
