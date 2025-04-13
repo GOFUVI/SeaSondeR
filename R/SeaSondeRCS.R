@@ -119,10 +119,10 @@ seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_object, FOR) {
       out <-  1:nRanges %>% purrr::reduce(\(result,i) {
         if(i <= length(nNegBraggLeftIndex)){
 
-        
+
           left_index <- nNegBraggLeftIndex[i]
           right_index <- nNegBraggRightIndex[i]
-  
+
           if (left_index > 0 && right_index > 0 && left_index <= right_index) {
             result[[i]]$negative_FOR <- seq(left_index+1, right_index+1)
           }
@@ -1941,6 +1941,12 @@ seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_object, nDoppler,
 #' @details The function internally utilizes several helper functions such as `seasonder_getCenterDopplerBin()`, `seasonder_getnDopplerCells()`, and `seasonder_getDopplerSpectrumResolution()` to calculate the Doppler bin frequencies. Furthermore, when normalization is requested, it uses `seasonder_getBraggDopplerAngularFrequency()` to obtain the second Bragg frequency for normalization purposes.
 #'
 #' @importFrom dplyr last
+#' @examples
+#' \dontrun{
+#'   cs_obj <- seasonder_createSeaSondeRCS(...)
+#'   freqs <- seasonder_getDopplerBinsFrequency(cs_obj)
+#'   print(freqs)
+#' }
 seasonder_getDopplerBinsFrequency <- function(seasonder_cs_object, normalized = FALSE) {
   if(seasonder_is_debug_point_enabled("seasonder_getDopplerBinsFrequency")){
     browser() # Debug point, do not remove
@@ -1989,9 +1995,10 @@ seasonder_getDopplerBinsFrequency <- function(seasonder_cs_object, normalized = 
 #'
 #' @examples
 #' \dontrun{
-#' # Assuming `cs_object` is a valid `SeaSondeRCS` object and `freq` contains Doppler frequencies
-#' radial_velocities <- seasonder_computeBinsRadialVelocity(cs_object, freq)
-#' print(radial_velocities)
+#'   cs_obj <- seasonder_createSeaSondeRCS(...)
+#'   freq <- seq(-10, 10, length.out = 128)
+#'   rv <- seasonder_computeBinsRadialVelocity(cs_obj, freq)
+#'   print(rv)
 #' }
 seasonder_computeBinsRadialVelocity <- function(seasonder_cs_object, freq) {
 
@@ -2039,6 +2046,12 @@ seasonder_computeBinsRadialVelocity <- function(seasonder_cs_object, freq) {
 #' @seealso \code{\link{seasonder_getDopplerBinsFrequency}},
 #'          \code{\link{seasonder_getBraggDopplerAngularFrequency}},
 #'          \code{\link{seasonder_getRadarWaveNumber}}
+#' @examples
+#' \dontrun{
+#'   cs_obj <- seasonder_createSeaSondeRCS(...)
+#'   velocities <- seasonder_getBinsRadialVelocity(cs_obj)
+#'   print(velocities)
+#' }
 seasonder_getBinsRadialVelocity <- function(seasonder_cs_object) {
 
   freq <- seasonder_getDopplerBinsFrequency(seasonder_cs_object)
@@ -2076,6 +2089,12 @@ seasonder_getBinsRadialVelocity <- function(seasonder_cs_object) {
 #'
 #' @seealso \code{\link{seasonder_getDopplerSpectrumResolution}},
 #'          \code{\link{seasonder_getRadarWaveNumber}}
+#' @examples
+#' \dontrun{
+#'   cs_obj <- seasonder_createSeaSondeRCS(...)
+#'   res <- seasonder_getRadialVelocityResolution(cs_obj)
+#'   print(res)
+#' }
 seasonder_getRadialVelocityResolution <- function(seasonder_cs_object) {
 
   spectra_res <- seasonder_getDopplerSpectrumResolution(seasonder_cs_object)
@@ -2896,6 +2915,13 @@ SeaSondeRCS_creation_step_text <- function(file_path) {
 #'
 #'
 #' @references Cross Spectra File Format Version 6. CODAR. 2016
+#' @examples
+#' \dontrun{
+#'   header <- list(nV1Extent = 62, nCsFileVersion = 4, nV2Extent = 56,
+#'                  nV3Extent = 48, nV4Extent = 0, nRangeCells = 100,
+#'                  nDopplerCells = 512, nCsKind = 1)
+#'   seasonder_validateCSFileData("example.cs", header)
+#' }
 seasonder_validateCSFileData <- function(filepath, header) {
 
   conditions_params <- list(calling_function = "seasonder_validateCSFileData",class = "seasonder_validate_cs_file_error",seasonder_cs_filepath = filepath, seasonder_cs_header = header)
@@ -2954,6 +2980,12 @@ seasonder_validateCSFileData <- function(filepath, header) {
 #'
 #'
 #' @return If invoked, the function returns a list with both `header` and `data` set to NULL.
+#' @examples
+#' \dontrun{
+#'   tryCatch({
+#'     seasonder_skip_cs_file(simpleError("test error"))
+#'   }, seasonder_cs_file_skipped = function(e) NULL)
+#' }
 #' @export
 seasonder_skip_cs_file <- function(cond) {
   invokeRestart("seasonder_skip_cs_file",cond)
@@ -3017,6 +3049,11 @@ seasonder_skip_cs_file <- function(cond) {
 #' \code{\link{seasonder_readYAMLSpecs}}
 #'
 #' @references Cross Spectra File Format Version 6. CODAR. 2016
+#' @examples
+#' \dontrun{
+#'   cs <- seasonder_readSeaSondeCSFile("path/to/csfile", "path/to/specs.yml", endian = "big")
+#'   print(cs)
+#' }
 #' @export
 #'
 seasonder_readSeaSondeCSFile <- function(filepath, specs_path, endian = "big") {
@@ -3169,6 +3206,11 @@ seasonder_raw_to_int <- function(r,signed = F) {
 #' @return Returns the value specified by the `value` parameter.
 #'
 #'
+#' @examples
+#' \dontrun{
+#'   result <- seasonder_skip_cs_field(simpleError("test error"), "default")
+#'   print(result)
+#' }
 #' @export
 seasonder_skip_cs_field <- function(cond,value) {
   invokeRestart("seasonder_skip_cs_field",cond,value)
@@ -3363,6 +3405,11 @@ seasonder_readCSField <- function(con, type, endian = "big") {
 #' the value from the field as its sole argument and return a QC-applied value.
 #'
 #' @return The value returned by the alternate QC function `qc_fun`.
+#' @examples
+#' \dontrun{
+#'   val <- seasonder_rerun_qc_with_fun(list(seasonder_value = 42), function(x) x * 2)
+#'   print(val)
+#' }
 #' @export
 seasonder_rerun_qc_with_fun <- function(cond,qc_fun) {
   invokeRestart("seasonder_rerun_qc_with_fun",cond,qc_fun)
@@ -3426,8 +3473,14 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun) {
 #' \code{\link{seasonder_readCSField}}
 #'
 #' It's also important to note that within `read_and_qc_field`, the function `seasonder_readCSField` is used. This function has its own error management and restart options, which are detailed in its documentation.
-#'
-
+#' @examples
+#' \dontrun{
+#'   field_spec <- list(type = "UInt8", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer"))
+#'   con <- rawConnection(as.raw(c(0x01)))
+#'   result <- read_and_qc_field(field_spec, con, endian = "big")
+#'   print(result)
+#'   close(con)
+#' }
 read_and_qc_field <- function(field_spec, connection, endian = "big") {
 
   # Parameters used for error messages and logging.
@@ -3443,17 +3496,21 @@ read_and_qc_field <- function(field_spec, connection, endian = "big") {
 
 
   # Read the field using the helper function
-  field_skipped <- FALSE
 
-  field_value <- rlang::try_fetch(seasonder_readCSField(connection, field_type, endian = endian),
-                                  seasonder_cs_field_skipped = function(cond) {
-                                    field_skipped <<- TRUE
-                                    rlang::cnd_signal(cond)
-                                    return(cond$seasonder_cs_field_value)
+fs_env <- new.env()
+fs_env$field_skipped <- FALSE
 
-                                  }
-  )
-  if (!field_skipped) {
+field_value <- rlang::try_fetch(
+    seasonder_readCSField(connection, field_type, endian = endian),
+    seasonder_cs_field_skipped = function(cond) {
+        fs_env$field_skipped <- TRUE  # asignación local al entorno fs_env
+        rlang::cnd_signal(cond)
+        cond$seasonder_cs_field_value
+    }
+)
+
+
+  if (!fs_env$field_skipped) {
 
     field_value_after_qc <-  withRestarts(
       seasonder_rerun_qc_with_fun = function(cond,qc_fun) {
@@ -3539,6 +3596,14 @@ read_and_qc_field <- function(field_spec, connection, endian = "big") {
 #'
 #' @return A named list where each entry corresponds to a field that has been read. Each key is
 #'   the field name, and its associated value is the data for that field after quality control.
+#' @examples
+#' \dontrun{
+#'   spec <- list(field1 = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()))
+#'   con <- rawConnection(as.raw(c(0x01)))
+#'   block <- seasonder_readSeaSondeCSFileBlock(spec, con, endian = "big")
+#'   print(block)
+#'   close(con)
+#' }
 #' @export
 seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian = "big") {
   # Use purrr::map to apply the read_and_qc_field function to each field specification
@@ -3589,9 +3654,9 @@ seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian = "big") {
 #'
 #' @examples
 #' \dontrun{
-#' specs <- list(field1 = "spec1", field2 = "spec2")
-#' fields <- c("field1", "field2", "field3")
-#' seasonder_check_specs(specs, fields) # Throws an error since spec for 'field3' is missing
+#'   specs <- list(field1 = "spec1", field2 = "spec2")
+#'   fields <- c("field1", "field2", "field3")
+#'   seasonder_check_specs(specs, fields) # Throws an error since spec for 'field3' is missing
 #' }
 #'
 seasonder_check_specs <- function(specs, fields) {
@@ -3624,6 +3689,18 @@ seasonder_check_specs <- function(specs, fields) {
 #' \code{\link{seasonder_readSeaSondeCSFileBlock}}
 #'
 #' @return A list with the read and transformed results.
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(rep(0, 100)))
+#'   specs <- list(
+#'     nCsFileVersion = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nDateTime = list(type = "UInt32", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nV1Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
+#'   )
+#'   header <- seasonder_readSeaSondeCSFileHeaderV1(specs, con, endian = "big")
+#'   print(header)
+#'   close(con)
+#' }
 seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
   # Step 1: Specification Validation
@@ -3662,6 +3739,17 @@ seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "bi
 #' \code{\link{seasonder_readSeaSondeCSFileBlock}}
 #'
 #' @return A list with the read results.
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(rep(0, 100)))
+#'   specs <- list(
+#'     nCsKind = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nV2Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
+#'   )
+#'   header <- seasonder_readSeaSondeCSFileHeaderV2(specs, con, endian = "big")
+#'   print(header)
+#'   close(con)
+#' }
 seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
   # Step 1: Specification Validation
@@ -3693,6 +3781,17 @@ seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "bi
 #' \code{\link{seasonder_readSeaSondeCSFileBlock}}
 #'
 #' @return A list with the read results.
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(rep(0, 100)))
+#'   specs <- list(
+#'     nSiteCodeName = list(type = "Char10", qc_fun = "qc_check_type", qc_params = list(expected_type = "character")),
+#'     nV3Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
+#'   )
+#'   header <- seasonder_readSeaSondeCSFileHeaderV3(specs, con, endian = "big")
+#'   print(header)
+#'   close(con)
+#' }
 #' @export
 seasonder_readSeaSondeCSFileHeaderV3 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
@@ -3731,6 +3830,27 @@ seasonder_readSeaSondeCSFileHeaderV3 <- function(specs, connection, endian = "bi
 #' \code{\link{seasonder_readSeaSondeCSFileBlock}}
 #'
 #' @return A list with the read and transformed results.
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(rep(0, 200)))
+#'   specs <- list(
+#'     nCoverMinutes = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     bDeletedSource = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     bOverrideSrcInfo = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     fStartFreqMHz = list(type = "Float", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     fRepFreqHz = list(type = "Float", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     fBandwidthKHz = list(type = "Float", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     bSweepUp = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nDopplerCells = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nRangeCells = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nFirstRangeCell = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     fRangeCellDistKm = list(type = "Float", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nV4Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
+#'   )
+#'   header <- seasonder_readSeaSondeCSFileHeaderV4(specs, con, endian = "big")
+#'   print(header)
+#'   close(con)
+#' }
 #' @export
 seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
@@ -3773,6 +3893,22 @@ seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "bi
 #' \code{\link{seasonder_readSeaSondeCSFileBlock}}
 #'
 #' @return A list with the read and transformed results.
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(rep(0, 150)))
+#'   specs <- list(
+#'     nOutputInterval = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nCreateTypeCode = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nCreatorVersion = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nActiveChannels = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nSpectraChannels = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nActiveChanBits = list(type = "UInt32", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     nV5Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
+#'   )
+#'   header <- seasonder_readSeaSondeCSFileHeaderV5(specs, con, endian = "big")
+#'   print(header)
+#'   close(con)
+#' }
 #' @export
 seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
@@ -3820,6 +3956,18 @@ seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "bi
 #' \code{\link{readV6BlockData}}
 #'
 #'
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(rep(0, 300)))
+#'   specs <- list(
+#'     nCS6ByteSize = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     block_spec = list( /* block spec details placeholder */ ),
+#'     blocks = list()
+#'   )
+#'   header <- readV6BlockData(specs, con, endian = "big")
+#'   print(header)
+#'   close(con)
+#' }
 #' @export
 readV6BlockData <- function(specs, connection, endian = "big", prev_data = NULL, remaining_loops = NULL) {
 
@@ -3910,7 +4058,12 @@ readV6BlockData <- function(specs, connection, endian = "big", prev_data = NULL,
 #'
 #' @return This function does not have a standard return value. Instead, it triggers a restart
 #' that can be caught by an enclosing context to handle the error and decide how to proceed.
-#'
+#' @examples
+#' \dontrun{
+#'   tryCatch({
+#'     seasonder_v6_skip_transformation(simpleError("test error"), "default")
+#'   }, seasonder_v6_block_transformacion_skipped = function(e) NULL)
+#' }
 #' @export
 seasonder_v6_skip_transformation <- function(cond, value) {
   invokeRestart("seasonder_v6_skip_transformation", cond, value)
@@ -3974,6 +4127,18 @@ seasonder_v6_skip_transformation <- function(cond, value) {
 #' \code{\link{seasonder_v6_skip_transformation}}
 #'
 #'
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(rep(0, 300)))
+#'   specs <- list(
+#'     nCS6ByteSize = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'     block_spec = list( /* block spec details placeholder */ ),
+#'     blocks = list()
+#'   )
+#'   header <- seasonder_readSeaSondeCSFileHeaderV6(specs, con, endian = "big")
+#'   print(header)
+#'   close(con)
+#' }
 #' @export
 seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "big", prev_data = NULL) {
   conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFileHeaderV6")
@@ -4066,7 +4231,19 @@ seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "bi
 #'
 #' @return List. A combination of the initial `pool` and the processed header for the given `version`.
 #'         Fields in the current header will overwrite or append to the pool as described above.
-#'
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(rep(0, 300)))
+#'   specs <- list(
+#'     V1 = list(...),
+#'     V2 = list(...),
+#'     V3 = list(...)
+#'   )
+#'   pool <- list()
+#'   header <- process_version_header(pool, 3, specs, con, endian = "big")
+#'   print(header)
+#'   close(con)
+#' }
 process_version_header <- function(pool, version, specs, connection, endian = "big", prev_data = NULL) {
   # Construct the function name based on the provided version
   function_name <- paste0("seasonder_readSeaSondeCSFileHeaderV", version)
@@ -4104,7 +4281,18 @@ process_version_header <- function(pool, version, specs, connection, endian = "b
 #' \code{\link{process_version_header}}
 #'
 #' @return A combined list of all processed headers up to the file version.
-#'
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(rep(0, 300)))
+#'   specs <- list(
+#'     V1 = list(...),
+#'     V2 = list(...),
+#'     V3 = list(...)
+#'   )
+#'   header <- seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
+#'   print(header)
+#'   close(con)
+#' }
 seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big") {
   # Read the general header (Version 1)
   withCallingHandlers({
@@ -4186,6 +4374,18 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
 #' @return A list containing the matrices for `SSA*`, `CSxy`, and `QC` (when applicable).
 #'
 #'
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(rep(0, 300)))
+#'   header <- list(
+#'     nRangeCells = 100,
+#'     nDopplerCells = 256,
+#'     nCsKind = 2
+#'   )
+#'   data <- seasonder_readSeaSondeCSFileData(con, header, endian = "big")
+#'   print(data)
+#'   close(con)
+#' }
 #' @export
 seasonder_readSeaSondeCSFileData <- function(connection, header, endian = "big") {
   conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFileData",class = "seasonder_cs_data_reading_error")
@@ -4322,7 +4522,11 @@ seasonder_the$qc_functions <- list()
 #' @param expected_type The expected type of the field_value.
 #'
 #' @return The original field_value if it matches the expected_type; otherwise, an error is raised.
-#'
+#' @examples
+#' \dontrun{
+#'   result <- qc_check_type(42, "numeric")
+#'   print(result)
+#' }
 qc_check_type <- function(field_value, expected_type) {
   if (!inherits(field_value, expected_type)) {
     seasonder_logAndAbort(glue::glue("QC Error: Value does not have the expected type: {expected_type}"))
@@ -4344,6 +4548,11 @@ qc_check_type <- function(field_value, expected_type) {
 #' @param expected_type (optional) The expected type of the field_value. Default is NULL.
 #'
 #' @return The original field_value if it's within range and matches the expected_type; otherwise, an error is raised.
+#' @examples
+#' \dontrun{
+#'   result <- qc_check_range(5, 0, 10)
+#'   print(result)
+#' }
 qc_check_range <- function(field_value, min, max, expected_type = NULL) {
   # Si se proporciona un tipo esperado, verifica el tipo antes de comprobar el rango
   if (!is.null(expected_type)) {
@@ -4374,6 +4583,11 @@ qc_check_range <- function(field_value, min, max, expected_type = NULL) {
 #' @return Returns the `field_value` if it passes the checks: it is of the expected
 #'         type (if `expected_type` is not NULL) and is non-negative. If any of the
 #'         checks fail, the function logs an error message and aborts execution.
+#' @examples
+#' \dontrun{
+#'   result <- qc_check_unsigned(10)
+#'   print(result)
+#' }
 qc_check_unsigned <- function(field_value,  expected_type = NULL) {
 
   if (!is.null(expected_type)) {
@@ -4402,6 +4616,15 @@ seasonder_load_qc_functions()
 
 #' @method print SeaSondeRCS
 #' @export
+#' @examples
+#' \dontrun{
+#'   obj <- list(header = list(nSiteCodeName = "Station1",
+#'                             nDateTime = Sys.time(),
+#'                             nDopplerCells = 256,
+#'                             nRangeCells = 100))
+#'   class(obj) <- "SeaSondeRCS"
+#'   print(obj)
+#' }
 print.SeaSondeRCS <- function(x, ...){
 
   template <- "Station Code: {{{nSiteCodeName}}}\nTime: {{{nDateTime}}}\nN Doppler Cells: {{{nDopplerCells}}}\nN Range Cells: {{{nRangeCells}}}\n"
