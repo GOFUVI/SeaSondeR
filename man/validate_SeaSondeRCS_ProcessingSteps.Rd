@@ -10,8 +10,13 @@ validate_SeaSondeRCS_ProcessingSteps(steps)
 \item{steps}{The character vector to be validated.}
 }
 \value{
-Returns TRUE if the validation passes.
+A logical value TRUE if the validation passes.
 }
 \description{
 This function validates if the provided ProcessingSteps is a character vector.
+}
+\examples{
+\dontrun{
+  validate_SeaSondeRCS_ProcessingSteps(c("step1", "step2"))
+}
 }

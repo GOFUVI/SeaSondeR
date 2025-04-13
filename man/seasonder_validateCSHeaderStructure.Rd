@@ -10,7 +10,7 @@ seasonder_validateCSHeaderStructure(header)
 \item{header}{A list representing the header metadata of a cross spectra file.}
 }
 \value{
-Invisible NULL if the header structure is valid. Otherwise, an error is thrown.
+Invisibly returns TRUE if the header structure is valid. Otherwise, an error is thrown.
 }
 \description{
 This function validates the structure of a header list that is expected to
@@ -39,3 +39,11 @@ detailed and structured condition messages:
 }
 }
 
+\examples{
+\dontrun{
+  seasonder_validateCSHeaderStructure(list(nRangeCells = 100, nDopplerCells = 256))
+}
+\dontrun{
+  seasonder_validateCSHeaderStructure(list(nRangeCells = 100, nDopplerCells = 256))
+}
+}
