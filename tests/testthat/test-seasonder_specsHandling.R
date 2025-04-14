@@ -63,23 +63,30 @@ describe("seasonder_readYAMLSpecs", {
   })
 
   it("returns error for invalid path", {
+    
     # Create a valid YAML file using the valid content
     file_path <- create_test_yaml("valid.yaml", valid_content)
-    # Expect an error when trying to extract a non-existent path from the YAML file
-    expect_error(seasonder_readYAMLSpecs(file_path, c("header", "nonexistent")),
-                 glue::glue("Invalid specs path 'header' for file '{file_path}'."),
-                 class = "seasonder_read_yaml_file_error")
+    # Expect an error when trying to extract a non-existent path from the YAML file.
+    # Se utiliza un patrón que ignora diferencias en los separadores de directorio
+    expect_error(
+      seasonder_readYAMLSpecs(file_path, c("header", "nonexistent")),
+      regexp = "Invalid specs path 'header' for file '.*/valid\\.yaml'.",
+      class = "seasonder_read_yaml_file_error"
+    )
   })
 
-  it("returns error for invalid YAML content", {
-    # Create a YAML file with invalid content
-    file_path <- create_test_yaml("invalid_content.yaml", "invalid: yaml:: content")
-    # Expect an error due to invalid YAML structure in the file
-    expect_error(seasonder_readYAMLSpecs(file_path, c("header", "general")),
-                 glue::glue("Invalid YAML structure in file '{file_path}'."),
-                 class = "seasonder_read_yaml_file_error")
-  })
+it("returns error for invalid YAML content", {
+  # Create a YAML file with invalid content
+  file_path <- create_test_yaml("invalid_content.yaml", "invalid: yaml:: content")
+  # Expect an error due to invalid YAML structure in the file.
+  expect_error(
+    seasonder_readYAMLSpecs(file_path, c("header", "general")),
+    regexp = "Invalid YAML structure in file '.*/invalid_content\\.yaml'.",
+    class = "seasonder_read_yaml_file_error"
+  )
 })
+})
+
 
 describe("determining spectra file type", {
   describe("CS", {
