@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,15 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/intro.html">SeaSondeR</a></li>
+    <li><a class="dropdown-item" href="articles/RadialMetricsExport.html">Exporting Radial Metrics</a></li>
+    <li><a class="dropdown-item" href="articles/SeaSondeAPM.html">Antenna Pattern</a></li>
+    <li><a class="dropdown-item" href="articles/SeaSondeCS.html">Cross-Spectra Files</a></li>
+  </ul>
+</li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -49,9 +58,8 @@
 <div class="page-header"><h1 id="seasonder">SeaSondeR<a class="anchor" aria-label="anchor" href="#seasonder"></a>
 </h1></div>
 <!-- badges: start -->
-<!-- badges: end -->
-<p>The goal of SeaSondeR is to provide a comprehensive set of tools for processing and analyzing data from the SeaSonde(R) High-Frequency Radar (HF-Radar) instrument. This package is intended to facilitate the creation of radial metrics files from spectra data.</p>
-<p>SeaSondeR is an R package developed as an open-source alternative to proprietary tools for processing HF-Radar spectra and generating Radial Metrics. SeaSondeR integrates all key processing steps into a single workflow. It reads and processes both spectrum (CS) files and SeaSonde(R) antenna patterns, identifies the first-order spectral region according to CODAR methodology, and applies the MUSIC algorithm to estimate signal arrival directions. Drawing on technical manuals, patent literature, and prior scientific work, SeaSondeR is designed for both experimental and synthetic data, facilitating cloud-based analyses of extensive HF-Radar datasets while promoting free software solutions in operational oceanography and coastal monitoring.</p>
+
+<p>The goal of SeaSondeR is to provide a comprehensive set of tools for processing and analyzing data from the SeaSonde(R) High-Frequency Radar (HF-Radar) instrument. This package is intended to facilitate the creation of radial metrics files from spectra data. SeaSondeR is an R package developed as an open-source alternative to proprietary tools for processing HF-Radar spectra and generating Radial Metrics. SeaSondeR integrates all key processing steps into a single workflow, reading and processing both spectrum (CS) files and SeaSonde(R) antenna patterns, identifying the first-order spectral region according to CODAR methodology, and applying the MUSIC algorithm to estimate signal arrival directions. Drawing on technical manuals, patent literature, and prior scientific work, SeaSondeR is designed for both experimental and synthetic data, facilitating cloud-based analyses of extensive HF-Radar datasets while promoting free software solutions in operational oceanography and coastal monitoring.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -64,6 +72,16 @@
 <h2 id="package-pages">Package pages<a class="anchor" aria-label="anchor" href="#package-pages"></a>
 </h2>
 <p><a href="https://gofuvi.github.io/SeaSondeR/" class="uri">https://gofuvi.github.io/SeaSondeR/</a></p>
+</div>
+<div class="section level2">
+<h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
+</h2>
+<p>This work has been funded by the HF-EOLUS project (TED2021-129551B-I00), financed by MICIU/AEI /10.13039/501100011033 and by the European Union NextGenerationEU/PRTR - BDNS 598843 - Component 17 - Investment I3.</p>
+</div>
+<div class="section level2">
+<h2 id="disclaimer">Disclaimer<a class="anchor" aria-label="anchor" href="#disclaimer"></a>
+</h2>
+<p>This software is provided “as is”, without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, or in connection with the software or the use or other dealings in the software.</p>
 </div>
 <div class="section level2">
 <h2 id="trademark-notice">Trademark Notice<a class="anchor" aria-label="anchor" href="#trademark-notice"></a>
@@ -87,6 +105,12 @@
 </ul>
 </div>
 
+<div class="community">
+<h2 data-toc-skip>Community</h2>
+<ul class="list-unstyled">
+<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
+</ul>
+</div>
 
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
@@ -104,7 +128,13 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/GOFUVI/SeaSondeR/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/GOFUVI/SeaSondeR/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://app.codecov.io/gh/GOFUVI/SeaSondeR" class="external-link"><img src="https://codecov.io/gh/GOFUVI/SeaSondeR/graph/badge.svg" alt="Codecov test coverage"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>

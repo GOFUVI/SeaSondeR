@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,6 +16,13 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/intro.html">SeaSondeR</a></li>
+    <li><a class="dropdown-item" href="../articles/RadialMetricsExport.html">Exporting Radial Metrics</a></li>
+    <li><a class="dropdown-item" href="../articles/SeaSondeAPM.html">Antenna Pattern</a></li>
+    <li><a class="dropdown-item" href="../articles/SeaSondeCS.html">Cross-Spectra Files</a></li>
+  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/GOFUVI/SeaSondeR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -121,6 +128,18 @@
         <dd>Parse a Metadata Line from a SeaSonde APM File</dd>
       </dl><dl><dt>
 
+          <code><a href="print.SeaSondeRAPM.html">print(<i>&lt;SeaSondeRAPM&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print a SeaSondeRAPM Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="print.SeaSondeRCS.html">print(<i>&lt;SeaSondeRCS&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print Method for SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
           <code><a href="process_version_header.html">process_version_header()</a></code>
 
         </dt>
@@ -175,6 +194,24 @@
         <dd>Convert Doppler Bins to Normalized Doppler Frequency</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_CSSW2CSData.html">seasonder_CSSW2CSData()</a></code>
+
+        </dt>
+        <dd>Transform CSSW Body to SeaSonde CS Data Structure</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_CSSW2CSHeader.html">seasonder_CSSW2CSHeader()</a></code>
+
+        </dt>
+        <dd>Transform CSSW Header to SeaSonde CS Header</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_CSSW_read_asign.html">seasonder_CSSW_read_asign()</a></code>
+
+        </dt>
+        <dd>Read Self Spectra Sign Information from a Connection</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_CSSY2CSData.html">seasonder_CSSY2CSData()</a></code>
 
         </dt>
@@ -185,6 +222,18 @@
 
         </dt>
         <dd>Transform CSSY Header to SeaSondeRCS Header</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_CSSY_read_asign.html">seasonder_CSSY_read_asign()</a></code>
+
+        </dt>
+        <dd>Read Self Spectra Sign Information from a Connection</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_CSSY_read_csign.html">seasonder_CSSY_read_csign()</a></code>
+
+        </dt>
+        <dd>Read Complex Spectral Sign Information from a Connection</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_DopplerFreq2Bins.html">seasonder_DopplerFreq2Bins()</a></code>
@@ -361,6 +410,12 @@
         <dd>Perform Doppler Interpolation for SeaSonde Cross-Spectra Data</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_SeaSondeRCSSWApplyScaling.html">seasonder_SeaSondeRCSSWApplyScaling()</a></code>
+
+        </dt>
+        <dd>Apply Scaling to SeaSondeRCSSW Data</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_SeaSondeRCSSYApplyScaling.html">seasonder_SeaSondeRCSSYApplyScaling()</a></code>
 
         </dt>
@@ -401,6 +456,12 @@
 
         </dt>
         <dd>Apply Amplitude and Phase Corrections to a SeaSonde RAPM Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_applyCSSWSigns.html">seasonder_applyCSSWSigns()</a></code>
+
+        </dt>
+        <dd>Apply CSSW Sign Corrections</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_areLogsEnabled.html">seasonder_areLogsEnabled()</a></code>
@@ -1177,16 +1238,46 @@
         <dd>Convert a Raw Vector to a 64-bit Integer</dd>
       </dl><dl><dt>
 
-          <code><a href="seasonder_readBodyRangeCell.html">seasonder_readBodyRangeCell()</a></code>
+          <code><a href="seasonder_readCSField.html">seasonder_readCSField()</a></code>
+
+        </dt>
+        <dd>Read a CSField from a Binary Connection</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_readCSSWBody.html">seasonder_readCSSWBody()</a></code>
+
+        </dt>
+        <dd>Read CSSW Body</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_readCSSWBodyRangeCell.html">seasonder_readCSSWBodyRangeCell()</a></code>
 
         </dt>
         <dd>Read a Body Range Cell and Apply Scaling if Required</dd>
       </dl><dl><dt>
 
-          <code><a href="seasonder_readCSField.html">seasonder_readCSField()</a></code>
+          <code><a href="seasonder_readCSSWFields.html">seasonder_readCSSWFields()</a></code>
 
         </dt>
-        <dd>Read a CSField from a Binary Connection</dd>
+        <dd>Read CSSW Fields</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_readCSSWHeader.html">seasonder_readCSSWHeader()</a></code>
+
+        </dt>
+        <dd>Read CSSW File Header</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_readCSSWLims.html">seasonder_readCSSWLims()</a></code>
+
+        </dt>
+        <dd>Read CSSW Limits</dd>
+      </dl><dl><dt>
+
+          <code><a href="seasonder_readCSSYBodyRangeCell.html">seasonder_readCSSYBodyRangeCell()</a></code>
+
+        </dt>
+        <dd>Read a Body Range Cell and Apply Scaling if Required</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_readCSSYHeader.html">seasonder_readCSSYHeader()</a></code>
@@ -1267,6 +1358,12 @@
         <dd>Read and Parse a SeaSonde APM File</dd>
       </dl><dl><dt>
 
+          <code><a href="seasonder_readSeaSondeRCSSWFile.html">seasonder_readSeaSondeRCSSWFile()</a></code>
+
+        </dt>
+        <dd>Read SeaSonde RCSSW File and Create SeaSondeRCS Object</dd>
+      </dl><dl><dt>
+
           <code><a href="seasonder_readSeaSondeRCSSYFile.html">seasonder_readSeaSondeRCSSYFile()</a></code>
 
         </dt>
@@ -1279,22 +1376,10 @@
         <dd>Read Specifications from a YAML File</dd>
       </dl><dl><dt>
 
-          <code><a href="seasonder_read_asign.html">seasonder_read_asign()</a></code>
-
-        </dt>
-        <dd>Read Self Spectra Sign Information from a Connection</dd>
-      </dl><dl><dt>
-
-          <code><a href="seasonder_read_csign.html">seasonder_read_csign()</a></code>
-
-        </dt>
-        <dd>Read Complex Spectral Sign Information from a Connection</dd>
-      </dl><dl><dt>
-
           <code><a href="seasonder_read_reduced_encoded_data.html">seasonder_read_reduced_encoded_data()</a></code>
 
         </dt>
-        <dd>This function reads an array of numbers from a binary connection using a custom command-based protocol. A block of data is processed according to its size specified in <code>key$size</code>. Within the block, the first byte read is a command byte that determines how the subsequent bytes are interpreted. The function updates a running "tracking value" based on the commands encountered and returns a vector of decoded numbers. The supported commands are:</dd>
+        <dd>Read Reduced Encoded Data from a Binary Connection</dd>
       </dl><dl><dt>
 
           <code><a href="seasonder_rejectDistantBragg.html">seasonder_rejectDistantBragg()</a></code>
@@ -1673,6 +1758,18 @@
 
         </dt>
         <dd>Convert Self-Spectra Power to dB</dd>
+      </dl><dl><dt>
+
+          <code><a href="summary.SeaSondeRAPM.html">summary(<i>&lt;SeaSondeRAPM&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Summarizes a SeaSondeRAPM Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="summary.SeaSondeRCS.html">summary(<i>&lt;SeaSondeRCS&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Summary Method for SeaSondeRCS Object</dd>
       </dl><dl><dt>
 
           <code><a href="validate_SeaSondeRAPM_AmplitudeFactors.html">validate_SeaSondeRAPM_AmplitudeFactors()</a></code>

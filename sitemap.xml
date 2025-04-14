@@ -1,6 +1,12 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://gofuvi.github.io/SeaSondeR/404.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/CONTRIBUTING.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/LICENSE.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/articles/RadialMetricsExport.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/articles/SeaSondeAPM.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/articles/SeaSondeCS.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/articles/index.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/articles/intro.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/authors.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/index.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/SeaSondeRAPM_SiteOrigin_override_step_text.html</loc></url>
@@ -19,6 +25,8 @@
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/new_SeaSondeRCS.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/parse_metadata_line.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/pipe.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/print.SeaSondeRAPM.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/print.SeaSondeRCS.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/process_version_header.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/qc_check_range.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/qc_check_type.html</loc></url>
@@ -28,8 +36,13 @@
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/read_matrix_row.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_Bins2DopplerFreq.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_Bins2NormalizedDopplerFreq.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_CSSW2CSData.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_CSSW2CSHeader.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_CSSW_read_asign.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_CSSY2CSData.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_CSSY2CSHeader.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_CSSY_read_asign.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_CSSY_read_csign.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_DopplerFreq2Bins.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_DopplerFreq2NormalizedDopplerFreq.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_MUSICBearing2GeographicalBearing.html</loc></url>
@@ -59,6 +72,7 @@
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_NormalizedDopplerFreq2DopplerFreq.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_SeaSondeRCSExportFORBoundaries.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_SeaSondeRCSMUSICInterpolateDoppler.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_SeaSondeRCSSWApplyScaling.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_SeaSondeRCSSYApplyScaling.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_SeaSondeRCS_plotSelfSpectrum.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_SelfSpectra2dB.html</loc></url>
@@ -66,6 +80,7 @@
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_SmoothSS.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_SwapDopplerUnits.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_applyAPMAmplitudeAndPhaseCorrections.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_applyCSSWSigns.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_areLogsEnabled.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_areMessagesEnabled.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_asJSONSeaSondeRCSData.html</loc></url>
@@ -195,8 +210,13 @@
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_logArchiver.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_plotAPMLoops.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_raw_to_int.html</loc></url>
-<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readBodyRangeCell.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readCSField.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readCSSWBody.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readCSSWBodyRangeCell.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readCSSWFields.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readCSSWHeader.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readCSSWLims.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readCSSYBodyRangeCell.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readCSSYHeader.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readPhaseFile.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFile.html</loc></url>
@@ -210,10 +230,9 @@
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFileHeaderV5.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeCSFileHeaderV6.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeRAPMFile.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeRCSSWFile.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readSeaSondeRCSSYFile.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_readYAMLSpecs.html</loc></url>
-<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_read_asign.html</loc></url>
-<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_read_csign.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_read_reduced_encoded_data.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_rejectDistantBragg.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_rejectDistantBraggPeakTest.html</loc></url>
@@ -278,6 +297,8 @@
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_validateFORMethod.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_validateFOR_parameters.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/self_spectra_to_dB.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/summary.SeaSondeRAPM.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/summary.SeaSondeRCS.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_AmplitudeFactors.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_AntennaBearing.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/validate_SeaSondeRAPM_BEAR.html</loc></url>

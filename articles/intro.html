@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,7 +34,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/intro.html">SeaSondeR</a></li>
-    <li><a class="dropdown-item" href="../articles/SeaSondeAPM.html">APM</a></li>
+    <li><a class="dropdown-item" href="../articles/RadialMetricsExport.html">Exporting Radial Metrics</a></li>
+    <li><a class="dropdown-item" href="../articles/SeaSondeAPM.html">Antenna Pattern</a></li>
     <li><a class="dropdown-item" href="../articles/SeaSondeCS.html">Cross-Spectra Files</a></li>
   </ul>
 </li>
@@ -60,122 +61,95 @@
       <h1>SeaSondeR</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/GOFUVI/SeaSondeR/blob/master/vignettes/intro.Rmd" class="external-link"><code>vignettes/intro.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/GOFUVI/SeaSondeR/blob/main/vignettes/intro.Rmd" class="external-link"><code>vignettes/intro.Rmd</code></a></small>
       <div class="d-none name"><code>intro.Rmd</code></div>
     </div>
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/GOFUVI/SeaSondeR" class="external-link">SeaSondeR</a></span><span class="op">)</span></span></code></pre></div>
-<div class="section level3">
-<h3 id="instrument-introduction-seasonde">Instrument Introduction: SeaSonde<a class="anchor" aria-label="anchor" href="#instrument-introduction-seasonde"></a>
-</h3>
-<p>SeaSonde is a compact, simplified radar system developed in
-California’s Silicon Valley to measure near-surface ocean currents and,
-in certain cases, ocean waves. It operates at low frequencies ranging
-from 4 to 50 megahertz, and uses a small bandwidth.</p>
-<p>A SeaSonde system consists of two or more radial sites that
-contribute to a combined site to produce current maps. Each radial site
-can be imagined as the hub of a wheel, with the “radials” acting as
-spokes pointing toward or away from the site. These radials represent
-the component velocities of an ocean current in specific directions.
-Radial sites are typically several kilometers apart and are fully
-automated.</p>
-</div>
-<div class="section level3">
-<h3 id="common-data-processing-tasks-">Common Data Processing Tasks.<a class="anchor" aria-label="anchor" href="#common-data-processing-tasks-"></a>
-</h3>
-<ol style="list-style-type: decimal">
-<li>
-<strong>Radial Map Generation</strong>: Creation of maps showing the
-direction and velocity of currents relative to a radial site.</li>
-<li>
-<strong>Vector Map Creation</strong>: Combining radial maps from
-multiple sites to create a complete ocean current map.</li>
-<li>
-<strong>Antenna Pattern Measurement (APM)</strong>: Antenna pattern
-calibration to improve data accuracy.</li>
-<li>
-<strong>Outliers Removal and Noise Filtering</strong>: Preprocessing
-to improve data quality.</li>
-<li><ol start="5" style="list-style-type: decimal">
-<li>
-<strong>Antenna Gain Calculation</strong>: Adjustment of
-measurements to obtain more accurate data.</li>
-</ol></li>
-</ol>
-</div>
-<div class="section level3">
-<h3 id="existing-seasonde-data-processing-software">Existing SeaSonde Data Processing Software<a class="anchor" aria-label="anchor" href="#existing-seasonde-data-processing-software"></a>
-</h3>
-<div class="section level4">
-<h4 id="radial-suite">Radial Suite<a class="anchor" aria-label="anchor" href="#radial-suite"></a>
-</h4>
-<p>This is proprietary software specifically for SeaSonde that provides
-tools for data processing.</p>
-<p><strong>Advantages</strong>:<br>
-- Designed specifically for SeaSonde. - Integrated and
-comprehensive.</p>
-<p><strong>Disadvantages</strong>:<br>
-- Closed software. - Costly and with limited licenses.</p>
-</div>
-<div class="section level4">
-<h4 id="radiowave-operators-working-group-repositories">Radiowave Operators Working Group Repositories<a class="anchor" aria-label="anchor" href="#radiowave-operators-working-group-repositories"></a>
-</h4>
-<p>Includes the <code>spectra_tools</code> repository, which has Python
-scripts for reading and preprocessing data.</p>
-<p><strong>Advantages</strong>:<br>
-- Open source. - Good for data quality control.</p>
-<p><strong>Disadvantages</strong>:<br>
-- Limited to a few tasks.</p>
-</div>
-<div class="section level4">
-<h4 id="hfr_cs_processing-by-bryan-emery">hfr_cs_processing by Bryan Emery<a class="anchor" aria-label="anchor" href="#hfr_cs_processing-by-bryan-emery"></a>
-</h4>
-<p>Provides a wide range of functionality for data processing in
-MATLAB.</p>
-<p><strong>Advantages</strong>:<br>
-- Complete task coverage. - Good for research.</p>
-<p><strong>Disadvantages</strong>:<br>
-- Requires a MATLAB license. - Limited to author’s research.</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="tasks-that-can-be-performed-with-this-r-package">Tasks that Can be Performed with This R Package<a class="anchor" aria-label="anchor" href="#tasks-that-can-be-performed-with-this-r-package"></a>
-</h3>
-<p>This R package, called <code>SeaSondeR</code>, aims to provide a
-complete, open source solution for SeaSonde data processing.
-Capabilities include:</p>
-<ol style="list-style-type: decimal">
-<li>
-<strong>Data Reading</strong>: Read APM and <code>.cs</code>
-files.</li>
-<li>
-<strong>Map Generation</strong>: Create both radial and vector
-maps.</li>
-<li><ol start="3" style="list-style-type: decimal">
-<li>
-<strong>APM</strong>: Antenna pattern calibration.</li>
-</ol></li>
-<li>
-<strong>Data Preprocessing</strong>: Noise filtering, outliers
-elimination and gain calculation.</li>
-<li>
-<strong>Interoperability</strong>: Can interface with other packages
-and repositories for deeper analysis.</li>
-<li>
-<strong>Diagnostics and Maintenance</strong>: Tools for radio site
-problem diagnosis and resolution.</li>
-</ol>
-<p>By using <code>SeaSondeR</code>, users can take advantage of the
-power and flexibility of the R language for data analysis, while
-maintaining high accuracy and reliability in the interpretation of
-SeaSonde data.</p>
+<div class="section level2">
+<h2 id="instrument-introduction-seasonde">Instrument Introduction: SeaSonde<a class="anchor" aria-label="anchor" href="#instrument-introduction-seasonde"></a>
+</h2>
+<p>SeaSonde is a compact HF radar system designed for coastal and
+regional monitoring of surface currents. It provides near real‐time
+measurements by exploiting the Bragg resonance phenomenon to detect
+Doppler shifts from ocean waves. SeaSondeR enables processing of both
+raw and averaged radar spectra and antenna pattern files to extract key
+oceanographic parameters.</p>
 </div>
 <div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 id="existing-seasonde-data-processing-software">Existing SeaSonde Data Processing Software<a class="anchor" aria-label="anchor" href="#existing-seasonde-data-processing-software"></a>
 </h2>
+<p>Several software solutions exist for processing SeaSonde data: -
+<strong>Radial Suite:</strong> A proprietary tool developed by CODAR for
+computing radial metrics. - <strong>Radiowave Operators Working Group
+Repositories:</strong> Open-source Python scripts for cleaning and
+preprocessing SeaSonde spectra available at <a href="https://github.com/rowg/spectra_tools" class="external-link">spectra_tools</a>. -
+<strong>hfr_cs_processing by Bryan Emery:</strong> A MATLAB-based
+package for generating radar radials based on SeaSonde spectra. More
+details can be found at <a href="https://github.com/brianemery/hfr_cs_processing" class="external-link">GitHub</a> <span class="citation">(Emery 2021)</span>.</p>
+</div>
+<div class="section level2">
+<h2 id="why-seasonder">Why SeaSondeR?<a class="anchor" aria-label="anchor" href="#why-seasonder"></a>
+</h2>
+<p>SeaSondeR is developed to provide an open source tool that unifies
+and automates the processing and analysis of HF SeaSonde radar data. It
+enables the reliable extraction of radial metrics and derived
+oceanographic parameters, supports scalable processing pipelines through
+Docker and AWS integration, and reduces reliance on proprietary
+commercial software.</p>
+</div>
+<div class="section level2">
+<h2 id="tasks-that-can-be-performed-with-this-r-package">Tasks that Can be Performed with This R Package<a class="anchor" aria-label="anchor" href="#tasks-that-can-be-performed-with-this-r-package"></a>
+</h2>
+<p>SeaSondeR is designed to: - Read and validate SeaSonde spectrum (CS)
+and antenna pattern files. - Compute the first order region by applying
+methods similar to those used by CODAR. - Apply the MUSIC algorithm for
+directional signal detection. - Calculate derived physical parameters
+(e.g., radial velocities, spectral resolutions). - Export radial metrics
+in formats compatible with CODAR tools. - Integrate with Docker and AWS
+for scalable and automated processing pipelines. See GitHub repositories
+<a href="https://github.com/GOFUVI/seasonder-rest" class="external-link">seasonder-rest</a>
+and <a href="https://github.com/GOFUVI/SeaSondeRAWSLambdaDocker" class="external-link">SeaSondeRAWSLambdaDocker</a>
+for integration examples.</p>
+</div>
+<div class="section level2">
+<h2 id="installation-in-r">Installation in R<a class="anchor" aria-label="anchor" href="#installation-in-r"></a>
+</h2>
+<p>To install SeaSondeR from the GitHub repository, you can run the
+following command in your R console.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Install SeaSondeR from GitHub</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"GOFUVI/SeaSondeR"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
+</h2>
+<p>This work has been funded by the HF-EOLUS project
+(TED2021-129551B-I00), financed by MICIU/AEI /10.13039/501100011033 and
+by the European Union NextGenerationEU/PRTR - BDNS 598843 - Component 17
+- Investment I3.</p>
+</div>
+<div class="section level2">
+<h2 id="disclaimer">Disclaimer<a class="anchor" aria-label="anchor" href="#disclaimer"></a>
+</h2>
+<p>This software is provided “as is”, without warranty of any kind,
+express or implied, including but not limited to the warranties of
+merchantability, fitness for a particular purpose, and noninfringement.
+In no event shall the authors or copyright holders be liable for any
+claim, damages, or other liability, whether in an action of contract,
+tort, or otherwise, arising from, out of, or in connection with the
+software or the use or other dealings in the software.</p>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-Emery2021code" class="csl-entry">
+Emery, Brian. 2021. <span>“<span class="nocase">HFR CS Processing
+Toolbox for MATLAB</span>, Software Release Version 2.0,
+Https://Doi.org/10.5281/Zenodo.5598294.”</span> <a href="https://doi.org/10.5281/zenodo.5598294" class="external-link">https://doi.org/10.5281/zenodo.5598294</a>.
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -184,7 +158,7 @@ SeaSonde data.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Juan Luis Herrera Cortijo.</p>
+  <p>Developed by Juan Luis Herrera Cortijo, Ramiro A. Varela Benvenuto, Adrián Fernández Baladrón.</p>
 </div>
 
 <div class="pkgdown-footer-right">
