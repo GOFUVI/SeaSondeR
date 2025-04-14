@@ -84,7 +84,7 @@ describe("seasonder_readYAMLSpecs", {
 describe("determining spectra file type", {
   describe("CS", {
     # Define file path for a CS file example using the 'here' package
-    filepath <- here::here("tests/testthat/data/TORA/CSS_TORA_24_04_04_0640.cs")
+    filepath <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
     endian <- "big"
 
     describe("seasonder_find_spectra_file_type", {
@@ -109,26 +109,26 @@ describe("determining spectra file type", {
     })
   })
 
-  describe("CSSY", {
-    # Define file path for a CSSY file example using the 'here' package
-    filepath <- here::here("tests/testthat/data/SUNS/CSS/CSS_SUNS_2025_02_17_060000.csr")
+  describe("CSSW", {
+    # Define file path for a CSSW file example using the 'here' package
+    filepath <- system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR")
     endian <- "big"
 
     describe("seasonder_find_spectra_file_type", {
-      it("should return CSSY", {
-        # Call the function and expect it to return "CSSY" for the given file
+      it("should return CSSW", {
+        # Call the function and expect it to return "CSSW" for the given file
         test <- seasonder_find_spectra_file_type(filepath, endian)
-        expect_equal(test, "CSSY")
+        expect_equal(test, "CSSW")
       })
     })
 
     describe("seasonder_defaultSpecsPathForFile", {
-      it("should return the default specs file for CSSY", {
-        # Get the expected default specs file path for CSSY
-        target <- seasonder_defaultSpecsFilePath("CSSY")
-        # Mock the function to force the return of "CSSY" and then test the default specs path function
+      it("should return the default specs file for CSSW", {
+        # Get the expected default specs file path for CSSW
+        target <- seasonder_defaultSpecsFilePath("CSSW")
+        # Mock the function to force the return of "CSSW" and then test the default specs path function
         test <- mockthat::with_mock(
-          seasonder_find_spectra_file_type = function(filepath, endian) "CSSY",
+          seasonder_find_spectra_file_type = function(filepath, endian) "CSSW",
           seasonder_defaultSpecsPathForFile(filepath, endian = endian)
         )
         expect_equal(test, target)
