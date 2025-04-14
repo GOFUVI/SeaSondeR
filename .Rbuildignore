@@ -17,4 +17,4 @@ r-reticulate
 ^\.renvignore$
 ^checks$
 ^CONTRIBUTING\.md$
-^codemeta$\.json$
+^codemeta\.json$
