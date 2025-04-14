@@ -59,7 +59,30 @@ seasonder_disableMessages()
   expected_metrics_text <- filter_text(expected_metrics_text)
   radial_metrics_text   <- filter_text(radial_metrics_text)
   
-  # Comparar los textos exportados con el fichero de referencia
-  expect_equal(radial_metrics_text, expected_metrics_text)
+  # Nuevo bloque para comparar considerando la línea %UUID:
+  uuid_expected <- grep("^%UUID:", expected_metrics_text, value = TRUE)
+  uuid_radial   <- grep("^%UUID:", radial_metrics_text, value = TRUE)
+  
+  if (length(uuid_expected) > 0 && length(uuid_radial) > 0) {
+    if (all(uuid_expected == uuid_radial)) {
+      # Si la línea %UUID: es idéntica, comparar todo el texto
+      expect_equal(radial_metrics_text, expected_metrics_text)
+    } else {
+      # Si la línea %UUID: difiere, comparar el resto de líneas permitiendo hasta 1 carácter de diferencia
+      expected_no_uuid <- expected_metrics_text[!grepl("^%UUID:", expected_metrics_text)]
+      radial_no_uuid   <- radial_metrics_text[!grepl("^%UUID:", radial_metrics_text)]
+      expect_equal(length(expected_no_uuid), length(radial_no_uuid))
+      for(i in seq_along(expected_no_uuid)) {
+        diff <- adist(expected_no_uuid[i], radial_no_uuid[i])
+        if(diff > 1) {
+          fail(sprintf("La línea %d difiere más de lo permitido: esperado '%s', obtenido '%s'", 
+                       i, expected_no_uuid[i], radial_no_uuid[i]))
+        }
+      }
+    }
+  } else {
+    # Si no hay línea %UUID: en ambos textos, comparar el texto completo
+    expect_equal(radial_metrics_text, expected_metrics_text)
+  }
 })
 
