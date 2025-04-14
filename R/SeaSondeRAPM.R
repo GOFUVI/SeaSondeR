@@ -334,7 +334,9 @@ SeaSondeRAPM_SiteOrigin_override_step_text <- function(SiteOrigin) {
 #' @export
 #' @examples
 #' \dontrun{
-#'   valid <- seasonder_validateCalibrationMatrixSeaSondeRAPM(matrix(complex(real=1, imaginary=0), nrow=3, ncol=5))
+#'   valid <- seasonder_validateCalibrationMatrixSeaSondeRAPM(
+#'      matrix(complex(real=1, imaginary=0), nrow=3, ncol=5)
+#'    )
 #' }
 seasonder_validateCalibrationMatrixSeaSondeRAPM <- function(matrix) {
   # Check if the input is a matrix
@@ -2011,6 +2013,14 @@ seasonder_plotAPMLoops <- function(seasonder_apm_obj) {
 
 #' Print a SeaSondeRAPM Object
 #' 
+#' This function prints the details of a SeaSondeRAPM object, including the station code,
+#' original file name, site origin (latitude and longitude), and antenna bearing.
+#' It is primarily used for displaying the object's metadata in a human-readable format.
+#' 
+#' @param x A SeaSondeRAPM object. This object should be created using the
+#'   seasonder_createSeaSondeRAPM() function and must include a calibration matrix,
+#'   a quality matrix, the BEAR attribute, and a StationCode.
+#' @param ... Additional arguments that might be passed to other methods; currently not used.
 #' @method print SeaSondeRAPM
 #' @export
 #' 
@@ -2041,7 +2051,7 @@ print.SeaSondeRAPM <- function(x, ...){
 #' The processing steps provide a record of the transformations and operations applied to the object, 
 #' which can be useful for debugging and understanding the data workflow.
 #'
-#' @param seasonder_apm_object An object of class "SeaSondeRAPM". This object should be created using 
+#' @param object An object of class "SeaSondeRAPM". This object should be created using 
 #'   the seasonder_createSeaSondeRAPM() function and must include a calibration matrix, a quality matrix, 
 #'   the BEAR attribute, and a StationCode.
 #' @param ... Additional arguments that might be passed to other methods; currently not used.

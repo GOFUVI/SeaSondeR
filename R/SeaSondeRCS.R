@@ -711,7 +711,8 @@ seasonder_setSeaSondeRCS_data <- function(seasonder_cs_object, data) {
 #'
 #' @examples 
 #' \dontrun{
-#'  # Assuming cs_obj is a valid SeaSondeRCS object and new_steps is a character vector of processing steps
+#'  # Assuming cs_obj is a valid SeaSondeRCS object and new_steps 
+#'  # is a character vector of processing steps
 #'   cs_obj <- seasonder_setSeaSondeRCS_ProcessingSteps(cs_obj, new_steps)
 #'   # Check the updated processing steps
 #'  print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_obj))
@@ -3591,7 +3592,8 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun) {
 #' It's also important to note that within `read_and_qc_field`, the function `seasonder_readCSField` is used. This function has its own error management and restart options, which are detailed in its documentation.
 #' @examples
 #' \dontrun{
-#'   field_spec <- list(type = "UInt8", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer"))
+#'   field_spec <- list(type = "UInt8", qc_fun = "qc_check_type", 
+#'    qc_params = list(expected_type = "integer"))
 #'   con <- rawConnection(as.raw(c(0x01)))
 #'   result <- read_and_qc_field(field_spec, con, endian = "big")
 #'   print(result)
@@ -3902,8 +3904,10 @@ seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "bi
 #' \dontrun{
 #'   con <- rawConnection(as.raw(rep(0, 100)))
 #'   specs <- list(
-#'     nSiteCodeName = list(type = "Char10", qc_fun = "qc_check_type", qc_params = list(expected_type = "character")),
-#'     nV3Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
+#'     nSiteCodeName = list(type = "Char10", qc_fun = "qc_check_type", 
+#'      qc_params = list(expected_type = "character")),
+#'     nV3Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", 
+#'      qc_params = list())
 #'   )
 #'   header <- seasonder_readSeaSondeCSFileHeaderV3(specs, con, endian = "big")
 #'   print(header)
@@ -4731,6 +4735,16 @@ seasonder_load_qc_functions()
 
 #' Print Method for SeaSondeRCS Object
 #' 
+#' 
+#' This method provides a formatted printout of the SeaSondeRCS object, displaying
+#' the station code, date/time, number of Doppler cells, and number of range cells.
+#' It is designed for interactive use, allowing users to quickly inspect the object.
+#' @param x An object of class "SeaSondeRCS". This object should contain at least a header list
+#' with metadata (such as station name, date/time, and cell counts).
+#' @param ... Additional arguments. Currently not used, but supplied for compatibility with
+#' generic print methods.
+#' @details The function uses the `whisker` package to render a template string with the
+#' header information.
 #' @method print SeaSondeRCS
 #' @export
 #' 
@@ -4763,7 +4777,7 @@ print.SeaSondeRCS <- function(x, ...){
 #' Provides a concise summary of a SeaSondeRCS object by printing the processing steps
 #' that have been applied to the data contained in the object.
 #'
-#' @param seasonder_cs_object An object of class "SeaSondeRCS". This object should contain
+#' @param object An object of class "SeaSondeRCS". This object should contain
 #' at least a header list with metadata (such as station name, date/time, and cell counts)
 #' and processing step information retrieved by the function
 #' seasonder_getSeaSondeRCS_ProcessingSteps.

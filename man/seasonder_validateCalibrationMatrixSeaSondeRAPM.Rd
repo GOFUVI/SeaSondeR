@@ -28,7 +28,9 @@ If any of these validation steps fail, the function will log a fatal error and s
 }
 \examples{
 \dontrun{
-  valid <- seasonder_validateCalibrationMatrixSeaSondeRAPM(matrix(complex(real=1, imaginary=0), nrow=3, ncol=5))
+  valid <- seasonder_validateCalibrationMatrixSeaSondeRAPM(
+     matrix(complex(real=1, imaginary=0), nrow=3, ncol=5)
+   )
 }
 }
 \seealso{

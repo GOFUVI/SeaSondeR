@@ -6,11 +6,20 @@
 \usage{
 \method{print}{SeaSondeRAPM}(x, ...)
 }
+\arguments{
+\item{x}{A SeaSondeRAPM object. This object should be created using the
+seasonder_createSeaSondeRAPM() function and must include a calibration matrix,
+a quality matrix, the BEAR attribute, and a StationCode.}
+
+\item{...}{Additional arguments that might be passed to other methods; currently not used.}
+}
 \value{
 The SeaSondeRAPM object itself, invisibly.
 }
 \description{
-Print a SeaSondeRAPM Object
+This function prints the details of a SeaSondeRAPM object, including the station code,
+original file name, site origin (latitude and longitude), and antenna bearing.
+It is primarily used for displaying the object's metadata in a human-readable format.
 }
 \examples{
 \dontrun{

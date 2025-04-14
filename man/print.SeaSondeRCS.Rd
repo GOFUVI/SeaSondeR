@@ -6,11 +6,24 @@
 \usage{
 \method{print}{SeaSondeRCS}(x, ...)
 }
+\arguments{
+\item{x}{An object of class "SeaSondeRCS". This object should contain at least a header list
+with metadata (such as station name, date/time, and cell counts).}
+
+\item{...}{Additional arguments. Currently not used, but supplied for compatibility with
+generic print methods.}
+}
 \value{
 Invisibly returns the original SeaSondeRCS object.
 }
 \description{
-Print Method for SeaSondeRCS Object
+This method provides a formatted printout of the SeaSondeRCS object, displaying
+the station code, date/time, number of Doppler cells, and number of range cells.
+It is designed for interactive use, allowing users to quickly inspect the object.
+}
+\details{
+The function uses the \code{whisker} package to render a template string with the
+header information.
 }
 \examples{
 \dontrun{

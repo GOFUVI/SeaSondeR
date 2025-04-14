@@ -7,11 +7,11 @@
 \method{summary}{SeaSondeRAPM}(object, ...)
 }
 \arguments{
-\item{...}{Additional arguments that might be passed to other methods; currently not used.}
-
-\item{seasonder_apm_object}{An object of class "SeaSondeRAPM". This object should be created using
+\item{object}{An object of class "SeaSondeRAPM". This object should be created using
 the seasonder_createSeaSondeRAPM() function and must include a calibration matrix, a quality matrix,
 the BEAR attribute, and a StationCode.}
+
+\item{...}{Additional arguments that might be passed to other methods; currently not used.}
 }
 \value{
 Invisibly returns the input SeaSondeRAPM object. This allows the function to be used in a sequence

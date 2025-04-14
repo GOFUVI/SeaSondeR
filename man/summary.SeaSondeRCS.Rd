@@ -7,13 +7,13 @@
 \method{summary}{SeaSondeRCS}(object, ...)
 }
 \arguments{
-\item{...}{Additional arguments. Currently not used, but supplied for compatibility with
-generic summary methods.}
-
-\item{seasonder_cs_object}{An object of class "SeaSondeRCS". This object should contain
+\item{object}{An object of class "SeaSondeRCS". This object should contain
 at least a header list with metadata (such as station name, date/time, and cell counts)
 and processing step information retrieved by the function
 seasonder_getSeaSondeRCS_ProcessingSteps.}
+
+\item{...}{Additional arguments. Currently not used, but supplied for compatibility with
+generic summary methods.}
 }
 \value{
 Invisibly returns the original SeaSondeRCS object.

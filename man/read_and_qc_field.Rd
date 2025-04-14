@@ -64,7 +64,8 @@ The function provides structured mechanisms to recover from errors/conditions du
 
 \examples{
 \dontrun{
-  field_spec <- list(type = "UInt8", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer"))
+  field_spec <- list(type = "UInt8", qc_fun = "qc_check_type", 
+   qc_params = list(expected_type = "integer"))
   con <- rawConnection(as.raw(c(0x01)))
   result <- read_and_qc_field(field_spec, con, endian = "big")
   print(result)

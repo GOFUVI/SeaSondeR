@@ -31,8 +31,10 @@ Adds nRangeCells, nDopplerCells, and nFirstRangeCell as constant values to the r
 \dontrun{
   con <- rawConnection(as.raw(rep(0, 100)))
   specs <- list(
-    nSiteCodeName = list(type = "Char10", qc_fun = "qc_check_type", qc_params = list(expected_type = "character")),
-    nV3Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
+    nSiteCodeName = list(type = "Char10", qc_fun = "qc_check_type", 
+     qc_params = list(expected_type = "character")),
+    nV3Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", 
+     qc_params = list())
   )
   header <- seasonder_readSeaSondeCSFileHeaderV3(specs, con, endian = "big")
   print(header)
