@@ -12,7 +12,6 @@ on:
   push:
     branches:
       - main
-      - SEAS-150
 
 jobs:
   pkgcheck:
