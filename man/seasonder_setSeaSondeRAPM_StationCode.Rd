@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_StationCode(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated StationCode.
+}
 \description{
 Setter for StationCode
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_StationCode(obj, new_station_code)
+}
 }

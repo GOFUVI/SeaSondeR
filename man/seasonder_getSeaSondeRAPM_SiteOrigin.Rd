@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_SiteOrigin(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The SiteOrigin attribute from the object.
+}
 \description{
 Getter for SiteOrigin
+}
+\examples{
+\dontrun{
+  site_origin <- seasonder_getSeaSondeRAPM_SiteOrigin(obj)
+}
 }

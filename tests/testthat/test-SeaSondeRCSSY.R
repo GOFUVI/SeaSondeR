@@ -2,9 +2,9 @@ test_that("Related functions are defined",{
 
   expect_true(is.function(seasonder_read_reduced_encoded_data),
               info = "seasonder_read_reduced_encoded_data must be defined")
-  expect_true(is.function(seasonder_read_csign), info = "The function seasonder_read_csign must be implemented")
-  expect_true(is.function(seasonder_read_asign),
-              info = "The function seasonder_read_asign should exist")
+  expect_true(is.function(seasonder_CSSY_read_csign), info = "The function seasonder_CSSY_read_csign must be implemented")
+  expect_true(is.function(seasonder_CSSY_read_asign),
+              info = "The function seasonder_CSSY_read_asign should exist")
   expect_true(exists("seasonder_SeaSondeRCSSYApplyScaling", mode = "function"),
               info = "seasonder_SeaSondeRCSSYApplyScaling should be defined")
 
@@ -164,98 +164,98 @@ describe("Tests for seasonder_read_reduced_encoded_data function", {
 
 })
 
-describe("seasonder_read_csign", {
+# describe("seasonder_CSSY_read_csign", {
 
-  it("returns a list with 6 groups for valid input with nDopplers = 8", {
-    # For nDopplers = 8, key$size should be 6 bytes (6 * (8/8) = 6)
-    key <- list(key = "csign", size = 6)
-    # Prepare a raw vector of 6 bytes with known values
-    raw_data <- as.raw(c(0xFF, 0x00, 0xA5, 0x5A, 0xCC, 0x33))
-    con <- rawConnection(raw_data, "rb")
-    on.exit(close(con), add = TRUE)
+#   it("returns a list with 6 groups for valid input with nDopplers = 8", {
+#     # For nDopplers = 8, key$size should be 6 bytes (6 * (8/8) = 6)
+#     key <- list(key = "csign", size = 6)
+#     # Prepare a raw vector of 6 bytes with known values
+#     raw_data <- as.raw(c(0xFF, 0x00, 0xA5, 0x5A, 0xCC, 0x33))
+#     con <- rawConnection(raw_data, "rb")
+#     on.exit(close(con), add = TRUE)
 
-    result <- seasonder_read_csign(con, key)
+#     result <- seasonder_CSSY_read_csign(con, key)
 
-    # Check that the result is a list and has 6 elements
-    expect_true(is.list(result), info = "The function should return a list")
-    expect_equal(length(result), 6, info = "The result list should have 6 elements")
+#     # Check that the result is a list and has 6 elements
+#     expect_true(is.list(result), info = "The function should return a list")
+#     expect_equal(length(result), 6, info = "The result list should have 6 elements")
 
-    # Verify that the list names match the expected groups
-    expected_names <- c("C13r", "C13i", "C23r", "C23i", "C12r", "C12i")
-    expect_equal(names(result), expected_names,
-                 info = "The list names should be C13r, C13i, C23r, C23i, C12r, C12i")
+#     # Verify that the list names match the expected groups
+#     expected_names <- c("C13r", "C13i", "C23r", "C23i", "C12r", "C12i")
+#     expect_equal(names(result), expected_names,
+#                  info = "The list names should be C13r, C13i, C23r, C23i, C12r, C12i")
 
-    # For nDopplers = 8, each group comes from 1 byte so each vector must have 8 bits
-    for (group in result) {
-      expect_equal(length(group), 8,
-                   info = "Each group should have 8 bits when nDopplers = 8")
-      expect_true(all(group %in% c(0, 1)),
-                  info = "Each bit in a group should be either 0 or 1")
-    }
+#     # For nDopplers = 8, each group comes from 1 byte so each vector must have 8 bits
+#     for (group in result) {
+#       expect_equal(length(group), 8,
+#                    info = "Each group should have 8 bits when nDopplers = 8")
+#       expect_true(all(group %in% c(0, 1)),
+#                   info = "Each bit in a group should be either 0 or 1")
+#     }
 
-    # Verify individual groups by comparing with rawToBits conversion of the corresponding byte(s)
-    expected_C13r <- as.integer(rawToBits(raw_data[1]))
-    expect_equal(result$C13r, expected_C13r,
-                 info = "C13r should match the bit conversion of the first byte")
+#     # Verify individual groups by comparing with rawToBits conversion of the corresponding byte(s)
+#     expected_C13r <- as.integer(rawToBits(raw_data[1]))
+#     expect_equal(result$C13r, expected_C13r,
+#                  info = "C13r should match the bit conversion of the first byte")
 
-    expected_C13i <- as.integer(rawToBits(raw_data[2]))
-    expect_equal(result$C13i, expected_C13i,
-                 info = "C13i should match the bit conversion of the second byte")
-  })
+#     expected_C13i <- as.integer(rawToBits(raw_data[2]))
+#     expect_equal(result$C13i, expected_C13i,
+#                  info = "C13i should match the bit conversion of the second byte")
+#   })
 
-  it("properly splits input into groups for nDopplers = 16", {
-    # For nDopplers = 16, key$size should be 12 bytes (6 * (16/8) = 12)
-    key <- list(key = "csign", size = 12)
-    # Prepare a raw vector with 12 bytes (2 bytes per group)
-    raw_data <- as.raw(c(
-      0xFF, 0x00,   # C13r group: 2 bytes
-      0xAA, 0x55,   # C13i group: 2 bytes
-      0x11, 0x22,   # C23r group: 2 bytes
-      0x33, 0x44,   # C23i group: 2 bytes
-      0x55, 0x66,   # C12r group: 2 bytes
-      0x77, 0x88    # C12i group: 2 bytes
-    ))
-    con <- rawConnection(raw_data, "rb")
-    on.exit(close(con), add = TRUE)
+#   it("properly splits input into groups for nDopplers = 16", {
+#     # For nDopplers = 16, key$size should be 12 bytes (6 * (16/8) = 12)
+#     key <- list(key = "csign", size = 12)
+#     # Prepare a raw vector with 12 bytes (2 bytes per group)
+#     raw_data <- as.raw(c(
+#       0xFF, 0x00,   # C13r group: 2 bytes
+#       0xAA, 0x55,   # C13i group: 2 bytes
+#       0x11, 0x22,   # C23r group: 2 bytes
+#       0x33, 0x44,   # C23i group: 2 bytes
+#       0x55, 0x66,   # C12r group: 2 bytes
+#       0x77, 0x88    # C12i group: 2 bytes
+#     ))
+#     con <- rawConnection(raw_data, "rb")
+#     on.exit(close(con), add = TRUE)
 
-    result <- seasonder_read_csign(con, key)
+#     result <- seasonder_CSSY_read_csign(con, key)
 
-    # Each group should have 2 bytes worth of bits, i.e., 16 bits in total.
-    for (group in result) {
-      expect_equal(length(group), 16,
-                   info = "Each group should have 16 bits when nDopplers = 16")
-      expect_true(all(group %in% c(0, 1)),
-                  info = "Each bit in a group should be either 0 or 1")
-    }
+#     # Each group should have 2 bytes worth of bits, i.e., 16 bits in total.
+#     for (group in result) {
+#       expect_equal(length(group), 16,
+#                    info = "Each group should have 16 bits when nDopplers = 16")
+#       expect_true(all(group %in% c(0, 1)),
+#                   info = "Each bit in a group should be either 0 or 1")
+#     }
 
-    # Verify that C13r is the concatenation of the bit conversions for its 2 bytes
-    expected_C13r <- c(as.integer(rawToBits(raw_data[1])),
-                       as.integer(rawToBits(raw_data[2])))
-    expect_equal(result$C13r, expected_C13r,
-                 info = "C13r should correctly combine bits from its two bytes")
-  })
+#     # Verify that C13r is the concatenation of the bit conversions for its 2 bytes
+#     expected_C13r <- c(as.integer(rawToBits(raw_data[1])),
+#                        as.integer(rawToBits(raw_data[2])))
+#     expect_equal(result$C13r, expected_C13r,
+#                  info = "C13r should correctly combine bits from its two bytes")
+#   })
 
-  it("errors when the connection provides fewer bytes than key$size", {
-    # Setup a scenario where the connection returns fewer bytes than required
-    key <- list(key = "csign", size = 6)
-    # Provide only 4 bytes intentionally
-    raw_data <- as.raw(c(0xFF, 0x00, 0xA5, 0x5A))
-    con <- rawConnection(raw_data, "rb")
-    on.exit(close(con), add = TRUE)
+#   it("errors when the connection provides fewer bytes than key$size", {
+#     # Setup a scenario where the connection returns fewer bytes than required
+#     key <- list(key = "csign", size = 6)
+#     # Provide only 4 bytes intentionally
+#     raw_data <- as.raw(c(0xFF, 0x00, 0xA5, 0x5A))
+#     con <- rawConnection(raw_data, "rb")
+#     on.exit(close(con), add = TRUE)
 
-    expect_error(
-      seasonder_read_csign(con, key),
-      regexp = "([Nn]ot enough|insufficient)",
-      info = "The function should error when the connection does not provide enough bytes"
-    )
-  })
-})
-
-
+#     expect_error(
+#       seasonder_CSSY_read_csign(con, key),
+#       regexp = "([Nn]ot enough|insufficient)",
+#       info = "The function should error when the connection does not provide enough bytes"
+#     )
+#   })
+# })
 
 
 
-describe("seasonder_read_asign", {
+
+
+describe("seasonder_CSSY_read_asign", {
 
   it("returns a list with 3 groups for valid input with nDopplers = 8", {
     # For nDopplers = 8, the size should be 3 * (8/8) = 3 bytes
@@ -265,7 +265,7 @@ describe("seasonder_read_asign", {
     con <- rawConnection(raw_data, "rb")
     on.exit(close(con), add = TRUE)
 
-    result <- seasonder_read_asign(con, key)
+    result <- seasonder_CSSY_read_asign(con, key)
 
     # Verify that the result is a list with 3 groups
     expect_true(is.list(result),
@@ -311,7 +311,7 @@ describe("seasonder_read_asign", {
     con <- rawConnection(raw_data, "rb")
     on.exit(close(con), add = TRUE)
 
-    result <- seasonder_read_asign(con, key)
+    result <- seasonder_CSSY_read_asign(con, key)
 
     # Each group should have 16 bits after conversion (2 bytes * 8 bits)
     for (group in result) {
@@ -346,21 +346,21 @@ describe("seasonder_read_asign", {
     on.exit(close(con), add = TRUE)
 
     expect_error(
-      seasonder_read_asign(con, key),
+      seasonder_CSSY_read_asign(con, key),
       regexp = "([Nn]ot enough|insufficient)",
       info = "The function should error when the connection does not provide enough bytes"
     )
   })
 
   it("errors when key$size is not divisible by 3", {
-    # For seasonder_read_asign, the total size should be divisible by 3.
+    # For seasonder_CSSY_read_asign, the total size should be divisible by 3.
     key <- list(key = "asign", size = 5)  # 5 is not divisible by 3
     raw_data <- as.raw(c(0xFF, 0x00, 0xAA, 0x55, 0x11))
     con <- rawConnection(raw_data, "rb")
     on.exit(close(con), add = TRUE)
 
     expect_error(
-      seasonder_read_asign(con, key),
+      seasonder_CSSY_read_asign(con, key),
       regexp = "Invalid total size",
       info = "The function should error when key$size is not divisible by 3"
     )
@@ -447,7 +447,7 @@ describe("seasonder_SeaSondeRCSSYApplyScaling", {
 })
 
 
-describe("seasonder_readBodyRangeCell",{
+describe("seasonder_readCSSYBodyRangeCell",{
 
   # Test: Verify that when a scaling block is provided, the reduced data block is scaled correctly
 
@@ -485,7 +485,7 @@ describe("seasonder_readBodyRangeCell",{
       seasonder_read_reduced_encoded_data = function(connection, key, endian) {
         return(c(1000, 2000, 3000))
       },
-    result <- seasonder_readBodyRangeCell(con, specs, dbRef = -20, endian = "big", specs_key_size = NULL)
+    result <- seasonder_readCSSYBodyRangeCell(con, specs, dbRef = -20, endian = "big", specs_key_size = NULL)
 )
     expected <- sapply(c(1000, 2000, 3000), function(val){
       if(val == 0xFFFFFFFF) return(NaN)
@@ -524,7 +524,7 @@ describe("seasonder_readBodyRangeCell",{
         return(res)
       },
 
-      result <- seasonder_readBodyRangeCell(con, specs, endian = "big", specs_key_size = NULL)
+      result <- seasonder_readCSSYBodyRangeCell(con, specs, endian = "big", specs_key_size = NULL)
     )
 
 

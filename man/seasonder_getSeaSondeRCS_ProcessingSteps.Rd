@@ -9,6 +9,16 @@ seasonder_getSeaSondeRCS_ProcessingSteps(seasonder_cs_object)
 \arguments{
 \item{seasonder_cs_object}{SeaSonderCS object}
 }
+\value{
+A list containing the processing steps of the SeaSondeRCS object.
+}
 \description{
 Getter for ProcessingSteps
+}
+\examples{
+\dontrun{
+# Assuming `cs_object` is a valid SeaSondeRCS object
+processing_steps <- seasonder_getSeaSondeRCS_ProcessingSteps(cs_object)
+print(processing_steps)
+}
 }

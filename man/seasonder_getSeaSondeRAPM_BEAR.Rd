@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_BEAR(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The BEAR attribute (bearing values) from the object.
+}
 \description{
 Getter for BEAR
+}
+\examples{
+\dontrun{
+  bear <- seasonder_getSeaSondeRAPM_BEAR(obj)
+}
 }

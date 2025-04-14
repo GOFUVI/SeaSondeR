@@ -11,8 +11,19 @@ seasonder_setSeaSondeRCS_header(seasonder_cs_object, header)
 
 \item{header}{new value}
 }
+\value{
+A SeaSondeRCS object with updated header.
+}
 \description{
 Setter for header
+}
+\examples{
+\dontrun{
+  # Assuming cs_obj is a valid SeaSondeRCS object and new_header is a valid header list
+  cs_obj <- seasonder_setSeaSondeRCS_header(cs_obj, new_header)
+ # Check the updated header
+  print(seasonder_getSeaSondeRCS_header(cs_obj))
+}
 }
 \seealso{
 \code{\link{seasonder_validateCSHeaderStructure}}

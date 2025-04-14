@@ -11,6 +11,9 @@ seasonder_check_specs(specs, fields)
 
 \item{fields}{A character vector of field names to be checked in the \code{specs}.}
 }
+\value{
+Invisibly returns NULL.
+}
 \description{
 This function checks if the provided specifications (\code{specs}) contain entries for all the required fields listed in \code{fields}.
 }
@@ -35,9 +38,9 @@ This function utilizes the \code{rlang} package to manage conditions, and provid
 
 \examples{
 \dontrun{
-specs <- list(field1 = "spec1", field2 = "spec2")
-fields <- c("field1", "field2", "field3")
-seasonder_check_specs(specs, fields) # Throws an error since spec for 'field3' is missing
+  specs <- list(field1 = "spec1", field2 = "spec2")
+  fields <- c("field1", "field2", "field3")
+  seasonder_check_specs(specs, fields) # Throws an error since spec for 'field3' is missing
 }
 
 }

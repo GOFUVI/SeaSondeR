@@ -18,3 +18,8 @@ The SeaSonde RAPM object with smoothed antenna pattern data and an updated proce
 This function smooths the antenna pattern data for each channel of a SeaSonde RAPM object
 by applying a moving average with a specified number of points.
 }
+\examples{
+\dontrun{
+  smoothed_obj <- seasonder_smoothAPM(obj, 5)
+}
+}

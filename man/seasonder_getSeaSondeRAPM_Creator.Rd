@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_Creator(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The Creator attribute from the object.
+}
 \description{
 Getter for Creator
+}
+\examples{
+\dontrun{
+  creator <- seasonder_getSeaSondeRAPM_Creator(obj)
+}
 }

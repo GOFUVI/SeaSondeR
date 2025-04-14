@@ -12,8 +12,7 @@ seasonder_v6_skip_transformation(cond, value)
 \item{value}{The provided value to be used when the transformation is skipped.}
 }
 \value{
-This function does not have a standard return value. Instead, it triggers a restart
-that can be caught by an enclosing context to handle the error and decide how to proceed.
+This function triggers a restart and does not return a usual value.
 }
 \description{
 This function provides a mechanism to invoke a restart during the reading and
@@ -35,3 +34,10 @@ the transformation process of a specific block, the restart provides users with
 an option to skip the problematic transformation and proceed with a fallback value.
 }
 
+\examples{
+\dontrun{
+  tryCatch({
+    seasonder_v6_skip_transformation(simpleError("test error"), "default")
+  }, seasonder_v6_block_transformacion_skipped = function(e) NULL)
+}
+}

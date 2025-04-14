@@ -19,7 +19,7 @@ A SeaSondeRCS object.
 \description{
 This generic function creates a SeaSondeRCS object either from a file path or directly from a list
 containing header and data. When \code{x} is a character string, the function determines the file type
-(either "CS" or "CSSY") by analyzing the spectra file and reads it using the appropriate reading function.
+(either "CS", "CSSY" or "CSSW") by analyzing the spectra file and reads it using the appropriate reading function.
 If \code{specs_path} is not provided (or set to \code{rlang::zap()}), the default YAML specifications path
 corresponding to the detected file type is used.
 }
@@ -32,6 +32,7 @@ appropriate reading function:
 \itemize{
 \item \code{seasonder_readSeaSondeCSFile} for CS files.
 \item \code{seasonder_readSeaSondeRCSSYFile} for CSSY files.
+\item \code{seasonder_readSeaSondeRCSSWFile} for CSSW files.
 }
 For list inputs, the SeaSondeRCS object is created directly from the provided header and data.
 Additionally, a processing step is appended to the object using \code{seasonder_setSeaSondeRCS_ProcessingSteps}
@@ -53,6 +54,6 @@ with a creation step text that indicates the source.
 \seealso{
 \code{\link{new_SeaSondeRCS}},
 \code{\link{seasonder_readSeaSondeCSFile}},
-\code{\link{seasonder_readSeaSondeRCSSYFile}},
+\code{\link{seasonder_readSeaSondeRCSSWFile}},
 \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}}
 }

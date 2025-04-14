@@ -39,6 +39,12 @@ The function initializes the following attributes:
 \item \code{PhaseCorrections}: Numeric vector with two elements for phase corrections. Default is \code{c(0,0)}.
 }
 }
+\examples{
+\dontrun{
+  # Initialize attributes for a dummy calibration matrix
+  attrs <- seasonder_initializeAttributesSeaSondeRAPM(matrix(1:6, nrow = 3))
+}
+}
 \seealso{
 \code{\link{seasonder_createSeaSondeRAPM}},
 \code{\link{seasonder_validateAttributesSeaSondeRAPM}}

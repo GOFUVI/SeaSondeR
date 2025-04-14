@@ -17,6 +17,14 @@ seasonder_setSeaSondeRAPM_ProcessingSteps(
 
 \item{append}{Append the new step to existing steps if TRUE; otherwise, replace previous steps.}
 }
+\value{
+The modified SeaSondeRAPM object with updated ProcessingSteps.
+}
 \description{
 Setter for ProcessingSteps
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_ProcessingSteps(obj, new_processing_steps)
+}
 }

@@ -14,10 +14,12 @@ seasonder_the$logs_enabled <- TRUE
 #' This function enables log recording in the SeaSondeR package.
 #' Once enabled, various SeaSondeR functions will output logs.
 #'
-#' @return NULL
+#' @return Invisibly returns TRUE, indicating that log recording has been enabled.
 #' @export
 #' @examples
-#' seasonder_enableLogs()
+#' \dontrun{
+#'   seasonder_enableLogs()
+#' }
 seasonder_enableLogs <- function() seasonder_the$logs_enabled <- TRUE
 
 #' Disable log recording in SeaSondeR
@@ -25,10 +27,12 @@ seasonder_enableLogs <- function() seasonder_the$logs_enabled <- TRUE
 #' This function disables log recording in the SeaSondeR package.
 #' Once disabled, various SeaSondeR functions will no longer output logs.
 #'
-#' @return NULL
+#' @return Invisibly returns FALSE, indicating that log recording has been disabled.
 #' @export
 #' @examples
-#' seasonder_disableLogs()
+#' \dontrun{
+#'   seasonder_disableLogs()
+#' }
 seasonder_disableLogs <- function() seasonder_the$logs_enabled <- FALSE
 
 #' Check if log recording is enabled in SeaSondeR
@@ -39,7 +43,9 @@ seasonder_disableLogs <- function() seasonder_the$logs_enabled <- FALSE
 #' @return Logical indicating whether logs are enabled or disabled.
 #' @export
 #' @examples
-#' seasonder_areLogsEnabled()
+#' \dontrun{
+#'   seasonder_areLogsEnabled()
+#' }
 seasonder_areLogsEnabled <- function() seasonder_the$logs_enabled
 
 seasonder_appendLog <- function(log_str) {
@@ -74,8 +80,12 @@ seasonder_logStr <- function(message,level) {
 #'
 #' @param n An integer specifying the number of recent log entries to retrieve.
 #'
-#' @return Returns the `n` most recent log entries from the global log.
+#' @return A character vector of the `n` most recent log entries from the global log.
 #' @export
+#' @examples
+#' \dontrun{
+#'   seasonder_getLog()
+#' }
 seasonder_getLog <- function(n=100) {
 
   utils::tail(seasonder_the$log,n = n)
@@ -88,12 +98,16 @@ seasonder_getLog <- function(n=100) {
 #'
 #' @param message A character string indicating the message to be logged.
 #' @param level A character string that defines the level of the log. It can be "info", "error", or "fatal". Default is "info".
+#'
+#' @return Invisibly returns the generated log message string.
 #' @export
 #'
 #' @examples
-#' seasonder_log("This is an info message")
-#' seasonder_log("This is an error message", "error")
-#' seasonder_log("This is a fatal message", "fatal")
+#' \dontrun{
+#'   seasonder_log("This is an info message")
+#'   seasonder_log("This is an error message", "error")
+#'   seasonder_log("This is a fatal message", "fatal")
+#' }
 seasonder_log <- function(message, level="info") {
 
   if (seasonder_areLogsEnabled()) {
@@ -117,8 +131,12 @@ seasonder_log <- function(message, level="info") {
 #' @param log_error_path Path to the ERROR level log file.
 #' @param log_fatal_path Path to the FATAL level log file.
 #'
-#' @return If temporary files are used, the path to the main temporary log file is returned. Otherwise, NULL.
+#' @return When temporary files are used, returns a character string with the main log file path; otherwise, returns an invisible value indicating that logs were archived.
 #' @export
+#' @examples
+#' \dontrun{
+#'   seasonder_logArchiver()
+#' }
 seasonder_logArchiver <- function(log_path=NULL, log_info_path=log_path, log_error_path=log_info_path, log_fatal_path=log_error_path) {
 
   temp_file <- FALSE
@@ -150,7 +168,7 @@ seasonder_logArchiver <- function(log_path=NULL, log_info_path=log_path, log_err
   if (temp_file) {
     return(log_path)
   }else{
-    return(NULL)
+    return(invisible())
   }
 }
 
@@ -162,9 +180,10 @@ seasonder_logArchiver <- function(log_path=NULL, log_info_path=log_path, log_err
 #'
 #' @param msg A character string indicating the message to be logged and informed.
 #' @param log_level A character string indicating the level of the log ("info", "error", "fatal"). Default is "info".
-#' @param calling_function function where the condition happened. If NULL (default), the code tries to determine which one was.
-#' @param ... passed to `rlang::inform` (log_level="info") or `rlang::warn` (log_level="error").
-#' @return An invisible NULL. The function modifies the shared environment `seasonder_the` in place if logs are enabled, and informs the message if messages are enabled.
+#' @param calling_function Function where the condition occurred. If NULL (default), the code determines the caller.
+#' @param ... Additional arguments passed to `rlang::inform` (if log_level="info") or `rlang::warn` (if log_level="error").
+#'
+#' @return Invisibly returns no value; used solely for its side effects of logging and messaging.
 #' @export
 #' @examples
 #' \dontrun{
@@ -215,13 +234,14 @@ seasonder_logAndMessage <- function(msg, log_level="info", calling_function=NULL
 
 #' Log and Abort Message in SeaSondeR
 #'
-#' This function logs a message to the SeaSondeR logging system and also aborts the execution.
+#' This function logs a message to the SeaSondeR logging system and aborts execution.
 #' It prefixes the abort message with the name of the calling function.
 #'
-#' @param msg A character string indicating the message
-#' @param calling_function function where the condition happened. If NULL (default), the code tries to determine which one was.
-#' @param ... passed to `rlang::abort`
-#' @return An invisible NULL. The function modifies the shared environment `seasonder_the` in place if logs are enabled.
+#' @param msg A character string indicating the message.
+#' @param calling_function Function where the condition occurred. If NULL (default), the code determines the caller.
+#' @param ... Additional arguments passed to `rlang::abort`.
+#'
+#' @return This function does not return as it always aborts execution.
 #' @export
 #' @examples
 #' \dontrun{
@@ -275,6 +295,10 @@ seasonder_logAndAbort <- function(msg, calling_function=NULL, ...) {
 #' @return A list of log blocks, each block being a vector of log entries.
 #' @importFrom lubridate ymd_hms
 #' @export
+#' @examples
+#' \dontrun{
+#'   seasonder_splitLog()
+#' }
 seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_quantile=0.9, min_threshold_secs=10) {
 
   time_block <- NULL
@@ -314,10 +338,14 @@ seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_qua
 #'
 #' This function fetches and splits the log entries, then returns the last entry.
 #'
-#' @param ... Arguments to be passed to `seasonder_splitLog`.
+#' @param ... Arguments passed to `seasonder_splitLog`.
 #'
-#' @return Returns the last log entry after splitting the log.
+#' @return A character vector representing the last log entry.
 #' @export
+#' @examples
+#' \dontrun{
+#'   seasonder_lastLog()
+#' }
 seasonder_lastLog <- function(...) {
   seasonder_splitLog(...) %>% dplyr::last()
 }

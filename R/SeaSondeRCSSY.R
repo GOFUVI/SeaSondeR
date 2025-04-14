@@ -1,4 +1,4 @@
-' Read Reduced Encoded Data from a Binary Connection
+#' Read Reduced Encoded Data from a Binary Connection
 #'
 #' This function reads an array of numbers from a binary connection using a custom command-based protocol.
 #' A block of data is processed according to its size specified in \code{key$size}. Within the block, the first byte read
@@ -252,11 +252,11 @@ seasonder_read_reduced_encoded_data <- function(connection, key, endian = "big")
 #' # Create a raw connection with sample data:
 #' con <- rawConnection(as.raw(c(0x42, 0x29, 0xa3, 0xd7, 0xFF, 0x00)))
 #' key <- list(size = 6, key = "csign")
-#' result <- seasonder_read_csign(con, key)
+#' result <- seasonder_CSSY_read_csign(con, key)
 #' print(result)
 #' close(con)
 #' }
-seasonder_read_csign <- function(connection, key) {
+seasonder_CSSY_read_csign <- function(connection, key) {
   # Store the number of bytes to read based on the key list.
   total_bytes <- key$size
 
@@ -282,7 +282,7 @@ seasonder_read_csign <- function(connection, key) {
   group_names <- c("c13r", "c13i", "c23r", "c23i", "c12r", "c12i")
 
   # Initialize the result list with names set for each group.
-  result <- setNames(vector("list", length(group_names)), group_names)
+  result <- stats::setNames(vector("list", length(group_names)), group_names)
 
   # Loop through each group to extract and process the relevant bytes.
   for (i in seq_along(group_names)) {
@@ -324,16 +324,14 @@ seasonder_read_csign <- function(connection, key) {
 #' @return A named list of 3 vectors. Each vector represents one group (i.e., \code{cs1a}, \code{cs2a}, \code{cs3a})
 #'   and contains integers (0 or 1) corresponding to the bits (in little-endian order) extracted from the raw data.
 #'
-#' @details The function performs the following steps:
-#'   \itemize{
-#'     \item Reads \code{key$size} bytes from the specified connection.
-#'     \item Verifies that the number of bytes read matches the expected size.
-#'     \item Checks that the total number of bytes is divisible by 3, allowing equal distribution among the groups.
-#'     \item Splits the raw byte vector into 3 groups based on the calculated number of bytes per group.
-#'     \item Converts each byte into its 8-bit binary representation (using \code{rawToBits}) and flattens the results for each group.
-#'   }
-#'
-seasonder_read_asign <- function(connection, key) {
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(c(0x01, 0x02, 0x03)))
+#'   key <- list(size = 3, key = "asgn")
+#'   result <- seasonder_CSSY_read_asign(con, key)
+#'   close(con)
+#' }
+seasonder_CSSY_read_asign <- function(connection, key) {
   # Determine the total number of bytes to read from the connection based on key$size.
   total_bytes <- key$size
 
@@ -357,7 +355,7 @@ seasonder_read_asign <- function(connection, key) {
   group_names <- c("cs1a", "cs2a", "cs3a")
 
   # Initialize an empty list to store each group's bit vectors, assigning the group names.
-  result <- setNames(vector("list", length(group_names)), group_names)
+  result <- stats::setNames(vector("list", length(group_names)), group_names)
 
   # Loop over each group to extract its corresponding bytes and convert them to bit vectors.
   for (i in seq_along(group_names)) {
@@ -515,10 +513,16 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 #' @param endian A string specifying the byte order ("big" or "little"). Defaults to "big".
 #' @param specs_key_size Optional specification for the key size block.
 #'
-#' @return A list with elements named after the keys read. For reduced data blocks, each element contains either
-#'         the raw decoded data or the scaled voltage values if a 'scal' block had been applied.
+#' @return A list representing a cell in the CSSY body.
 #'
-seasonder_readBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
+#' @examples
+#' \dontrun{
+#'   con <- rawConnection(as.raw(c(0x00)))
+#'   specs <- list(indx = list(type = "int"))
+#'   result <- seasonder_readCSSYBodyRangeCell(con, specs, dbRef = 0, endian = "big")
+#'   close(con)
+#' }
+seasonder_readCSSYBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
   indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
   scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
   out <- list()
@@ -553,10 +557,10 @@ seasonder_readBodyRangeCell <- function(connection, specs, dbRef, endian = "big"
       out <- append(out, list(data_block) %>% magrittr::set_names(key$key))
     } else if(key$key %in% c("csgn")){
       # Process complex spectral sign information
-      out <- append(out, list(seasonder_read_csign(connection, key)) %>% magrittr::set_names(key$key))
+      out <- append(out, list(seasonder_CSSY_read_csign(connection, key)) %>% magrittr::set_names(key$key))
     } else if(key$key %in% c("asgn")){
       # Process self spectra sign information
-      out <- append(out, list(seasonder_read_asign(connection, key)) %>% magrittr::set_names(key$key))
+      out <- append(out, list(seasonder_CSSY_read_asign(connection, key)) %>% magrittr::set_names(key$key))
     } else {
       # For all other keys, process them as simple field blocks
       out <- append(out, list(seasonder_readCSSYFields(connection, purrr::chuck(specs, key$key),
@@ -582,7 +586,7 @@ seasonder_readCSSYBody <- function(connection, specs, size, dbRef, endian = "big
   out <- list()
   while(seek(connection) < end_point){
 
-    out <- append(out, list(seasonder_readBodyRangeCell(connection, specs,  dbRef,endian = endian, specs_key_size = specs_key_size)))
+    out <- append(out, list(seasonder_readCSSYBodyRangeCell(connection, specs,  dbRef,endian = endian, specs_key_size = specs_key_size)))
 
   }
   out <- seasonder_applyCSSYSigns(out)
@@ -682,7 +686,7 @@ seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", 
 
         out <- seasonder_readCSSYHeader(connection, purrr::chuck(current_specs, key$key), endian, parent_key = key, keys_so_far = keys_so_far, specs_key_size = specs_key_size)
 
-        out$lims <- seasonder_readCSSYLims(connection, out$nRange,endian = endian)
+        out$lims <- seasonder_readCSSYLims(connection, out$nRange*4,endian = endian)
 
         out <- list(out) %>% magrittr::set_names(key$key)
 
@@ -702,19 +706,25 @@ seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", 
 #' Transform CSSY Header to SeaSondeRCS Header
 #'
 #' This helper function extracts the 'cs4h' component from a CSSY header, removes it from the original header,
-#' and embeds the remaining header information within the 'header_cssy' field of the CS header.
+#' and embeds the remaining header information within the 'header_csr' field of the CS header.
 #'
 #' @param header A list representing the CSSY header. Must contain a 'cs4h' component.
 #' @return A transformed header where the primary CS header is taken from 'cs4h' and the remaining CSSY header fields
-#'         are stored in the 'header_cssy' element.
+#'         are stored in the 'header_csr' element.
+#'
+#' @examples
+#' \dontrun{
+#'   header <- list(cs4h = list(dummy = "data"), other_field = "info")
+#'   result <- seasonder_CSSY2CSHeader(header)
+#' }
 seasonder_CSSY2CSHeader <- function(header) {
   if (is.null(header$cs4h)) {
     seasonder_logAndAbort("CSSY header does not contain a cs4h component")
   }
   header_cs <- header$cs4h  # Extract the valid CS header
-  header_cssy <- header    # Copy the original header
-  header_cssy$cs4h <- NULL  # Remove the cs4h component from the original header
-  header_cs$header_cssy <- header_cssy  # Embed the remaining header
+  header_csr <- header    # Copy the original header
+  header_csr$cs4h <- NULL  # Remove the cs4h component from the original header
+  header_cs$header_csr <- header_csr  # Embed the remaining header
   return(header_cs)
 }
 

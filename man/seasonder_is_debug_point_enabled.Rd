@@ -10,8 +10,13 @@ seasonder_is_debug_point_enabled(debug_point)
 \item{debug_point}{A character string specifying the debug point.}
 }
 \value{
-Logical value indicating whether the debug point is enabled.
+TRUE if the debug point is enabled, FALSE otherwise.
 }
 \description{
 This function checks whether the provided debug point is enabled.
+}
+\examples{
+\dontrun{
+  seasonder_is_debug_point_enabled("example_debug")
+}
 }

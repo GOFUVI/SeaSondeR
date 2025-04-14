@@ -15,3 +15,10 @@ The version value.
 \description{
 Get the version value from a SeaSondeR object
 }
+\examples{
+\dontrun{
+# Assuming `object` is a valid object
+value <- seasonder_getVersion(object)
+print(value)
+}
+}

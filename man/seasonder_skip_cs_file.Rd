@@ -11,7 +11,7 @@ seasonder_skip_cs_file(cond)
 to log a detailed error message indicating the reason for skipping the file.}
 }
 \value{
-If invoked, the function returns a list with both \code{header} and \code{data} set to NULL.
+A list with header = NULL and data = NULL.
 }
 \description{
 This function serves as a restart for \code{seasonder_readSeaSondeCSFile}. When invoked, it provides a
@@ -26,5 +26,12 @@ The effect of invoking this restart is twofold:
 \enumerate{
 \item An error message detailing the reason for skipping the file is logged.
 \item The calling function (\code{seasonder_readSeaSondeCSFile}) will immediately return a list with \code{header = NULL} and \code{data = NULL}.
+}
+}
+\examples{
+\dontrun{
+  tryCatch({
+    seasonder_skip_cs_file(simpleError("test error"))
+  }, seasonder_cs_file_skipped = function(e) NULL)
 }
 }

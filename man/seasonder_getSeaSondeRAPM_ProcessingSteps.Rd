@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_ProcessingSteps(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The ProcessingSteps attribute from the object.
+}
 \description{
 Getter for ProcessingSteps
+}
+\examples{
+\dontrun{
+  processing_steps <- seasonder_getSeaSondeRAPM_ProcessingSteps(obj)
+}
 }

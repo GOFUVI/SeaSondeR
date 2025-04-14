@@ -9,6 +9,14 @@ SeaSondeRAPM_amplitude_factors_override_step_text(amplitude_factors)
 \arguments{
 \item{amplitude_factors}{A numeric vector with two elements for the new amplitude factors.}
 }
+\value{
+A character string stating the new amplitude factors.
+}
 \description{
 This function generates a message indicating that amplitude factors have been overridden.
+}
+\examples{
+\dontrun{
+  msg <- SeaSondeRAPM_amplitude_factors_override_step_text(c(1.05, 0.95))
+}
 }

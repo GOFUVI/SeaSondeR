@@ -6,11 +6,16 @@
 \usage{
 seasonder_enableMessages()
 }
+\value{
+logical TRUE indicating that message logging was enabled.
+}
 \description{
 This function enables message logging in the SeaSondeR package.
 Once enabled, various SeaSondeR functions will output informational
 messages.
 }
 \examples{
-seasonder_enableMessages()
+\dontrun{
+  seasonder_enableMessages()
+}
 }

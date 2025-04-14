@@ -3,7 +3,7 @@ title: "Cross-Spectra Files"
 output: rmarkdown::html_vignette
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{Cross-Spectra}
+  %\VignetteIndexEntry{Cross-Spectra Files}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

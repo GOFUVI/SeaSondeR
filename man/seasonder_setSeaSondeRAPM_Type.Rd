@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_Type(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated Type.
+}
 \description{
 Setter for Type
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_Type(obj, new_type)
+}
 }

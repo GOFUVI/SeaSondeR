@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_Creator(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated Creator.
+}
 \description{
 Setter for Creator
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_Creator(obj, new_creator)
+}
 }

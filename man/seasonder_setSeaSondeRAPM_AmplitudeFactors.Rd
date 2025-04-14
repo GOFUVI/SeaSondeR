@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_AmplitudeFactors(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated AmplitudeFactors.
+}
 \description{
 Setter for AmplitudeFactors
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_AmplitudeFactors(obj, new_amplitude_factors)
+}
 }

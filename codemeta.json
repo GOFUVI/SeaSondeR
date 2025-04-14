@@ -1,0 +1,44 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "name": "SeaSondeR",
+  "version": "0.2.6",
+  "description": "Tools for Computing Radial Metrics from SeaSonde HF-Radar Data",
+  "license": "GPL-3.0-or-later",
+  "url": [
+    "https://github.com/GOFUVI/SeaSondeR",
+    "https://gofuvi.github.io/SeaSondeR/"
+  ],
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Juan Luis",
+      "familyName": "Herrera Cortijo",
+      "email": "juan.luis.herrera.cortijo@gmail.com",
+      "orcid": "https://orcid.org/0000-0002-4206-2459",
+      "role": [
+        "aut",
+        "cre"
+      ]
+    },
+    {
+      "@type": "Person",
+      "givenName": "Ramiro A.",
+      "familyName": "Varela Benvenuto",
+      "email": "rvarela@uvigo.es",
+      "orcid": "https://orcid.org/0000-0002-9212-577X",
+      "role": [
+        "aut"
+      ]
+    },
+    {
+      "@type": "Person",
+      "givenName": "Adrián",
+      "familyName": "Fernández Baladrón",
+      "email": "afbaladron@uvigo.es",
+      "orcid": "https://orcid.org/0000-0001-6795-4261",
+      "role": [
+        "aut"
+      ]
+    }
+  ]
+}

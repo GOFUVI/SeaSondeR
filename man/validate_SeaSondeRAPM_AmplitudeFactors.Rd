@@ -15,3 +15,8 @@ Returns TRUE if the validation passes.
 \description{
 This function validates if the provided AmplitudeFactors is a numeric vector of length 2.
 }
+\examples{
+\dontrun{
+  valid <- validate_SeaSondeRAPM_AmplitudeFactors(c(1.1, 0.9))
+}
+}

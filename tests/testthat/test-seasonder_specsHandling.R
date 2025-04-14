@@ -63,28 +63,35 @@ describe("seasonder_readYAMLSpecs", {
   })
 
   it("returns error for invalid path", {
+    
     # Create a valid YAML file using the valid content
     file_path <- create_test_yaml("valid.yaml", valid_content)
-    # Expect an error when trying to extract a non-existent path from the YAML file
-    expect_error(seasonder_readYAMLSpecs(file_path, c("header", "nonexistent")),
-                 glue::glue("Invalid specs path 'header' for file '{file_path}'."),
-                 class = "seasonder_read_yaml_file_error")
+    # Expect an error when trying to extract a non-existent path from the YAML file.
+    # Se utiliza un patrón que ignora diferencias en los separadores de directorio
+    expect_error(
+      seasonder_readYAMLSpecs(file_path, c("header", "nonexistent")),
+      regexp = "Invalid specs path 'header' for file '.*/valid\\.yaml'.",
+      class = "seasonder_read_yaml_file_error"
+    )
   })
 
-  it("returns error for invalid YAML content", {
-    # Create a YAML file with invalid content
-    file_path <- create_test_yaml("invalid_content.yaml", "invalid: yaml:: content")
-    # Expect an error due to invalid YAML structure in the file
-    expect_error(seasonder_readYAMLSpecs(file_path, c("header", "general")),
-                 glue::glue("Invalid YAML structure in file '{file_path}'."),
-                 class = "seasonder_read_yaml_file_error")
-  })
+it("returns error for invalid YAML content", {
+  # Create a YAML file with invalid content
+  file_path <- create_test_yaml("invalid_content.yaml", "invalid: yaml:: content")
+  # Expect an error due to invalid YAML structure in the file.
+  expect_error(
+    seasonder_readYAMLSpecs(file_path, c("header", "general")),
+    regexp = "Invalid YAML structure in file '.*/invalid_content\\.yaml'.",
+    class = "seasonder_read_yaml_file_error"
+  )
 })
+})
+
 
 describe("determining spectra file type", {
   describe("CS", {
     # Define file path for a CS file example using the 'here' package
-    filepath <- here::here("tests/testthat/data/TORA/CSS_TORA_24_04_04_0640.cs")
+    filepath <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
     endian <- "big"
 
     describe("seasonder_find_spectra_file_type", {
@@ -109,26 +116,26 @@ describe("determining spectra file type", {
     })
   })
 
-  describe("CSSY", {
-    # Define file path for a CSSY file example using the 'here' package
-    filepath <- here::here("tests/testthat/data/SUNS/CSS/CSS_SUNS_2025_02_17_060000.csr")
+  describe("CSSW", {
+    # Define file path for a CSSW file example using the 'here' package
+    filepath <- system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR")
     endian <- "big"
 
     describe("seasonder_find_spectra_file_type", {
-      it("should return CSSY", {
-        # Call the function and expect it to return "CSSY" for the given file
+      it("should return CSSW", {
+        # Call the function and expect it to return "CSSW" for the given file
         test <- seasonder_find_spectra_file_type(filepath, endian)
-        expect_equal(test, "CSSY")
+        expect_equal(test, "CSSW")
       })
     })
 
     describe("seasonder_defaultSpecsPathForFile", {
-      it("should return the default specs file for CSSY", {
-        # Get the expected default specs file path for CSSY
-        target <- seasonder_defaultSpecsFilePath("CSSY")
-        # Mock the function to force the return of "CSSY" and then test the default specs path function
+      it("should return the default specs file for CSSW", {
+        # Get the expected default specs file path for CSSW
+        target <- seasonder_defaultSpecsFilePath("CSSW")
+        # Mock the function to force the return of "CSSW" and then test the default specs path function
         test <- mockthat::with_mock(
-          seasonder_find_spectra_file_type = function(filepath, endian) "CSSY",
+          seasonder_find_spectra_file_type = function(filepath, endian) "CSSW",
           seasonder_defaultSpecsPathForFile(filepath, endian = endian)
         )
         expect_equal(test, target)

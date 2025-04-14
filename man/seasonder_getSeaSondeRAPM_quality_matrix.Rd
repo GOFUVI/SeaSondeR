@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_quality_matrix(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The quality_matrix attribute from the object.
+}
 \description{
 Getter for quality_matrix
+}
+\examples{
+\dontrun{
+  quality_matrix <- seasonder_getSeaSondeRAPM_quality_matrix(obj)
+}
 }

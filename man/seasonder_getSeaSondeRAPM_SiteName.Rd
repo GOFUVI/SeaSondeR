@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_SiteName(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The SiteName attribute from the object.
+}
 \description{
 Getter for SiteName
+}
+\examples{
+\dontrun{
+  site_name <- seasonder_getSeaSondeRAPM_SiteName(obj)
+}
 }

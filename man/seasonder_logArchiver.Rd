@@ -21,9 +21,14 @@ seasonder_logArchiver(
 \item{log_fatal_path}{Path to the FATAL level log file.}
 }
 \value{
-If temporary files are used, the path to the main temporary log file is returned. Otherwise, NULL.
+When temporary files are used, returns a character string with the main log file path; otherwise, returns an invisible value indicating that logs were archived.
 }
 \description{
 Archives log entries based on their levels: INFO, ERROR, or FATAL. If paths are not provided,
 temporary files will be used.
+}
+\examples{
+\dontrun{
+  seasonder_logArchiver()
+}
 }

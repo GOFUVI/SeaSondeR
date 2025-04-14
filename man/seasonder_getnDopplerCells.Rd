@@ -15,3 +15,10 @@ The nDopplerCells value.
 \description{
 Get the nDopplerCells value from a SeaSondeRCS object
 }
+\examples{
+\dontrun{
+  # Assuming cs_obj is a valid SeaSondeRCS object
+ n_doppler_cells <- seasonder_getnDopplerCells(cs_obj)
+ print(n_doppler_cells)
+}
+}

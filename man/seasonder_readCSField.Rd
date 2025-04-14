@@ -14,7 +14,7 @@ seasonder_readCSField(con, type, endian = "big")
 \item{endian}{A character string indicating the byte order. Options are "big" and "little" (default is "big").}
 }
 \value{
-The value read from the connection.
+The value obtained from reading the CSField according to the specified type.
 }
 \description{
 This function reads specific data types from a binary connection,

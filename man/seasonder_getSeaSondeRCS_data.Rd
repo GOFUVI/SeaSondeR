@@ -9,8 +9,20 @@ seasonder_getSeaSondeRCS_data(seasonder_cs_object)
 \arguments{
 \item{seasonder_cs_object}{SeaSondeRCS object}
 }
+\value{
+A list containing the data matrices for the SeaSondeRCS object. If the data is not set, it initializes
+the data structure with the number of range and Doppler cells.
+}
 \description{
 Getter for data
+}
+\examples{
+\dontrun{
+ # Assuming `cs_object` is a valid SeaSondeRCS object
+ data_list <- seasonder_getSeaSondeRCS_data(cs_object)
+ # Print the data list
+ print(data_list)
+}
 }
 \seealso{
 \code{\link{seasonder_getnRangeCells}}

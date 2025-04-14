@@ -15,3 +15,8 @@ Returns TRUE if the validation passes.
 \description{
 This function validates if the provided StationCode is an empty character string or a 4-character string of length 1.
 }
+\examples{
+\dontrun{
+  valid <- validate_SeaSondeRAPM_StationCode("ABCD")
+}
+}

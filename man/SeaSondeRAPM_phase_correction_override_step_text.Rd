@@ -9,6 +9,14 @@ SeaSondeRAPM_phase_correction_override_step_text(phase_correction)
 \arguments{
 \item{phase_correction}{A numeric vector with two elements for the new phase corrections.}
 }
+\value{
+A character string stating the new phase correction values.
+}
 \description{
 This function generates a message indicating that phase corrections have been overridden.
+}
+\examples{
+\dontrun{
+  msg <- SeaSondeRAPM_phase_correction_override_step_text(c(10, -10))
+}
 }

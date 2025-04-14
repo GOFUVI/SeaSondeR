@@ -6,10 +6,15 @@
 \usage{
 seasonder_enableLogs()
 }
+\value{
+Invisibly returns TRUE, indicating that log recording has been enabled.
+}
 \description{
 This function enables log recording in the SeaSondeR package.
 Once enabled, various SeaSondeR functions will output logs.
 }
 \examples{
-seasonder_enableLogs()
+\dontrun{
+  seasonder_enableLogs()
+}
 }

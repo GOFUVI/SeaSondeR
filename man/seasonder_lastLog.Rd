@@ -7,11 +7,16 @@
 seasonder_lastLog(...)
 }
 \arguments{
-\item{...}{Arguments to be passed to \code{seasonder_splitLog}.}
+\item{...}{Arguments passed to \code{seasonder_splitLog}.}
 }
 \value{
-Returns the last log entry after splitting the log.
+A character vector representing the last log entry.
 }
 \description{
 This function fetches and splits the log entries, then returns the last entry.
+}
+\examples{
+\dontrun{
+  seasonder_lastLog()
+}
 }
