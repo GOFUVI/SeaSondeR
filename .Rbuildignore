@@ -15,4 +15,4 @@
 ^tools$
 r-reticulate
 ^\.renvignore$
-
+^checks$
