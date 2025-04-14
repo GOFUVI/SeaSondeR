@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_Smoothing(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated Smoothing.
+}
 \description{
 Setter for Smoothing
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_Smoothing(obj, new_smoothing)
+}
 }

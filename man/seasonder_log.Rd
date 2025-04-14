@@ -11,11 +11,16 @@ seasonder_log(message, level = "info")
 
 \item{level}{A character string that defines the level of the log. It can be "info", "error", or "fatal". Default is "info".}
 }
+\value{
+Invisibly returns the generated log message string.
+}
 \description{
 This function creates a logging message and signals a seasonder_log condition.
 }
 \examples{
-seasonder_log("This is an info message")
-seasonder_log("This is an error message", "error")
-seasonder_log("This is a fatal message", "fatal")
+\dontrun{
+  seasonder_log("This is an info message")
+  seasonder_log("This is an error message", "error")
+  seasonder_log("This is a fatal message", "fatal")
+}
 }

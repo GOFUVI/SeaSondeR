@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_BearingResolution(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated BearingResolution.
+}
 \description{
 Setter for BearingResolution
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_BearingResolution(obj, new_bearing_resolution)
+}
 }

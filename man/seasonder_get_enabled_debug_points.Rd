@@ -12,3 +12,8 @@ A character vector of enabled debug points.
 \description{
 This function returns the currently enabled debug points.
 }
+\examples{
+\dontrun{
+  seasonder_get_enabled_debug_points()
+}
+}

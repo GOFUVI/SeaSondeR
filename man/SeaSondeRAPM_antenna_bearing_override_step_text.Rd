@@ -9,6 +9,14 @@ SeaSondeRAPM_antenna_bearing_override_step_text(antenna_bearing)
 \arguments{
 \item{antenna_bearing}{The new antenna bearing value.}
 }
+\value{
+A character string stating that the antenna bearing has been overridden.
+}
 \description{
 This function generates a message indicating that the AntennaBearing attribute was overridden.
+}
+\examples{
+\dontrun{
+  msg <- SeaSondeRAPM_antenna_bearing_override_step_text(45)
+}
 }

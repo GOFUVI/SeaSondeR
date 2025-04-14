@@ -15,3 +15,8 @@ Returns TRUE if the validation passes.
 \description{
 This function validates if the provided FileName is a character string.
 }
+\examples{
+\dontrun{
+  valid <- validate_SeaSondeRAPM_FileName("file.apm")
+}
+}

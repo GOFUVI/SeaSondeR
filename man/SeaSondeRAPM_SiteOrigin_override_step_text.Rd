@@ -9,6 +9,14 @@ SeaSondeRAPM_SiteOrigin_override_step_text(SiteOrigin)
 \arguments{
 \item{SiteOrigin}{A numeric vector with two elements representing the new latitude and longitude.}
 }
+\value{
+A character string with the updated SiteOrigin details.
+}
 \description{
 This function generates a message indicating that the SiteOrigin has been overridden.
+}
+\examples{
+\dontrun{
+  msg <- SeaSondeRAPM_SiteOrigin_override_step_text(c(37.7749, -122.4194))
+}
 }

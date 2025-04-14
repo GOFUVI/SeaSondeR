@@ -11,12 +11,12 @@ seasonder_logAndMessage(msg, log_level = "info", calling_function = NULL, ...)
 
 \item{log_level}{A character string indicating the level of the log ("info", "error", "fatal"). Default is "info".}
 
-\item{calling_function}{function where the condition happened. If NULL (default), the code tries to determine which one was.}
+\item{calling_function}{Function where the condition occurred. If NULL (default), the code determines the caller.}
 
-\item{...}{passed to \code{rlang::inform} (log_level="info") or \code{rlang::warn} (log_level="error").}
+\item{...}{Additional arguments passed to \code{rlang::inform} (if log_level="info") or \code{rlang::warn} (if log_level="error").}
 }
 \value{
-An invisible NULL. The function modifies the shared environment \code{seasonder_the} in place if logs are enabled, and informs the message if messages are enabled.
+Invisibly returns no value; used solely for its side effects of logging and messaging.
 }
 \description{
 This function logs a message to the SeaSondeR logging system and also informs the message to the console.

@@ -1,0 +1,59 @@
+---
+title: "SeaSondeR"
+output: rmarkdown::html_vignette
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{SeaSondeR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Instrument Introduction: SeaSonde
+SeaSonde is a compact HF radar system designed for coastal and regional monitoring of surface currents. It provides near real‐time measurements by exploiting the Bragg resonance phenomenon to detect Doppler shifts from ocean waves. SeaSondeR enables processing of both raw and averaged radar spectra and antenna pattern files to extract key oceanographic parameters.
+
+## Existing SeaSonde Data Processing Software
+Several software solutions exist for processing SeaSonde data:
+- **Radial Suite:** A proprietary tool developed by CODAR for computing radial metrics.
+- **Radiowave Operators Working Group Repositories:** Open-source Python scripts for cleaning and preprocessing SeaSonde spectra available at [spectra_tools](https://github.com/rowg/spectra_tools).
+- **hfr_cs_processing by Bryan Emery:** A MATLAB-based package for generating radar radials based on SeaSonde spectra. More details can be found at [GitHub](https://github.com/brianemery/hfr_cs_processing) [@Emery2021code].
+  
+## Why SeaSondeR?
+
+SeaSondeR is developed to provide an open source tool that unifies and automates the processing and analysis of HF SeaSonde radar data. It enables the reliable extraction of radial metrics and derived oceanographic parameters, supports scalable processing pipelines through Docker and AWS integration, and reduces reliance on proprietary commercial software.
+
+## Tasks that Can be Performed with This R Package
+SeaSondeR is designed to:
+- Read and validate SeaSonde spectrum (CS) and antenna pattern files.
+- Compute the first order region by applying methods similar to those used by CODAR.
+- Apply the MUSIC algorithm for directional signal detection.
+- Calculate derived physical parameters (e.g., radial velocities, spectral resolutions).
+- Export radial metrics in formats compatible with CODAR tools.
+- Integrate with Docker and AWS for scalable and automated processing pipelines. See GitHub repositories [seasonder-rest](https://github.com/GOFUVI/seasonder-rest) and [SeaSondeRAWSLambdaDocker](https://github.com/GOFUVI/SeaSondeRAWSLambdaDocker) for integration examples.
+
+## Installation in R
+
+To install SeaSondeR from the GitHub repository, you can run the following command in your R console.
+
+```{r, eval=FALSE}
+# Install SeaSondeR from GitHub
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+devtools::install_github("GOFUVI/SeaSondeR")
+```
+
+
+## Acknowledgements
+
+This work has been funded by the HF-EOLUS project (TED2021-129551B-I00), financed by MICIU/AEI /10.13039/501100011033 and by the European Union NextGenerationEU/PRTR - BDNS 598843 - Component 17 - Investment I3.
+
+## Disclaimer
+
+This software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.

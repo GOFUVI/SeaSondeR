@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_CommentLine(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated CommentLine.
+}
 \description{
 Setter for CommentLine
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_CommentLine(obj, new_comment_line)
+}
 }

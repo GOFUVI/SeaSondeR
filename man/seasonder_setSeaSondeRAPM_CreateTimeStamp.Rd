@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_CreateTimeStamp(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated CreateTimeStamp.
+}
 \description{
 Setter for CreateTimeStamp
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_CreateTimeStamp(obj, new_create_time_stamp)
+}
 }

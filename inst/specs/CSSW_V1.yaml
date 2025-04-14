@@ -191,7 +191,6 @@ CSSW:
         c23a: "Reduced Encoded Data"
         c12m: "Reduced Encoded Data"
         c12a: "Reduced Encoded Data"
-        csgn: "Cross-Spectra Sign"
         asgn: "Auto-Spectra Sign"
         csqf: "Reduced Encoded Data"
         'END ': "the end"

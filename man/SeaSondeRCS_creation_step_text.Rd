@@ -15,3 +15,10 @@ A character string with the formatted message indicating the time of creation an
 \description{
 This function generates a text message indicating the time an CS object was created based on the current system time and the provided file path.
 }
+\examples{
+\dontrun{
+  file_path <- "path/to/file.cs"
+ message <- SeaSondeRCS_creation_step_text(file_path)
+ print(message)
+}
+}

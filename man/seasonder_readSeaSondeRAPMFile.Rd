@@ -33,6 +33,11 @@ A SeaSondeRAPM object containing the parsed data.
 This function reads a SeaSonde APM file and returns a SeaSondeRAPM object containing
 the parsed data.
 }
+\examples{
+\dontrun{
+  obj <- seasonder_readSeaSondeRAPMFile("path/to/file.apm")
+}
+}
 \seealso{
 \code{\link{seasonder_createSeaSondeRAPM}}
 

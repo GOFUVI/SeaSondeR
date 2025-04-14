@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_FileID(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated FileID.
+}
 \description{
 Setter for FileID
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_FileID(obj, new_file_id)
+}
 }

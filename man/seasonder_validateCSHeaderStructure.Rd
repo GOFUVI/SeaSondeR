@@ -37,11 +37,11 @@ detailed and structured condition messages:
 \item \code{seasonder_CS_header_is_not_a_list}: Triggered when the header parameter is not a list.
 \item \code{seasonder_CS_missing_nRange_nDoppler_error}: Triggered when either nRangeCells or nDopplerCells is missing from the header.
 }
-
-\strong{Condition Cases}:
-\itemize{
-\item When the header is not a list, the function throws an error with the class \code{seasonder_CS_header_is_not_a_list}.
-\item If either nRangeCells or nDopplerCells is missing, an error with the class \code{seasonder_CS_missing_nRange_nDoppler_error} is thrown.
-}
 }
 
+\examples{
+\dontrun{
+header <- list(nRangeCells = 100, nDopplerCells = 256)
+seasonder_validateCSHeaderStructure(header)
+}
+}

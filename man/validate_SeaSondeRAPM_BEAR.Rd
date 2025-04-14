@@ -19,3 +19,8 @@ This function validates if the provided BEAR is a numeric vector and if its leng
 matches the number of columns in the calibration_matrix of the given SeaSondeRAPM object.
 It also validates that the bearings are between -180 and 180 degrees.
 }
+\examples{
+\dontrun{
+  valid <- validate_SeaSondeRAPM_BEAR(c(0,45,90), obj)
+}
+}

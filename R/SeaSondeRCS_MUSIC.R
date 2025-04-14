@@ -402,6 +402,9 @@ seasonder_NULLSeaSondeRCS_MUSIC <- function() {
 #' }
 seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL) {
 
+  # Initialize globals for seasonder_initSeaSondeRCS_MUSIC
+  range_cell <- doppler_bin <- rlang::zap()
+
   # Default to all range cells and Doppler bins if not specified
   if (is.null(range_cells) || is.null(doppler_bins)) {
 
@@ -685,7 +688,7 @@ SeaSondeRCS_doa_selection_end_step_text  <- function() {
 #' @export
 seasonder_setMUSICOptions <- seasonder_setSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object, MUSIC_options = seasonder_defaultMUSIC_options()) {
 
-  MUSIC_options <- modifyList(seasonder_defaultMUSIC_options(), MUSIC_options)
+  MUSIC_options <- utils::modifyList(seasonder_defaultMUSIC_options(), MUSIC_options)
 
   attr(seasonder_cs_object, "MUSIC_data")$MUSIC_options <- MUSIC_options
 
@@ -1792,7 +1795,8 @@ seasonder_MUSIC_Bins2DopplerFreq <- function(seasonder_cs_object, bins) {
 
 
 seasonder_MUSICCheckTwoSolutions <- function(seasonder_cs_object){
-
+# Initialize globals for seasonder_MUSICCheckTwoSolutions
+  DOA_solutions <- rlang::zap()
   # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
@@ -1912,6 +1916,8 @@ seasonder_MUSICCheckEigenValueRatio <- function(seasonder_cs_object){
 #' updated_obj <- seasonder_MUSICCheckSignalPowers(seasonder_cs_object)
 #' }
 seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
+  # Initialize globals for seasonder_MUSICCheckSignalPowers
+  DOA_solutions <- signal_power_ratio <- rlang::zap()
   # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
@@ -1996,6 +2002,8 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
 #' }
 #'
 seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
+  # Initialize globals for seasonder_MUSICCheckSignalMatrix
+DOA_solutions <- diag_off_diag_power_ratio <- rlang::zap()
   # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
   # Compute the ratio of diagonal to off-diagonal power for dual-bearing solutions
@@ -2028,7 +2036,7 @@ seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
 
 
 seasonder_MUSICCheckBearingDistance <- function(seasonder_cs_object){
-
+  DOA_solutions <- bearing_separation <- rlang::zap()
   # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
@@ -2200,7 +2208,7 @@ seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_object){
     interpolated_cells <- dplyr::setdiff(1:nDoppler, index_mapping$mapped)
 
     # Perform the interpolation for each matrix in the cross-spectra data structure
-    interpolated_data %<>% purrr::map2(names(.), \(matrix, name){
+    interpolated_data %<>% purrr::map2(names(interpolated_data), \(matrix, name){
 
       # Validate that the matrix name exists in the original data
       if(!name %in% names(data)){
@@ -2306,6 +2314,8 @@ seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_object){
 #' }
 seasonder_MUSICComputeCov <- function(seasonder_cs_object) {
 
+  # Initialize globals for seasonder_MUSICComputeCov
+  range_cell <- doppler_bin <- rlang::zap()
   # Log the start of the MUSIC covariance matrix computation
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(
     SeaSondeRCS_MUSIC_compute_cov_start_step_text()
@@ -2375,7 +2385,8 @@ CS23 <- seasonder_getSeaSondeRCS_MUSIC_interpolated_dataMatrix(seasonder_cs_obje
 
 seasonder_computeSignalSNR <- function(seasonder_cs_object){
 
-
+  # Initialize globals for seasonder_computeSignalSNR
+  MA1S <- MA2S <- MA3S <- rlang::zap()
   # Retrieve the MUSIC data object from the input
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 NL1 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1)
@@ -2404,7 +2415,8 @@ new_columns <-  purrr::map2(MUSIC$cov, MUSIC$range_cell, \(C, rc,n1 = NL1, n2 = 
 }
 
 seasonder_SNRCheck <- function(seasonder_cs_object, discard_low_SNR  = T){
-
+  # Initialize globals for seasonder_SNRCheck
+  MA1S <- MA2S <- MA3S <- VFLG <- rlang::zap()
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
   noisefact <- seasonder_getFOR_noisefact(seasonder_cs_object)
 
@@ -2503,6 +2515,9 @@ seasonder_eigen_decomp_C <- function(C){
 #' cs_object <- seasonder_MUSICCovDecomposition(cs_object)
 #' }
 seasonder_MUSICCovDecomposition <- function(seasonder_cs_object){
+
+  # Initialize globals for seasonder_MUSICCovDecomposition
+  cov <- rlang::zap()
   # Add a processing step entry indicating the start of the MUSIC covariance decomposition
   seasonder_cs_object  %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_MUSIC_covariance_decomposition_start_step_text())
 
@@ -2980,10 +2995,12 @@ seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
 
 seasonder_MUSIC_remove_no_solutions <- function(seasonder_cs_object){
 
+  # Initialize globals for seasonder_MUSIC_remove_no_solutions
+  retained_solution <- rlang::zap()
+
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
-
-
-MUSIC %>% dplyr::filter(retained_solution != "none")
+  # Remove entries with no retained solution
+  MUSIC %>% dplyr::filter(retained_solution != "none")
 
   seasonder_cs_object %<>%
     seasonder_setSeaSondeRCS_MUSIC(MUSIC)
@@ -3076,7 +3093,8 @@ seasonder_MUSICSelectDOA <- function(seasonder_cs_object) {
 
 seasonder_checkPPMIN <- function(seasonder_cs_object) {
 
-
+  # Initialize globals for seasonder_checkPPMIN
+  DOA <- retained_solution <- rlang::zap()
   PPMIN <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_MUSIC_options() %>% purrr::pluck("PPMIN",.default = NULL)
  if(!is.null(PPMIN)){
    MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
@@ -3097,7 +3115,8 @@ seasonder_checkPPMIN <- function(seasonder_cs_object) {
 }
 
 seasonder_checkPWMAX <- function(seasonder_cs_object) {
-
+  # Initialize globals for seasonder_checkPWMAX
+  DOA <- retained_solution <- rlang::zap()  
 
   PWMAX <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_MUSIC_options() %>% purrr::pluck("PWMAX",.default = NULL)
   if(!is.null(PWMAX)){
@@ -3392,7 +3411,7 @@ doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_options(out)$doppler_int
 #' 2. Adjusting the angles to the range [0, 360) using modulo 360.
 #' 3. Adding the antenna bearing to each value and wrapping the result to the range [0, 360) again using modulo 360.
 #'
-#' The formula for each bearing is: \eqn{geo_bearing = ((-1 * music_bearing %% 360) + antenna_bearing) %% 360}.
+#' The formula for each bearing is: \eqn{geo_bearing = ((-1 * music_bearing \\%\\% 360) + antenna_bearing) \\%\\% 360}.
 #'
 #' @return A list of numeric vectors containing the geographic bearings in degrees.
 #'
@@ -3608,7 +3627,11 @@ seasonder_MUSICLonLat <- seasonder_MUSIC_LonLat
 #' print(music_table)
 #' }
 seasonder_exportMUSICTable <- function(seasonder_cs_object) {
-
+  # Initialize globals for seasonder_exportMUSICTable
+  range_cell <- doppler_bin <- freq <- radial_v <- DOA <- lonlat <- 
+  signal_power <- signal_power_db <- noise_level <- lon <- lat <- 
+  doppler_freq <- radial_velocity <- bearing <- bearing_raw <- SNR <- 
+  DOA_peak_resp_db <- rlang::zap()
   # Retrieve timestamp from the header; default to POSIXct(0) if unavailable
   datetime <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nDateTime") %||% as.POSIXct(0)
 
@@ -3803,7 +3826,8 @@ out <- out + as.integer(!music$P0_check) * 16
 #'
 #' @export
 seasonder_exportRangeInfo <- function(seasonder_cs_object){
-
+  # Initialize globals for seasonder_exportRangeInfo
+  range_cell <- retained_solution <- MSEL <- is_single <- is_dual <- NVSC <- NVDC <- SPRC <- RNGC <- rlang::zap()
   cols <- c("SPRC", "RNGC", "NF01", "NF02", "NF03", "ALM1", "ALM2", "ALM3", "ALM4", "NVSC", "NVDC", "NVAC")
 
   rm <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object) %>% dplyr::select(SPRC = range_cell, RNGC = range, MSEL = retained_solution)
@@ -3880,6 +3904,12 @@ return(out)
 #'
 #' @export
 seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) {
+  # Initialize globals for seasonder_exportRadialMetrics
+  DOA_solutions <- radial_v <- doppler_bin <- diag_off_diag_power_ratio <- length_dual <- 
+  MPKR <- MDP1 <- MDP2 <- MDR1 <- MDR2 <- MDW1 <- MDW2 <- cov <- 
+  SPRC <- MAXS <- Noise_3 <- Noise_2 <- Noise_1 <- .id <- lonlat <- DOA <- 
+  MSA1 <- MDA1 <- MDA2 <- retained_solution <- BEAR <- VFLG <- PPFG <- PWFG <- 
+  VELO <- HEAD <- rlang::zap()
   # Obtain the MUSIC table using the function seasonder_getSeaSondeRCS_MUSIC from the global environment. This allows the function to be overridden using local_redefs.
   music <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
@@ -4080,7 +4110,7 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
 #'
 #' @export
 seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object, LLUV_path,...) {
-
+  
   apm_object <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_APM()
 
   radial_metrics <- seasonder_exportRadialMetrics(seasonder_cs_object,...)
@@ -4090,154 +4120,122 @@ seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object, LLUV_path,...
   APM_attributes <- attributes(apm_object)
 
   sprintf_vector <- function(x, format, sep = " ") {
-    vec_format <- rep(format, length(x)) %>% paste0(collapse = sep)
-    do.call(sprintf, c(list(vec_format), as.list(x)))
+  vec_format <- rep(format, length(x)) %>% paste0(collapse = sep)
+  do.call(sprintf, c(list(vec_format), as.list(x)))
   }
 
   get_col_format <- function(col_name) {
 
-    col_formats <- list(
-      # Coordenadas (en grados)
-      list(cols = c("LOND"), format = "%12.7f"),
-      list(cols = c("LATD"), format = "%12.7f"),
-      # Componentes de velocidad (cm/s)
-      list(cols = c("VELU", "VELV"), format = "%9.3f"),
-      list(cols = c("VELO"), format = "%11.3f"),
-      # Código de vector (entero)
-      list(cols = c("VFLG"), format = "%11d"),
-      # Distancias (km)
-      list(cols = c("RNGE"), format = "%10.4f"),
-      # Ángulo de rumbo (por ejemplo, Bearing en grados)
-      list(cols = c("BEAR"), format = "%8.1f"),
-      # Dirección (por ejemplo, Head)
-      list(cols = c("HEAD"), format = "%10.1f"),
-      # Celdas asociadas (por ejemplo, RngCell, DopCell y flag de selección)
-      list(cols = c("SPRC"), format = "%10d"),
-      list(cols = c("SPDC"), format = "%9d"),
-      list(cols = c("MSEL"), format = "%6d  "),
-      # Medidas asociadas a MusicSngl/MusicDual (valores numéricos con un decimal)
-      list(cols = c("MSA1", "MDA1", "MDA2"), format = "%9.1f "),
-      # Razón Eigen (Eigen Ratio)
-      list(cols = c("MEGR"), format = "%14.4f"),
-      # Razón de potencia (Power Ratio)
-      list(cols = c("MPKR"), format = "%13.5f"),
-      # Razón de offset (Off Ratio)
-      list(cols = c("MOFR"), format = "%13.6f"),
-      # Fases A13 y A23 (ángulos)
-      list(cols = c("MP13", "MP23"), format = "%8.1f "),
-      # Columnas asociadas a Pwr, Pk Width, Peak Resp, S/N, etc. (se muestran con un decimal)
-      list(cols = c("MSP1", "MDP1", "MDP2"), format = "%10.1f"),
-      list(cols = c("MSW1", "MDW1", "MDW2"), format = "%9.1f "),
-      list(cols = c("MSR1", "MDR1", "MDR2"), format = "%10.1f"),
-      list(cols = c("MA1S", "MA2S", "MA3S"), format = "%8.1f  "),
-      # Valores muy pequeños en notación científica
-      list(cols = c("MEI1", "MEI2", "MEI3"), format = "%14.5e"),
-      # Columnas de conteo (picos, rechazos, etc.)
-      list(cols = c("MDRJ", "PPFG", "PWFG"), format = "%6d  ")
-    )
+  col_formats <- list(
+    # Coordinates (in degrees)
+    list(cols = c("LOND"), format = "%12.7f"),
+    list(cols = c("LATD"), format = "%12.7f"),
+    # Velocity components (cm/s)
+    list(cols = c("VELU", "VELV"), format = "%9.3f"),
+    list(cols = c("VELO"), format = "%11.3f"),
+    # Vector code (integer)
+    list(cols = c("VFLG"), format = "%11d"),
+    # Distances (km)
+    list(cols = c("RNGE"), format = "%10.4f"),
+    # Heading angle (e.g., Bearing in degrees)
+    list(cols = c("BEAR"), format = "%8.1f"),
+    # Direction (e.g., Head)
+    list(cols = c("HEAD"), format = "%10.1f"),
+    # Associated cells (e.g., RngCell, DopCell and selection flag)
+    list(cols = c("SPRC"), format = "%10d"),
+    list(cols = c("SPDC"), format = "%9d"),
+    list(cols = c("MSEL"), format = "%6d  "),
+    # Measurements associated with MusicSngl/MusicDual (numeric values with one decimal)
+    list(cols = c("MSA1", "MDA1", "MDA2"), format = "%9.1f "),
+    # Eigen ratio (Eigen Ratio)
+    list(cols = c("MEGR"), format = "%14.4f"),
+    # Power ratio (Power Ratio)
+    list(cols = c("MPKR"), format = "%13.5f"),
+    # Offset ratio (Off Ratio)
+    list(cols = c("MOFR"), format = "%13.6f"),
+    # Phases A13 and A23 (angles)
+    list(cols = c("MP13", "MP23"), format = "%8.1f "),
+    # Columns associated with Pwr, Pk Width, Peak Resp, S/N, etc. (displayed with one decimal)
+    list(cols = c("MSP1", "MDP1", "MDP2"), format = "%10.1f"),
+    list(cols = c("MSW1", "MDW1", "MDW2"), format = "%9.1f "),
+    list(cols = c("MSR1", "MDR1", "MDR2"), format = "%10.1f"),
+    list(cols = c("MA1S", "MA2S", "MA3S"), format = "%8.1f  "),
+    # Very small values in scientific notation
+    list(cols = c("MEI1", "MEI2", "MEI3"), format = "%14.5e"),
+    # Count columns (peaks, rejections, etc.)
+    list(cols = c("MDRJ", "PPFG", "PWFG"), format = "%6d  ")
+  )
 
-    fmt <- purrr::keep(col_formats, \(fmt) col_name %in% fmt$cols)
-    out <- NULL
-    if(length(fmt) > 0){
-      out <- fmt %>% magrittr::extract2(1) %>% purrr::pluck("format")
-    }
+  fmt <- purrr::keep(col_formats, \(fmt) col_name %in% fmt$cols)
+  out <- NULL
+  if(length(fmt) > 0){
+    out <- fmt %>% magrittr::extract2(1) %>% purrr::pluck("format")
+  }
 
-    return(out)
+  return(out)
   }
 
   radial_metrics_fmt <- radial_metrics %>% dplyr::mutate(dplyr::across(dplyr::everything(), \(x) sprintf(get_col_format(dplyr::cur_column()), x)))
 
   radial_metrics_fmt <- as.list(radial_metrics_fmt) %>% purrr::transpose()
-
-  # Preparar templates
-
-  template_data <- system.file("templates", "LLUV_RDM1_data.mustache", package = "SeaSondeR") %>%
-    readLines() %>% paste0(collapse = "\n")
-
-  # Inserta la función helper para generar un UUID a partir de una cadena
-  StringToUUID <- function(Name) {
-    # Convierte la cadena Name a su representación en bytes
-    name_bytes <- charToRaw(Name)
-    
-    # Genera el hash SHA-1 utilizando openssl
-    sha1_hash <- openssl::sha1(name_bytes)
-    
-    # Extrae los primeros 16 bytes del hash
-    result <- sha1_hash[1:16]
-    
-    # Ajusta el byte 7 (índice 6 en R) para la versión 5 del UUID
-    result[7] <- as.raw(as.integer(result[7]) & 0x0F | 0x50)
-    
-    # Ajusta el byte 9 (índice 8 en R) para la variante del UUID
-    result[9] <- as.raw(as.integer(result[9]) & 0x3F | 0x80)
-    
-    # Convierte los bytes resultantes en un UUID en formato estándar
-    uuid_str <- paste(sprintf("%02x", as.integer(result[1:4])), collapse = "")
-    uuid_str <- paste0(uuid_str, "-", paste(sprintf("%02x", as.integer(result[5:6])), collapse = ""))
-    uuid_str <- paste0(uuid_str, "-", paste(sprintf("%02x", as.integer(result[7:8])), collapse = ""))
-    uuid_str <- paste0(uuid_str, "-", paste(sprintf("%02x", as.integer(result[9:10])), collapse = ""))
-    uuid_str <- paste0(uuid_str, "-", paste(sprintf("%02x", as.integer(result[11:16])), collapse = ""))
-    
-    return(uuid_str)
-  }
-
-data_string <- radial_metrics_fmt %>% purrr::map_chr(\(x) paste0(x[c("LOND","LATD","VELU","VELV","VFLG","RNGE","BEAR","VELO","HEAD","SPRC","SPDC","MSEL","MSA1","MDA1","MDA2","MEGR","MPKR","MOFR","MP13","MP23","MSP1","MDP1","MDP2","MSW1","MDW1","MDW2","MSR1","MDR1","MDR2","MA1S","MA2S","MA3S","MEI1","MEI2","MEI3","MDRJ","PPFG","PWFG")], collapse = "")) %>% paste0(collapse = "\n")
-  # Renderizar el template de data a partir de radial_metrics_fmt
+  
+  data_string <- radial_metrics_fmt %>% purrr::map_chr(\(x) paste0(x[c("LOND","LATD","VELU","VELV","VFLG","RNGE","BEAR","VELO","HEAD","SPRC","SPDC","MSEL","MSA1","MDA1","MDA2","MEGR","MPKR","MOFR","MP13","MP23","MSP1","MDP1","MDP2","MSW1","MDW1","MDW2","MSR1","MDR1","MDR2","MA1S","MA2S","MA3S","MEI1","MEI2","MEI3","MDRJ","PPFG","PWFG")], collapse = "")) %>% paste0(collapse = "\n")
+  # Render the data template from radial_metrics_fmt
   # data_string <- whisker::whisker.render(template_data, data= list(data=radial_metrics_fmt))
 
-  # Calcular UUID_data de forma determinista usando data_string como semilla
-  UUID_data <- toupper(StringToUUID(data_string))
+  # Calculate UUID_data deterministically using data_string as seed
+  UUID_data <- toupper(uuid::UUIDfromName("80113bfb-8db7-018b-011d-fe529c9ec978",data_string))
 
   # NEW: Compute range info table using tableStart = "2"
   rangeInfo <- seasonder_exportCTFRangeInfo_string(seasonder_cs_object, tableStart = "2")
 
   data <- list(
-    RadialMusicParameters = sprintf_vector(MUSIC_params, "%0.3f", " "),
-    ncols = ncol(radial_metrics),
-    nrows = nrow(radial_metrics),
-    PatternPhaseCorrections = sprintf_vector(APM_attributes$PhaseCorrections, "%0.2f", " "),
-    PatternAmplitudeCorrections = sprintf_vector(APM_attributes$AmplitudeFactors, "%0.4f", " "),
-    RadialBraggNoiseThreshold = sprintf("%0.3f", seasonder_getFOR_noisefact(seasonder_cs_object)),
-    RadialBraggPeakNull = sprintf("%0.3f", seasonder_getFOR_fdown(seasonder_cs_object)),
-    RadialBraggPeakDropOff = sprintf("%0.3f", seasonder_getFOR_flim(seasonder_cs_object)),
-    data = data_string,
-    TimeStamp = format(as.POSIXct(seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nDateTime"), origin = "1970-01-01"), "%Y %m %d  %H %M %S"),
-    TransmitCenterFreqMHz = sprintf("%0.6f", seasonder_getCenterFreqMHz(seasonder_cs_object)),
-    TransmitBandwidthKHz = sprintf("%0.6f",
-                                   -1^(seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "bSweepUp") == 0) *
-                                   seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fBandwidthKHz")),
-    TransmitSweepRateHz = sprintf("%0.6f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fRepFreqHz")),
-    RangeResolutionKMeters = sprintf("%0.6f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fRangeCellDistKm")),
-    Site = seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nSiteCodeName"),
-    TimeZone = seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "szTimeZone"),
-    fHoursFromUTC = sprintf("%+0.3f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fHoursFromUTC")),
-    TimeCoverage = sprintf("%0.3f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nCoverMinutes")),
-    Origin = paste(APM_attributes$SiteOrigin, collapse = " "),
-    UUID = UUID_data,
-    PatternUUID = APM_attributes$FileID,
-    AntennaBearing = sprintf("%0.1f", APM_attributes$AntennaBearing),
-    PatternType = APM_attributes$Type %||% tools::file_path_sans_ext(APM_attributes$FileName),
-    PatternDate = format(as.POSIXct(APM_attributes$PatternDate), "%Y %m %d  %H %M %S"),
-    PatternResolution = sprintf("%0.1f", APM_attributes$PatternResolution),
-    PatternSmoothing = sprintf("%d", APM_attributes$Smoothing),
-    RangeStart = 1,
-    RangeEnd = seasonder_getnRangeCells(seasonder_cs_object),
-    RangeCells = seasonder_getnRangeCells(seasonder_cs_object),
-    DopplerInterpolation = sprintf("%d", seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_cs_object)),
-    DopplerCells = sprintf(
-      "%d", 
-      seasonder_getnDopplerCells(seasonder_cs_object) * 
-      seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_cs_object)
-    ),
-    BraggSmoothingPoints = sprintf("%d", seasonder_getFOR_nsm(seasonder_cs_object)),
-    CurrentVelocityLimit = sprintf("%0.1f", seasonder_getFOR_currmax(seasonder_cs_object)),
-    range_info_table = rangeInfo$out_str,
-    ProcessedTimeStamp = format(Sys.time(), "%Y %m %d  %H %M %S"),
-    SeaSondeRVersion = packageVersion("SeaSondeR")
+  RadialMusicParameters = sprintf_vector(MUSIC_params, "%0.3f", " "),
+  ncols = ncol(radial_metrics),
+  nrows = nrow(radial_metrics),
+  PatternPhaseCorrections = sprintf_vector(APM_attributes$PhaseCorrections, "%0.2f", " "),
+  PatternAmplitudeCorrections = sprintf_vector(APM_attributes$AmplitudeFactors, "%0.4f", " "),
+  RadialBraggNoiseThreshold = sprintf("%0.3f", seasonder_getFOR_noisefact(seasonder_cs_object)),
+  RadialBraggPeakNull = sprintf("%0.3f", seasonder_getFOR_fdown(seasonder_cs_object)),
+  RadialBraggPeakDropOff = sprintf("%0.3f", seasonder_getFOR_flim(seasonder_cs_object)),
+  data = data_string,
+  TimeStamp = format(as.POSIXct(seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nDateTime"), origin = "1970-01-01"), "%Y %m %d  %H %M %S"),
+  TransmitCenterFreqMHz = sprintf("%0.6f", seasonder_getCenterFreqMHz(seasonder_cs_object)),
+  TransmitBandwidthKHz = sprintf("%0.6f",
+                   -1^(seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "bSweepUp") == 0) *
+                   seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fBandwidthKHz")),
+  TransmitSweepRateHz = sprintf("%0.6f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fRepFreqHz")),
+  RangeResolutionKMeters = sprintf("%0.6f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fRangeCellDistKm")),
+  Site = seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nSiteCodeName"),
+  TimeZone = seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "szTimeZone"),
+  fHoursFromUTC = sprintf("%+0.3f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "fHoursFromUTC")),
+  TimeCoverage = sprintf("%0.3f", seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nCoverMinutes")),
+  Origin = paste(APM_attributes$SiteOrigin, collapse = " "),
+  UUID = UUID_data,
+  PatternUUID = APM_attributes$FileID,
+  AntennaBearing = sprintf("%0.1f", APM_attributes$AntennaBearing),
+  PatternType = APM_attributes$Type %||% tools::file_path_sans_ext(APM_attributes$FileName),
+  PatternDate = format(as.POSIXct(APM_attributes$PatternDate), "%Y %m %d  %H %M %S"),
+  PatternResolution = sprintf("%0.1f", APM_attributes$PatternResolution),
+  PatternSmoothing = sprintf("%d", APM_attributes$Smoothing),
+  RangeStart = 1,
+  RangeEnd = seasonder_getnRangeCells(seasonder_cs_object),
+  RangeCells = seasonder_getnRangeCells(seasonder_cs_object),
+  DopplerInterpolation = sprintf("%d", seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_cs_object)),
+  DopplerCells = sprintf(
+    "%d", 
+    seasonder_getnDopplerCells(seasonder_cs_object) * 
+    seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation(seasonder_cs_object)
+  ),
+  BraggSmoothingPoints = sprintf("%d", seasonder_getFOR_nsm(seasonder_cs_object)),
+  CurrentVelocityLimit = sprintf("%0.1f", seasonder_getFOR_currmax(seasonder_cs_object)),
+  range_info_table = rangeInfo$out_str,
+  ProcessedTimeStamp = format(Sys.time(), "%Y %m %d  %H %M %S"),
+  SeaSondeRVersion = utils::packageVersion("SeaSondeR")
   )
 
   template <- system.file("templates", "LLUV_RDM1.mustache", package = "SeaSondeR") %>%
-    readLines() %>% paste0(collapse = "\n")
+  readLines() %>% paste0(collapse = "\n")
 
   LLUV <- whisker::whisker.render(template, data = data)
 

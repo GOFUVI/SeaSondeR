@@ -46,3 +46,13 @@ otherwise, the raw data is returned.
 The function continues reading keys until it detects the 'END ' marker or a repeated 'indx' key, which signals
 the end of the block.
 }
+\examples{
+\dontrun{
+  # Example usage:
+  con <- rawConnection(as.raw(1:100))
+  specs <- list(sampleKey = list(type = "double"))
+  result <- seasonder_readCSSWBodyRangeCell(con, specs, dbRef = -20, endian = "big")
+  print(result)
+  close(con)
+}
+}

@@ -42,6 +42,19 @@ based on provided specifications. Regular blocks are read directly, while
 repeated blocks are processed recursively based on a set of loops provided
 in the specifications.
 }
+\examples{
+\dontrun{
+  con <- rawConnection(as.raw(rep(0, 300)))
+  specs <- list(
+    nCS6ByteSize = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
+    block_spec = list( /* block spec details placeholder */ ),
+    blocks = list()
+  )
+  header <- readV6BlockData(specs, con, endian = "big")
+  print(header)
+  close(con)
+}
+}
 \seealso{
 \code{\link{readV6BlockData}}
 }

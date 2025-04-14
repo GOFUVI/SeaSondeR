@@ -9,6 +9,14 @@ SeaSondeRAPM_smoothing_step_text(smoothing)
 \arguments{
 \item{smoothing}{The smoothing parameter (number of points used).}
 }
+\value{
+A character string detailing the smoothing operation.
+}
 \description{
 This function generates a message indicating that smoothing has been applied to the APM.
+}
+\examples{
+\dontrun{
+  msg <- SeaSondeRAPM_smoothing_step_text(5)
+}
 }

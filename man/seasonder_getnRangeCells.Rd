@@ -15,3 +15,10 @@ The nRangeCells value.
 \description{
 Get the nRangeCells value from a SeaSondeRCS object
 }
+\examples{
+\dontrun{
+ # Assuming cs_obj is a valid SeaSondeRCS object
+ n_range_cells <- seasonder_getnRangeCells(cs_obj)
+ print(n_range_cells)
+}
+}

@@ -1,9 +1,9 @@
 ---
-title: "APM"
+title: "Antenna Pattern"
 output: rmarkdown::html_vignette
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{APM}
+  %\VignetteIndexEntry{Antenna Pattern}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

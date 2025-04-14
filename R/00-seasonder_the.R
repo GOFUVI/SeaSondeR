@@ -17,10 +17,12 @@ seasonder_the$messages_enabled <- TRUE
 #' Once enabled, various SeaSondeR functions will output informational
 #' messages.
 #'
-#' @return NULL
+#' @return logical TRUE indicating that message logging was enabled.
 #' @export
 #' @examples
-#' seasonder_enableMessages()
+#' \dontrun{
+#'   seasonder_enableMessages()
+#' }
 seasonder_enableMessages <- function() seasonder_the$messages_enabled <- TRUE
 
 #' Disable message logging in SeaSondeR
@@ -29,21 +31,24 @@ seasonder_enableMessages <- function() seasonder_the$messages_enabled <- TRUE
 #' Once disabled, various SeaSondeR functions will no longer output
 #' informational messages.
 #'
-#' @return NULL
+#' @return logical FALSE indicating that message logging was disabled.
 #' @export
 #' @examples
-#' seasonder_disableMessages()
+#' \dontrun{
+#'   seasonder_disableMessages()
+#' }
 seasonder_disableMessages <- function() seasonder_the$messages_enabled <- FALSE
 
 #' Check if message logging is enabled in SeaSondeR
 #'
-#' This function checks whether message logging is currently enabled
-#' in the SeaSondeR package.
+#' This function checks whether message logging is currently enabled.
 #'
-#' @return Logical indicating whether messages are enabled or disabled.
+#' @return Logical value indicating whether messages are enabled.
 #' @export
 #' @examples
-#' seasonder_areMessagesEnabled()
+#' \dontrun{
+#'   seasonder_areMessagesEnabled()
+#' }
 seasonder_areMessagesEnabled <- function() seasonder_the$messages_enabled
 
 
@@ -59,6 +64,10 @@ seasonder_the$debug_points_enabled <- c("none")
 #' @param debug_points A character vector of debug point names to enable.
 #' @return Updated character vector of enabled debug points.
 #' @export
+#' @examples
+#' \dontrun{
+#'   seasonder_enable_debug_points("example_debug")
+#' }
 seasonder_enable_debug_points <- function(debug_points) {
   seasonder_the$debug_points_enabled <- c(seasonder_the$debug_points_enabled, debug_points)
 }
@@ -69,6 +78,10 @@ seasonder_enable_debug_points <- function(debug_points) {
 #'
 #' @return A character vector of enabled debug points.
 #' @export
+#' @examples
+#' \dontrun{
+#'   seasonder_get_enabled_debug_points()
+#' }
 seasonder_get_enabled_debug_points <- function() seasonder_the$debug_points_enabled
 
 #' Check if a debug point is enabled in SeaSondeR
@@ -76,8 +89,12 @@ seasonder_get_enabled_debug_points <- function() seasonder_the$debug_points_enab
 #' This function checks whether the provided debug point is enabled.
 #'
 #' @param debug_point A character string specifying the debug point.
-#' @return Logical value indicating whether the debug point is enabled.
+#' @return TRUE if the debug point is enabled, FALSE otherwise.
 #' @export
+#' @examples
+#' \dontrun{
+#'   seasonder_is_debug_point_enabled("example_debug")
+#' }
 seasonder_is_debug_point_enabled <- function(debug_point){
   debug_point %in% seasonder_get_enabled_debug_points()
 }
@@ -86,8 +103,12 @@ seasonder_is_debug_point_enabled <- function(debug_point){
 #'
 #' This function resets the debug points to the default state ("none").
 #'
-#' @return A character vector containing only the default debug point.
+#' @return A character vector containing only the default debug point "none".
 #' @export
+#' @examples
+#' \dontrun{
+#'   seasonder_disable_all_debug_points()
+#' }
 seasonder_disable_all_debug_points <- function(){
   seasonder_the$debug_points_enabled <- c("none")
 }

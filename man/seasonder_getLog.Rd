@@ -10,8 +10,13 @@ seasonder_getLog(n = 100)
 \item{n}{An integer specifying the number of recent log entries to retrieve.}
 }
 \value{
-Returns the \code{n} most recent log entries from the global log.
+A character vector of the \code{n} most recent log entries from the global log.
 }
 \description{
 This function fetches the most recent log entries from the global log variable \code{seasonder_the$log}.
+}
+\examples{
+\dontrun{
+  seasonder_getLog()
+}
 }

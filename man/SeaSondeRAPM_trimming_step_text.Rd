@@ -9,6 +9,14 @@ SeaSondeRAPM_trimming_step_text(trimming)
 \arguments{
 \item{trimming}{The number of points trimmed from each end of the APM.}
 }
+\value{
+A character string with the trimming details.
+}
 \description{
 This function generates a message indicating that trimming has been applied to the APM.
+}
+\examples{
+\dontrun{
+  msg <- SeaSondeRAPM_trimming_step_text(3)
+}
 }

@@ -15,3 +15,11 @@ Returns TRUE if the validation passes.
 \description{
 This function validates if the provided ProcessingSteps is a character vector.
 }
+\examples{
+\dontrun{
+  # Example of a valid ProcessingSteps
+ steps <- c("Step 1", "Step 2")
+  is_valid <- validate_SeaSondeRCS_ProcessingSteps(steps)
+  print(is_valid)  # Should return TRUE
+}
+}

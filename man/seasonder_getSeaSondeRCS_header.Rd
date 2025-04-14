@@ -9,6 +9,16 @@ seasonder_getSeaSondeRCS_header(seasonder_cs_object)
 \arguments{
 \item{seasonder_cs_object}{SeaSondeRCS object}
 }
+\value{
+A list containing the header data of the SeaSondeRCS object.
+}
 \description{
 Getter for header
+}
+\examples{
+\dontrun{
+  # Assuming cs_obj is a valid SeaSondeRCS object
+  header_data <- seasonder_getSeaSondeRCS_header(cs_obj)
+  print(header_data)
+}
 }

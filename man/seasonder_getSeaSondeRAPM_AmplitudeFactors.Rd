@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_AmplitudeFactors(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The AmplitudeFactors attribute from the object.
+}
 \description{
 Getter for AmplitudeFactors
+}
+\examples{
+\dontrun{
+  amplitude_factors <- seasonder_getSeaSondeRAPM_AmplitudeFactors(obj)
+}
 }

@@ -6,10 +6,15 @@
 \usage{
 seasonder_disableLogs()
 }
+\value{
+Invisibly returns FALSE, indicating that log recording has been disabled.
+}
 \description{
 This function disables log recording in the SeaSondeR package.
 Once disabled, various SeaSondeR functions will no longer output logs.
 }
 \examples{
-seasonder_disableLogs()
+\dontrun{
+  seasonder_disableLogs()
+}
 }

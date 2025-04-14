@@ -33,6 +33,13 @@ frequency resolution of the radar's Doppler spectrum and the corresponding
 velocity resolution, taking into account the wave number which is a fundamental
 characteristic of the radar system.
 }
+\examples{
+\dontrun{
+  cs_obj <- seasonder_createSeaSondeRCS(...)
+  res <- seasonder_getRadialVelocityResolution(cs_obj)
+  print(res)
+}
+}
 \seealso{
 \code{\link{seasonder_getDopplerSpectrumResolution}},
 \code{\link{seasonder_getRadarWaveNumber}}

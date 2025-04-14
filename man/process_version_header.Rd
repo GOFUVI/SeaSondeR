@@ -52,6 +52,20 @@ This function assumes that the desired version-specific \verb{seasonder_readSeaS
 functions are available in the global environment.
 }
 
+\examples{
+\dontrun{
+  con <- rawConnection(as.raw(rep(0, 300)))
+  specs <- list(
+    V1 = list(...),
+    V2 = list(...),
+    V3 = list(...)
+  )
+  pool <- list()
+  header <- process_version_header(pool, 3, specs, con, endian = "big")
+  print(header)
+  close(con)
+}
+}
 \seealso{
 \code{\link{seasonder_readSeaSondeCSFileHeaderV2}}
 \code{\link{seasonder_readSeaSondeCSFileHeaderV3}}

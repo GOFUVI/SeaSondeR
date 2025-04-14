@@ -1,90 +1,3 @@
-#' Read Complex Spectral Sign Information from a Connection
-#'
-#' This function reads a raw binary stream from a provided connection, expecting a specific format
-#' that contains the sign bits for complex spectral values. The data is divided into 6 groups corresponding
-#' to: \code{C13r}, \code{C13i}, \code{C23r}, \code{C23i}, \code{C12r}, and \code{C12i}.
-#'
-#' @param connection A binary connection to read raw bytes from.
-#' @param key A list containing:
-#'   \describe{
-#'     \item{size}{An integer specifying the total number of bytes to be read. It must equal 6 times the number
-#'       of bytes per group.}
-#'     \item{key}{A string identifier (expected to be \code{"csign"}).}
-#'   }
-#'
-#' @return A named list of 6 vectors. Each vector represents one group (e.g., \code{C13r}, \code{C13i}, etc.)
-#'   and contains integers (0 or 1) corresponding to the bits (in little-endian order) extracted from the raw data.
-#'
-#' @details The function performs the following steps:
-#'   \itemize{
-#'     \item Reads \code{key$size} bytes from the specified connection.
-#'     \item Checks if enough bytes were read.
-#'     \item Ensures that the total number of bytes is divisible by 6, allowing equal distribution among the groups.
-#'     \item Splits the raw byte vector into 6 groups based on the calculated number of bytes per group.
-#'     \item Converts each byte into its 8-bit representation (using \code{rawToBits}) and flattens the result.
-#'   }
-#'
-#'
-#' @examples
-#' \dontrun{
-#' # Create a raw connection with sample data:
-#' con <- rawConnection(as.raw(c(0x42, 0x29, 0xa3, 0xd7, 0xFF, 0x00)))
-#' key <- list(size = 6, key = "csign")
-#' result <- seasonder_CSSW_read_csign(con, key)
-#' print(result)
-#' close(con)
-#' }
-seasonder_CSSW_read_csign <- function(connection, key) {
-  # Store the number of bytes to read based on the key list.
-  total_bytes <- key$size
-
-  # Read the specified number of raw bytes from the connection.
-  raw_data <- readBin(connection, what = "raw", n = total_bytes)
-
-  # Check if the actual number of bytes read is less than expected.
-  if (length(raw_data) < total_bytes) {
-    stop("Not enough bytes in connection")
-  }
-
-  # Validate that the total number of bytes is divisible by 6,
-  # which is necessary to form 6 equal-sized groups corresponding to:
-  # C13r, C13i, C23r, C23i, C12r, and C12i.
-  if (total_bytes %% 6 != 0) {
-    stop("Invalid total size: not divisible by 6")
-  }
-
-  # Calculate how many bytes correspond to each group.
-  group_bytes_count <- total_bytes / 6
-
-  # Define the names of the 6 groups in the expected order.
-  group_names <- c("c13m", "c13a", "c23m", "c23a", "c12m", "c12a")
-
-  # Initialize the result list with names set for each group.
-  result <- setNames(vector("list", length(group_names)), group_names)
-
-  # Loop through each group to extract and process the relevant bytes.
-  for (i in seq_along(group_names)) {
-    # Calculate the starting and ending indices for the current group's slice.
-    start_index <- (i - 1) * group_bytes_count + 1
-    end_index <- i * group_bytes_count
-
-    # Extract the subset of raw bytes corresponding to the current group.
-    group_raw <- raw_data[start_index:end_index]
-
-    # Convert each byte in the group to its 8-bit binary representation.
-    # rawToBits converts a byte to a vector of 8 bits (in little-endian order).
-    # lapply applies this conversion to each byte, and unlist flattens the list to a vector.
-    group_bits <- unlist(lapply(group_raw, function(byte) as.integer(rawToBits(byte))))
-
-    # Store the converted bits in the result list for the current group.
-    result[[i]] <- group_bits
-  }
-
-  # Return the list containing vectors of bits for each of the 6 groups.
-  return(result)
-}
-
-
 #' Read Self Spectra Sign Information from a Connection
 #'
 #' This function reads a raw binary stream from a provided connection, expecting a specific format
@@ -99,8 +12,7 @@ seasonder_CSSW_read_csign <- function(connection, key) {
 #'     \item{key}{A string identifier (expected to be \code{"asign"}).}
 #'   }
 #'
-#' @return A named list of 3 vectors. Each vector represents one group (i.e., \code{cs1a}, \code{cs2a}, \code{cs3a})
-#'   and contains integers (0 or 1) corresponding to the bits (in little-endian order) extracted from the raw data.
+#' @return A named list of 3 vectors, each containing bits as integers (0 or 1) for self spectra sign data.
 #'
 #' @details The function performs the following steps:
 #'   \itemize{
@@ -111,6 +23,15 @@ seasonder_CSSW_read_csign <- function(connection, key) {
 #'     \item Converts each byte into its 8-bit binary representation (using \code{rawToBits}) and flattens the results for each group.
 #'   }
 #'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' con <- rawConnection(as.raw(c(0xFF, 0x00, 0xAA, 0x55, 0xCC, 0x33, 0x77, 0x88, 0x99)))
+#' key <- list(size = 9, key = "asign")
+#' result <- seasonder_CSSW_read_asign(con, key)
+#' print(result)
+#' close(con)
+#' }
 seasonder_CSSW_read_asign <- function(connection, key) {
   # Determine the total number of bytes to read from the connection based on key$size.
   total_bytes <- key$size
@@ -135,7 +56,7 @@ seasonder_CSSW_read_asign <- function(connection, key) {
   group_names <- c("cs1a", "cs2a", "cs3a")
 
   # Initialize an empty list to store each group's bit vectors, assigning the group names.
-  result <- setNames(vector("list", length(group_names)), group_names)
+  result <- stats::setNames(vector("list", length(group_names)), group_names)
 
   # Loop over each group to extract its corresponding bytes and convert them to bit vectors.
   for (i in seq_along(group_names)) {
@@ -158,6 +79,25 @@ seasonder_CSSW_read_asign <- function(connection, key) {
   return(result)
 }
 
+#' Read CSSW Fields
+#'
+#' Processes a block of keys from the binary connection according to provided specifications.
+#'
+#' @param connection A binary connection.
+#' @param specs A list specifying the expected keys.
+#' @param endian A character indicating byte order.
+#' @param parent_key Optional parent key information.
+#' @return A named list as returned by seasonder_readSeaSondeCSFileBlock consistent with the provided specifications.
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' con <- rawConnection(as.raw(1:10))
+#' specs <- list(field = list(type = "integer"))
+#' result <- seasonder_readCSSWFields(con, specs, "big")
+#' print(result)
+#' close(con)
+#' }
 seasonder_readCSSWFields <- function(connection, specs, endian, parent_key= NULL){
   variable_char_types <- purrr::map_lgl(specs, \(x) x$type == "CharX")
   if(any(variable_char_types)){
@@ -195,6 +135,7 @@ seasonder_readCSSWFields <- function(connection, specs, endian, parent_key= NULL
 #' @param fmin A numeric value representing the minimum scaling value. Acts as an offset for the scaling.
 #' @param fscale A numeric value representing the scaling factor. Must not be zero as it determines the divisor in the scaling formula.
 #' @param dbRef A numeric value representing the decibel reference to be added before the voltage conversion step.
+#' @param computeVoltage A logical value indicating whether to compute the voltage from the scaled values. If FALSE, it returns the intermediate scaled values.
 #'
 #' @return A list with the same structure as `values`, where each numeric vector has been transformed to a vector of floating point
 #' voltage values. Special integer values equal to 0xFFFFFFFF are converted to NaN.
@@ -218,7 +159,7 @@ seasonder_readCSSWFields <- function(connection, specs, endian, parent_key= NULL
 #'
 #' The function includes input validation to ensure that `values` is a list, and that `fmax`, `fmin`, `fscale`, and `dbRef`
 #' are numeric. It also checks that no element in `values` is non-numeric and that `fscale` is non-zero to prevent division errors.
-seasonder_SeaSondeRCSSWApplyScaling <- function(values, fmax, fmin, fscale, dbRef) {
+seasonder_SeaSondeRCSSWApplyScaling <- function(values, fmax, fmin, fscale, dbRef, computeVoltage = TRUE) {
 
   # Validate that 'values' is a list
   if (!is.list(values)) {
@@ -251,12 +192,15 @@ seasonder_SeaSondeRCSSWApplyScaling <- function(values, fmax, fmin, fscale, dbRe
       } else {
         # Compute the intermediate scaled value using the linear transformation
         intermediate <- value * (fmax - fmin) / fscale + fmin
-
+if(computeVoltage){
         # Convert the intermediate value to voltage using the decibel conversion formula
         voltage <- 10^((intermediate + dbRef) / 10)
 
         # Return the computed voltage value
         return(voltage)
+}else{
+  return(intermediate)
+}
       }
     })
   })
@@ -296,6 +240,15 @@ seasonder_SeaSondeRCSSWApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 #' @return A list with elements named after the keys read. For reduced data blocks, each element contains either
 #'         the raw decoded data or the scaled voltage values if a 'scal' block had been applied.
 #'
+#' @examples
+#' \dontrun{
+#'   # Example usage:
+#'   con <- rawConnection(as.raw(1:100))
+#'   specs <- list(sampleKey = list(type = "double"))
+#'   result <- seasonder_readCSSWBodyRangeCell(con, specs, dbRef = -20, endian = "big")
+#'   print(result)
+#'   close(con)
+#' }
 seasonder_readCSSWBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
   indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
   scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
@@ -326,12 +279,10 @@ seasonder_readCSSWBodyRangeCell <- function(connection, specs, dbRef, endian = "
                                                           fmax = scaling_params$fmax,
                                                           fmin = scaling_params$fmin,
                                                           fscale = scaling_params$fscale,
-                                                          dbRef = dbRef)[[1]]
+                                                          dbRef = dbRef,
+                                                          computeVoltage = !key$key %in% c("c13a","c12a","c23a"))[[1]]
       }
       out <- append(out, list(data_block) %>% magrittr::set_names(key$key))
-    } else if(key$key %in% c("csgn")){
-      # Process complex spectral sign information
-      out <- append(out, list(seasonder_CSSW_read_csign(connection, key)) %>% magrittr::set_names(key$key))
     } else if(key$key %in% c("asgn")){
       # Process self spectra sign information
       out <- append(out, list(seasonder_CSSW_read_asign(connection, key)) %>% magrittr::set_names(key$key))
@@ -350,9 +301,27 @@ seasonder_readCSSWBodyRangeCell <- function(connection, specs, dbRef, endian = "
 }
 
 
-
-
-
+#' Read CSSW Body
+#'
+#' Reads the body section of a CSSW file, processing each cell block until the designated endpoint.
+#'
+#' @param connection A binary connection from which the body is read.
+#' @param specs A list specifying the body keys and formats.
+#' @param size The total number of bytes to read for the body section.
+#' @param dbRef Numeric decibel reference used for scaling.
+#' @param endian A character specifying byte order.
+#' @param specs_key_size Optional specification for the key size block.
+#' @return A list of processed body cells with applied sign corrections.
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' con <- rawConnection(as.raw(1:100))
+#' specs <- list(sampleKey = list(type = "double"))
+#' result <- seasonder_readCSSWBody(con, specs, 100, dbRef = -20, endian = "big")
+#' print(result)
+#' close(con)
+#' }
 seasonder_readCSSWBody <- function(connection, specs, size, dbRef, endian = "big", specs_key_size = NULL){
 
   end_point <- seek(connection) + size
@@ -367,6 +336,23 @@ seasonder_readCSSWBody <- function(connection, specs, size, dbRef, endian = "big
   return(out)
 }
 
+#' Read CSSW Limits
+#'
+#' Reads a specified number of 32-bit unsigned integers from a binary connection and reshapes them into a matrix representing CSSW limits.
+#'
+#' @param connection A binary connection.
+#' @param n_values The number of 32-bit unsigned integers to read.
+#' @param endian A string specifying byte order ("big" or "little").
+#' @return A numeric matrix with four columns: LeftBraggLeftLimit, LeftBraggRightLimit, RightBraggLeftLimit, and RightBraggRightLimit.
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' con <- rawConnection(as.raw(rep(0x01, 16)))
+#' lims <- seasonder_readCSSWLims(con, 4, endian = "big")
+#' print(lims)
+#' close(con)
+#' }
 seasonder_readCSSWLims <- function(connection, n_values, endian = "big") {
 
   # Read n_values of 32-bit unsigned integers
@@ -478,14 +464,20 @@ seasonder_readCSSWHeader <- function(connection, current_specs, endian = "big", 
 }
 
 
-#' Transform CSSW Header to SeaSondeRCS Header
+#' Transform CSSW Header to SeaSonde CS Header
 #'
-#' This helper function extracts the 'cs4h' component from a CSSW header, removes it from the original header,
-#' and embeds the remaining header information within the 'header_csr' field of the CS header.
+#' Extracts the 'cs4h' component from a CSSW header and reorganizes the remaining header information under 'header_csr'.
 #'
-#' @param header A list representing the CSSW header. Must contain a 'cs4h' component.
-#' @return A transformed header where the primary CS header is taken from 'cs4h' and the remaining CSSW header fields
-#'         are stored in the 'header_csr' element.
+#' @param header A list representing the CSSW header, which must contain a 'cs4h' component.
+#' @return A transformed list representing a valid SeaSonde CS header with embedded CSSW header information.
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' header <- list(cs4h = list(field = 1), someField = 42)
+#' cs_header <- seasonder_CSSW2CSHeader(header)
+#' print(cs_header)
+#' }
 seasonder_CSSW2CSHeader <- function(header) {
   if (is.null(header$cs4h)) {
     seasonder_logAndAbort("CSSW header does not contain a cs4h component")
@@ -606,13 +598,13 @@ seasonder_CSSW2CSData <- function(body) {
 
     # For cross spectra, combine the real and imaginary parts to create complex numbers
     if (!is.null(cell$c12m) && !is.null(cell$c12a)) {
-      CS12[row, ] <- cell$c12m * exp(1i * cell$c12a)
+      CS12[row, ] <- complex(real = cell$c12m * cos(cell$c12a * pi / 180),imaginary = cell$c12m * sin(cell$c12a * pi / 180))
     }
     if (!is.null(cell$c13m) && !is.null(cell$c13a)) {
-      CS13[row, ] <- cell$c13m * exp(1i * cell$c13a)
+      CS13[row, ] <- complex(real = cell$c13m * cos(cell$c13a * pi / 180),imaginary = cell$c13m * sin(cell$c13a * pi / 180))
     }
     if (!is.null(cell$c23m) && !is.null(cell$c23a)) {
-      CS23[row, ] <- cell$c23m * exp(1i * cell$c23a)
+      CS23[row, ] <- complex(real = cell$c23m * cos(cell$c23a * pi / 180),imaginary = cell$c23m * sin(cell$c23a * pi / 180))
     }
   }
 
@@ -628,24 +620,27 @@ seasonder_CSSW2CSData <- function(body) {
   )
 }
 
-
+#' Apply CSSW Sign Corrections
+#'
+#' Applies sign corrections to both cross-spectra and auto-spectra fields within a list of CSSW data cells.
+#'
+#' @param cs_data A list of CSSW data cells, where each cell may include fields for cross-spectra ('c12m', 'c12a', 'c13m', 'c13a', 'c23m', 'c23a') and auto-spectra ('cs1a', 'cs2a', 'cs3a') signs.
+#' @return The modified list of CSSW data cells with sign corrections applied.
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' cs_data <- list(
+#'   list(csgn = list(c12m = 1, c12a = 0, c13m = 1, c13a = 0, c23m = 1, c23a = 0),
+#'        c12m = c(1,2), c12a = c(0,0),
+#'        cs1a = c(3,4))
+#' )
+#' corrected <- seasonder_applyCSSWSigns(cs_data)
+#' print(corrected)
+#' }
 seasonder_applyCSSWSigns <- function(cs_data) {
   for (i in seq_along(cs_data)) {
     cell <- cs_data[[i]]
-
-    # Apply cross-spectra sign correction if 'csgn' exists
-    if (!is.null(cell$csgn)) {
-      cs_fields <- c("c12m", "c12a", "c13m", "c13a", "c23m", "c23a")
-      for (field in cs_fields) {
-        if (!is.null(cell[[field]])) {
-
-      csgn <- cell$csgn[[field]] *-2 +1
-
-          # Multiply element-wise the spectral data by the sign vector
-          cell[[field]] <- cell[[field]] * csgn
-        }
-      }
-    }
 
     # Apply auto-spectra sign correction if 'asgn' exists
     if (!is.null(cell$asgn)) {

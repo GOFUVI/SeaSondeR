@@ -11,6 +11,14 @@ seasonder_setSeaSondeRAPM_SiteOrigin(seasonde_apm_obj, new_value)
 
 \item{new_value}{new value}
 }
+\value{
+The modified SeaSondeRAPM object with updated SiteOrigin.
+}
 \description{
 Setter for SiteOrigin
+}
+\examples{
+\dontrun{
+  obj <- seasonder_setSeaSondeRAPM_SiteOrigin(obj, new_site_origin)
+}
 }

@@ -15,3 +15,8 @@ The version value.
 \description{
 Get the version value from a SeaSondeRAPM object
 }
+\examples{
+\dontrun{
+  version <- seasonder_getVersion.SeaSondeRAPM(obj)
+}
+}

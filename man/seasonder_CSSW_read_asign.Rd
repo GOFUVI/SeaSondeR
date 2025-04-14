@@ -17,8 +17,7 @@ of bytes per group.}
 }}
 }
 \value{
-A named list of 3 vectors. Each vector represents one group (i.e., \code{cs1a}, \code{cs2a}, \code{cs3a})
-and contains integers (0 or 1) corresponding to the bits (in little-endian order) extracted from the raw data.
+A named list of 3 vectors, each containing bits as integers (0 or 1) for self spectra sign data.
 }
 \description{
 This function reads a raw binary stream from a provided connection, expecting a specific format
@@ -33,5 +32,15 @@ The function performs the following steps:
 \item Checks that the total number of bytes is divisible by 3, allowing equal distribution among the groups.
 \item Splits the raw byte vector into 3 groups based on the calculated number of bytes per group.
 \item Converts each byte into its 8-bit binary representation (using \code{rawToBits}) and flattens the results for each group.
+}
+}
+\examples{
+\dontrun{
+# Example usage:
+con <- rawConnection(as.raw(c(0xFF, 0x00, 0xAA, 0x55, 0xCC, 0x33, 0x77, 0x88, 0x99)))
+key <- list(size = 9, key = "asign")
+result <- seasonder_CSSW_read_asign(con, key)
+print(result)
+close(con)
 }
 }

@@ -12,7 +12,7 @@ seasonder_skip_cs_field(cond, value)
 \item{value}{The desired return value to use in place of the CSField reading that encountered an error.}
 }
 \value{
-Returns the value specified by the \code{value} parameter.
+The value specified in the 'value' parameter.
 }
 \description{
 This function is a convenience mechanism to invoke the \code{seasonder_skip_cs_field} restart option. It can be used in custom condition handlers when reading a CSField from a binary connection encounters an error or condition. When called, it indicates the intention to skip reading the current CSField and return a specific value.
@@ -21,4 +21,10 @@ This function is a convenience mechanism to invoke the \code{seasonder_skip_cs_f
 During the execution of the \code{seasonder_readCSField} function, errors or conditions can occur. To provide a structured mechanism to handle such cases, the function utilizes the \code{rlang::withRestarts} mechanism, offering a restart option named \code{seasonder_skip_cs_field}. This restart allows the function to gracefully handle reading errors by logging a relevant error message and returning a specified value.
 
 The \code{seasonder_skip_cs_field} function provides an easy way to invoke this restart. When called within a custom condition handler, it signals the intention to skip the current CSField reading due to an error and specifies a return value.
+}
+\examples{
+\dontrun{
+  result <- seasonder_skip_cs_field(simpleError("test error"), "default")
+  print(result)
+}
 }

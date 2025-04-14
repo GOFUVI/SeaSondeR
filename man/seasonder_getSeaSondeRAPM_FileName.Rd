@@ -9,6 +9,14 @@ seasonder_getSeaSondeRAPM_FileName(seasonde_apm_obj)
 \arguments{
 \item{seasonde_apm_obj}{SeaSonderAPM object}
 }
+\value{
+The FileName attribute from the object.
+}
 \description{
 Getter for FileName
+}
+\examples{
+\dontrun{
+  file_name <- seasonder_getSeaSondeRAPM_FileName(obj)
+}
 }
