@@ -3411,7 +3411,7 @@ doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_options(out)$doppler_int
 #' 2. Adjusting the angles to the range [0, 360) using modulo 360.
 #' 3. Adding the antenna bearing to each value and wrapping the result to the range [0, 360) again using modulo 360.
 #'
-#' The formula for each bearing is: \eqn{geo_bearing = ((-1 * music_bearing %% 360) + antenna_bearing) %% 360}.
+#' The formula for each bearing is: \eqn{geo_bearing = ((-1 * music_bearing \\%\\% 360) + antenna_bearing) \\%\\% 360}.
 #'
 #' @return A list of numeric vectors containing the geographic bearings in degrees.
 #'

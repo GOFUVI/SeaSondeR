@@ -25,7 +25,7 @@ The geographic bearing is calculated by:
 \item Adding the antenna bearing to each value and wrapping the result to the range [0, 360) again using modulo 360.
 }
 
-The formula for each bearing is: \eqn{geo_bearing = ((-1 * music_bearing \%\% 360) + antenna_bearing) \%\% 360}.
+The formula for each bearing is: \eqn{geo_bearing = ((-1 * music_bearing \\\%\\\% 360) + antenna_bearing) \\\%\\\% 360}.
 }
 \examples{
 \dontrun{

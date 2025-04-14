@@ -17,6 +17,17 @@ seasonder_setSeaSondeRCS_ProcessingSteps(
 
 \item{append}{append the new step or replace previous steps? Default: TRUE}
 }
+\value{
+A SeaSondeRCS object with updated ProcessingSteps.
+}
 \description{
 Setter for ProcessingSteps
+}
+\examples{
+\dontrun{
+ # Assuming cs_obj is a valid SeaSondeRCS object and new_steps is a character vector of processing steps
+  cs_obj <- seasonder_setSeaSondeRCS_ProcessingSteps(cs_obj, new_steps)
+  # Check the updated processing steps
+ print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_obj))
+}
 }

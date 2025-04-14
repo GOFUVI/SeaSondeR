@@ -6,6 +6,9 @@
 \usage{
 \method{print}{SeaSondeRCS}(x, ...)
 }
+\value{
+Invisibly returns the original SeaSondeRCS object.
+}
 \description{
 Print Method for SeaSondeRCS Object
 }

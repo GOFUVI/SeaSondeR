@@ -6,6 +6,9 @@
 \usage{
 \method{print}{SeaSondeRAPM}(x, ...)
 }
+\value{
+The SeaSondeRAPM object itself, invisibly.
+}
 \description{
 Print a SeaSondeRAPM Object
 }

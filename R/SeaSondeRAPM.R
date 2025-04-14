@@ -2013,6 +2013,9 @@ seasonder_plotAPMLoops <- function(seasonder_apm_obj) {
 #' 
 #' @method print SeaSondeRAPM
 #' @export
+#' 
+#' @return The SeaSondeRAPM object itself, invisibly.
+#' 
 #' @examples
 #' \dontrun{
 #'   print(obj)
@@ -2027,4 +2030,69 @@ print.SeaSondeRAPM <- function(x, ...){
 
   invisible(x)
 
+}
+
+
+#### summary ####
+
+#' Summarizes a SeaSondeRAPM Object
+#'
+#' This function prints a summary of a SeaSondeRAPM object by displaying its processing steps. 
+#' The processing steps provide a record of the transformations and operations applied to the object, 
+#' which can be useful for debugging and understanding the data workflow.
+#'
+#' @param seasonder_apm_object An object of class "SeaSondeRAPM". This object should be created using 
+#'   the seasonder_createSeaSondeRAPM() function and must include a calibration matrix, a quality matrix, 
+#'   the BEAR attribute, and a StationCode.
+#' @param ... Additional arguments that might be passed to other methods; currently not used.
+#'
+#' @return Invisibly returns the input SeaSondeRAPM object. This allows the function to be used in a sequence 
+#'   of operations (e.g., chaining) without printing the object again after the summary is displayed.
+#'
+#' @details The function first verifies that the provided object inherits from the "SeaSondeRAPM" class. 
+#'   It then retrieves the processing steps associated with the object via the seasonder_getSeaSondeRAPM_ProcessingSteps() 
+#'   function. These steps are concatenated into a single string, which is printed alongside a header indicating that 
+#'   they represent the processing steps. This method is primarily used for diagnostic purposes and for verifying 
+#'   that the object has undergone the intended series of operations.
+#'
+#' @examples
+#' \dontrun{
+#'   # Create a dummy calibration matrix with 3 rows and 5 columns
+#'   dummy_matrix <- matrix(complex(real = 1:15, imaginary = rep(0, 15)), nrow = 3)
+#'
+#'   # Define a dummy BEAR attribute with 5 bearings
+#'   dummy_bear <- seq(0, 360, length.out = ncol(dummy_matrix) + 1)[- (ncol(dummy_matrix) + 1)]
+#'
+#'   # Create a dummy quality matrix (for example, just copying the dummy_matrix)
+#'   dummy_quality <- dummy_matrix
+#'
+#'   # Create a dummy SeaSondeRAPM object using the dummy matrices and attributes
+#'   dummy_obj <- seasonder_createSeaSondeRAPM(
+#'     calibration_matrix = dummy_matrix,
+#'     quality_matrix = dummy_quality,
+#'     BEAR = dummy_bear,
+#'     StationCode = "1234"
+#'   )
+#'
+#'   # Print the summary of the dummy SeaSondeRAPM object
+#'   summary(dummy_obj)
+#' }
+#' @method summary SeaSondeRAPM
+#' @export
+summary.SeaSondeRAPM <- function(object, ...) {
+  # Check if the object is of class SeaSondeRAPM
+  if (!inherits(object, "SeaSondeRAPM")) {
+    stop("The object must be of class 'SeaSondeRAPM'")
+  }
+  
+  # Retrieve and collapse the processing steps
+  processing_steps <- seasonder_getSeaSondeRAPM_ProcessingSteps(object) %>% 
+  paste0(collapse = "\n")
+  
+  # Print the summary details
+  cat("Processing steps:\n")
+  cat(processing_steps, "\n")
+  cat("\n")
+  
+  invisible(object)
 }

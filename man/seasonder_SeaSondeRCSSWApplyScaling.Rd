@@ -4,7 +4,14 @@
 \alias{seasonder_SeaSondeRCSSWApplyScaling}
 \title{Apply Scaling to SeaSondeRCSSW Data}
 \usage{
-seasonder_SeaSondeRCSSWApplyScaling(values, fmax, fmin, fscale, dbRef)
+seasonder_SeaSondeRCSSWApplyScaling(
+  values,
+  fmax,
+  fmin,
+  fscale,
+  dbRef,
+  computeVoltage = TRUE
+)
 }
 \arguments{
 \item{values}{A list of numeric vectors containing integer values to be scaled. Each vector is expected to contain values read
@@ -17,6 +24,8 @@ from a binary CSSW values block.}
 \item{fscale}{A numeric value representing the scaling factor. Must not be zero as it determines the divisor in the scaling formula.}
 
 \item{dbRef}{A numeric value representing the decibel reference to be added before the voltage conversion step.}
+
+\item{computeVoltage}{A logical value indicating whether to compute the voltage from the scaled values. If FALSE, it returns the intermediate scaled values.}
 }
 \value{
 A list with the same structure as \code{values}, where each numeric vector has been transformed to a vector of floating point

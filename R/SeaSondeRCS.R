@@ -89,6 +89,13 @@ new_SeaSondeRCS_CSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL
 #'           \item \code{CS23}: Matrix for CS23 component, complex numbers with \code{NA_real_} real and imaginary parts.
 #'           \item \code{QC}: Quality control matrix, filled with \code{NA_real_}.
 #'         }
+#' @examples 
+#' \dontrun{
+#'   # Initialize the data structure with 100 range cells and 256 Doppler bins
+#'   nRanges <- 100
+#'  nDoppler <- 256
+#'  cs_data_structure <- seasonder_initCSDataStructure(nRanges, nDoppler)
+#' }
 seasonder_initCSDataStructure <- function(nRanges, nDoppler) {
 
 
@@ -482,6 +489,13 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path = rlang::zap(), 
 #'
 #' @param steps The character vector to be validated.
 #' @return Returns TRUE if the validation passes.
+#' @examples 
+#' \dontrun{
+#'   # Example of a valid ProcessingSteps
+#'  steps <- c("Step 1", "Step 2")
+#'   is_valid <- validate_SeaSondeRCS_ProcessingSteps(steps)
+#'   print(is_valid)  # Should return TRUE
+#' }
 validate_SeaSondeRCS_ProcessingSteps <- function(steps) {
   if (!is.character(steps)) {
     seasonder_logAndAbort("ProcessingSteps must be a character vector.", calling_function = "validate_SeaSondeRCS_ProcessingSteps")
@@ -516,6 +530,11 @@ validate_SeaSondeRCS_ProcessingSteps <- function(steps) {
 #'
 #' @return Invisible NULL if the header structure is valid. Otherwise, an error is thrown.
 #'
+#' @examples 
+#' \dontrun{
+#' header <- list(nRangeCells = 100, nDopplerCells = 256)
+#' seasonder_validateCSHeaderStructure(header)
+#' }
 #' @export
 seasonder_validateCSHeaderStructure <- function(header) {
   # TODO: test, document, vignette
@@ -630,6 +649,15 @@ seasonder_validateCSDataStructure <- function(data, nRanges, nDoppler) {
 #' @seealso
 #' \code{\link{seasonder_validateCSHeaderStructure}}
 #'
+#' @return A SeaSondeRCS object with updated header.
+#' 
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object and new_header is a valid header list
+#'   cs_obj <- seasonder_setSeaSondeRCS_header(cs_obj, new_header)
+#'  # Check the updated header
+#'   print(seasonder_getSeaSondeRCS_header(cs_obj))
+#' }
 #' @export
 seasonder_setSeaSondeRCS_header <- function(seasonder_cs_object, header) {
   # TODO: test, document, vignette
@@ -650,6 +678,15 @@ seasonder_setSeaSondeRCS_header <- function(seasonder_cs_object, header) {
 #' @seealso
 #' \code{\link{seasonder_validateCSDataStructure}}
 #'
+#' @return A SeaSondeRCS object with updated data.
+#' 
+#' @examples 
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object and new_data is a valid data list
+#'   cs_obj <- seasonder_setSeaSondeRCS_data(cs_obj, new_data)
+#'   # Check the updated data
+#'   print(seasonder_getSeaSondeRCS_data(cs_obj))
+#' }
 #' @export
 seasonder_setSeaSondeRCS_data <- function(seasonder_cs_object, data) {
   # TODO: test, document, vignette
@@ -672,6 +709,14 @@ seasonder_setSeaSondeRCS_data <- function(seasonder_cs_object, data) {
 #' @param processing_steps new value
 #' @param append append the new step or replace previous steps? Default: TRUE
 #'
+#' @examples 
+#' \dontrun{
+#'  # Assuming cs_obj is a valid SeaSondeRCS object and new_steps is a character vector of processing steps
+#'   cs_obj <- seasonder_setSeaSondeRCS_ProcessingSteps(cs_obj, new_steps)
+#'   # Check the updated processing steps
+#'  print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_obj))
+#' }
+#' @return A SeaSondeRCS object with updated ProcessingSteps.
 #' @export
 seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_object, processing_steps,append = TRUE) {
 
@@ -787,6 +832,16 @@ new_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(out, low_limit = 
 #'
 #' @importFrom rlang %||%
 #'
+#' 
+#' @return A list containing the header data of the SeaSondeRCS object.
+#' 
+#' 
+#' @examples
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object
+#'   header_data <- seasonder_getSeaSondeRCS_header(cs_obj)
+#'   print(header_data)
+#' }
 #' @export
 seasonder_getSeaSondeRCS_header <- function(seasonder_cs_object) {
   # TODO: test, document, vignette
@@ -812,6 +867,14 @@ seasonder_getSeaSondeRCS_header <- function(seasonder_cs_object) {
 #' @seealso
 #' \code{\link{seasonder_createSeaSondeRCS}}, \code{\link{seasonder_getSeaSondeRCS_header}}
 #'
+#' @examples 
+#' \dontrun{
+#' # Assuming cs_obj is a valid SeaSondeRCS object
+#' # Convert the SeaSondeRCS object to JSON and save it to a file
+#' json_output <- seasonder_asJSONSeaSondeRCSHeader(cs_obj, path = "header_output.json")
+#' # Print the JSON output
+#' print(json_output)
+#' }
 #' @note
 #' If a path is provided and there is an issue writing to the file, the function logs an error message using `seasonder_logAndMessage` and returns the JSON data as a string.
 seasonder_asJSONSeaSondeRCSHeader <- function(seasonder_cs_object, path = NULL) {
@@ -844,6 +907,14 @@ seasonder_asJSONSeaSondeRCSHeader <- function(seasonder_cs_object, path = NULL) 
 #' @seealso
 #' \code{\link{seasonder_createSeaSondeRCS}}, \code{\link{seasonder_getSeaSondeRCS_data}}
 #'
+#' @examples 
+#' \dontrun{
+#' # Assuming cs_obj is a valid SeaSondeRCS object
+#' # Convert the SeaSondeRCS object to JSON and save it to a file
+#' json_output <- seasonder_asJSONSeaSondeRCSData(cs_obj, path = "output.json")
+#' # Print the JSON output
+#' print(json_output)
+#' }
 #' @note
 #' If a path is provided and there is an issue writing to the file, the function logs an error message using `seasonder_logAndMessage` and returns the JSON data as a string.
 seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_object, path = NULL) {
@@ -930,6 +1001,16 @@ seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <
 #'
 #' @importFrom rlang %||%
 #'
+#' 
+#' @return A list containing the data matrices for the SeaSondeRCS object. If the data is not set, it initializes
+#' the data structure with the number of range and Doppler cells.
+#' @examples 
+#' \dontrun{
+#'  # Assuming `cs_object` is a valid SeaSondeRCS object
+#'  data_list <- seasonder_getSeaSondeRCS_data(cs_object)
+#'  # Print the data list
+#'  print(data_list)
+#' }
 #' @export
 seasonder_getSeaSondeRCS_data <- function(seasonder_cs_object) {
   # TODO: test, document, vignette
@@ -1264,6 +1345,13 @@ SSMatrices <- antennae %>% purrr::map(\(antenna) seasonder_getSeaSondeRCS_antenn
 #'
 #' @param seasonder_cs_object SeaSonderCS object
 #'
+#' @return A list containing the processing steps of the SeaSondeRCS object.
+#' @examples 
+#' \dontrun{
+#' # Assuming `cs_object` is a valid SeaSondeRCS object
+#' processing_steps <- seasonder_getSeaSondeRCS_ProcessingSteps(cs_object)
+#' print(processing_steps)
+#' }
 #' @export
 seasonder_getSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_object) {
   return(attributes(seasonder_cs_object)$ProcessingSteps)
@@ -1273,6 +1361,12 @@ seasonder_getSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_object) {
 #'
 #' @param seasonder_obj A SeaSondeRCS object.
 #' @return The version value.
+#' @examples 
+#' \dontrun{
+#' # Assuming `cs_object` is a valid SeaSondeRCS object
+#' value <- seasonder_getVersion(cs_object)
+#' print(value)
+#' }
 #' @export
 seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj) {
 
@@ -1307,6 +1401,19 @@ seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj) {
 #'   \item Field or nested fields specified by the path are not found in the header.
 #' }
 #'
+#' @examples
+#' \dontrun{
+#' # Assuming `cs_object` is a valid SeaSondeRCS object
+#' # Retrieve a specific field from the header
+#' field_value <- seasonder_getCSHeaderByPath(cs_object, c("nRangeCells"))
+#' # Retrieve a nested field from the header
+#' nested_field_value <- seasonder_getCSHeaderByPath(cs_object, c("header", "nRangeCells"))
+#' # Print the retrieved values
+#' print(field_value)
+#' print(nested_field_value)
+#' # Retrieve a field that does not exist (will issue a warning)
+#' non_existent_field_value <- seasonder_getCSHeaderByPath(cs_object, c("nonExistentField"))
+#' } 
 #' @export
 seasonder_getCSHeaderByPath <- function(seasonder_obj, path, warn_missing = T) {
 
@@ -1372,6 +1479,12 @@ if(field %in% names(header)){
 #'
 #' @param seasonder_obj A SeaSondeRCS object.
 #' @return The nRangeCells value.
+#' @examples 
+#' \dontrun{
+#'  # Assuming cs_obj is a valid SeaSondeRCS object
+#'  n_range_cells <- seasonder_getnRangeCells(cs_obj)
+#'  print(n_range_cells)
+#' }
 #' @export
 seasonder_getnRangeCells <- function(seasonder_obj) {
   return(seasonder_getSeaSondeRCS_headerField(seasonder_obj, "nRangeCells"))
@@ -1380,6 +1493,12 @@ seasonder_getnRangeCells <- function(seasonder_obj) {
 #' Get the nDopplerCells value from a SeaSondeRCS object
 #'
 #' @param seasonder_obj A SeaSondeRCS object.
+#' @examples 
+#' \dontrun{
+#'   # Assuming cs_obj is a valid SeaSondeRCS object
+#'  n_doppler_cells <- seasonder_getnDopplerCells(cs_obj)
+#'  print(n_doppler_cells)
+#' }
 #' @return The nDopplerCells value.
 #' @export
 seasonder_getnDopplerCells <- function(seasonder_obj) {
@@ -2865,6 +2984,12 @@ seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_object, antenna,
 #' @return
 #' A character string with the formatted message indicating the time of creation and the file path.
 #'
+#' @examples 
+#' \dontrun{
+#'   file_path <- "path/to/file.cs"
+#'  message <- SeaSondeRCS_creation_step_text(file_path)
+#'  print(message)
+#' }
 SeaSondeRCS_creation_step_text <- function(file_path) {
   # Use glue to format the message with the current system time and the provided file path
   glue::glue("{Sys.time()}: Created from {file_path}.")
@@ -4608,6 +4733,9 @@ seasonder_load_qc_functions()
 #' 
 #' @method print SeaSondeRCS
 #' @export
+#' 
+#' @return Invisibly returns the original SeaSondeRCS object.
+#' 
 #' @examples
 #' \dontrun{
 #'   obj <- list(header = list(nSiteCodeName = "Station1",
@@ -4628,3 +4756,49 @@ print.SeaSondeRCS <- function(x, ...){
 
 }
 
+#### summary ####
+
+#' Summary Method for SeaSondeRCS Object
+#'
+#' Provides a concise summary of a SeaSondeRCS object by printing the processing steps
+#' that have been applied to the data contained in the object.
+#'
+#' @param seasonder_cs_object An object of class "SeaSondeRCS". This object should contain
+#' at least a header list with metadata (such as station name, date/time, and cell counts)
+#' and processing step information retrieved by the function
+#' seasonder_getSeaSondeRCS_ProcessingSteps.
+#' @param ... Additional arguments. Currently not used, but supplied for compatibility with
+#' generic summary methods.
+#'
+#' @return Invisibly returns the original SeaSondeRCS object. 
+#'
+#' @details This method first validates that the input object inherits from the "SeaSondeRCS" class.
+#' It then retrieves the processing steps applied to the data using seasonder_getSeaSondeRCS_ProcessingSteps,
+#' formats them into a readable string, and outputs the result via the cat function.
+#' The function is designed for interactive use, and its output facilitates quick inspection of the object.
+#' 
+#' @method summary SeaSondeRCS
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'  obj <- list(header = list(nSiteCodeName = "Station1",
+#'                             nDateTime = Sys.time(),
+#'                             nDopplerCells = 256,
+#'                             nRangeCells = 100))
+#'  class(obj) <- "SeaSondeRCS"
+#'  summary(obj)
+#' }
+summary.SeaSondeRCS <- function(object, ...) {
+  # Check if the object is of class SeaSondeRCS
+  if (!inherits(object, "SeaSondeRCS")) {
+    stop("The object must be of class 'SeaSondeRCS'")
+  }
+processing_steps <- seasonder_getSeaSondeRCS_ProcessingSteps(object) %>% paste0(collapse = "\n")
+  # Print the summary of the header
+  cat("Processing steps:\n")
+  cat(processing_steps)
+  cat("\n")
+
+  invisible(object)
+}
