@@ -42,7 +42,6 @@ The MUSIC algorithm is executed in a series of sequential steps:
 }
 }
 \examples{
-\donttest{
 # Create a SeaSondeRCS object (example)
 cs_object <- seasonder_createSeaSondeRCS(x = list(header = list(), data = list()))
 
@@ -51,8 +50,6 @@ cs_object <- seasonder_runMUSIC(cs_object)
 
 # Check the updated processing steps
 print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_object))
-}
-
 }
 \seealso{
 \code{\link{seasonder_MUSICComputeCov}}: Compute the covariance matrix.

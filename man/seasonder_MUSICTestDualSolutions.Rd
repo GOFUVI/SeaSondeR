@@ -38,9 +38,9 @@ Each test updates the MUSIC solutions in the input object, marking solutions tha
 The function also logs the start and end of the testing process as part of the object's processing steps.
 }
 \examples{
-\donttest{
-updated_obj <- seasonder_MUSICTestDualSolutions(seasonder_cs_object)
-}
+# Test dual solutions
+cs_obj <- seasonder_createSeaSondeRCS(...)
+updated_obj <- SeaSondeR:::seasonder_MUSICTestDualSolutions(cs_obj)
 }
 \seealso{
 \code{\link{seasonder_MUSICCheckEigenValueRatio}}, \code{\link{seasonder_MUSICCheckSignalPowers}},

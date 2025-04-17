@@ -43,11 +43,9 @@ The resulting Doppler bins frequencies are crucial for analyzing the spectral
 properties of the MUSIC output.
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object
-doppler_bins <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(cs_object, normalized = FALSE)
-print(doppler_bins)
-}
+# Get Doppler bins frequency
+cs_obj <- seasonder_createSeaSondeRCS(...)
+freqs <- SeaSondeR:::seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(cs_obj, normalized = TRUE)
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin}} to retrieve the central bin.

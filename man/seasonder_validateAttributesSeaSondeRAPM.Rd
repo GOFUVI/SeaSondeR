@@ -40,6 +40,9 @@ The function performs validation on the following attributes of the SeaSondeRAPM
 It internally calls specific validation functions for each of these attributes. If any of the attributes are found to be invalid, the function will stop execution and display an error message.
 }
 \examples{
+# Create a test SeaSondeRAPM object by reading sample file
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 valid <- seasonder_validateAttributesSeaSondeRAPM(obj)
 }
 \seealso{

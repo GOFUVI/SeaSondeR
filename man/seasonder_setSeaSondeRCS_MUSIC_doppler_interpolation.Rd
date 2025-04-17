@@ -28,12 +28,10 @@ The function performs the following operations:
 }
 }
 \examples{
-\donttest{
-  # Suppose 'cs_object' is a valid SeaSondeRCS object
-  cs_object <- seasonder_createSeaSondeRCS(...)
-  cs_object <- seasonder_setMUSICDopplerInterpolation(cs_object, 2)
-  # Now the object has the Doppler interpolation factor set to 2
-}
+# Suppose 'cs_object' is a valid SeaSondeRCS object
+cs_object <- seasonder_createSeaSondeRCS(...)
+cs_object <- seasonder_setMUSICDopplerInterpolation(cs_object, 2)
+# Now the object has the Doppler interpolation factor set to 2
 }
 \seealso{
 \code{\link{SeaSondeRCS_MUSIC_validate_doppler_interpolation}} for Doppler interpolation factor validation.

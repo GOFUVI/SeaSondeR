@@ -30,5 +30,8 @@ they represent the processing steps. This method is primarily used for diagnosti
 that the object has undergone the intended series of operations.
 }
 \examples{
-summary(dummy_obj)
+# Summarize a test SeaSondeRAPM object
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+summary(obj)
 }

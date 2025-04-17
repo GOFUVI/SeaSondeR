@@ -18,5 +18,10 @@ The modified SeaSondeRAPM object with updated PhaseCorrections.
 Setter for PhaseCorrections
 }
 \examples{
+# Create a default SeaSondeRAPM object
+obj <- seasonder_createSeaSondeRAPM()
+# Define new_phase_corrections (e.g., from the object)
+new_phase_corrections <- attributes(obj)$PhaseCorrections
+# Update PhaseCorrections in the object
 obj <- seasonder_setSeaSondeRAPM_PhaseCorrections(obj, new_phase_corrections)
 }

@@ -25,8 +25,9 @@
 #' @importFrom magrittr %>% %<>%
 #' @export
 #' @examples
-#'   # Create a default SeaSondeRAPM object
-#'   obj <- seasonder_createSeaSondeRAPM()
+#'   # Create a test SeaSondeRAPM object by reading sample file
+#'   apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#'   obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(real = NA_real_, imaginary = NA_real_),
                                                                      nrow = 3, ncol = 0), ...) {
 
@@ -390,8 +391,9 @@ seasonder_validateCalibrationMatrixSeaSondeRAPM <- function(matrix) {
 #'
 #' @export
 #' @examples
-#' # Create a default SeaSondeRAPM object
-#' obj <- seasonder_createSeaSondeRAPM()
+#' # Create a test SeaSondeRAPM object by reading sample file
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' valid <- seasonder_validateAttributesSeaSondeRAPM(obj)
 seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {
   # Validate each attribute of the SeaSondeRAPM object using their respective validation functions
@@ -427,8 +429,9 @@ seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' # Create a default SeaSondeRAPM object and retrieve its quality_matrix
-#' obj <- seasonder_createSeaSondeRAPM()
+#' # Create a test SeaSondeRAPM object by reading sample file
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' q_matrix <- attributes(obj)$quality_matrix
 #' valid <- SeaSondeR:::validate_SeaSondeRAPM_quality_matrix(q_matrix, obj)
 validate_SeaSondeRAPM_quality_matrix <- function(matrix, seasonde_apm_obj) {
@@ -1432,6 +1435,9 @@ seasonder_getSeaSondeRAPM_FileID <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
+#' # Smooth antenna pattern data from a test SeaSondeRAPM object
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' smoothed_obj <- seasonder_smoothAPM(obj, 5)
 seasonder_smoothAPM <- function(seasonder_apm_object, smoothing) {
   # Smooth the first antenna channel:
@@ -1466,6 +1472,9 @@ seasonder_smoothAPM <- function(seasonder_apm_object, smoothing) {
 #'
 #' @export
 #' @examples
+#' # Trim loops for a test SeaSondeRAPM object
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' trimmed_obj <- seasonder_trimAPM(obj, 3)
 seasonder_trimAPM <- function(seasonder_apm_object, trimming) {
 
@@ -1507,6 +1516,9 @@ seasonder_trimAPM <- function(seasonder_apm_object, trimming) {
 #'
 #' @export
 #' @examples
+#' # Apply amplitude & phase corrections to a test SeaSondeRAPM object
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' corrected_obj <- seasonder_applyAPMAmplitudeAndPhaseCorrections(obj)
 seasonder_applyAPMAmplitudeAndPhaseCorrections <- function(seasonder_apm_object) {
   # Retrieve the amplitude factors from the object
@@ -1556,7 +1568,10 @@ seasonder_applyAPMAmplitudeAndPhaseCorrections <- function(seasonder_apm_object)
 #'         and the "BEAR" attribute are updated with the new bearings, while the "BearingResolution"
 #'         attribute remains unchanged.
 #' @examples
-#' result <- seasonder_extrapolateAPM(dummy_mat, n = 1)
+#' # Extrapolate loops for a test SeaSondeRAPM object
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' result <- seasonder_extrapolateAPM(obj, n = 1)
 #' @export
 seasonder_extrapolateAPM <- function(seasonder_apm_object, n = 1) {
 
@@ -1700,7 +1715,9 @@ parse_metadata_line <- function(line) {
 #' @seealso \code{\link{seasonder_createSeaSondeRAPM}}
 #' @seealso \code{\link{seasonder_validateAttributesSeaSondeRAPM}}
 #' @examples
-#' obj <- seasonder_readSeaSondeRAPMFile("path/to/file.apm")
+#' # Read a test SeaSondeRAPM object from sample file
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing = NULL, override_phase_corrections = NULL, override_amplitude_factors = NULL, override_SiteOrigin = NULL, ...) {
 
   # Read all lines from the specified file
@@ -1845,7 +1862,9 @@ seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing =
 #'
 #' @export
 #' @examples
-#' phase_corrections <- seasonder_readPhaseFile("path/to/phase_file.txt")
+#' # Read phase corrections from sample file
+#' phase_file <- system.file("css_data/Phases.txt", package = "SeaSondeR")
+#' phase_corrections <- seasonder_readPhaseFile(phase_file)
 seasonder_readPhaseFile <- function(file_path) {
   # Read the file lines and extract the first phase correction value using regex
   phasec1 <- readLines(file_path) %>%
@@ -1871,6 +1890,9 @@ seasonder_readPhaseFile <- function(file_path) {
 #'
 #' @export
 #' @examples
+#' # Plot loops from a test SeaSondeRAPM object
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' plot <- seasonder_plotAPMLoops(obj)
 seasonder_plotAPMLoops <- function(seasonder_apm_obj) {
   loop <- rlang::zap()
@@ -1927,6 +1949,9 @@ seasonder_plotAPMLoops <- function(seasonder_apm_obj) {
 #' @return The SeaSondeRAPM object itself, invisibly.
 #' 
 #' @examples
+#' # Print metadata of a test SeaSondeRAPM object
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' print(obj)
 print.SeaSondeRAPM <- function(x, ...){
 
@@ -1964,7 +1989,10 @@ print.SeaSondeRAPM <- function(x, ...){
 #'   that the object has undergone the intended series of operations.
 #'
 #' @examples
-#' summary(dummy_obj)
+#' # Summarize a test SeaSondeRAPM object
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' summary(obj)
 #' @method summary SeaSondeRAPM
 #' @export
 summary.SeaSondeRAPM <- function(object, ...) {

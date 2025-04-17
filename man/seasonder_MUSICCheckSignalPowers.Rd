@@ -35,9 +35,9 @@ This ratio is compared to a threshold defined in the MUSIC parameters. Only solu
 Solutions failing this test are marked as "single."
 }
 \examples{
-\donttest{
-updated_obj <- seasonder_MUSICCheckSignalPowers(seasonder_cs_object)
-}
+# Signal power ratio check
+cs_obj <- seasonder_createSeaSondeRCS(...)
+updated_obj <- SeaSondeR:::seasonder_MUSICCheckSignalPowers(cs_obj)
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC}}, \code{\link{seasonder_setSeaSondeRCS_MUSIC}}

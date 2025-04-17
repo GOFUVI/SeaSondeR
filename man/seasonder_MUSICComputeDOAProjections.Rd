@@ -50,9 +50,9 @@ where:
 }
 
 \examples{
-\donttest{
-cs_object <- seasonder_MUSICComputeDOAProjections(cs_object)
-}
+# Compute DOA projections
+cs_obj <- seasonder_createSeaSondeRCS(...)
+out <- SeaSondeR:::seasonder_MUSICComputeDOAProjections(cs_obj)
 }
 \seealso{
 \code{\link{seasonder_compute_antenna_pattern_proyections}} for computing projections.

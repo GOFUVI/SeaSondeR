@@ -51,10 +51,9 @@ The signal and noise subspaces are orthogonal. This decomposition facilitates id
 antenna manifold that best fits the signal subspace.
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid SeaSondeRCS object
-cs_object <- seasonder_MUSICCovDecomposition(cs_object)
-}
+# Covariance decomposition
+cs_obj <- seasonder_createSeaSondeRCS(...)
+out <- SeaSondeR:::seasonder_MUSICCovDecomposition(cs_obj)
 }
 \references{
 Paolo, T. de, Cook, T. & Terrill, E. Properties of HF RADAR Compact Antenna Arrays and Their Effect on the MUSIC Algorithm. OCEANS 2007 1–10 (2007) doi:10.1109/oceans.2007.4449265.

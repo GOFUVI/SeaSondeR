@@ -20,9 +20,7 @@ The function accesses the MUSIC_data attribute under MUSIC_options and retrieves
 If absent, it defaults to 1L.
 }
 \examples{
-\donttest{
-  # Assuming cs_object is a valid SeaSondeRCS object.
-  interp_factor <- seasonder_getMUSICDopplerInterpolation(cs_object)
-  print(interp_factor)
-}
+# Assuming cs_object is a valid SeaSondeRCS object.
+interp_factor <- seasonder_getMUSICDopplerInterpolation(cs_object)
+print(interp_factor)
 }

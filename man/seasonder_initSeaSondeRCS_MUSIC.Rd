@@ -48,15 +48,16 @@ Columns in the resulting tibble include:
 }
 }
 \examples{
-\donttest{
-# Initialize MUSIC data structure for all range cells and Doppler bins
-music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object)
+# Initialize MUSIC data for all range cells and Doppler bins
+cs_obj <- seasonder_createSeaSondeRCS(...)
+music_data <- SeaSondeR:::seasonder_initSeaSondeRCS_MUSIC(cs_obj)
+print(music_data)
 
 # Initialize for specific range cells and Doppler bins
-music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object, 
+cs_obj <- seasonder_createSeaSondeRCS(...)
+music_data <- SeaSondeR:::seasonder_initSeaSondeRCS_MUSIC(cs_obj, 
 range_cells = c(1, 2), doppler_bins = c(5, 10))
 print(music_data)
-}
 }
 \seealso{
 \code{\link{seasonder_NULLSeaSondeRCS_MUSIC}} for a NULL initialized structure.

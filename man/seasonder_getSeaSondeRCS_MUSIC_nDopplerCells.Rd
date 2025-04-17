@@ -29,11 +29,9 @@ the interpolated number of Doppler cells.
 }
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object
-n_doppler_cells <- seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(cs_object)
-print(n_doppler_cells)
-}
+# Get interpolated doppler cells count
+cs_obj <- seasonder_createSeaSondeRCS(...)
+n_doppler <- SeaSondeR:::seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(cs_obj)
 }
 \seealso{
 \code{\link{seasonder_getnDopplerCells}} to obtain the base number of Doppler cells.

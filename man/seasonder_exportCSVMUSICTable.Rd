@@ -26,11 +26,8 @@ This function performs the following steps:
 }
 }
 \examples{
-\donttest{
 # Assuming `seasonder_cs_object` is a valid `SeaSondeRCS` object
 seasonder_exportCSVMUSICTable(seasonder_cs_object, "output/music_table.csv")
-}
-
 }
 \seealso{
 \itemize{

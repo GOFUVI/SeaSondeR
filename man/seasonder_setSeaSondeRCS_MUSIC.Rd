@@ -26,17 +26,15 @@ MUSIC results to the \code{MUSIC} field within the \code{MUSIC_data} attribute. 
 during the MUSIC processing workflow.
 }
 \examples{
-\donttest{
-  # Assuming cs_obj is a valid SeaSondeRCS object and music_results contains MUSIC analysis results:
-  cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+# Assuming cs_obj is a valid SeaSondeRCS object and music_results contains MUSIC analysis results:
+cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 
-  # Example MUSIC data (placeholder)
-  music_results <- list(result1 = 1, result2 = 2)  # Replace with actual MUSIC results structure
+# Example MUSIC data (placeholder)
+music_results <- list(result1 = 1, result2 = 2)  # Replace with actual MUSIC results structure
 
-  # Set the MUSIC data in the SeaSondeRCS object
-  cs_obj <- seasonder_setSeaSondeRCS_MUSIC(cs_obj, music_results)
+# Set the MUSIC data in the SeaSondeRCS object
+cs_obj <- seasonder_setSeaSondeRCS_MUSIC(cs_obj, music_results)
 
-  # Retrieve and inspect the MUSIC data
-  print(attr(cs_obj, "MUSIC_data")$MUSIC)
-}
+# Retrieve and inspect the MUSIC data
+print(attr(cs_obj, "MUSIC_data")$MUSIC)
 }

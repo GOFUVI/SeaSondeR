@@ -54,24 +54,11 @@ response and peak width for each.
 }
 }
 \examples{
-\donttest{
-  # Example usage:
-  # Generate a dummy projections matrix with 50 columns and 2 rows for single and dual solutions
-  projections <- matrix(runif(100), nrow = 2, ncol = 50)
-  # Assign bearing angles as an attribute (0 to 359 degrees)
-  attr(projections, "bearings") <- seq(0, 359, length.out = 50)
-
-  # Define valid bearings (for example, all bearings between 0 and 359)
-  valid_bearings <- seq(0, 359, length.out = 50)
-
-  # Create a dummy APM object with the same number of columns as projections
-  seasonder_apm_obj <- matrix(runif(150), nrow = 3, ncol = 50)
-
-  # Extract DOA solutions using the MUSIC algorithm
-  result <- seasonder_MUSICExtractDOASolutions(projections, valid_bearings, seasonder_apm_obj)
-  print(result)
-}
-
+# Extract DOA solutions
+projections <- matrix(runif(100), nrow=2)
+attr(projections, "bearings") <- seq(0,359,length.out=50)
+apm <- seasonder_readSeaSondeRAPMFile("path")
+sol <- SeaSondeR:::seasonder_MUSICExtractDOASolutions(projections, seq(0,359,by=10), apm)
 }
 \references{
 Paolo, S., & Terril, E. (2007). Detection and characterization of signals in HF radar cross-spectra using the MUSIC algorithm.

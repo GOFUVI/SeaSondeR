@@ -47,14 +47,9 @@ off-diagonal element.
 }
 }
 \examples{
-\donttest{
-  # Assume cs_obj is a valid SeaSondeRCS object with MUSIC data already computed.
-  updated_obj <- seasonder_MUSICCheckSignalMatrix(cs_obj)
-  # The updated object now has an added diag_off_diag_power_ratio column and 
-  #updated retained_solution fields.
-  print(updated_obj)
-}
-
+# Signal matrix power ratio check
+cs_obj <- seasonder_createSeaSondeRCS(...)
+updated_obj <- SeaSondeR:::seasonder_MUSICCheckSignalMatrix(cs_obj)
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC}} to retrieve MUSIC data,

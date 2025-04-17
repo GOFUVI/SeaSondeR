@@ -25,9 +25,7 @@ The returned list includes:
 }
 }
 \examples{
-\donttest{
 # Retrieve the default options for the MUSIC algorithm
 opts <- seasonder_defaultMUSIC_options()
 print(opts)
-}
 }

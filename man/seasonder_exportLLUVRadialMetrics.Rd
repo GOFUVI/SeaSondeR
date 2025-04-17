@@ -36,10 +36,7 @@ formatted data, header information, and the generated UUID.
 }
 }
 \examples{
-\donttest{
-  # Assuming cs_object is a valid SeaSondeRCS object with MUSIC data:
-  radial_metrics <- seasonder_exportLLUVRadialMetrics(cs_object, tempfile(fileext = ".ruv"))
-  print(radial_metrics)
-}
-
+# Assuming cs_object is a valid SeaSondeRCS object with MUSIC data:
+radial_metrics <- seasonder_exportLLUVRadialMetrics(cs_object, tempfile(fileext = ".ruv"))
+print(radial_metrics)
 }

@@ -18,5 +18,10 @@ The modified SeaSondeRAPM object with updated BEAR.
 Setter for BEAR
 }
 \examples{
+# Create a default SeaSondeRAPM object
+obj <- seasonder_createSeaSondeRAPM()
+# Define a new BEAR vector (e.g., from the object)
+new_bear <- attributes(obj)$BEAR
+# Update BEAR in the object
 obj <- seasonder_setSeaSondeRAPM_BEAR(obj, new_bear)
 }

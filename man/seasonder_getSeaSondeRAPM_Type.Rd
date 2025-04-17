@@ -16,5 +16,7 @@ The Type attribute from the object.
 Getter for Type
 }
 \examples{
+# Create a default SeaSondeRAPM object
+obj <- seasonder_createSeaSondeRAPM()
 type <- seasonder_getSeaSondeRAPM_Type(obj)
 }

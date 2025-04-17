@@ -20,9 +20,7 @@ The function retrieves the MUSIC options from the object's MUSIC_data attribute.
 In the absence of user-defined options, it returns the default options provided by \code{seasonder_defaultMUSIC_options()}.
 }
 \examples{
-\donttest{
-  # Assuming cs_object is a valid SeaSondeRCS object.
-  opts <- seasonder_getMUSICOptions(cs_object)
-  print(opts)
-}
+# Assuming cs_object is a valid SeaSondeRCS object.
+opts <- seasonder_getMUSICOptions(cs_object)
+print(opts)
 }

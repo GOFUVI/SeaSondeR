@@ -34,11 +34,9 @@ The initialized tibble contains the following columns:
 }
 }
 \examples{
-\donttest{
 # Initialize a NULL structure for MUSIC analysis
-music_results <- seasonder_NULLSeaSondeRCS_MUSIC()
+music_results <- SeaSondeR:::seasonder_NULLSeaSondeRCS_MUSIC()
 print(music_results)
-}
 }
 \seealso{
 \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.

@@ -27,14 +27,10 @@ placeholders for components such as \code{SSA1}, \code{SSA2}, \code{SSA3}, \code
 \code{CS23}, and \code{QC}.
 }
 \examples{
-\donttest{
-# Create a SeaSondeR cross-spectral object
-seasonder_cs_object <- seasonder_createSeaSondeRCS(...)
-
 # Initialize interpolated data
-interpolated_data <- seasonder_MUSICInitInterpolatedData(seasonder_cs_object)
+cs_obj <- seasonder_createSeaSondeRCS(...)
+interpolated_data <- SeaSondeR:::seasonder_MUSICInitInterpolatedData(cs_obj)
 print(interpolated_data)
-}
 }
 \seealso{
 \code{\link{seasonder_initCSDataStructure}} for details on the cross-spectral data structure.

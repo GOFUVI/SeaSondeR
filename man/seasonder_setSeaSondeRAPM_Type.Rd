@@ -18,5 +18,10 @@ The modified SeaSondeRAPM object with updated Type.
 Setter for Type
 }
 \examples{
+# Create a default SeaSondeRAPM object
+obj <- seasonder_createSeaSondeRAPM()
+# Define a new Type value (e.g., from the object)
+new_type <- attributes(obj)$Type
+# Update Type in the object
 obj <- seasonder_setSeaSondeRAPM_Type(obj, new_type)
 }

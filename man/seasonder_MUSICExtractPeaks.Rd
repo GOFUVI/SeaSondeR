@@ -34,12 +34,9 @@ The MUSIC algorithm's implementation follows the theoretical framework outlined 
 in HF radar cross-spectra.
 }
 \examples{
-\donttest{
-cs_object <- seasonder_createSeaSondeRCS(x = "path/to/cs_file")
-cs_object <- seasonder_MUSICExtractPeaks(cs_object)
-print(cs_object)
-}
-
+# Extract peaks
+cs_obj <- seasonder_createSeaSondeRCS(...)
+out <- SeaSondeR:::seasonder_MUSICExtractPeaks(cs_obj)
 }
 \references{
 Paolo, S., & Terril, E. (2007). Detection and characterization of signals in HF radar cross-spectra using the MUSIC algorithm.

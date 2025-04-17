@@ -41,14 +41,12 @@ populated with range cell and Doppler bin combinations.
 The final object is ready for further MUSIC analysis steps, such as computing Direction of Arrival (DOA).
 }
 \examples{
-\donttest{
 # Initialize MUSIC data for all range cells and Doppler bins
 cs_object <- seasonder_createSeaSondeRCS(...)
 cs_object <- seasonder_initMUSICData(cs_object)
 
 # Initialize MUSIC data for specific range cells and Doppler bins
 cs_object <- seasonder_initMUSICData(cs_object, range_cells = c(1, 2), doppler_bins = c(5, 10))
-}
 }
 \seealso{
 \code{\link{seasonder_NULLSeaSondeRCS_MUSIC}} for initializing a NULL structure.

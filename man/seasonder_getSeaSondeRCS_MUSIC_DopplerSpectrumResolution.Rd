@@ -31,11 +31,9 @@ This adjustment is critical for accurately interpreting MUSIC data in cases wher
 Doppler interpolation has been applied.
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object
-spectrum_resolution <- seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution(cs_object)
-print(spectrum_resolution)
-}
+# Get adjusted Doppler spectrum resolution
+cs_obj <- seasonder_createSeaSondeRCS(...)
+res <- SeaSondeR:::seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution(cs_obj)
 }
 \seealso{
 \code{\link{seasonder_getDopplerSpectrumResolution}} to retrieve the base Doppler spectrum resolution.

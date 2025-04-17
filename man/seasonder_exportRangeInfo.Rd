@@ -44,10 +44,7 @@ interpolation factor.
 }
 }
 \examples{
-\donttest{
-  # Assuming cs_object is a valid SeaSondeRCS object with MUSIC data loaded:
-  range_info <- seasonder_exportRangeInfo(cs_object)
-  print(range_info)
-}
-
+# Assuming cs_object is a valid SeaSondeRCS object with MUSIC data loaded:
+range_info <- seasonder_exportRangeInfo(cs_object)
+print(range_info)
 }

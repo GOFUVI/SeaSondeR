@@ -19,5 +19,9 @@ This function validates if the provided quality_matrix is a 3-row complex matrix
 It also checks if the number of columns matches that of the calibration_matrix in the given SeaSondeRAPM object.
 }
 \examples{
+# Create a test SeaSondeRAPM object by reading sample file
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+q_matrix <- attributes(obj)$quality_matrix
 valid <- SeaSondeR:::validate_SeaSondeRAPM_quality_matrix(q_matrix, obj)
 }

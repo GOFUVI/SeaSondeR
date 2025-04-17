@@ -16,5 +16,7 @@ The BEAR attribute (bearing values) from the object.
 Getter for BEAR
 }
 \examples{
+# Create a default SeaSondeRAPM object
+obj <- seasonder_createSeaSondeRAPM()
 bear <- seasonder_getSeaSondeRAPM_BEAR(obj)
 }

@@ -31,9 +31,9 @@ This ratio is compared to a threshold defined in the MUSIC parameters to determi
 is considered valid. Solutions failing this test are marked as "single."
 }
 \examples{
-\donttest{
-updated_obj <- seasonder_MUSICCheckEigenValueRatio(seasonder_cs_object)
-}
+# Eigenvalue ratio check
+cs_obj <- seasonder_createSeaSondeRCS(...)
+updated_obj <- SeaSondeR:::seasonder_MUSICCheckEigenValueRatio(cs_obj)
 }
 \seealso{
 \code{seasonder_getSeaSondeRCS_MUSIC}, \code{seasonder_setSeaSondeRCS_MUSIC}

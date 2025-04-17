@@ -37,10 +37,9 @@ The function appends the following processing steps to the \code{ProcessingSteps
 }
 
 \examples{
-\donttest{
-# Assuming `seasonder_cs_object` is a valid SeaSondeRCS object with MUSIC results
-updated_obj <- seasonder_MUSICSelectDOA(seasonder_cs_object)
-}
+# Select DOA
+cs_obj <- seasonder_createSeaSondeRCS(...)
+out <- SeaSondeR:::seasonder_MUSICSelectDOA(cs_obj)
 }
 \seealso{
 \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}} to manage processing steps.

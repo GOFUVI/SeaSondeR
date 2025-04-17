@@ -35,11 +35,9 @@ The interpolation process is as follows:
 }
 }
 \examples{
-\donttest{
-# Assume `cs_obj` is a valid SeaSondeRCS object
-cs_obj <- seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
-}
-
+# Doppler interpolation
+cs_obj <- seasonder_createSeaSondeRCS(...)
+out <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
 }
 \seealso{
 \code{\link{seasonder_setSeaSondeRCS_MUSIC_interpolated_data}} for setting interpolated data,

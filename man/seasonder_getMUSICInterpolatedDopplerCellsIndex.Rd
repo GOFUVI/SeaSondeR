@@ -20,9 +20,7 @@ The interpolated doppler cells index is part of the MUSIC_data and is used to id
 which Doppler bins were introduced during the interpolation process.
 }
 \examples{
-\donttest{
-  # Assuming cs_object is a valid SeaSondeRCS object.
-  doppler_index <- seasonder_getMUSICInterpolatedDopplerCellsIndex(cs_object)
-  print(doppler_index)
-}
+# Assuming cs_object is a valid SeaSondeRCS object.
+doppler_index <- seasonder_getMUSICInterpolatedDopplerCellsIndex(cs_object)
+print(doppler_index)
 }

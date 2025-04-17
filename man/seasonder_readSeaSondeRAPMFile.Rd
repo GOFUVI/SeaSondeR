@@ -34,7 +34,9 @@ This function reads a SeaSonde APM file and returns a SeaSondeRAPM object contai
 the parsed data.
 }
 \examples{
-obj <- seasonder_readSeaSondeRAPMFile("path/to/file.apm")
+# Read a test SeaSondeRAPM object from sample file
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 }
 \seealso{
 \code{\link{seasonder_createSeaSondeRAPM}}

@@ -35,10 +35,9 @@ The function performs the following steps:
 }
 }
 \examples{
-\donttest{
-# Assuming seasonder_cs_object is a valid SeaSondeRCS object
-updated_object <- seasonder_MUSICComputeSignalPowerMatrix(seasonder_cs_object)
-}
+# Compute signal power matrix
+cs_obj <- seasonder_createSeaSondeRCS(...)
+updated_obj <- SeaSondeR:::seasonder_MUSICComputeSignalPowerMatrix(cs_obj)
 }
 \seealso{
 \code{\link{seasonder_computePowerMatrix}}

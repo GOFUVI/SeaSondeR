@@ -47,10 +47,7 @@ to the vector flag (\code{VFLG}) are applied.
 }
 }
 \examples{
-\donttest{
-  # Assuming 'cs_object' is a valid SeaSondeRCS object with MUSIC data:
-  radial_metrics <- seasonder_exportRadialMetrics(cs_object, AngSeg = list(c(5, 30, 60)))
-  print(radial_metrics)
-}
-
+# Assuming 'cs_object' is a valid SeaSondeRCS object with MUSIC data:
+radial_metrics <- seasonder_exportRadialMetrics(cs_object, AngSeg = list(c(5, 30, 60)))
+print(radial_metrics)
 }

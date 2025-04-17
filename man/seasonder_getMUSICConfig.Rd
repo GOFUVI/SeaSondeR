@@ -23,9 +23,7 @@ This function returns the key configuration parameters for the MUSIC algorithm f
 The configuration is aggregated from the MUSIC_data attribute of the object for easy access.
 }
 \examples{
-\donttest{
-  # Assuming cs_object is a valid SeaSondeRCS object.
-  config <- seasonder_getMUSICConfig(cs_object)
-  print(config)
-}
+# Assuming cs_object is a valid SeaSondeRCS object.
+config <- seasonder_getMUSICConfig(cs_object)
+print(config)
 }

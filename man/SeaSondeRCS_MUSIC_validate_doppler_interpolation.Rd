@@ -36,11 +36,9 @@ The maximum Doppler bins (2048) constraint is derived from CODAR's SeaSonde R8 R
 }
 
 \examples{
-\donttest{
-# Assume `cs_obj` is a valid SeaSondeRCS object
-doppler_factor <- SeaSondeRCS_MUSIC_validate_doppler_interpolation(2, cs_obj)
-}
-
+# Validate doppler interpolation
+cs_obj <- seasonder_createSeaSondeRCS(...)
+doppler_factor <- SeaSondeR:::SeaSondeRCS_MUSIC_validate_doppler_interpolation(2, cs_obj)
 }
 \seealso{
 \code{\link{seasonder_getnDopplerCells}} for retrieving the number of Doppler bins,

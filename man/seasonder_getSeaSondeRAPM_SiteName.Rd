@@ -16,5 +16,7 @@ The SiteName attribute from the object.
 Getter for SiteName
 }
 \examples{
+# Create a default SeaSondeRAPM object
+obj <- seasonder_createSeaSondeRAPM()
 site_name <- seasonder_getSeaSondeRAPM_SiteName(obj)
 }

@@ -19,5 +19,8 @@ This function smooths the antenna pattern data for each channel of a SeaSonde RA
 by applying a moving average with a specified number of points.
 }
 \examples{
+# Smooth antenna pattern data from a test SeaSondeRAPM object
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 smoothed_obj <- seasonder_smoothAPM(obj, 5)
 }

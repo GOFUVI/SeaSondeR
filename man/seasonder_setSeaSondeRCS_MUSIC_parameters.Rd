@@ -29,20 +29,18 @@ in the object's \code{MUSIC_data} attribute. These parameters are used in variou
 steps of the MUSIC processing workflow.
 }
 \examples{
-\donttest{
-  # Create a SeaSondeRCS object (assume cs_obj is already created)
-  cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+# Create a SeaSondeRCS object (assume cs_obj is already created)
+cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 
-  # Retrieve default MUSIC parameters
-  default_params <- seasonder_defaultMUSIC_parameters()
+# Retrieve default MUSIC parameters
+default_params <- seasonder_defaultMUSIC_parameters()
 
-  # Optionally modify the default parameters
-  new_params <- default_params * 1.5
+# Optionally modify the default parameters
+new_params <- default_params * 1.5
 
-  # Update the SeaSondeRCS object with the new MUSIC parameters
-  cs_obj <- seasonder_setSeaSondeRCS_MUSIC_parameters(cs_obj, new_params)
+# Update the SeaSondeRCS object with the new MUSIC parameters
+cs_obj <- seasonder_setSeaSondeRCS_MUSIC_parameters(cs_obj, new_params)
 
-  # Verify the update
-  print(attr(cs_obj, "MUSIC_data")$MUSIC_options$MUSIC_parameters)
-}
+# Verify the update
+print(attr(cs_obj, "MUSIC_data")$MUSIC_options$MUSIC_parameters)
 }

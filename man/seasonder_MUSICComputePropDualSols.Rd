@@ -29,10 +29,9 @@ using \code{seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion}.
 }
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object with MUSIC data
-updated_object <- seasonder_MUSICComputePropDualSols(cs_object)
-}
+# Compute proportion of dual solutions
+cs_obj <- seasonder_createSeaSondeRCS(...)
+updated_obj <- SeaSondeR:::seasonder_MUSICComputePropDualSols(cs_obj)
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC}} to retrieve the MUSIC data.

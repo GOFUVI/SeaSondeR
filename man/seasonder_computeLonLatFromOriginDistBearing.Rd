@@ -41,11 +41,9 @@ The function uses the geodetic formulas provided by the \code{geosphere} package
 The calculation employs the \code{geosphere::destPoint} function, which handles the spherical geometry of the Earth.
 }
 \examples{
-\donttest{
 # Example with a point at 100 km to the north of the origin
 result <- seasonder_computeLonLatFromOriginDistBearing(-123.3656, 48.4284, 100, 0)
 print(result)
-}
 }
 \seealso{
 \code{\link[geosphere]{destPoint}}

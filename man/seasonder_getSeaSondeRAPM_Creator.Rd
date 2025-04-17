@@ -16,5 +16,7 @@ The Creator attribute from the object.
 Getter for Creator
 }
 \examples{
+# Create a default SeaSondeRAPM object
+obj <- seasonder_createSeaSondeRAPM()
 creator <- seasonder_getSeaSondeRAPM_Creator(obj)
 }
