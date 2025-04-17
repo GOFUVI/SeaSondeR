@@ -21,7 +21,7 @@ This function updates a single First Order Region (FOR) parameter in the SeaSond
 It creates a single-parameter list and passes it to \code{seasonder_setFOR_parameters()}.
 }
 \examples{
-\dontrun{
+\donttest{
   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
   cs_obj <- seasonder_setFORParameter(cs_obj, "nsm", 4)
 }

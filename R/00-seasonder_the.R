@@ -20,7 +20,7 @@ seasonder_the$messages_enabled <- TRUE
 #' @return logical TRUE indicating that message logging was enabled.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_enableMessages()
 #' }
 seasonder_enableMessages <- function() seasonder_the$messages_enabled <- TRUE
@@ -34,7 +34,7 @@ seasonder_enableMessages <- function() seasonder_the$messages_enabled <- TRUE
 #' @return logical FALSE indicating that message logging was disabled.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_disableMessages()
 #' }
 seasonder_disableMessages <- function() seasonder_the$messages_enabled <- FALSE
@@ -46,7 +46,7 @@ seasonder_disableMessages <- function() seasonder_the$messages_enabled <- FALSE
 #' @return Logical value indicating whether messages are enabled.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_areMessagesEnabled()
 #' }
 seasonder_areMessagesEnabled <- function() seasonder_the$messages_enabled
@@ -65,7 +65,7 @@ seasonder_the$debug_points_enabled <- c("none")
 #' @return Updated character vector of enabled debug points.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_enable_debug_points("example_debug")
 #' }
 seasonder_enable_debug_points <- function(debug_points) {
@@ -79,7 +79,7 @@ seasonder_enable_debug_points <- function(debug_points) {
 #' @return A character vector of enabled debug points.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_get_enabled_debug_points()
 #' }
 seasonder_get_enabled_debug_points <- function() seasonder_the$debug_points_enabled
@@ -92,7 +92,7 @@ seasonder_get_enabled_debug_points <- function() seasonder_the$debug_points_enab
 #' @return TRUE if the debug point is enabled, FALSE otherwise.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_is_debug_point_enabled("example_debug")
 #' }
 seasonder_is_debug_point_enabled <- function(debug_point){
@@ -106,7 +106,7 @@ seasonder_is_debug_point_enabled <- function(debug_point){
 #' @return A character vector containing only the default debug point "none".
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_disable_all_debug_points()
 #' }
 seasonder_disable_all_debug_points <- function(){

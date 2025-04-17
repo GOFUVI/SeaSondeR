@@ -34,7 +34,7 @@ velocity resolution, taking into account the wave number which is a fundamental
 characteristic of the radar system.
 }
 \examples{
-\dontrun{
+\donttest{
   cs_obj <- seasonder_createSeaSondeRCS(...)
   res <- seasonder_getRadialVelocityResolution(cs_obj)
   print(res)

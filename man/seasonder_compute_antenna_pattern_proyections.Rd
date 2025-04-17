@@ -51,7 +51,7 @@ as it corresponds to the direction where the signal is strongest relative to the
 }
 
 \examples{
-\dontrun{
+\donttest{
 # Assume En is a 3x3 noise subspace eigenvector matrix and a is the antenna manifold vector.
 En <- matrix(c(0.5+0.5i, -0.3i, 0, 0.4, 0.6-0.2i, -0.4i, 0, 0.3+0.3i, -0.1i), nrow = 3)
 a <- c(1+1i, -0.5+0.5i, 0.2-0.3i)

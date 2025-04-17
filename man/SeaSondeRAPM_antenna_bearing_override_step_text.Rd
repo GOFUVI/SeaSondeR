@@ -16,7 +16,7 @@ A character string stating that the antenna bearing has been overridden.
 This function generates a message indicating that the AntennaBearing attribute was overridden.
 }
 \examples{
-\dontrun{
+\donttest{
   msg <- SeaSondeRAPM_antenna_bearing_override_step_text(45)
 }
 }

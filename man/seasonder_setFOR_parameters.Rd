@@ -25,7 +25,7 @@ and then stored in the object's "FOR_data" attribute under \code{FOR_parameters}
 If the \code{noisefact} parameter changes, the noise level is recomputed for antennas 1, 2, and 3.
 }
 \examples{
-\dontrun{
+\donttest{
   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
   new_params <- list(nsm = 3, noisefact = 4, fdown = 12, flim = 80, currmax = 2.5)
   cs_obj <- seasonder_setFOR_parameters(cs_obj, new_params)

@@ -90,7 +90,7 @@ new_SeaSondeRCS_CSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL
 #'           \item \code{QC}: Quality control matrix, filled with \code{NA_real_}.
 #'         }
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #'   # Initialize the data structure with 100 range cells and 256 Doppler bins
 #'   nRanges <- 100
 #'  nDoppler <- 256
@@ -232,7 +232,7 @@ seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 #' \code{seasonder_initSeaSondeRCS_FOR}. A processing step message is logged to indicate successful creation.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Example header and data lists (replace with actual header and data content)
 #'   my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0, 
 #' nFirstRangeCell = 1)
@@ -332,7 +332,7 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 #' @importFrom glue glue
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Creating a SeaSondeRCS object from a list
 #'   cs_list <- list(header = my_header, data = my_data)
 #'   rcs_object <- seasonder_createSeaSondeRCS(cs_list)
@@ -369,7 +369,7 @@ seasonder_createSeaSondeRCS <- function(x, specs_path = NULL, ...) {
 #' \code{\link{SeaSondeRCS_creation_step_text}}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Given a list with header and data, create a SeaSondeRCS object
 #'   cs_list <- list(header = my_header, data = my_data)
 #'   rcs_object <- seasonder_createSeaSondeRCS(cs_list)
@@ -435,7 +435,7 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL, ...) {
 #' @importFrom glue glue
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Create a SeaSondeRCS object from a file using the default YAML specifications
 #'   rcs_object <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
 #'
@@ -490,7 +490,7 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path = rlang::zap(), 
 #' @param steps The character vector to be validated.
 #' @return Returns TRUE if the validation passes.
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #'   # Example of a valid ProcessingSteps
 #'  steps <- c("Step 1", "Step 2")
 #'   is_valid <- validate_SeaSondeRCS_ProcessingSteps(steps)
@@ -531,7 +531,7 @@ validate_SeaSondeRCS_ProcessingSteps <- function(steps) {
 #' @return Invisible NULL if the header structure is valid. Otherwise, an error is thrown.
 #'
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #' header <- list(nRangeCells = 100, nDopplerCells = 256)
 #' seasonder_validateCSHeaderStructure(header)
 #' }
@@ -587,7 +587,7 @@ seasonder_validateCSHeaderStructure <- function(header) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data <- list(
 #'   SSA1 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
 #'   SSA2 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
@@ -652,7 +652,7 @@ seasonder_validateCSDataStructure <- function(data, nRanges, nDoppler) {
 #' @return A SeaSondeRCS object with updated header.
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Assuming cs_obj is a valid SeaSondeRCS object and new_header is a valid header list
 #'   cs_obj <- seasonder_setSeaSondeRCS_header(cs_obj, new_header)
 #'  # Check the updated header
@@ -681,7 +681,7 @@ seasonder_setSeaSondeRCS_header <- function(seasonder_cs_object, header) {
 #' @return A SeaSondeRCS object with updated data.
 #' 
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #'   # Assuming cs_obj is a valid SeaSondeRCS object and new_data is a valid data list
 #'   cs_obj <- seasonder_setSeaSondeRCS_data(cs_obj, new_data)
 #'   # Check the updated data
@@ -710,7 +710,7 @@ seasonder_setSeaSondeRCS_data <- function(seasonder_cs_object, data) {
 #' @param append append the new step or replace previous steps? Default: TRUE
 #'
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #'  # Assuming cs_obj is a valid SeaSondeRCS object and new_steps 
 #'  # is a character vector of processing steps
 #'   cs_obj <- seasonder_setSeaSondeRCS_ProcessingSteps(cs_obj, new_steps)
@@ -752,7 +752,7 @@ seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_object, proces
 #' APM object. Further validation of the APM object should be performed (TODO).
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Assuming cs_obj is a valid SeaSondeRCS object and apm_obj is a valid APM object:
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/file.cs")
 #'   apm_obj <- list(param1 = "value1", param2 = "value2")  # Example APM object
@@ -795,7 +795,7 @@ seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_obje
 #' Finally, it sets the new noise limits in the FOR parameters using \code{seasonder_setFORParameter}.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Define a new noise level estimation interval
 #'   new_interval <- list(low_limit = 0.9, high_limit = 1.0)
 #'
@@ -838,7 +838,7 @@ new_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(out, low_limit = 
 #' 
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Assuming cs_obj is a valid SeaSondeRCS object
 #'   header_data <- seasonder_getSeaSondeRCS_header(cs_obj)
 #'   print(header_data)
@@ -869,7 +869,7 @@ seasonder_getSeaSondeRCS_header <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_createSeaSondeRCS}}, \code{\link{seasonder_getSeaSondeRCS_header}}
 #'
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #' # Assuming cs_obj is a valid SeaSondeRCS object
 #' # Convert the SeaSondeRCS object to JSON and save it to a file
 #' json_output <- seasonder_asJSONSeaSondeRCSHeader(cs_obj, path = "header_output.json")
@@ -909,7 +909,7 @@ seasonder_asJSONSeaSondeRCSHeader <- function(seasonder_cs_object, path = NULL) 
 #' \code{\link{seasonder_createSeaSondeRCS}}, \code{\link{seasonder_getSeaSondeRCS_data}}
 #'
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #' # Assuming cs_obj is a valid SeaSondeRCS object
 #' # Convert the SeaSondeRCS object to JSON and save it to a file
 #' json_output <- seasonder_asJSONSeaSondeRCSData(cs_obj, path = "output.json")
@@ -947,7 +947,7 @@ seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_object, path = NULL) {
 #' The function uses \code{attr(..., exact = TRUE)} to ensure that the correct attribute is retrieved.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Assuming cs_obj is a valid SeaSondeRCS object with an "APM" attribute
 #'   apm_value <- seasonder_getSeaSondeRCS_APM(cs_obj)
 #'   print(apm_value)
@@ -977,7 +977,7 @@ seasonder_getSeaSondeRCS_APM <- function(seasonder_cs_object){
 #' This interval is typically used during the noise level estimation process for the SeaSondeRCS object.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Assuming cs_obj is a valid SeaSondeRCS object with noise limits estimation interval set
 #'   interval <- seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval(cs_obj)
 #'   print(interval)
@@ -1006,7 +1006,7 @@ seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <
 #' @return A list containing the data matrices for the SeaSondeRCS object. If the data is not set, it initializes
 #' the data structure with the number of range and Doppler cells.
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #'  # Assuming `cs_object` is a valid SeaSondeRCS object
 #'  data_list <- seasonder_getSeaSondeRCS_data(cs_object)
 #'  # Print the data list
@@ -1064,7 +1064,7 @@ seasonder_getSeaSondeRCS_data <- function(seasonder_cs_object) {
 #' @importFrom rlang %||%
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid SeaSondeRCS object
 #' ssa1_matrix <- seasonder_getSeaSondeRCS_dataMatrix(cs_object, "SSA1")
 #' print(ssa1_matrix)
@@ -1112,7 +1112,7 @@ seasonder_getSeaSondeRCS_dataMatrix <- function(seasonder_cs_object, matrix_name
 #' @importFrom rlang %||%
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid SeaSondeRCS object
 #' ssa1_data <- seasonder_getSeaSondeRCS_antenna_SSdata(cs_object, 1)
 #' print(ssa1_data)
@@ -1157,7 +1157,7 @@ seasonder_extractSeaSondeRCS_distRanges_from_SSdata <- function(SSmatrix, dist_r
 #' performed to verify that the provided Doppler cell indices fall within the range of the matrix columns.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Create a sample self-spectra matrix with 5 range cells and 10 Doppler bins
 #'   sample_matrix <- matrix(1:50, nrow = 5, ncol = 10)
 #'
@@ -1221,7 +1221,7 @@ seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, dop
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Example: Extract self-spectra for antennas 1 and 2, for range cells 10 to 20,
 #'   # and Doppler bins 5 to 15 using raw data.
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
@@ -1348,7 +1348,7 @@ SSMatrices <- antennae %>% purrr::map(\(antenna) seasonder_getSeaSondeRCS_antenn
 #'
 #' @return A list containing the processing steps of the SeaSondeRCS object.
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid SeaSondeRCS object
 #' processing_steps <- seasonder_getSeaSondeRCS_ProcessingSteps(cs_object)
 #' print(processing_steps)
@@ -1363,7 +1363,7 @@ seasonder_getSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_object) {
 #' @param seasonder_obj A SeaSondeRCS object.
 #' @return The version value.
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid SeaSondeRCS object
 #' value <- seasonder_getVersion(cs_object)
 #' print(value)
@@ -1403,7 +1403,7 @@ seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj) {
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid SeaSondeRCS object
 #' # Retrieve a specific field from the header
 #' field_value <- seasonder_getCSHeaderByPath(cs_object, c("nRangeCells"))
@@ -1454,7 +1454,7 @@ seasonder_getCSHeaderByPath <- function(seasonder_obj, path, warn_missing = TRUE
 #' @importFrom purrr pluck list_flatten
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid SeaSondeRCS object
 #' field_value <- seasonder_getSeaSondeRCS_headerField(cs_object, "nDopplerCells")
 #' print(field_value)
@@ -1481,7 +1481,7 @@ if(field %in% names(header)){
 #' @param seasonder_obj A SeaSondeRCS object.
 #' @return The nRangeCells value.
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #'  # Assuming cs_obj is a valid SeaSondeRCS object
 #'  n_range_cells <- seasonder_getnRangeCells(cs_obj)
 #'  print(n_range_cells)
@@ -1495,7 +1495,7 @@ seasonder_getnRangeCells <- function(seasonder_obj) {
 #'
 #' @param seasonder_obj A SeaSondeRCS object.
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #'   # Assuming cs_obj is a valid SeaSondeRCS object
 #'  n_doppler_cells <- seasonder_getnDopplerCells(cs_obj)
 #'  print(n_doppler_cells)
@@ -1525,7 +1525,7 @@ seasonder_getCellsDistKm <- function(seasonder_cs_object) {
 #' @return A numeric value representing the center frequency in MHz.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Assuming cs_obj is a valid SeaSondeRCS object with a "CenterFreq" header field
 #'   center_freq <- seasonder_getCenterFreqMHz(cs_obj)
 #'   print(center_freq)
@@ -1588,7 +1588,7 @@ seasonder_getfLatitude <- function(seasonder_cs_object){
 #' the `SeaSondeRCS` header.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid `SeaSondeRCS` object
 #' receiver_gain <- seasonder_getReceiverGain_dB(cs_object)
 #' print(receiver_gain)
@@ -1632,7 +1632,7 @@ seasonder_getReceiverGain_dB <- function(seasonder_cs_object) {
 #' of Doppler cells from a SeaSondeRCS object.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid `SeaSondeRCS` object
 #' nDoppler <- seasonder_getnDopplerCells(cs_object)
 #' center_bin <- seasonder_computeCenterDopplerBin(cs_object, nDoppler)
@@ -1668,7 +1668,7 @@ seasonder_computeCenterDopplerBin <- function(seasonder_cs_object, nDoppler) {
 #' zero-based indexing, R uses one-based indexing.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Assuming cs_obj is a valid SeaSondeRCS object:
 #'   center_bin <- seasonder_getCenterDopplerBin(cs_obj)
 #'   print(center_bin)
@@ -1712,7 +1712,7 @@ seasonder_getCenterDopplerBin <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getCenterFreqMHz}} to retrieve the radar's center frequency.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid `SeaSondeRCS` object
 #' wavelength <- seasonder_getRadarWaveLength(cs_object)
 #' print(wavelength)
@@ -1762,7 +1762,7 @@ seasonder_getRadarWaveLength <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getRadarWaveLength}} to compute the radar wavelength.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid `SeaSondeRCS` object
 #' wave_number <- seasonder_getRadarWaveNumber(cs_object)
 #' print(wave_number)
@@ -1808,7 +1808,7 @@ seasonder_getRadarWaveNumber <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getRadarWaveLength}} to compute the radar wavelength.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid `SeaSondeRCS` object
 #' bragg_wavelength <- seasonder_getBraggWaveLength(cs_object)
 #' print(bragg_wavelength)
@@ -1850,7 +1850,7 @@ seasonder_getBraggWaveLength <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getRadarWaveNumber}} to compute the radar wave number.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid `SeaSondeRCS` object
 #' bragg_angular_freq <- seasonder_getBraggDopplerAngularFrequency(cs_object)
 #' print(bragg_angular_freq)
@@ -1900,7 +1900,7 @@ seasonder_getBraggDopplerAngularFrequency <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getSeaSondeRCS_headerField}} to access specific header fields.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_object` is a valid `SeaSondeRCS` object
 #' spectral_res <- seasonder_getDopplerSpectrumResolution(cs_object)
 #' print(spectral_res)
@@ -1955,7 +1955,7 @@ seasonder_getDopplerSpectrumResolution <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_NormalizedDopplerFreq2Bins}} for the frequency-to-bin mapping logic.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Example usage of seasonder_getBraggLineBins
 #' bragg_bins <- seasonder_getBraggLineBins(cs_obj)
 #' print(bragg_bins)
@@ -2005,7 +2005,7 @@ seasonder_getBraggLineBins <- function(seasonder_cs_object) {
 #'          \code{\link{seasonder_getBraggDopplerAngularFrequency}}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Example of computing Doppler frequencies
 #' nDoppler <- 512
 #' center_bin <- seasonder_getCenterDopplerBin(cs_obj)
@@ -2055,7 +2055,7 @@ seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_object, nDoppler,
 #'
 #' @importFrom dplyr last
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   cs_obj <- seasonder_createSeaSondeRCS(...)
 #'   freqs <- seasonder_getDopplerBinsFrequency(cs_obj)
 #'   print(freqs)
@@ -2107,7 +2107,7 @@ seasonder_getDopplerBinsFrequency <- function(seasonder_cs_object, normalized = 
 #' \code{\link{seasonder_getRadarWaveNumber}} to obtain the radar wave number.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   cs_obj <- seasonder_createSeaSondeRCS(...)
 #'   freq <- seq(-10, 10, length.out = 128)
 #'   rv <- seasonder_computeBinsRadialVelocity(cs_obj, freq)
@@ -2160,7 +2160,7 @@ seasonder_computeBinsRadialVelocity <- function(seasonder_cs_object, freq) {
 #'          \code{\link{seasonder_getBraggDopplerAngularFrequency}},
 #'          \code{\link{seasonder_getRadarWaveNumber}}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   cs_obj <- seasonder_createSeaSondeRCS(...)
 #'   velocities <- seasonder_getBinsRadialVelocity(cs_obj)
 #'   print(velocities)
@@ -2203,7 +2203,7 @@ seasonder_getBinsRadialVelocity <- function(seasonder_cs_object) {
 #' @seealso \code{\link{seasonder_getDopplerSpectrumResolution}},
 #'          \code{\link{seasonder_getRadarWaveNumber}}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   cs_obj <- seasonder_createSeaSondeRCS(...)
 #'   res <- seasonder_getRadialVelocityResolution(cs_obj)
 #'   print(res)
@@ -2265,7 +2265,7 @@ seasonder_rangeCellsDists2RangeNumber <- function(seasonder_cs_object,cells_dist
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert dB values to self-spectra power
 #' dB_vals <- c(-100, -80, -60)
 #' receiver_gain <- -34.2
@@ -2307,7 +2307,7 @@ dB_to_self_spectra <- function(dB_values, receiver_gain){
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert self-spectra power to dB
 #' spectrum_vals <- c(1e-10, 1e-8, 1e-6)
 #' receiver_gain <- -34.2
@@ -2352,7 +2352,7 @@ self_spectra_to_dB <- function(spectrum_values, receiver_gain){
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert self-spectra to dB using a SeaSondeR object
 #' cs_obj <- seasonder_createSeaSondeRCS(...)
 #' spectrum_vals <- c(1e-10, 1e-8, 1e-6)
@@ -2399,7 +2399,7 @@ seasonder_SelfSpectra2dB <- function(seasonder_cs_object, spectrum_values) {
 #' \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving Doppler bin frequencies.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert specific Doppler bins to normalized Doppler frequency
 #' cs_obj <- seasonder_createSeaSondeRCS(...)
 #' bins <- c(10, 20, 30)
@@ -2445,7 +2445,7 @@ seasonder_Bins2NormalizedDopplerFreq <- function(seasonder_cs_object, bins) {
 #' @importFrom magrittr %>%
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert normalized Doppler frequencies to bin indices
 #' cs_obj <- seasonder_createSeaSondeRCS(...)
 #' doppler_values <- c(-0.5, 0, 0.8)
@@ -2517,7 +2517,7 @@ seasonder_NormalizedDopplerFreq2Bins <- function(seasonder_cs_object, doppler_va
 #' @importFrom magrittr %>%
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert Doppler frequencies to bin indices
 #' cs_obj <- seasonder_createSeaSondeRCS(...)
 #' doppler_values <- c(-0.2, 0, 0.5)
@@ -2570,7 +2570,7 @@ seasonder_computeDopplerFreq2Bins <- function(seasonder_cs_object, doppler_value
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert Doppler frequencies to bin indices
 #' cs_obj <- seasonder_createSeaSondeRCS(...)
 #' doppler_values <- c(-0.2, 0, 0.5)  # Example Doppler frequencies in Hz
@@ -2616,7 +2616,7 @@ seasonder_DopplerFreq2Bins <- function(seasonder_cs_object, doppler_values) {
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert specific Doppler bins to Doppler frequencies
 #' cs_obj <- seasonder_createSeaSondeRCS(...)
 #' bins <- c(10, 20, 30)  # Example bin indices
@@ -2667,7 +2667,7 @@ seasonder_Bins2DopplerFreq <- function(seasonder_cs_object, bins) {
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert Doppler frequencies to normalized Doppler frequencies
 #' cs_obj <- seasonder_createSeaSondeRCS(...)
 #' doppler_values <- c(-0.3, 0, 0.6)  # Example Doppler frequencies in Hz
@@ -2718,7 +2718,7 @@ seasonder_DopplerFreq2NormalizedDopplerFreq <- function(seasonder_cs_object, dop
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert normalized Doppler frequencies to Doppler frequencies
 #' cs_obj <- seasonder_createSeaSondeRCS(...)
 #' normalized_values <- c(-0.3, 0, 0.6)  # Example normalized Doppler frequencies
@@ -2788,7 +2788,7 @@ seasonder_NormalizedDopplerFreq2DopplerFreq <- function(seasonder_cs_object, dop
 #' @importFrom glue glue
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert Doppler frequencies (Hz) to normalized Doppler frequency
 #' cs_obj <- seasonder_createSeaSondeRCS(...)
 #' doppler_values <- c(-0.3, 0, 0.6)  # Doppler values in Hz
@@ -2885,7 +2885,7 @@ seasonder_SwapDopplerUnits <- function(seasonder_cs_object, values, in_units, ou
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Assuming cs_object is a valid SeaSondeRCS object and antenna 1, range cell 5 are valid:
 #'   p <- seasonder_SeaSondeRCS_plotSelfSpectrum(cs_object, antenna = 1, range_cell = 5)
 #'   print(p)
@@ -2986,7 +2986,7 @@ seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_object, antenna,
 #' A character string with the formatted message indicating the time of creation and the file path.
 #'
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #'   file_path <- "path/to/file.cs"
 #'  message <- SeaSondeRCS_creation_step_text(file_path)
 #'  print(message)
@@ -3035,7 +3035,7 @@ SeaSondeRCS_creation_step_text <- function(file_path) {
 #'
 #' @references Cross Spectra File Format Version 6. CODAR. 2016
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   header <- list(nV1Extent = 62, nCsFileVersion = 4, nV2Extent = 56,
 #'                  nV3Extent = 48, nV4Extent = 0, nRangeCells = 100,
 #'                  nDopplerCells = 512, nCsKind = 1)
@@ -3100,7 +3100,7 @@ seasonder_validateCSFileData <- function(filepath, header) {
 #'
 #' @return A list with header = NULL and data = NULL.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   tryCatch({
 #'     seasonder_skip_cs_file(simpleError("test error"))
 #'   }, seasonder_cs_file_skipped = function(e) NULL)
@@ -3169,7 +3169,7 @@ seasonder_skip_cs_file <- function(cond) {
 #'
 #' @references Cross Spectra File Format Version 6. CODAR. 2016
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   cs <- seasonder_readSeaSondeCSFile("path/to/csfile", "path/to/specs.yml", endian = "big")
 #'   print(cs)
 #' }
@@ -3254,7 +3254,7 @@ seasonder_readSeaSondeCSFile <- function(filepath, specs_path, endian = "big") {
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' int_val <- 1234567890
 #' raw_val <- seasonder_int_to_raw(int_val)
 #' cat(rawToChar(raw_val))
@@ -3294,7 +3294,7 @@ seasonder_int_to_raw <- function(x) {
 #' @param signed Logical, indicating whether the conversion should consider the value as signed (default is FALSE for unsigned).
 #' @return A 64-bit integer representation of the raw vector.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' r <- as.raw(c(0x12,0x34,0x56,0x78,0x90,0xAB,0xCD,0xEF))
 #' seasonder_raw_to_int(r, signed = TRUE)
 #' }
@@ -3326,7 +3326,7 @@ seasonder_raw_to_int <- function(r,signed = F) {
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   result <- seasonder_skip_cs_field(simpleError("test error"), "default")
 #'   print(result)
 #' }
@@ -3346,7 +3346,7 @@ seasonder_skip_cs_field <- function(cond,value) {
 #' @return The value obtained from reading the CSField according to the specified type.
 #' @importFrom rlang !!!
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' con <- rawConnection(as.raw(c(0x12)))
 #' seasonder_readCSField(con, "UInt8")
 #' }
@@ -3525,7 +3525,7 @@ seasonder_readCSField <- function(con, type, endian = "big") {
 #'
 #' @return The value returned by the alternate quality control function.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   val <- seasonder_rerun_qc_with_fun(list(seasonder_value = 42), function(x) x * 2)
 #'   print(val)
 #' }
@@ -3591,7 +3591,7 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun) {
 #'
 #' It's also important to note that within `read_and_qc_field`, the function `seasonder_readCSField` is used. This function has its own error management and restart options, which are detailed in its documentation.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   field_spec <- list(type = "UInt8", qc_fun = "qc_check_type", 
 #'    qc_params = list(expected_type = "integer"))
 #'   con <- rawConnection(as.raw(c(0x01)))
@@ -3715,7 +3715,7 @@ field_value <- rlang::try_fetch(
 #' @return A named list where each entry corresponds to a field that has been read. Each key is
 #'   the field name, and its associated value is the data for that field after quality control.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   spec <- list(field1 = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()))
 #'   con <- rawConnection(as.raw(c(0x01)))
 #'   block <- seasonder_readSeaSondeCSFileBlock(spec, con, endian = "big")
@@ -3772,7 +3772,7 @@ seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian = "big") {
 #'
 #' @return Invisibly returns NULL.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   specs <- list(field1 = "spec1", field2 = "spec2")
 #'   fields <- c("field1", "field2", "field3")
 #'   seasonder_check_specs(specs, fields) # Throws an error since spec for 'field3' is missing
@@ -3809,7 +3809,7 @@ seasonder_check_specs <- function(specs, fields) {
 #'
 #' @return A list with the read and transformed results.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- rawConnection(as.raw(rep(0, 100)))
 #'   specs <- list(
 #'     nCsFileVersion = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
@@ -3859,7 +3859,7 @@ seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "bi
 #'
 #' @return A list with the read results.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- rawConnection(as.raw(rep(0, 100)))
 #'   specs <- list(
 #'     nCsKind = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
@@ -3901,7 +3901,7 @@ seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "bi
 #'
 #' @return A list with the read results.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- rawConnection(as.raw(rep(0, 100)))
 #'   specs <- list(
 #'     nSiteCodeName = list(type = "Char10", qc_fun = "qc_check_type", 
@@ -3952,7 +3952,7 @@ seasonder_readSeaSondeCSFileHeaderV3 <- function(specs, connection, endian = "bi
 #'
 #' @return A list with the read and transformed results.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- rawConnection(as.raw(rep(0, 200)))
 #'   specs <- list(
 #'     nCoverMinutes = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
@@ -4015,7 +4015,7 @@ seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "bi
 #'
 #' @return A list with the read and transformed results.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- rawConnection(as.raw(rep(0, 150)))
 #'   specs <- list(
 #'     nOutputInterval = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
@@ -4078,7 +4078,7 @@ seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "bi
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- rawConnection(as.raw(rep(0, 300)))
 #'   specs <- list(
 #'     nCS6ByteSize = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
@@ -4179,7 +4179,7 @@ readV6BlockData <- function(specs, connection, endian = "big", prev_data = NULL,
 #'
 #' @return This function triggers a restart and does not return a usual value.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   tryCatch({
 #'     seasonder_v6_skip_transformation(simpleError("test error"), "default")
 #'   }, seasonder_v6_block_transformacion_skipped = function(e) NULL)
@@ -4248,7 +4248,7 @@ seasonder_v6_skip_transformation <- function(cond, value) {
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- rawConnection(as.raw(rep(0, 300)))
 #'   specs <- list(
 #'     nCS6ByteSize = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
@@ -4352,7 +4352,7 @@ seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "bi
 #' @return List. A combination of the initial `pool` and the processed header for the given `version`.
 #'         Fields in the current header will overwrite or append to the pool as described above.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- rawConnection(as.raw(rep(0, 300)))
 #'   specs <- list(
 #'     V1 = list(...),
@@ -4402,7 +4402,7 @@ process_version_header <- function(pool, version, specs, connection, endian = "b
 #'
 #' @return A combined list of all processed headers up to the file version.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- rawConnection(as.raw(rep(0, 300)))
 #'   specs <- list(
 #'     V1 = list(...),
@@ -4495,7 +4495,7 @@ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big"
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- rawConnection(as.raw(rep(0, 300)))
 #'   header <- list(
 #'     nRangeCells = 100,
@@ -4643,7 +4643,7 @@ seasonder_the$qc_functions <- list()
 #'
 #' @return The original field_value if it matches the expected_type; otherwise, an error is raised.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   result <- qc_check_type(42, "numeric")
 #'   print(result)
 #' }
@@ -4669,7 +4669,7 @@ qc_check_type <- function(field_value, expected_type) {
 #'
 #' @return The original field_value if it's within range and matches the expected_type; otherwise, an error is raised.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   result <- qc_check_range(5, 0, 10)
 #'   print(result)
 #' }
@@ -4704,7 +4704,7 @@ qc_check_range <- function(field_value, min, max, expected_type = NULL) {
 #'         type (if `expected_type` is not NULL) and is non-negative. If any of the
 #'         checks fail, the function logs an error message and aborts execution.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   result <- qc_check_unsigned(10)
 #'   print(result)
 #' }
@@ -4751,7 +4751,7 @@ seasonder_load_qc_functions()
 #' @return Invisibly returns the original SeaSondeRCS object.
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- list(header = list(nSiteCodeName = "Station1",
 #'                             nDateTime = Sys.time(),
 #'                             nDopplerCells = 256,
@@ -4795,7 +4795,7 @@ print.SeaSondeRCS <- function(x, ...){
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'  obj <- list(header = list(nSiteCodeName = "Station1",
 #'                             nDateTime = Sys.time(),
 #'                             nDopplerCells = 256,

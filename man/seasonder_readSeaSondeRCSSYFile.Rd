@@ -41,7 +41,7 @@ The function executes the following steps:
 }
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming "path/to/file.rcssy" is a valid SeaSonde RCSSY file and the specifications file exists:
   cs_obj <- seasonder_readSeaSondeRCSSYFile("path/to/file.rcssy")
 

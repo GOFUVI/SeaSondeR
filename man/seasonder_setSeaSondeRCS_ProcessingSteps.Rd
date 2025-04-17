@@ -24,7 +24,7 @@ A SeaSondeRCS object with updated ProcessingSteps.
 Setter for ProcessingSteps
 }
 \examples{
-\dontrun{
+\donttest{
  # Assuming cs_obj is a valid SeaSondeRCS object and new_steps 
  # is a character vector of processing steps
   cs_obj <- seasonder_setSeaSondeRCS_ProcessingSteps(cs_obj, new_steps)

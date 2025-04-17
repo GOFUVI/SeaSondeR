@@ -3,7 +3,7 @@
 #' @param seasonder_obj A SeaSondeR object.
 #' @return The version value.
 #' @examples 
-#' \dontrun{
+#' \donttest{
 #' # Assuming `object` is a valid object
 #' value <- seasonder_getVersion(object)
 #' print(value)

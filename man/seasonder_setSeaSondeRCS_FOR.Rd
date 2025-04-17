@@ -26,7 +26,7 @@ to the "FOR" field within the object's "FOR_data" attribute. It is intended to b
 as part of the FOR processing workflow.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming a function seasonder_createSeaSondeRCS() exists to create the SeaSondeRCS object:
 cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 

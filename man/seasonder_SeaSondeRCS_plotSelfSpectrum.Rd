@@ -51,7 +51,7 @@ The function performs the following steps:
 }
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming cs_object is a valid SeaSondeRCS object and antenna 1, range cell 5 are valid:
   p <- seasonder_SeaSondeRCS_plotSelfSpectrum(cs_object, antenna = 1, range_cell = 5)
   print(p)

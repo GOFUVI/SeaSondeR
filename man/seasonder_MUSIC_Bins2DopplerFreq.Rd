@@ -26,7 +26,7 @@ corresponding to the provided bin indices. This is useful for translating bin-do
 into physical Doppler frequency values for analysis or visualization.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `seasonder_cs_object` is a valid SeaSondeRCS object
 bins <- c(1, 5, 10)
 doppler_freqs <- seasonder_MUSIC_Bins2DopplerFreq(seasonder_cs_object, bins)

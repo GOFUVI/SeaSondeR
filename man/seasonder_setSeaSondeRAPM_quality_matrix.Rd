@@ -18,7 +18,7 @@ The modified SeaSondeRAPM object with updated quality_matrix.
 Setter for quality_matrix
 }
 \examples{
-\dontrun{
+\donttest{
   obj <- seasonder_setSeaSondeRAPM_quality_matrix(obj, new_quality_matrix)
 }
 }

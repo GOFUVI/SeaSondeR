@@ -48,7 +48,7 @@ Normalization is based on the positive Bragg frequency calculated by
 \code{seasonder_getBraggDopplerAngularFrequency()}.
 }
 \examples{
-\dontrun{
+\donttest{
 # Example of computing Doppler frequencies
 nDoppler <- 512
 center_bin <- seasonder_getCenterDopplerBin(cs_obj)

@@ -34,7 +34,7 @@ Bragg scattering in HF radar systems, which correspond to surface waves with wav
 half that of the transmitted radar signal.
 }
 \examples{
-\dontrun{
+\donttest{
 # Example usage of seasonder_getBraggLineBins
 bragg_bins <- seasonder_getBraggLineBins(cs_obj)
 print(bragg_bins)

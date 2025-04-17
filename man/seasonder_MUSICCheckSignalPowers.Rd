@@ -35,7 +35,7 @@ This ratio is compared to a threshold defined in the MUSIC parameters. Only solu
 Solutions failing this test are marked as "single."
 }
 \examples{
-\dontrun{
+\donttest{
 updated_obj <- seasonder_MUSICCheckSignalPowers(seasonder_cs_object)
 }
 }

@@ -27,7 +27,7 @@ The function first checks if \code{option_name} is one of the valid options as p
 Then, the current MUSIC options are retrieved, updated with the new value, and stored back into the object.
 }
 \examples{
-\dontrun{
+\donttest{
   # Update a specific MUSIC option, for example, setting 'smoothNoiseLevel' to TRUE
   cs_object <- seasonder_setMUSICOption(cs_object, "smoothNoiseLevel", TRUE)
   opts <- seasonder_getSeaSondeRCS_MUSIC_options(cs_object)

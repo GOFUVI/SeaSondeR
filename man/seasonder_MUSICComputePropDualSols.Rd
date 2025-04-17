@@ -29,7 +29,7 @@ using \code{seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion}.
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid `SeaSondeRCS` object with MUSIC data
 updated_object <- seasonder_MUSICComputePropDualSols(cs_object)
 }

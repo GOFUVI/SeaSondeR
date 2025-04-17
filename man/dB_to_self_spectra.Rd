@@ -28,7 +28,7 @@ where:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Convert dB values to self-spectra power
 dB_vals <- c(-100, -80, -60)
 receiver_gain <- -34.2

@@ -37,7 +37,7 @@ Off-diagonal elements (\eqn{i \neq j}) are derived from cross-spectra fields, su
 If the row index is greater than the column index, the conjugate of the value is used.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assume seasonder_cs_object is a valid SeaSondeRCS object
 updated_obj <- seasonder_MUSICComputeCov(seasonder_cs_object)
 }

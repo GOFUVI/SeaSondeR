@@ -51,7 +51,7 @@ The signal and noise subspaces are orthogonal. This decomposition facilitates id
 antenna manifold that best fits the signal subspace.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid SeaSondeRCS object
 cs_object <- seasonder_MUSICCovDecomposition(cs_object)
 }

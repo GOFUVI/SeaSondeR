@@ -65,7 +65,7 @@ The function executes the following steps:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Sample spectrum
 spectrum <- c(0.1, 0.3, 0.5, 1.0, 2.5, 3.8, 2.1, 1.0, 0.5, 0.2)
 doppler_bins <- seq(-5, 5, length.out = length(spectrum))

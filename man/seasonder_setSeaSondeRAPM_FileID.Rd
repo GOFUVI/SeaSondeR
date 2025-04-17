@@ -18,7 +18,7 @@ The modified SeaSondeRAPM object with updated FileID.
 Setter for FileID
 }
 \examples{
-\dontrun{
+\donttest{
   obj <- seasonder_setSeaSondeRAPM_FileID(obj, new_file_id)
 }
 }

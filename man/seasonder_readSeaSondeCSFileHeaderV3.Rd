@@ -28,7 +28,7 @@ Reads the header of a SeaSonde file (Version 3) based on the provided specificat
 Adds nRangeCells, nDopplerCells, and nFirstRangeCell as constant values to the results.
 }
 \examples{
-\dontrun{
+\donttest{
   con <- rawConnection(as.raw(rep(0, 100)))
   specs <- list(
     nSiteCodeName = list(type = "Char10", qc_fun = "qc_check_type", 

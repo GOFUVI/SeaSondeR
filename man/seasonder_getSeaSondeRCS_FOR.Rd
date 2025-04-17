@@ -22,7 +22,7 @@ The function attempts to retrieve the 'FOR' element from the object's "FOR_data"
 If it does not exist, it calls \code{seasonder_initSeaSondeRCS_FOR()} to initialize the FOR data.
 }
 \examples{
-\dontrun{
+\donttest{
   FOR_data <- seasonder_getSeaSondeRCS_FOR(cs_obj)
   print(FOR_data)
 }

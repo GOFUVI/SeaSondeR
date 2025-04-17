@@ -68,7 +68,7 @@ Proper error management ensures the integrity of the reading process and provide
 }
 
 \examples{
-\dontrun{
+\donttest{
   con <- rawConnection(as.raw(rep(0, 300)))
   specs <- list(
     nCS6ByteSize = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),

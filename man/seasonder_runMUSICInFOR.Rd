@@ -42,7 +42,7 @@ the indices based on the interpolation factor.
 }
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming cs_object is a valid SeaSondeRCS object with FOR data initialized:
   result <- seasonder_runMUSIC_in_FOR(cs_object, doppler_interpolation = 3L)
   print(result)

@@ -29,7 +29,7 @@ in the object's \code{MUSIC_data} attribute. These parameters are used in variou
 steps of the MUSIC processing workflow.
 }
 \examples{
-\dontrun{
+\donttest{
   # Create a SeaSondeRCS object (assume cs_obj is already created)
   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 

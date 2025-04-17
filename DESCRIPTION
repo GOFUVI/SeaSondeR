@@ -1,6 +1,6 @@
 Package: SeaSondeR
 Title: Computing Radial Metrics from SeaSonde(R) HF-Radar Data
-Version: 0.2.7.9001
+Version: 0.2.7.9002
 Authors@R: c(
     person("Juan Luis", "Herrera Cortijo", , "juan.luis.herrera.cortijo@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0002-4206-2459")),

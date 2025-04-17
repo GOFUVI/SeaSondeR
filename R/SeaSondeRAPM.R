@@ -25,7 +25,7 @@
 #' @importFrom magrittr %>% %<>%
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Create a default SeaSondeRAPM object
 #'   obj <- seasonder_createSeaSondeRAPM()
 #' }
@@ -129,7 +129,7 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
 #' @importFrom magrittr %<>%
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Initialize attributes for a dummy calibration matrix
 #'   attrs <- seasonder_initializeAttributesSeaSondeRAPM(matrix(1:6, nrow = 3))
 #' }
@@ -178,7 +178,7 @@ seasonder_initializeAttributesSeaSondeRAPM <- function(calibration_matrix, ...) 
 #' @return A character string with the formatted creation message.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   msg <- SeaSondeRAPM_creation_step_text("path/to/file")
 #' }
 SeaSondeRAPM_creation_step_text <- function(file_path) {
@@ -195,7 +195,7 @@ SeaSondeRAPM_creation_step_text <- function(file_path) {
 #' @return A character string stating that the antenna bearing has been overridden.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   msg <- SeaSondeRAPM_antenna_bearing_override_step_text(45)
 #' }
 SeaSondeRAPM_antenna_bearing_override_step_text <- function(antenna_bearing) {
@@ -212,7 +212,7 @@ SeaSondeRAPM_antenna_bearing_override_step_text <- function(antenna_bearing) {
 #' @return A character string detailing the smoothing operation.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   msg <- SeaSondeRAPM_smoothing_step_text(5)
 #' }
 SeaSondeRAPM_smoothing_step_text <- function(smoothing){
@@ -229,7 +229,7 @@ SeaSondeRAPM_smoothing_step_text <- function(smoothing){
 #' @return A character string with the trimming details.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   msg <- SeaSondeRAPM_trimming_step_text(3)
 #' }
 SeaSondeRAPM_trimming_step_text <- function(trimming){
@@ -249,7 +249,7 @@ SeaSondeRAPM_trimming_step_text <- function(trimming){
 #' @return A character string detailing the applied amplitude and phase corrections.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   msg <- SeaSondeRAPM_amplitude_and_phase_corrections_step_text(1.1, 0.9, 15, -15)
 #' }
 SeaSondeRAPM_amplitude_and_phase_corrections_step_text <- function(amplitude1, amplitude2, phase1, phase2){
@@ -266,7 +266,7 @@ SeaSondeRAPM_amplitude_and_phase_corrections_step_text <- function(amplitude1, a
 #' @return A character string stating the new phase correction values.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   msg <- SeaSondeRAPM_phase_correction_override_step_text(c(10, -10))
 #' }
 SeaSondeRAPM_phase_correction_override_step_text <- function(phase_correction) {
@@ -283,7 +283,7 @@ SeaSondeRAPM_phase_correction_override_step_text <- function(phase_correction) {
 #' @return A character string stating the new amplitude factors.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   msg <- SeaSondeRAPM_amplitude_factors_override_step_text(c(1.05, 0.95))
 #' }
 SeaSondeRAPM_amplitude_factors_override_step_text <- function(amplitude_factors) {
@@ -300,7 +300,7 @@ SeaSondeRAPM_amplitude_factors_override_step_text <- function(amplitude_factors)
 #' @return A character string with the updated SiteOrigin details.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   msg <- SeaSondeRAPM_SiteOrigin_override_step_text(c(37.7749, -122.4194))
 #' }
 SeaSondeRAPM_SiteOrigin_override_step_text <- function(SiteOrigin) {
@@ -333,7 +333,7 @@ SeaSondeRAPM_SiteOrigin_override_step_text <- function(SiteOrigin) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- seasonder_validateCalibrationMatrixSeaSondeRAPM(
 #'      matrix(complex(real=1, imaginary=0), nrow=3, ncol=5)
 #'    )
@@ -412,7 +412,7 @@ seasonder_validateCalibrationMatrixSeaSondeRAPM <- function(matrix) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- seasonder_validateAttributesSeaSondeRAPM(obj)
 #' }
 seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {
@@ -449,7 +449,7 @@ seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_quality_matrix(q_matrix, obj)
 #' }
 validate_SeaSondeRAPM_quality_matrix <- function(matrix, seasonde_apm_obj) {
@@ -482,7 +482,7 @@ validate_SeaSondeRAPM_quality_matrix <- function(matrix, seasonde_apm_obj) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_BEAR(c(0,45,90), obj)
 #' }
 validate_SeaSondeRAPM_BEAR <- function(vector, seasonde_apm_obj) {
@@ -519,7 +519,7 @@ validate_SeaSondeRAPM_BEAR <- function(vector, seasonde_apm_obj) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_Type("Measured")
 #' }
 validate_SeaSondeRAPM_Type <- function(type) {
@@ -542,7 +542,7 @@ validate_SeaSondeRAPM_Type <- function(type) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_Creator("John Doe")
 #' }
 validate_SeaSondeRAPM_Creator <- function(creator) {
@@ -562,7 +562,7 @@ validate_SeaSondeRAPM_Creator <- function(creator) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_SiteName("Site A")
 #' }
 validate_SeaSondeRAPM_SiteName <- function(site_name) {
@@ -582,7 +582,7 @@ validate_SeaSondeRAPM_SiteName <- function(site_name) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_SiteOrigin(c(37.7749, -122.4194))
 #' }
 validate_SeaSondeRAPM_SiteOrigin <- function(site_origin) {
@@ -603,7 +603,7 @@ validate_SeaSondeRAPM_SiteOrigin <- function(site_origin) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_FileName("file.apm")
 #' }
 validate_SeaSondeRAPM_FileName <- function(file_name) {
@@ -623,7 +623,7 @@ validate_SeaSondeRAPM_FileName <- function(file_name) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_CreateTimeStamp(Sys.time())
 #' }
 validate_SeaSondeRAPM_CreateTimeStamp <- function(timestamp) {
@@ -643,7 +643,7 @@ validate_SeaSondeRAPM_CreateTimeStamp <- function(timestamp) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_ProcessingSteps(c("Step 1", "Step 2"))
 #' }
 validate_SeaSondeRAPM_ProcessingSteps <- function(steps) {
@@ -663,7 +663,7 @@ validate_SeaSondeRAPM_ProcessingSteps <- function(steps) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_AmplitudeFactors(c(1.1, 0.9))
 #' }
 validate_SeaSondeRAPM_AmplitudeFactors <- function(factors) {
@@ -684,7 +684,7 @@ validate_SeaSondeRAPM_AmplitudeFactors <- function(factors) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_AntennaBearing(45)
 #' }
 validate_SeaSondeRAPM_AntennaBearing <- function(bearing) {
@@ -704,7 +704,7 @@ validate_SeaSondeRAPM_AntennaBearing <- function(bearing) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_StationCode("ABCD")
 #' }
 validate_SeaSondeRAPM_StationCode <- function(code) {
@@ -739,7 +739,7 @@ validate_SeaSondeRAPM_StationCode <- function(code) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_BearingResolution(10)
 #' }
 validate_SeaSondeRAPM_BearingResolution <- function(resolution) {
@@ -759,7 +759,7 @@ validate_SeaSondeRAPM_BearingResolution <- function(resolution) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_Smoothing(5)
 #' }
 validate_SeaSondeRAPM_Smoothing <- function(smoothing) {
@@ -779,7 +779,7 @@ validate_SeaSondeRAPM_Smoothing <- function(smoothing) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_CommentLine("This is a comment.")
 #' }
 validate_SeaSondeRAPM_CommentLine <- function(comment) {
@@ -799,7 +799,7 @@ validate_SeaSondeRAPM_CommentLine <- function(comment) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_FileID("123e4567-e89b-12d3-a456-426614174000")
 #' }
 validate_SeaSondeRAPM_FileID <- function(id) {
@@ -820,7 +820,7 @@ validate_SeaSondeRAPM_FileID <- function(id) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   valid <- validate_SeaSondeRAPM_PhaseCorrections(c(10, -10))
 #' }
 validate_SeaSondeRAPM_PhaseCorrections <- function(corrections) {
@@ -842,7 +842,7 @@ validate_SeaSondeRAPM_PhaseCorrections <- function(corrections) {
 #' @return The version value.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   version <- seasonder_getVersion.SeaSondeRAPM(obj)
 #' }
 seasonder_getVersion.SeaSondeRAPM <- function(seasonder_obj) {
@@ -858,7 +858,7 @@ seasonder_getVersion.SeaSondeRAPM <- function(seasonder_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   quality_matrix <- seasonder_getSeaSondeRAPM_quality_matrix(obj)
 #' }
 seasonder_getSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj) {
@@ -875,7 +875,7 @@ seasonder_getSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_quality_matrix(obj, new_quality_matrix)
 #' }
 seasonder_setSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj, new_value) {
@@ -900,7 +900,7 @@ seasonder_setSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj, new_value
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   bear <- seasonder_getSeaSondeRAPM_BEAR(obj)
 #' }
 seasonder_getSeaSondeRAPM_BEAR <- function(seasonde_apm_obj) {
@@ -917,7 +917,7 @@ seasonder_getSeaSondeRAPM_BEAR <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_BEAR(obj, new_bear)
 #' }
 seasonder_setSeaSondeRAPM_BEAR <- function(seasonde_apm_obj, new_value) {
@@ -937,7 +937,7 @@ seasonder_setSeaSondeRAPM_BEAR <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   phase_corrections <- seasonder_getSeaSondeRAPM_PhaseCorrections(obj)
 #' }
 seasonder_getSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj) {
@@ -954,7 +954,7 @@ seasonder_getSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_PhaseCorrections(obj, new_phase_corrections)
 #' }
 seasonder_setSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj, new_value) {
@@ -974,7 +974,7 @@ seasonder_setSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj, new_val
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   type <- seasonder_getSeaSondeRAPM_Type(obj)
 #' }
 seasonder_getSeaSondeRAPM_Type <- function(seasonde_apm_obj) {
@@ -991,7 +991,7 @@ seasonder_getSeaSondeRAPM_Type <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_Type(obj, new_type)
 #' }
 seasonder_setSeaSondeRAPM_Type <- function(seasonde_apm_obj, new_value) {
@@ -1011,7 +1011,7 @@ seasonder_setSeaSondeRAPM_Type <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   creator <- seasonder_getSeaSondeRAPM_Creator(obj)
 #' }
 seasonder_getSeaSondeRAPM_Creator <- function(seasonde_apm_obj) {
@@ -1028,7 +1028,7 @@ seasonder_getSeaSondeRAPM_Creator <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_Creator(obj, new_creator)
 #' }
 seasonder_setSeaSondeRAPM_Creator <- function(seasonde_apm_obj, new_value) {
@@ -1048,7 +1048,7 @@ seasonder_setSeaSondeRAPM_Creator <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   site_name <- seasonder_getSeaSondeRAPM_SiteName(obj)
 #' }
 seasonder_getSeaSondeRAPM_SiteName <- function(seasonde_apm_obj) {
@@ -1065,7 +1065,7 @@ seasonder_getSeaSondeRAPM_SiteName <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_SiteName(obj, new_site_name)
 #' }
 seasonder_setSeaSondeRAPM_SiteName <- function(seasonde_apm_obj, new_value) {
@@ -1085,7 +1085,7 @@ seasonder_setSeaSondeRAPM_SiteName <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   site_origin <- seasonder_getSeaSondeRAPM_SiteOrigin(obj)
 #' }
 seasonder_getSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj) {
@@ -1102,7 +1102,7 @@ seasonder_getSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_SiteOrigin(obj, new_site_origin)
 #' }
 seasonder_setSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj, new_value) {
@@ -1124,7 +1124,7 @@ seasonder_setSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   file_name <- seasonder_getSeaSondeRAPM_FileName(obj)
 #' }
 seasonder_getSeaSondeRAPM_FileName <- function(seasonde_apm_obj) {
@@ -1141,7 +1141,7 @@ seasonder_getSeaSondeRAPM_FileName <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_FileName(obj, new_file_name)
 #' }
 seasonder_setSeaSondeRAPM_FileName <- function(seasonde_apm_obj, new_value) {
@@ -1161,7 +1161,7 @@ seasonder_setSeaSondeRAPM_FileName <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   create_time_stamp <- seasonder_getSeaSondeRAPM_CreateTimeStamp(obj)
 #' }
 seasonder_getSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj) {
@@ -1178,7 +1178,7 @@ seasonder_getSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_CreateTimeStamp(obj, new_create_time_stamp)
 #' }
 seasonder_setSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj, new_value) {
@@ -1198,7 +1198,7 @@ seasonder_setSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj, new_valu
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   processing_steps <- seasonder_getSeaSondeRAPM_ProcessingSteps(obj)
 #' }
 seasonder_getSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj) {
@@ -1216,7 +1216,7 @@ seasonder_getSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_ProcessingSteps(obj, new_processing_steps)
 #' }
 seasonder_setSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj, new_value, append = TRUE) {
@@ -1242,7 +1242,7 @@ seasonder_setSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj, new_valu
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   amplitude_factors <- seasonder_getSeaSondeRAPM_AmplitudeFactors(obj)
 #' }
 seasonder_getSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj) {
@@ -1259,7 +1259,7 @@ seasonder_getSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_AmplitudeFactors(obj, new_amplitude_factors)
 #' }
 seasonder_setSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj, new_value) {
@@ -1279,7 +1279,7 @@ seasonder_setSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj, new_val
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(obj)
 #' }
 seasonder_getSeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj) {
@@ -1296,7 +1296,7 @@ seasonder_getSeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_AntennaBearing(obj, new_antenna_bearing)
 #' }
 seasonder_setSeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj, new_value) {
@@ -1316,7 +1316,7 @@ seasonder_setSeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj, new_value
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   station_code <- seasonder_getSeaSondeRAPM_StationCode(obj)
 #' }
 seasonder_getSeaSondeRAPM_StationCode <- function(seasonde_apm_obj) {
@@ -1333,7 +1333,7 @@ seasonder_getSeaSondeRAPM_StationCode <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_StationCode(obj, new_station_code)
 #' }
 seasonder_setSeaSondeRAPM_StationCode <- function(seasonde_apm_obj, new_value) {
@@ -1353,7 +1353,7 @@ seasonder_setSeaSondeRAPM_StationCode <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   bearing_resolution <- seasonder_getSeaSondeRAPM_BearingResolution(obj)
 #' }
 seasonder_getSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj) {
@@ -1370,7 +1370,7 @@ seasonder_getSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_BearingResolution(obj, new_bearing_resolution)
 #' }
 seasonder_setSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj, new_value) {
@@ -1390,7 +1390,7 @@ seasonder_setSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj, new_va
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   smoothing <- seasonder_getSeaSondeRAPM_Smoothing(obj)
 #' }
 seasonder_getSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj) {
@@ -1407,7 +1407,7 @@ seasonder_getSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_Smoothing(obj, new_smoothing)
 #' }
 seasonder_setSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj, new_value) {
@@ -1427,7 +1427,7 @@ seasonder_setSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   comment_line <- seasonder_getSeaSondeRAPM_CommentLine(obj)
 #' }
 seasonder_getSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj) {
@@ -1444,7 +1444,7 @@ seasonder_getSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_CommentLine(obj, new_comment_line)
 #' }
 seasonder_setSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj, new_value) {
@@ -1465,7 +1465,7 @@ seasonder_setSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_setSeaSondeRAPM_FileID(obj, new_file_id)
 #' }
 seasonder_setSeaSondeRAPM_FileID <- function(seasonde_apm_obj, new_value) {
@@ -1485,7 +1485,7 @@ seasonder_setSeaSondeRAPM_FileID <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   file_id <- seasonder_getSeaSondeRAPM_FileID(obj)
 #' }
 seasonder_getSeaSondeRAPM_FileID <- function(seasonde_apm_obj) {
@@ -1508,7 +1508,7 @@ seasonder_getSeaSondeRAPM_FileID <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   smoothed_obj <- seasonder_smoothAPM(obj, 5)
 #' }
 seasonder_smoothAPM <- function(seasonder_apm_object, smoothing) {
@@ -1544,7 +1544,7 @@ seasonder_smoothAPM <- function(seasonder_apm_object, smoothing) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   trimmed_obj <- seasonder_trimAPM(obj, 3)
 #' }
 seasonder_trimAPM <- function(seasonder_apm_object, trimming) {
@@ -1587,7 +1587,7 @@ seasonder_trimAPM <- function(seasonder_apm_object, trimming) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   corrected_obj <- seasonder_applyAPMAmplitudeAndPhaseCorrections(obj)
 #' }
 seasonder_applyAPMAmplitudeAndPhaseCorrections <- function(seasonder_apm_object) {
@@ -1638,7 +1638,7 @@ seasonder_applyAPMAmplitudeAndPhaseCorrections <- function(seasonder_apm_object)
 #'         and the "BEAR" attribute are updated with the new bearings, while the "BearingResolution"
 #'         attribute remains unchanged.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Create a dummy APM object
 #'   dummy_mat <- matrix(1:15, nrow = 3)
 #'   attr(dummy_mat, "BEAR") <- c(10, 20, 30)
@@ -1716,7 +1716,7 @@ seasonder_extrapolateAPM <- function(seasonder_apm_object, n = 1) {
 #' @return A numeric vector containing the row values.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   row <- read_matrix_row(lines, 1, 3)
 #' }
 read_matrix_row <- function(lines, start, number_of_lines_to_read) {
@@ -1735,7 +1735,7 @@ read_matrix_row <- function(lines, start, number_of_lines_to_read) {
 #' @return A list containing the attribute name and its value.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   metadata <- parse_metadata_line("value ! attribute")
 #' }
 parse_metadata_line <- function(line) {
@@ -1794,7 +1794,7 @@ parse_metadata_line <- function(line) {
 #' @seealso \code{\link{seasonder_createSeaSondeRAPM}}
 #' @seealso \code{\link{seasonder_validateAttributesSeaSondeRAPM}}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   obj <- seasonder_readSeaSondeRAPMFile("path/to/file.apm")
 #' }
 seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing = NULL, override_phase_corrections = NULL, override_amplitude_factors = NULL, override_SiteOrigin = NULL, ...) {
@@ -1941,7 +1941,7 @@ seasonder_readSeaSondeRAPMFile <- function(file_path, override_antenna_bearing =
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   phase_corrections <- seasonder_readPhaseFile("path/to/phase_file.txt")
 #' }
 seasonder_readPhaseFile <- function(file_path) {
@@ -1969,7 +1969,7 @@ seasonder_readPhaseFile <- function(file_path) {
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   plot <- seasonder_plotAPMLoops(obj)
 #' }
 seasonder_plotAPMLoops <- function(seasonder_apm_obj) {
@@ -2027,7 +2027,7 @@ seasonder_plotAPMLoops <- function(seasonder_apm_obj) {
 #' @return The SeaSondeRAPM object itself, invisibly.
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   print(obj)
 #' }
 print.SeaSondeRAPM <- function(x, ...){
@@ -2066,7 +2066,7 @@ print.SeaSondeRAPM <- function(x, ...){
 #'   that the object has undergone the intended series of operations.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Create a dummy calibration matrix with 3 rows and 5 columns
 #'   dummy_matrix <- matrix(complex(real = 1:15, imaginary = rep(0, 15)), nrow = 3)
 #'

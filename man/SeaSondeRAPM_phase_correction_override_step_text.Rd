@@ -16,7 +16,7 @@ A character string stating the new phase correction values.
 This function generates a message indicating that phase corrections have been overridden.
 }
 \examples{
-\dontrun{
+\donttest{
   msg <- SeaSondeRAPM_phase_correction_override_step_text(c(10, -10))
 }
 }

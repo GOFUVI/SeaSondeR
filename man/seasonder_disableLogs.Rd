@@ -14,7 +14,7 @@ This function disables log recording in the SeaSondeR package.
 Once disabled, various SeaSondeR functions will no longer output logs.
 }
 \examples{
-\dontrun{
+\donttest{
   seasonder_disableLogs()
 }
 }

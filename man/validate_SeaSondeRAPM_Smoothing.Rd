@@ -16,7 +16,7 @@ Returns TRUE if the validation passes.
 This function validates if the provided Smoothing is a numeric value.
 }
 \examples{
-\dontrun{
+\donttest{
   valid <- validate_SeaSondeRAPM_Smoothing(5)
 }
 }

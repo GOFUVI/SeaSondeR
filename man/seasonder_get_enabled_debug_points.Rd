@@ -13,7 +13,7 @@ A character vector of enabled debug points.
 This function returns the currently enabled debug points.
 }
 \examples{
-\dontrun{
+\donttest{
   seasonder_get_enabled_debug_points()
 }
 }

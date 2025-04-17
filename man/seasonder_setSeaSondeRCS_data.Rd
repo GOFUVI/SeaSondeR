@@ -18,7 +18,7 @@ A SeaSondeRCS object with updated data.
 Setter for data
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming cs_obj is a valid SeaSondeRCS object and new_data is a valid data list
   cs_obj <- seasonder_setSeaSondeRCS_data(cs_obj, new_data)
   # Check the updated data

@@ -30,7 +30,7 @@ object with \code{interval_value}. It then computes new reference noise normaliz
 Finally, it sets the new noise limits in the FOR parameters using \code{seasonder_setFORParameter}.
 }
 \examples{
-\dontrun{
+\donttest{
   # Define a new noise level estimation interval
   new_interval <- list(low_limit = 0.9, high_limit = 1.0)
 

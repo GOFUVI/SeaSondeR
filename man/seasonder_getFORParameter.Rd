@@ -22,7 +22,7 @@ The function retrieves the list of FOR parameters using \code{seasonder_getFOR_p
 the value associated with \code{FOR_parameter}. If the parameter is not found, an error is logged.
 }
 \examples{
-\dontrun{
+\donttest{
   # Retrieve the 'nsm' parameter from a SeaSondeRCS object
   nsm_value <- seasonder_getFORParameter(cs_obj, "nsm")
   print(nsm_value)

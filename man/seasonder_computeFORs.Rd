@@ -50,7 +50,7 @@ This function provides a flexible interface for computing FORs, allowing users t
 methods and configure parameters without modifying the internal object structure.
 }
 \examples{
-\dontrun{
+\donttest{
 # Compute FORs using the SeaSonde method
 cs_obj <- seasonder_computeFORs(cs_obj, method = "SeaSonde")
 

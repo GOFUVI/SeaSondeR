@@ -23,7 +23,7 @@ This function logs a message to the SeaSondeR logging system and also informs th
 It prefixes the message with the name of the calling function.
 }
 \examples{
-\dontrun{
+\donttest{
 my_function <- function() {
   seasonder_logAndMessage("This is a message", "info")
 }

@@ -31,7 +31,7 @@ where:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Convert specific Doppler bins to normalized Doppler frequency
 cs_obj <- seasonder_createSeaSondeRCS(...)
 bins <- c(10, 20, 30)

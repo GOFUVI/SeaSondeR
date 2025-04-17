@@ -34,7 +34,7 @@ This function reads a SeaSonde APM file and returns a SeaSondeRAPM object contai
 the parsed data.
 }
 \examples{
-\dontrun{
+\donttest{
   obj <- seasonder_readSeaSondeRAPMFile("path/to/file.apm")
 }
 }

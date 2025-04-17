@@ -28,7 +28,7 @@ The computed velocities are returned as a numeric vector, which can be used in s
 analyses or visualizations.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `seasonder_cs_object` is a valid SeaSondeRCS object
 radial_velocities <- seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(seasonder_cs_object)
 print(radial_velocities)

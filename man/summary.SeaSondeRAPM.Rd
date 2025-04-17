@@ -30,7 +30,7 @@ they represent the processing steps. This method is primarily used for diagnosti
 that the object has undergone the intended series of operations.
 }
 \examples{
-\dontrun{
+\donttest{
   # Create a dummy calibration matrix with 3 rows and 5 columns
   dummy_matrix <- matrix(complex(real = 1:15, imaginary = rep(0, 15)), nrow = 3)
 

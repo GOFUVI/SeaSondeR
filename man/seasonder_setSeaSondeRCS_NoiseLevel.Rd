@@ -26,7 +26,7 @@ It retrieves the current "NoiseLevel" attribute (or initializes it with the defa
 updates the noise level for the given antenna, and stores it back in the object.
 }
 \examples{
-\dontrun{
+\donttest{
   # Assume a SeaSondeRCS object is created using seasonder_createSeaSondeRCS()
   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 

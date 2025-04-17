@@ -57,7 +57,7 @@ and \eqn{G_{\text{inv}}} is the inverse of \eqn{G}.
 }
 
 \examples{
-\dontrun{
+\donttest{
 # Example with two steering vectors
 eig <- list(
   values = c(10, 5),

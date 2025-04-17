@@ -32,7 +32,7 @@ ensuring its dimensions match the original self-spectra structure.
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Smooth and assign self-spectra for FOR processing
 smoothed_SS <- seasonder_SmoothSS(cs_obj, antenna = 3)
 cs_obj <- seasonder_setSeaSondeRCS_FOR_SS_Smoothed(cs_obj, smoothed_SS)

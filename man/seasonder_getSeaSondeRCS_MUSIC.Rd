@@ -19,7 +19,7 @@ This function extracts the MUSIC data structure from a SeaSondeRCS object.
 If the MUSIC data does not exist in the object, the function initializes it via \code{seasonder_initSeaSondeRCS_MUSIC()}.
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming cs_object is a valid SeaSondeRCS object.
   music_data <- seasonder_getMUSIC(cs_object)
   print(music_data)

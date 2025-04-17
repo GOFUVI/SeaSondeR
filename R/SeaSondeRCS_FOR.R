@@ -23,7 +23,7 @@
 #' - \code{\link{seasonder_logAndAbort}} for error handling and logging.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Validate a correct method
 #' seasonder_validateFORMethod("SeaSonde")
 #'
@@ -211,7 +211,7 @@ seasonder_defaultFOR_parameters <- function() {
 #' - \code{\link{seasonder_validateFORMethod}} for validating the processing method.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Validate and complete FOR parameters for a SeaSondeRCS object
 #' validated_params <- seasonder_validateFOR_parameters(cs_obj, list(fdown = 12))
 #' print(validated_params)
@@ -276,7 +276,7 @@ seasonder_validateFOR_parameters <- function(seasonder_cs_object, FOR_parameters
 #' If the \code{noisefact} parameter changes, the noise level is recomputed for antennas 1, 2, and 3.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 #'   new_params <- list(nsm = 3, noisefact = 4, fdown = 12, flim = 80, currmax = 2.5)
 #'   cs_obj <- seasonder_setFOR_parameters(cs_obj, new_params)
@@ -317,7 +317,7 @@ if(!is.null(FOR_parameters$noisefact) && (is.null(old_parameters$noisefact)  || 
 #' @return The updated SeaSondeRCS object with the new parameter value.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 #'   cs_obj <- seasonder_setFORParameter(cs_obj, "nsm", 4)
 #' }
@@ -345,7 +345,7 @@ return(seasonder_cs_object)
 #' @return The updated SeaSondeRCS object with the new \code{nsm} value.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 #'   cs_obj <- seasonder_setFOR_nsm(cs_obj, 3)
 #' }
@@ -366,7 +366,7 @@ seasonder_setFOR_nsm <- function(seasonder_cs_object, nsm) {
 #' @return The updated SeaSondeRCS object with the new \code{noisefact} value.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 #'   cs_obj <- seasonder_setFOR_noisefact(cs_obj, 4)
 #' }
@@ -390,7 +390,7 @@ seasonder_setFOR_noisefact <- function(seasonder_cs_object, noisefact){
 #' @return The updated SeaSondeRCS object with the new \code{flim} value.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 #'   cs_obj <- seasonder_setFOR_flim(cs_obj, 100)
 #' }
@@ -414,7 +414,7 @@ seasonder_setFOR_flim <- function(seasonder_cs_object, flim){
 #' @return The updated SeaSondeRCS object with the new \code{fdown} value.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 #'   cs_obj <- seasonder_setFOR_fdown(cs_obj, 12)
 #' }
@@ -439,7 +439,7 @@ seasonder_setFOR_fdown <- function(seasonder_cs_object, fdown){
 #' @return The updated SeaSondeRCS object with the new \code{currmax} value.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 #'   cs_obj <- seasonder_setFOR_currmax(cs_obj, 2.5)
 #' }
@@ -467,7 +467,7 @@ seasonder_setFOR_currmax <- function(seasonder_cs_object, currmax) {
 #' as part of the FOR processing workflow.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming a function seasonder_createSeaSondeRCS() exists to create the SeaSondeRCS object:
 #' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 #'
@@ -520,7 +520,7 @@ seasonder_setSeaSondeRCS_FOR <- function(seasonder_cs_object, FOR) {
 #' - \code{\link{seasonder_SmoothFORSS}} for applying smoothing and setting the result.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Smooth and assign self-spectra for FOR processing
 #' smoothed_SS <- seasonder_SmoothSS(cs_obj, antenna = 3)
 #' cs_obj <- seasonder_setSeaSondeRCS_FOR_SS_Smoothed(cs_obj, smoothed_SS)
@@ -554,7 +554,7 @@ seasonder_setSeaSondeRCS_FOR_SS_Smoothed <- function(seasonder_cs_object, FOR_SS
 #' is later used in the processing workflow to guide FOR computation.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Create a SeaSondeRCS object (assuming seasonder_createSeaSondeRCS is defined)
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 #'
@@ -602,7 +602,7 @@ seasonder_setSeaSondeRCS_FOR_method <- function(seasonder_cs_object, FOR_method)
 #' - \code{\link{seasonder_setSeaSondeRCS_FOR_MAXP.bin}} for setting maximum power bin indices.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assign maximum power values to a SeaSondeRCS object
 #' cs_obj <- seasonder_setSeaSondeRCS_FOR_MAXP(cs_obj, MAXP_values)
 #' }
@@ -640,7 +640,7 @@ seasonder_setSeaSondeRCS_FOR_MAXP <- function(seasonder_cs_object, FOR_MAXP) {
 #' - \code{\link{seasonder_setSeaSondeRCS_FOR_MAXP}} for setting maximum power values.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assign maximum power bin indices to a SeaSondeRCS object
 #' cs_obj <- seasonder_setSeaSondeRCS_FOR_MAXP.bin(cs_obj, MAXP_bin_values)
 #' }
@@ -668,7 +668,7 @@ seasonder_setSeaSondeRCS_FOR_MAXP.bin <- function(seasonder_cs_object, FOR_MAXP.
 #' @return The updated SeaSondeRCS object with the modified "NoiseLevel" attribute.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Assume a SeaSondeRCS object is created using seasonder_createSeaSondeRCS()
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 #'
@@ -728,7 +728,7 @@ seasonder_setSeaSondeRCS_NoiseLevel <- function(seasonder_cs_object, NoiseLevel,
 #' \code{\link{seasonder_defaultFOR_parameters}} for retrieving default parameter values.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Retrieve FOR parameters for a SeaSondeRCS object
 #' for_params <- seasonder_getFOR_parameters(cs_obj)
 #' print(for_params)
@@ -757,7 +757,7 @@ seasonder_getFOR_parameters <- function(seasonder_cs_object) {
 #' the value associated with \code{FOR_parameter}. If the parameter is not found, an error is logged.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Retrieve the 'nsm' parameter from a SeaSondeRCS object
 #'   nsm_value <- seasonder_getFORParameter(cs_obj, "nsm")
 #'   print(nsm_value)
@@ -781,7 +781,7 @@ seasonder_getFORParameter <- function(seasonder_cs_object, FOR_parameter){
 #' @return The value of the 'nsm' parameter.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   smoothing_factor <- seasonder_getFOR_nsm(cs_obj)
 #'   print(smoothing_factor)
 #' }
@@ -801,7 +801,7 @@ seasonder_getFOR_nsm <- function(seasonder_cs_object){
 #' @return The value of the 'noisefact' parameter.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   noise_factor <- seasonder_getFOR_noisefact(cs_obj)
 #'   print(noise_factor)
 #' }
@@ -822,7 +822,7 @@ seasonder_getFOR_noisefact <- function(seasonder_cs_object){
 #' @return The value of the 'fdown' parameter.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   fdown_value <- seasonder_getFOR_fdown(cs_obj)
 #'   print(fdown_value)
 #' }
@@ -843,7 +843,7 @@ seasonder_getFOR_fdown <- function(seasonder_cs_object){
 #' @return The value of the 'flim' parameter.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   flim_value <- seasonder_getFOR_flim(cs_obj)
 #'   print(flim_value)
 #' }
@@ -864,7 +864,7 @@ seasonder_getFOR_flim <- function(seasonder_cs_object){
 #' @return The value of the 'currmax' parameter.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   currmax_value <- seasonder_getFOR_currmax(cs_obj)
 #'   print(currmax_value)
 #' }
@@ -894,7 +894,7 @@ seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits <- function(seaso
 #' If it does not exist, it calls \code{seasonder_initSeaSondeRCS_FOR()} to initialize the FOR data.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   FOR_data <- seasonder_getSeaSondeRCS_FOR(cs_obj)
 #'   print(FOR_data)
 #' }
@@ -934,7 +934,7 @@ seasonder_getSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 #' - \code{\link{seasonder_setSeaSondeRCS_FOR_SS_Smoothed}} for setting smoothed self-spectra.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Retrieve smoothed FOR self-spectra
 #' smoothed_SS <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(cs_obj)
 #' print(smoothed_SS)
@@ -1015,7 +1015,7 @@ seasonder_getSeaSondeRCS_FOR_reject_noise_ionospheric_threshold <- function(seas
 #' \code{seasonder_getSeaSondeRCS_NoiseLevel()}.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Assuming cs_obj is a valid SeaSondeRCS object with configured FOR parameters and noise level
 #'   config <- seasonder_getSeaSondeRCS_FORConfig(cs_obj)
 #'   print(config)
@@ -1104,7 +1104,7 @@ SeaSondeRCS_setFORParameters_step_text <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving Doppler bin frequencies.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Estimate the reference noise limits for a SeaSondeRCS object using default scaling factors
 #'   noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj)
 #'   print(noise_limits)
@@ -1178,7 +1178,7 @@ seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_object
 #' - \code{\link{seasonder_setSeaSondeRCS_NoiseLevel}} for storing the computed noise level.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Compute the noise level for a SeaSondeRCS object using antenna 3 and unsmoothed spectra
 #'   cs_obj <- seasonder_computeNoiseLevel(cs_obj)
 #'
@@ -1275,7 +1275,7 @@ seasonder_computeSeaSondeRCSAntennaNoise <- function(seasonder_cs_object, antenn
 #' - \code{\link{seasonder_getFOR_parameters}} for retrieving default \code{nsm} values.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Apply smoothing to the FOR self-spectra
 #' cs_obj <- seasonder_SmoothFORSS(cs_obj)
 #' }
@@ -1330,7 +1330,7 @@ seasonder_SmoothFORSS <- function(seasonder_cs_object) {
 #' - \code{\link[slider]{slide_mean}} for applying the sliding window mean operation.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Smooth the self-spectra for a given antenna
 #' smoothed_SS <- seasonder_SmoothSS(cs_obj, antenna = "A1")
 #' print(smoothed_SS)
@@ -1408,7 +1408,7 @@ seasonder_SmoothSS <- function(seasonder_cs_object, antenna, smoothing = NULL) {
 #' - \code{\link[pracma]{findpeaks}} for peak detection.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' FOR_spectrum <- c(0.1, 0.2, 0.3, 0.5, 0.8, 0.6, 0.4, 0.2, 0.1)
 #' start_power <- 0.4
 #' doppler_bins <- seq(-5, 5, length.out = length(FOR_spectrum))
@@ -1481,7 +1481,7 @@ seasonder_findFORNullsInFOR <- function(FOR, start_point_P, doppler_bins, left_r
 #' - \code{\link{seasonder_getFOR_parameters}} for retrieving FOR settings.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Sample spectrum
 #' spectrum <- c(0.1, 0.3, 0.5, 1.0, 2.5, 3.8, 2.1, 1.0, 0.5, 0.2)
 #' doppler_bins <- seq(-5, 5, length.out = length(spectrum))
@@ -1591,7 +1591,7 @@ seasonder_findFORNullsInSpectrum <- function(seasonder_cs_object, spectrum, dopp
 #' - \code{\link{seasonder_findFORNulls}} for high-level null detection across all spectra.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming `cs_obj` is a valid SeaSondeRCS object with self-spectra data
 #' doppler_bins <- seq(-5, 5, length.out = ncol(SS_matrix))
 #' FOR_nulls <- seasonder_findFORNullsInSSMatrix(cs_obj, SS_matrix, doppler_bins)
@@ -1650,7 +1650,7 @@ seasonder_findFORNullsInSSMatrix <- function(seasonder_cs_object, SS, doppler_bi
 #' - \code{\link{seasonder_getSeaSondeRCS_FOR_SS_Smoothed}} for retrieving smoothed SS data.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Find First Order Nulls for a SeaSondeRCS object
 #' cs_obj <- seasonder_findFORNulls(cs_obj)
 #' }
@@ -1755,7 +1755,7 @@ seasonder_findFORNulls <- function(seasonder_cs_object) {
 #' - \code{\link{seasonder_filterFORAmplitudes}} for filtering weak FOR detections.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Extract spectral power for FOR bins
 #' FOR_data <- seasonder_extractFOR(cs_obj, spectrum_matrix, detected_FOR_bins)
 #' print(FOR_data)
@@ -1831,7 +1831,7 @@ seasonder_extractFOR <- function(seasonder_cs_object, spectrum, FOR) {
 #' - \code{\link{seasonder_setSeaSondeRCS_FOR}} for storing the filtered FOR data.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Apply amplitude filtering to the FOR detection
 #' cs_obj <- seasonder_filterFORAmplitudes(cs_obj)
 #' }
@@ -1932,7 +1932,7 @@ seasonder_filterFORAmplitudes <- function(seasonder_cs_object) {
 #' - \code{\link{seasonder_setSeaSondeRCS_FOR}} for storing updated FOR data.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Apply maximum radial velocity filtering
 #' cs_obj <- seasonder_limitFORCurrentRange(cs_obj)
 #' }
@@ -2009,7 +2009,7 @@ seasonder_limitFORCurrentRange <- function(seasonder_cs_object) {
 #' @references COS. SpectraPlotterMap 12 User Guide. CODAR Ocean Sensors (COS), Mountain View, CA, USA, 2016.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Evaluate a single peak for rejection
 #' peak <- c(100, 101, 102)
 #' cs_obj <- seasonder_rejectDistantBraggPeakTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")
@@ -2095,7 +2095,7 @@ seasonder_rejectDistantBraggPeakTest <- function(seasonder_cs_object, peak, rang
 #' @references COS. SpectraPlotterMap 12 User Guide. CODAR Ocean Sensors (COS), Mountain View, CA, USA, 2016.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Apply distant Bragg peak rejection to a SeaSondeRCS object
 #' cs_obj <- seasonder_rejectDistantBragg(cs_obj)
 #' }
@@ -2177,7 +2177,7 @@ seasonder_rejectDistantBragg <- function(seasonder_cs_object) {
 #' - \code{\link{seasonder_SelfSpectra2dB}} for power conversion to dB.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Evaluate a single peak for noise/ionospheric contamination
 #' peak <- c(100, 101, 102)
 #' cs_obj <- seasonder_rejectNoiseIonosphericTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")
@@ -2281,7 +2281,7 @@ seasonder_rejectNoiseIonosphericTest <- function(seasonder_cs_object, peak, rang
 #' - \code{\link{seasonder_setSeaSondeRCS_FOR}} for updating FOR data.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Apply noise/ionospheric rejection to a SeaSondeRCS object
 #' cs_obj <- seasonder_rejectNoiseIonospheric(cs_obj)
 #' }
@@ -2358,7 +2358,7 @@ seasonder_rejectNoiseIonospheric <- function(seasonder_cs_object) {
 #' - \code{\link{seasonder_rejectNoiseIonospheric}} for rejecting noise/ionospheric contamination.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Compute First Order Regions using the SeaSonde method
 #' cs_obj <- seasonder_computeFORsSeaSondeMethod(cs_obj)
 #' }
@@ -2430,7 +2430,7 @@ seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_object) {
 #' - \code{\link{seasonder_setFOR_parameters}} for configuring FOR parameters.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Compute FORs using the SeaSonde method
 #' cs_obj <- seasonder_computeFORs(cs_obj, method = "SeaSonde")
 #'
@@ -2499,7 +2499,7 @@ seasonder_computeFORs <- function(seasonder_cs_object, method = NULL, FOR_contro
 #' - \code{\link{seasonder_getSeaSondeRCS_FOR}} for retrieving the FOR data.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Export the FOR boundaries from a SeaSondeRCS object
 #' boundaries <- seasonder_SeaSondeRCSExportFORBoundaries(cs_obj)
 #' print(boundaries)

@@ -28,7 +28,7 @@ check if the field value matches a specified data type before performing the
 unsigned check.
 }
 \examples{
-\dontrun{
+\donttest{
   result <- qc_check_unsigned(10)
   print(result)
 }

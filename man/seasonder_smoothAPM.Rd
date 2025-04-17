@@ -19,7 +19,7 @@ This function smooths the antenna pattern data for each channel of a SeaSonde RA
 by applying a moving average with a specified number of points.
 }
 \examples{
-\dontrun{
+\donttest{
   smoothed_obj <- seasonder_smoothAPM(obj, 5)
 }
 }

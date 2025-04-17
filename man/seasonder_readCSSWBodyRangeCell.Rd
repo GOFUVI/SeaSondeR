@@ -47,7 +47,7 @@ The function continues reading keys until it detects the 'END ' marker or a repe
 the end of the block.
 }
 \examples{
-\dontrun{
+\donttest{
   # Example usage:
   con <- rawConnection(as.raw(1:100))
   specs <- list(sampleKey = list(type = "double"))

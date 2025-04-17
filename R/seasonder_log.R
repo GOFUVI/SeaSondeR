@@ -17,7 +17,7 @@ seasonder_the$logs_enabled <- TRUE
 #' @return Invisibly returns TRUE, indicating that log recording has been enabled.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_enableLogs()
 #' }
 seasonder_enableLogs <- function() seasonder_the$logs_enabled <- TRUE
@@ -30,7 +30,7 @@ seasonder_enableLogs <- function() seasonder_the$logs_enabled <- TRUE
 #' @return Invisibly returns FALSE, indicating that log recording has been disabled.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_disableLogs()
 #' }
 seasonder_disableLogs <- function() seasonder_the$logs_enabled <- FALSE
@@ -43,7 +43,7 @@ seasonder_disableLogs <- function() seasonder_the$logs_enabled <- FALSE
 #' @return Logical indicating whether logs are enabled or disabled.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_areLogsEnabled()
 #' }
 seasonder_areLogsEnabled <- function() seasonder_the$logs_enabled
@@ -83,7 +83,7 @@ seasonder_logStr <- function(message,level) {
 #' @return A character vector of the `n` most recent log entries from the global log.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_getLog()
 #' }
 seasonder_getLog <- function(n=100) {
@@ -103,7 +103,7 @@ seasonder_getLog <- function(n=100) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_log("This is an info message")
 #'   seasonder_log("This is an error message", "error")
 #'   seasonder_log("This is a fatal message", "fatal")
@@ -134,7 +134,7 @@ seasonder_log <- function(message, level="info") {
 #' @return When temporary files are used, returns a character string with the main log file path; otherwise, returns an invisible value indicating that logs were archived.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_logArchiver()
 #' }
 seasonder_logArchiver <- function(log_path=NULL, log_info_path=log_path, log_error_path=log_info_path, log_fatal_path=log_error_path) {
@@ -186,7 +186,7 @@ seasonder_logArchiver <- function(log_path=NULL, log_info_path=log_path, log_err
 #' @return Invisibly returns no value; used solely for its side effects of logging and messaging.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' my_function <- function() {
 #'   seasonder_logAndMessage("This is a message", "info")
 #' }
@@ -244,7 +244,7 @@ seasonder_logAndMessage <- function(msg, log_level="info", calling_function=NULL
 #' @return This function does not return as it always aborts execution.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' my_function <- function() {
 #'   seasonder_logAndAbort("This is a message")
 #' }
@@ -296,7 +296,7 @@ seasonder_logAndAbort <- function(msg, calling_function=NULL, ...) {
 #' @importFrom lubridate ymd_hms
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_splitLog()
 #' }
 seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_quantile=0.9, min_threshold_secs=10) {
@@ -343,7 +343,7 @@ seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_qua
 #' @return A character vector representing the last log entry.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   seasonder_lastLog()
 #' }
 seasonder_lastLog <- function(...) {

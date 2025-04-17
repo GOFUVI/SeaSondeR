@@ -28,7 +28,7 @@ Reads the header of a SeaSonde file (Version 4) based on the provided specificat
 Transforms the CenterFreq field and returns the results.
 }
 \examples{
-\dontrun{
+\donttest{
   con <- rawConnection(as.raw(rep(0, 200)))
   specs <- list(
     nCoverMinutes = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),

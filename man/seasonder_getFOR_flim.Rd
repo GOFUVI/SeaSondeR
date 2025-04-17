@@ -17,7 +17,7 @@ This function retrieves the null limit ('flim') parameter for FIRST Order Region
 from a SeaSondeRCS object.
 }
 \examples{
-\dontrun{
+\donttest{
   flim_value <- seasonder_getFOR_flim(cs_obj)
   print(flim_value)
 }

@@ -57,7 +57,7 @@ calls itself recursively to process nested keys.
 }
 }
 \examples{
-\dontrun{
+\donttest{
   con <- file("path/to/file.cssy", "rb")
   specs <- seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CSSW"), "header")
   header <- seasonder_readCSSWHeader(con, specs, endian = "big")

@@ -22,7 +22,7 @@ A named list as returned by seasonder_readSeaSondeCSFileBlock consistent with th
 Processes a block of keys from the binary connection according to provided specifications.
 }
 \examples{
-\dontrun{
+\donttest{
 # Example usage:
 con <- rawConnection(as.raw(1:10))
 specs <- list(field = list(type = "integer"))

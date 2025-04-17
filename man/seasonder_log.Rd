@@ -18,7 +18,7 @@ Invisibly returns the generated log message string.
 This function creates a logging message and signals a seasonder_log condition.
 }
 \examples{
-\dontrun{
+\donttest{
   seasonder_log("This is an info message")
   seasonder_log("This is an error message", "error")
   seasonder_log("This is a fatal message", "fatal")

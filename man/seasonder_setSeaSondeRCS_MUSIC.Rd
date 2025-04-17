@@ -26,7 +26,7 @@ MUSIC results to the \code{MUSIC} field within the \code{MUSIC_data} attribute. 
 during the MUSIC processing workflow.
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming cs_obj is a valid SeaSondeRCS object and music_results contains MUSIC analysis results:
   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 

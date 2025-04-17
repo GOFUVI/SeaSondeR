@@ -39,7 +39,7 @@ The function follows these steps:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Find First Order Nulls for a SeaSondeRCS object
 cs_obj <- seasonder_findFORNulls(cs_obj)
 }

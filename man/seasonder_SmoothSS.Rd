@@ -38,7 +38,7 @@ across the self-spectra matrix.
 This smoothing implementation mimics the one performed by the tool AnalyzeSpectra of CODAR's Radial Suite R8.
 }
 \examples{
-\dontrun{
+\donttest{
 # Smooth the self-spectra for a given antenna
 smoothed_SS <- seasonder_SmoothSS(cs_obj, antenna = "A1")
 print(smoothed_SS)

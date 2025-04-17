@@ -31,7 +31,7 @@ The center Doppler bin is a key parameter for organizing Doppler frequency data
 around zero and is critical for spectral analysis.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid `SeaSondeRCS` object
 center_bin <- seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin(cs_object)
 print(center_bin)

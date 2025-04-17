@@ -38,7 +38,7 @@ is provided. For logging and aborting, this function utilizes the
 }
 
 \examples{
-\dontrun{
+\donttest{
 # Assuming a YAML file named "example.yaml" exists with appropriate content
 result <- seasonder_readYAMLSpecs("example.yaml", c("header", "versions", "V2"))
 print(result)

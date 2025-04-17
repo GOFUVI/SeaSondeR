@@ -33,7 +33,7 @@ The wave number is an essential parameter for analyzing radar signals and
 their interaction with the medium being measured.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid `SeaSondeRCS` object
 wave_number <- seasonder_getRadarWaveNumber(cs_object)
 print(wave_number)

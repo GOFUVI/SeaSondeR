@@ -14,7 +14,7 @@ This function checks whether log recording is currently enabled
 in the SeaSondeR package.
 }
 \examples{
-\dontrun{
+\donttest{
   seasonder_areLogsEnabled()
 }
 }

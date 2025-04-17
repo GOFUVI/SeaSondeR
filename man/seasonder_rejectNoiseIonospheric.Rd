@@ -46,7 +46,7 @@ This function is particularly useful in environments where noise or ionospheric 
 ensuring that only valid first-order Bragg peaks are retained for further processing.
 }
 \examples{
-\dontrun{
+\donttest{
 # Apply noise/ionospheric rejection to a SeaSondeRCS object
 cs_obj <- seasonder_rejectNoiseIonospheric(cs_obj)
 }

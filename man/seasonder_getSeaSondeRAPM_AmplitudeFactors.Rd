@@ -16,7 +16,7 @@ The AmplitudeFactors attribute from the object.
 Getter for AmplitudeFactors
 }
 \examples{
-\dontrun{
+\donttest{
   amplitude_factors <- seasonder_getSeaSondeRAPM_AmplitudeFactors(obj)
 }
 }

@@ -22,7 +22,7 @@ This function retrieves the full set of Doppler bin frequencies using \code{\lin
 It then selects the Doppler frequencies corresponding to the specified bin indices.
 }
 \examples{
-\dontrun{
+\donttest{
 # Convert specific Doppler bins to Doppler frequencies
 cs_obj <- seasonder_createSeaSondeRCS(...)
 bins <- c(10, 20, 30)  # Example bin indices

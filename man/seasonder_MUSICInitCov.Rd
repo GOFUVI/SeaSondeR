@@ -18,7 +18,7 @@ This structure is specifically designed for three-channel antenna configurations
 in SeaSondeR applications.
 }
 \examples{
-\dontrun{
+\donttest{
 # Initialize a covariance matrix for MUSIC
 cov_matrix <- seasonder_MUSICInitCov()
 print(cov_matrix)

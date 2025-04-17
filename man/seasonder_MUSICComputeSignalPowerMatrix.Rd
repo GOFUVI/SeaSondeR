@@ -35,7 +35,7 @@ The function performs the following steps:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming seasonder_cs_object is a valid SeaSondeRCS object
 updated_object <- seasonder_MUSICComputeSignalPowerMatrix(seasonder_cs_object)
 }

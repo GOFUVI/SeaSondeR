@@ -20,7 +20,7 @@ The function checks for the presence of MUSIC parameters in the object's MUSIC_d
 If not found, it defaults to the values returned by \code{seasonder_defaultMUSIC_parameters()}.
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming cs_object is a valid SeaSondeRCS object.
   params <- seasonder_getMUSICParameters(cs_object)
   print(params)

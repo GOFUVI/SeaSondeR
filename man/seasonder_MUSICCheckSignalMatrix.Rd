@@ -47,7 +47,7 @@ off-diagonal element.
 }
 }
 \examples{
-\dontrun{
+\donttest{
   # Assume cs_obj is a valid SeaSondeRCS object with MUSIC data already computed.
   updated_obj <- seasonder_MUSICCheckSignalMatrix(cs_obj)
   # The updated object now has an added diag_off_diag_power_ratio column and 

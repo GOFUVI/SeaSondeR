@@ -21,7 +21,7 @@ This function extracts the header data from a \code{seasonder_cs_object}, repres
 If a path is provided and there is an issue writing to the file, the function logs an error message using \code{seasonder_logAndMessage} and returns the JSON data as a string.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming cs_obj is a valid SeaSondeRCS object
 # Convert the SeaSondeRCS object to JSON and save it to a file
 json_output <- seasonder_asJSONSeaSondeRCSHeader(cs_obj, path = "header_output.json")

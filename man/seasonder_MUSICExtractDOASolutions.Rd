@@ -54,7 +54,7 @@ response and peak width for each.
 }
 }
 \examples{
-\dontrun{
+\donttest{
   # Example usage:
   # Generate a dummy projections matrix with 50 columns and 2 rows for single and dual solutions
   projections <- matrix(runif(100), nrow = 2, ncol = 50)

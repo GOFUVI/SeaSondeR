@@ -16,7 +16,7 @@ Returns TRUE if the validation passes.
 This function validates if the provided SiteName is a character string.
 }
 \examples{
-\dontrun{
+\donttest{
   valid <- validate_SeaSondeRAPM_SiteName("Site A")
 }
 }

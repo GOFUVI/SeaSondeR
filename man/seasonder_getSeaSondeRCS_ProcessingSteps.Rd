@@ -16,7 +16,7 @@ A list containing the processing steps of the SeaSondeRCS object.
 Getter for ProcessingSteps
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid SeaSondeRCS object
 processing_steps <- seasonder_getSeaSondeRCS_ProcessingSteps(cs_object)
 print(processing_steps)

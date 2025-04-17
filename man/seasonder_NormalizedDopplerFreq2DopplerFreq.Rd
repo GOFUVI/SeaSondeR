@@ -37,7 +37,7 @@ where:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Convert normalized Doppler frequencies to Doppler frequencies
 cs_obj <- seasonder_createSeaSondeRCS(...)
 normalized_values <- c(-0.3, 0, 0.6)  # Example normalized Doppler frequencies

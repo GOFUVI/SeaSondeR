@@ -26,7 +26,7 @@ that contains the sign bits for self spectra values. The data is divided into 3 
 to: \code{cs1a}, \code{cs2a}, and \code{cs3a}.
 }
 \examples{
-\dontrun{
+\donttest{
   con <- rawConnection(as.raw(c(0x01, 0x02, 0x03)))
   key <- list(size = 3, key = "asgn")
   result <- seasonder_CSSY_read_asign(con, key)

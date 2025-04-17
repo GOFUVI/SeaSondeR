@@ -39,7 +39,7 @@ Additionally, a processing step is appended to the object using \code{seasonder_
 with a creation step text that indicates the source.
 }
 \examples{
-\dontrun{
+\donttest{
   # Creating a SeaSondeRCS object from a list
   cs_list <- list(header = my_header, data = my_data)
   rcs_object <- seasonder_createSeaSondeRCS(cs_list)

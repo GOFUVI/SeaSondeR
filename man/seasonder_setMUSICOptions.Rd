@@ -27,7 +27,7 @@ The function uses \code{modifyList} to merge the default MUSIC options with any 
 This ensures that the resulting options list contains all required fields.
 }
 \examples{
-\dontrun{
+\donttest{
   # Create a SeaSondeRCS object (assume cs_object is already created)
   cs_object <- seasonder_setMUSICOptions(cs_object, list(doppler_interpolation = 3))
   opts <- seasonder_getSeaSondeRCS_MUSIC_options(cs_object)

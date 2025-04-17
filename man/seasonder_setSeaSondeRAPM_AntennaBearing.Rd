@@ -18,7 +18,7 @@ The modified SeaSondeRAPM object with updated AntennaBearing.
 Setter for AntennaBearing
 }
 \examples{
-\dontrun{
+\donttest{
   obj <- seasonder_setSeaSondeRAPM_AntennaBearing(obj, new_antenna_bearing)
 }
 }

@@ -26,7 +26,7 @@ an error is raised using \code{\link{seasonder_logAndAbort}}.
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Validate a correct method
 seasonder_validateFORMethod("SeaSonde")
 

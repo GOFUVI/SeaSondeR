@@ -20,7 +20,7 @@ The function first checks if the interpolated data is set in the MUSIC_data attr
 If absent, it initializes the data with \code{seasonder_MUSICInitInterpolatedData()}.
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming cs_object is a valid SeaSondeRCS object.
   interp_data <- seasonder_getMUSICInterpolatedData(cs_object)
   str(interp_data)

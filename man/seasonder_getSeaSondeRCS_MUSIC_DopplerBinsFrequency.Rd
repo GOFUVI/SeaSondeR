@@ -43,7 +43,7 @@ The resulting Doppler bins frequencies are crucial for analyzing the spectral
 properties of the MUSIC output.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid `SeaSondeRCS` object
 doppler_bins <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(cs_object, normalized = FALSE)
 print(doppler_bins)

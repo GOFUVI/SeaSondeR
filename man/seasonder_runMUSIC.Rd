@@ -42,7 +42,7 @@ The MUSIC algorithm is executed in a series of sequential steps:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Create a SeaSondeRCS object (example)
 cs_object <- seasonder_createSeaSondeRCS(x = list(header = list(), data = list()))
 

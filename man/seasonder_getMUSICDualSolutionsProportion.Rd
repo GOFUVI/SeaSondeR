@@ -20,7 +20,7 @@ The function checks the MUSIC_data attribute for a dual_solutions_proportion val
 If not available, it defaults to NA_real_.
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming cs_object is a valid SeaSondeRCS object.
   dual_prop <- seasonder_getMUSICDualSolutionsProportion(cs_object)
   print(dual_prop)

@@ -32,7 +32,7 @@ This calculation is fundamental for understanding the frequency spacing between
 adjacent Doppler bins in the radar spectrum.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid `SeaSondeRCS` object
 spectral_res <- seasonder_getDopplerSpectrumResolution(cs_object)
 print(spectral_res)

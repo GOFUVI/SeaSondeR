@@ -16,7 +16,7 @@ TRUE if the debug point is enabled, FALSE otherwise.
 This function checks whether the provided debug point is enabled.
 }
 \examples{
-\dontrun{
+\donttest{
   seasonder_is_debug_point_enabled("example_debug")
 }
 }

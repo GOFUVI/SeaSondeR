@@ -45,7 +45,7 @@ vectors from the first cell where they appear. Finally, each cell's data is inse
 of the matrices as indicated by the cell's \code{indx$index} value.
 }
 \examples{
-\dontrun{
+\donttest{
   # Example with a single cell
   cell <- list(
     indx  = list(index = 1),

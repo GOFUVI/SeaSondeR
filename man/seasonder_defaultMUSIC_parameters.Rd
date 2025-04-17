@@ -23,7 +23,7 @@ The default parameters are:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Retrieve default parameters
 params <- seasonder_defaultMUSIC_parameters()
 print(params)

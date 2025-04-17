@@ -37,7 +37,7 @@ The function appends the following processing steps to the \code{ProcessingSteps
 }
 
 \examples{
-\dontrun{
+\donttest{
 # Assuming `seasonder_cs_object` is a valid SeaSondeRCS object with MUSIC results
 updated_obj <- seasonder_MUSICSelectDOA(seasonder_cs_object)
 }

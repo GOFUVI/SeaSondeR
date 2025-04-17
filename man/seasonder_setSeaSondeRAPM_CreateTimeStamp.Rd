@@ -18,7 +18,7 @@ The modified SeaSondeRAPM object with updated CreateTimeStamp.
 Setter for CreateTimeStamp
 }
 \examples{
-\dontrun{
+\donttest{
   obj <- seasonder_setSeaSondeRAPM_CreateTimeStamp(obj, new_create_time_stamp)
 }
 }

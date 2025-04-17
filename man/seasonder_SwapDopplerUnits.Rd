@@ -52,7 +52,7 @@ The unit conversions follow this logic:
 Overall, the functions used for Doppler units conversion mimic the implementation of Doppler units displayed in  SpectraPlotterMap 12 in Radial Suite R8
 }
 \examples{
-\dontrun{
+\donttest{
 # Convert Doppler frequencies (Hz) to normalized Doppler frequency
 cs_obj <- seasonder_createSeaSondeRCS(...)
 doppler_values <- c(-0.3, 0, 0.6)  # Doppler values in Hz

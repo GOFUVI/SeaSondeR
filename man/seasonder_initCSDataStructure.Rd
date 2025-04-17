@@ -31,7 +31,7 @@ related to SeaSonde radar measurements. It creates a list of matrices,
 each corresponding to different components of the SeaSonde data.
 }
 \examples{
-\dontrun{
+\donttest{
   # Initialize the data structure with 100 range cells and 256 Doppler bins
   nRanges <- 100
  nDoppler <- 256

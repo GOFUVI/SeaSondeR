@@ -18,7 +18,7 @@ The updated SeaSondeRCS object with the new \code{flim} value.
 This function sets the null limit (\code{flim}) used for defining the first-order region in the SeaSondeRCS object.
 }
 \examples{
-\dontrun{
+\donttest{
   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
   cs_obj <- seasonder_setFOR_flim(cs_obj, 100)
 }

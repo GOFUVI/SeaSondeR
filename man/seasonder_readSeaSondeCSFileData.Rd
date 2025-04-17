@@ -52,7 +52,7 @@ This function utilizes the \code{rlang} package to manage errors and conditions,
 }
 
 \examples{
-\dontrun{
+\donttest{
   con <- rawConnection(as.raw(rep(0, 300)))
   header <- list(
     nRangeCells = 100,

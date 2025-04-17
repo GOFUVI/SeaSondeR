@@ -16,7 +16,7 @@ A character string with the trimming details.
 This function generates a message indicating that trimming has been applied to the APM.
 }
 \examples{
-\dontrun{
+\donttest{
   msg <- SeaSondeRAPM_trimming_step_text(3)
 }
 }

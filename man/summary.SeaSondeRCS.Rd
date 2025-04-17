@@ -29,7 +29,7 @@ formats them into a readable string, and outputs the result via the cat function
 The function is designed for interactive use, and its output facilitates quick inspection of the object.
 }
 \examples{
-\dontrun{
+\donttest{
  obj <- list(header = list(nSiteCodeName = "Station1",
                             nDateTime = Sys.time(),
                             nDopplerCells = 256,

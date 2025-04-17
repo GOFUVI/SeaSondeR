@@ -53,7 +53,7 @@ functions are available in the global environment.
 }
 
 \examples{
-\dontrun{
+\donttest{
   con <- rawConnection(as.raw(rep(0, 300)))
   specs <- list(
     V1 = list(...),

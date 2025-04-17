@@ -27,7 +27,7 @@ The function follows these steps:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 int_val <- 1234567890
 raw_val <- seasonder_int_to_raw(int_val)
 cat(rawToChar(raw_val))

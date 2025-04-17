@@ -27,7 +27,7 @@ placeholders for components such as \code{SSA1}, \code{SSA2}, \code{SSA3}, \code
 \code{CS23}, and \code{QC}.
 }
 \examples{
-\dontrun{
+\donttest{
 # Create a SeaSondeR cross-spectral object
 seasonder_cs_object <- seasonder_createSeaSondeRCS(...)
 

@@ -30,7 +30,7 @@ where:
 Absolute values of power are used to ensure valid logarithmic calculations.
 }
 \examples{
-\dontrun{
+\donttest{
 # Convert self-spectra power to dB
 spectrum_vals <- c(1e-10, 1e-8, 1e-6)
 receiver_gain <- -34.2

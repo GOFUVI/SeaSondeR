@@ -42,7 +42,7 @@ This function is useful for exporting the computed FOR boundaries to a format th
 be further analyzed or visualized.
 }
 \examples{
-\dontrun{
+\donttest{
 # Export the FOR boundaries from a SeaSondeRCS object
 boundaries <- seasonder_SeaSondeRCSExportFORBoundaries(cs_obj)
 print(boundaries)

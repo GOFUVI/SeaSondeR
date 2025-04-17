@@ -21,7 +21,7 @@ This function logs a message to the SeaSondeR logging system and aborts executio
 It prefixes the abort message with the name of the calling function.
 }
 \examples{
-\dontrun{
+\donttest{
 my_function <- function() {
   seasonder_logAndAbort("This is a message")
 }

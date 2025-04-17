@@ -16,7 +16,7 @@ The version value.
 Get the version value from a SeaSondeR object
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `object` is a valid object
 value <- seasonder_getVersion(object)
 print(value)

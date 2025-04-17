@@ -28,7 +28,7 @@ The matrix rows are labeled:
 An attribute \code{"bearings"} is attached to the matrix, storing the input bearings vector.
 }
 \examples{
-\dontrun{
+\donttest{
 # Initialize projections for default bearings
 projections <- seasonder_MUSICInitProjections()
 print(projections)

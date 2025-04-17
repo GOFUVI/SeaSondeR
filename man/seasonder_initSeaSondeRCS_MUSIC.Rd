@@ -48,7 +48,7 @@ Columns in the resulting tibble include:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Initialize MUSIC data structure for all range cells and Doppler bins
 music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object)
 

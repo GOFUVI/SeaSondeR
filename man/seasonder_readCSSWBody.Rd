@@ -33,7 +33,7 @@ A list of processed body cells with applied sign corrections.
 Reads the body section of a CSSW file, processing each cell block until the designated endpoint.
 }
 \examples{
-\dontrun{
+\donttest{
 # Example usage:
 con <- rawConnection(as.raw(1:100))
 specs <- list(sampleKey = list(type = "double"))

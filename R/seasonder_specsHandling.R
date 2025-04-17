@@ -15,7 +15,7 @@ seasonder_the$valid_yaml_seasondecssy_versions <- c("1.0.0")  # Valid version fo
 #' @importFrom rlang arg_match
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Retrieve the default CS specifications file path
 #'   cs_specs_path <- seasonder_defaultSpecsFilePath("CS")
 #'
@@ -74,7 +74,7 @@ seasonder_defaultSpecsFilePath <- function(type = "CS") {
 #' @importFrom yaml read_yaml
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Assuming a YAML file named "example.yaml" exists with appropriate content
 #' result <- seasonder_readYAMLSpecs("example.yaml", c("header", "versions", "V2"))
 #' print(result)
@@ -136,7 +136,7 @@ seasonder_readYAMLSpecs <- function(file_path, path = rlang::zap()) {
 #' @importFrom glue glue
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Determine the spectra file type for a given file path
 #'   file_type <- seasonder_find_spectra_file_type("path/to/spectra_file.bin")
 #'   print(file_type)
@@ -244,7 +244,7 @@ seasonder_find_spectra_file_type <- function(filepath, endian = "big") {
 #' @seealso \code{\link{seasonder_find_spectra_file_type}}, \code{\link{seasonder_defaultSpecsFilePath}}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Get the default specifications path for a given spectra file
 #'   specs_path <- seasonder_defaultSpecsPathForFile("path/to/spectra_file.bin")
 #'   print(specs_path)

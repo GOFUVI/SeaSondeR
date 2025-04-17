@@ -41,7 +41,7 @@ for which the FOR nulls are identified. The nulls define the boundaries of the f
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_obj` is a valid SeaSondeRCS object with self-spectra data
 doppler_bins <- seq(-5, 5, length.out = ncol(SS_matrix))
 FOR_nulls <- seasonder_findFORNullsInSSMatrix(cs_obj, SS_matrix, doppler_bins)

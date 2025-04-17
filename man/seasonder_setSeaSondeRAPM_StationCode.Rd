@@ -18,7 +18,7 @@ The modified SeaSondeRAPM object with updated StationCode.
 Setter for StationCode
 }
 \examples{
-\dontrun{
+\donttest{
   obj <- seasonder_setSeaSondeRAPM_StationCode(obj, new_station_code)
 }
 }

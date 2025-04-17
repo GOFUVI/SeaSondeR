@@ -16,7 +16,7 @@ The CommentLine attribute from the object.
 Getter for CommentLine
 }
 \examples{
-\dontrun{
+\donttest{
   comment_line <- seasonder_getSeaSondeRAPM_CommentLine(obj)
 }
 }

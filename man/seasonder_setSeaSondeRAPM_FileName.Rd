@@ -18,7 +18,7 @@ The modified SeaSondeRAPM object with updated FileName.
 Setter for FileName
 }
 \examples{
-\dontrun{
+\donttest{
   obj <- seasonder_setSeaSondeRAPM_FileName(obj, new_file_name)
 }
 }

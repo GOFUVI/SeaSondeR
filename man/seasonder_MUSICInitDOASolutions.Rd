@@ -31,7 +31,7 @@ The function returns a list containing two sub-lists, one for \code{"single"} so
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Initialize DOA solutions
 doa_solutions <- seasonder_MUSICInitDOASolutions()
 print(doa_solutions)

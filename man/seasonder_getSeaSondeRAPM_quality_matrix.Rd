@@ -16,7 +16,7 @@ The quality_matrix attribute from the object.
 Getter for quality_matrix
 }
 \examples{
-\dontrun{
+\donttest{
   quality_matrix <- seasonder_getSeaSondeRAPM_quality_matrix(obj)
 }
 }

@@ -16,7 +16,7 @@ The version value.
 Get the version value from a SeaSondeRCS object
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid SeaSondeRCS object
 value <- seasonder_getVersion(cs_object)
 print(value)

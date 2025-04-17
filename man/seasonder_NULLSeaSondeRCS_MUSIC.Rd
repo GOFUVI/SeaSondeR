@@ -34,7 +34,7 @@ The initialized tibble contains the following columns:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Initialize a NULL structure for MUSIC analysis
 music_results <- seasonder_NULLSeaSondeRCS_MUSIC()
 print(music_results)

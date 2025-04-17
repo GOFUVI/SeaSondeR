@@ -32,7 +32,7 @@ are then combined with the original matrix, and the column names and the "BEAR" 
 are updated to reflect the complete set of bearings.
 }
 \examples{
-\dontrun{
+\donttest{
   # Create a dummy APM object
   dummy_mat <- matrix(1:15, nrow = 3)
   attr(dummy_mat, "BEAR") <- c(10, 20, 30)

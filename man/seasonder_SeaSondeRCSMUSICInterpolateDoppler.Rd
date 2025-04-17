@@ -35,7 +35,7 @@ The interpolation process is as follows:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Assume `cs_obj` is a valid SeaSondeRCS object
 cs_obj <- seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
 }

@@ -16,7 +16,7 @@ A ggplot object displaying the magnitude of the two loops as a function of beari
 This function generates a polar plot of the antenna pattern loops from a SeaSonde RAPM object.
 }
 \examples{
-\dontrun{
+\donttest{
   plot <- seasonder_plotAPMLoops(obj)
 }
 }

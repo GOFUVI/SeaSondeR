@@ -36,7 +36,7 @@ This function utilizes the \code{rlang} package to manage errors and conditions,
 }
 
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid SeaSondeRCS object
 # Retrieve a specific field from the header
 field_value <- seasonder_getCSHeaderByPath(cs_object, c("nRangeCells"))

@@ -31,7 +31,7 @@ The center frequency is initially stored in MHz and is converted to Hz by multip
 it by \eqn{10^6}.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid `SeaSondeRCS` object
 wavelength <- seasonder_getRadarWaveLength(cs_object)
 print(wavelength)

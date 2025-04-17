@@ -26,7 +26,7 @@ The function uses the \code{whisker} package to render a template string with th
 header information.
 }
 \examples{
-\dontrun{
+\donttest{
   obj <- list(header = list(nSiteCodeName = "Station1",
                             nDateTime = Sys.time(),
                             nDopplerCells = 256,

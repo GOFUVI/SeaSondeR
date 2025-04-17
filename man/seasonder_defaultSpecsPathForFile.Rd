@@ -24,7 +24,7 @@ The function leverages \code{seasonder_find_spectra_file_type} to determine whet
 It then uses \code{seasonder_defaultSpecsFilePath} to obtain the corresponding default specifications path.
 }
 \examples{
-\dontrun{
+\donttest{
   # Get the default specifications path for a given spectra file
   specs_path <- seasonder_defaultSpecsPathForFile("path/to/spectra_file.bin")
   print(specs_path)

@@ -32,7 +32,7 @@ scattering from the sea surface, which is fundamental to the operation of
 HF radar systems.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid `SeaSondeRCS` object
 bragg_wavelength <- seasonder_getBraggWaveLength(cs_object)
 print(bragg_wavelength)

@@ -22,7 +22,7 @@ as an array of text lines. It is used to facilitate reading data from
 SeaSonde APM files.
 }
 \examples{
-\dontrun{
+\donttest{
   row <- read_matrix_row(lines, 1, 3)
 }
 }

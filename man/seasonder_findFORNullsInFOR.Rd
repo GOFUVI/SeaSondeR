@@ -42,7 +42,7 @@ The function follows these steps to determine the null point:
 The function relies on \code{pracma::findpeaks} to identify the peak.
 }
 \examples{
-\dontrun{
+\donttest{
 FOR_spectrum <- c(0.1, 0.2, 0.3, 0.5, 0.8, 0.6, 0.4, 0.2, 0.1)
 start_power <- 0.4
 doppler_bins <- seq(-5, 5, length.out = length(FOR_spectrum))

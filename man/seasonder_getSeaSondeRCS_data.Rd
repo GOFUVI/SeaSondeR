@@ -17,7 +17,7 @@ the data structure with the number of range and Doppler cells.
 Getter for data
 }
 \examples{
-\dontrun{
+\donttest{
  # Assuming `cs_object` is a valid SeaSondeRCS object
  data_list <- seasonder_getSeaSondeRCS_data(cs_object)
  # Print the data list

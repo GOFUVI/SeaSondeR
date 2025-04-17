@@ -16,7 +16,7 @@ A list containing the header data of the SeaSondeRCS object.
 Getter for header
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming cs_obj is a valid SeaSondeRCS object
   header_data <- seasonder_getSeaSondeRCS_header(cs_obj)
   print(header_data)

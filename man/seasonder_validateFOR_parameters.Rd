@@ -46,7 +46,7 @@ computed using \code{\link{seasonder_estimateReferenceNoiseNormalizedLimits}}.
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Validate and complete FOR parameters for a SeaSondeRCS object
 validated_params <- seasonder_validateFOR_parameters(cs_obj, list(fdown = 12))
 print(validated_params)

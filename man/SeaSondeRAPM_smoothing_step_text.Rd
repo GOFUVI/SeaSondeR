@@ -16,7 +16,7 @@ A character string detailing the smoothing operation.
 This function generates a message indicating that smoothing has been applied to the APM.
 }
 \examples{
-\dontrun{
+\donttest{
   msg <- SeaSondeRAPM_smoothing_step_text(5)
 }
 }

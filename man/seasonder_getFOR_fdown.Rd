@@ -17,7 +17,7 @@ This function retrieves the power dropoff threshold ('fdown') for First Order Re
 from a SeaSondeRCS object.
 }
 \examples{
-\dontrun{
+\donttest{
   fdown_value <- seasonder_getFOR_fdown(cs_obj)
   print(fdown_value)
 }

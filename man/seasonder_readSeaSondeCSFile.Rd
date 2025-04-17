@@ -63,7 +63,7 @@ This function provides a structured mechanism to recover from errors during its 
 }
 
 \examples{
-\dontrun{
+\donttest{
   cs <- seasonder_readSeaSondeCSFile("path/to/csfile", "path/to/specs.yml", endian = "big")
   print(cs)
 }

@@ -15,7 +15,7 @@ Once disabled, various SeaSondeR functions will no longer output
 informational messages.
 }
 \examples{
-\dontrun{
+\donttest{
   seasonder_disableMessages()
 }
 }

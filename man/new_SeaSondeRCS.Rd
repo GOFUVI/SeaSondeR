@@ -42,7 +42,7 @@ initializes FOR parameters, and sets up the FOR configuration by calling
 \code{seasonder_initSeaSondeRCS_FOR}. A processing step message is logged to indicate successful creation.
 }
 \examples{
-\dontrun{
+\donttest{
   # Example header and data lists (replace with actual header and data content)
   my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0, 
 nFirstRangeCell = 1)

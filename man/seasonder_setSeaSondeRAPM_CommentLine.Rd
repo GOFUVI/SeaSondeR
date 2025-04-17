@@ -18,7 +18,7 @@ The modified SeaSondeRAPM object with updated CommentLine.
 Setter for CommentLine
 }
 \examples{
-\dontrun{
+\donttest{
   obj <- seasonder_setSeaSondeRAPM_CommentLine(obj, new_comment_line)
 }
 }

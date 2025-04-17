@@ -17,7 +17,7 @@ This function returns the default file path for the specifications YAML file cor
 to the provided type. The type must be one of the names defined in the default paths (i.e., "CS" or "CSSY").
 }
 \examples{
-\dontrun{
+\donttest{
   # Retrieve the default CS specifications file path
   cs_specs_path <- seasonder_defaultSpecsFilePath("CS")
 

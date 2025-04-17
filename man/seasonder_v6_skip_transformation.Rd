@@ -35,7 +35,7 @@ an option to skip the problematic transformation and proceed with a fallback val
 }
 
 \examples{
-\dontrun{
+\donttest{
   tryCatch({
     seasonder_v6_skip_transformation(simpleError("test error"), "default")
   }, seasonder_v6_block_transformacion_skipped = function(e) NULL)

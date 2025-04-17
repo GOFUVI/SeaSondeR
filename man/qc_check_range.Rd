@@ -23,7 +23,7 @@ This function verifies if a given value lies within a specified range
 and matches the expected type, if provided.
 }
 \examples{
-\dontrun{
+\donttest{
   result <- qc_check_range(5, 0, 10)
   print(result)
 }

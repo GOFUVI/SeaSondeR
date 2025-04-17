@@ -40,7 +40,7 @@ The function performs validation on the following attributes of the SeaSondeRAPM
 It internally calls specific validation functions for each of these attributes. If any of the attributes are found to be invalid, the function will stop execution and display an error message.
 }
 \examples{
-\dontrun{
+\donttest{
   valid <- seasonder_validateAttributesSeaSondeRAPM(obj)
 }
 }

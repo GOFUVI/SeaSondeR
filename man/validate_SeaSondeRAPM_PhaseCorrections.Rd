@@ -17,7 +17,7 @@ This function validates if the provided PhaseCorrections attribute is a numeric
 vector of length 2.
 }
 \examples{
-\dontrun{
+\donttest{
   valid <- validate_SeaSondeRAPM_PhaseCorrections(c(10, -10))
 }
 }

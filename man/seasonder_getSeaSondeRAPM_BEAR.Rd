@@ -16,7 +16,7 @@ The BEAR attribute (bearing values) from the object.
 Getter for BEAR
 }
 \examples{
-\dontrun{
+\donttest{
   bear <- seasonder_getSeaSondeRAPM_BEAR(obj)
 }
 }

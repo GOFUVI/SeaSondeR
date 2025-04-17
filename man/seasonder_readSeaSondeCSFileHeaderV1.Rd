@@ -28,7 +28,7 @@ Reads the header of a SeaSonde file (Version 1) based on the provided specificat
 Transforms the date-time fields and returns the results.
 }
 \examples{
-\dontrun{
+\donttest{
   con <- rawConnection(as.raw(rep(0, 100)))
   specs <- list(
     nCsFileVersion = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),

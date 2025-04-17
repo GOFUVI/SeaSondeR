@@ -26,7 +26,7 @@ to the self-spectra of antenna 3. This smoothing aids in detecting the nulls tha
 second-order regions.
 }
 \examples{
-\dontrun{
+\donttest{
 # Retrieve smoothed FOR self-spectra
 smoothed_SS <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(cs_obj)
 print(smoothed_SS)

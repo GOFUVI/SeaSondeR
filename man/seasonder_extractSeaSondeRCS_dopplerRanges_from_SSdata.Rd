@@ -22,7 +22,7 @@ The function extracts a subset of columns from the self-spectra matrix. No expli
 performed to verify that the provided Doppler cell indices fall within the range of the matrix columns.
 }
 \examples{
-\dontrun{
+\donttest{
   # Create a sample self-spectra matrix with 5 range cells and 10 Doppler bins
   sample_matrix <- matrix(1:50, nrow = 5, ncol = 10)
 

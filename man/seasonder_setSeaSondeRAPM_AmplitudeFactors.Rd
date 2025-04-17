@@ -18,7 +18,7 @@ The modified SeaSondeRAPM object with updated AmplitudeFactors.
 Setter for AmplitudeFactors
 }
 \examples{
-\dontrun{
+\donttest{
   obj <- seasonder_setSeaSondeRAPM_AmplitudeFactors(obj, new_amplitude_factors)
 }
 }

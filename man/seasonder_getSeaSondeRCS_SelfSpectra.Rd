@@ -61,7 +61,7 @@ range cell numbers using \code{seasonder_rangeCellsDists2RangeNumber}.
 }
 }
 \examples{
-\dontrun{
+\donttest{
   # Example: Extract self-spectra for antennas 1 and 2, for range cells 10 to 20,
   # and Doppler bins 5 to 15 using raw data.
   cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")

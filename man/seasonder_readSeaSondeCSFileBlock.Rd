@@ -64,7 +64,7 @@ is up to the QC function to decide what to do if it receives a NULL.
 }
 }
 \examples{
-\dontrun{
+\donttest{
   spec <- list(field1 = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()))
   con <- rawConnection(as.raw(c(0x01)))
   block <- seasonder_readSeaSondeCSFileBlock(spec, con, endian = "big")

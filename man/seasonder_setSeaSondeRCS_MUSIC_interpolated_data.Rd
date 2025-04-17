@@ -29,7 +29,7 @@ The function assigns the provided interpolated data (or initializes a new data s
 MUSIC processing steps, where interpolated cross-spectral data is required for refining the estimation of Doppler bins.
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming cs_obj is a valid SeaSondeRCS object and you have computed interpolated data:
   interpolated <- my_interpolated_data  # Replace with actual interpolated data structure
   cs_obj <- seasonder_setSeaSondeRCS_MUSIC_interpolated_data(cs_obj, interpolated)

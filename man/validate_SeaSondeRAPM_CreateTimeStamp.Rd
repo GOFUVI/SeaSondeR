@@ -16,7 +16,7 @@ Returns TRUE if the validation passes.
 This function validates if the provided CreateTimeStamp is a POSIXct Date object.
 }
 \examples{
-\dontrun{
+\donttest{
   valid <- validate_SeaSondeRAPM_CreateTimeStamp(Sys.time())
 }
 }

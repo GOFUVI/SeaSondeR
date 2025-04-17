@@ -29,7 +29,7 @@ was detected in the first-order region. This information is used to refine first
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Assign maximum power bin indices to a SeaSondeRCS object
 cs_obj <- seasonder_setSeaSondeRCS_FOR_MAXP.bin(cs_obj, MAXP_bin_values)
 }

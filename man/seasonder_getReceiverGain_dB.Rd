@@ -24,7 +24,7 @@ using \code{\link{seasonder_getSeaSondeRCS_headerField}}. If the field is not
 present or has a NULL value, the function defaults to a receiver gain of -34.2 dB (CODAR, 2016).
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid `SeaSondeRCS` object
 receiver_gain <- seasonder_getReceiverGain_dB(cs_object)
 print(receiver_gain)

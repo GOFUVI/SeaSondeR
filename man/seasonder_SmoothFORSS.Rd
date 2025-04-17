@@ -34,7 +34,7 @@ regions, preventing over-smoothing that could distort boundaries or under-smooth
 introduce jagged edges.
 }
 \examples{
-\dontrun{
+\donttest{
 # Apply smoothing to the FOR self-spectra
 cs_obj <- seasonder_SmoothFORSS(cs_obj)
 }

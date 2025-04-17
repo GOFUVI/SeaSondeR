@@ -30,7 +30,7 @@ The Bragg Doppler angular frequency \eqn{\omega_B} is calculated using the formu
 The returned vector contains the negative (\eqn{-\omega_B}) and positive (\eqn{+\omega_B}) angular frequencies.
 }
 \examples{
-\dontrun{
+\donttest{
 # Assuming `cs_object` is a valid `SeaSondeRCS` object
 bragg_angular_freq <- seasonder_getBraggDopplerAngularFrequency(cs_object)
 print(bragg_angular_freq)

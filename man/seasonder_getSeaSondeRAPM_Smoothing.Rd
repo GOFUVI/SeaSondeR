@@ -16,7 +16,7 @@ The Smoothing attribute from the object.
 Getter for Smoothing
 }
 \examples{
-\dontrun{
+\donttest{
   smoothing <- seasonder_getSeaSondeRAPM_Smoothing(obj)
 }
 }

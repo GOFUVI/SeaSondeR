@@ -16,7 +16,7 @@ The PhaseCorrections attribute from the object.
 Getter for PhaseCorrections
 }
 \examples{
-\dontrun{
+\donttest{
   phase_corrections <- seasonder_getSeaSondeRAPM_PhaseCorrections(obj)
 }
 }

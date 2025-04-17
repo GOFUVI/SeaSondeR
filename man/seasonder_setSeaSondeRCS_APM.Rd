@@ -24,7 +24,7 @@ The function simply sets the "APM" attribute of the provided SeaSondeRCS object 
 APM object. Further validation of the APM object should be performed (TODO).
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming cs_obj is a valid SeaSondeRCS object and apm_obj is a valid APM object:
   cs_obj <- seasonder_createSeaSondeRCS("path/to/file.cs")
   apm_obj <- list(param1 = "value1", param2 = "value2")  # Example APM object

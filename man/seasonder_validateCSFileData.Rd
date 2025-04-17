@@ -44,7 +44,7 @@ This function utilizes the \code{rlang} package to manage conditions and provide
 }
 
 \examples{
-\dontrun{
+\donttest{
   header <- list(nV1Extent = 62, nCsFileVersion = 4, nV2Extent = 56,
                  nV3Extent = 48, nV4Extent = 0, nRangeCells = 100,
                  nDopplerCells = 512, nCsKind = 1)

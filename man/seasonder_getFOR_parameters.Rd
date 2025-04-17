@@ -36,7 +36,7 @@ and assigns default values where necessary.
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Retrieve FOR parameters for a SeaSondeRCS object
 for_params <- seasonder_getFOR_parameters(cs_obj)
 print(for_params)

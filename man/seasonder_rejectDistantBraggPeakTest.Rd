@@ -60,7 +60,7 @@ This test is particularly important in scenarios where strong non-Bragg signals,
 ships or other high-intensity noise sources, might otherwise be misclassified as first-order Bragg.
 }
 \examples{
-\dontrun{
+\donttest{
 # Evaluate a single peak for rejection
 peak <- c(100, 101, 102)
 cs_obj <- seasonder_rejectDistantBraggPeakTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")

@@ -29,7 +29,7 @@ This value is extracted from the self-spectra and used for setting first-order b
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Assign maximum power values to a SeaSondeRCS object
 cs_obj <- seasonder_setSeaSondeRCS_FOR_MAXP(cs_obj, MAXP_values)
 }

@@ -26,7 +26,7 @@ The function first validates the provided method. If the method is valid, it is 
 is later used in the processing workflow to guide FOR computation.
 }
 \examples{
-\dontrun{
+\donttest{
   # Create a SeaSondeRCS object (assuming seasonder_createSeaSondeRCS is defined)
   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
 

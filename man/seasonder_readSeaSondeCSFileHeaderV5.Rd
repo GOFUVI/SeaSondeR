@@ -28,7 +28,7 @@ Reads the header of a SeaSonde file (Version 5) based on the provided specificat
 Performs applicable transformations and returns the results.
 }
 \examples{
-\dontrun{
+\donttest{
   con <- rawConnection(as.raw(rep(0, 150)))
   specs <- list(
     nOutputInterval = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),

@@ -28,7 +28,7 @@ The function performs the following operations:
 }
 }
 \examples{
-\dontrun{
+\donttest{
   # Suppose 'cs_object' is a valid SeaSondeRCS object
   cs_object <- seasonder_createSeaSondeRCS(...)
   cs_object <- seasonder_setMUSICDopplerInterpolation(cs_object, 2)

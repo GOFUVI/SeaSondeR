@@ -34,7 +34,7 @@ The MUSIC algorithm's implementation follows the theoretical framework outlined 
 in HF radar cross-spectra.
 }
 \examples{
-\dontrun{
+\donttest{
 cs_object <- seasonder_createSeaSondeRCS(x = "path/to/cs_file")
 cs_object <- seasonder_MUSICExtractPeaks(cs_object)
 print(cs_object)

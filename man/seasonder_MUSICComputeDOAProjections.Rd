@@ -50,7 +50,7 @@ where:
 }
 
 \examples{
-\dontrun{
+\donttest{
 cs_object <- seasonder_MUSICComputeDOAProjections(cs_object)
 }
 }

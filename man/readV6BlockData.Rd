@@ -43,7 +43,7 @@ repeated blocks are processed recursively based on a set of loops provided
 in the specifications.
 }
 \examples{
-\dontrun{
+\donttest{
   con <- rawConnection(as.raw(rep(0, 300)))
   specs <- list(
     nCS6ByteSize = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),

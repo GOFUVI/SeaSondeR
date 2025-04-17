@@ -16,7 +16,7 @@ A character string stating the new amplitude factors.
 This function generates a message indicating that amplitude factors have been overridden.
 }
 \examples{
-\dontrun{
+\donttest{
   msg <- SeaSondeRAPM_amplitude_factors_override_step_text(c(1.05, 0.95))
 }
 }

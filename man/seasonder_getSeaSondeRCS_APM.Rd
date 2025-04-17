@@ -20,7 +20,7 @@ a SeaSondeRCS object. This attribute is stored as an attribute named "APM" withi
 The function uses \code{attr(..., exact = TRUE)} to ensure that the correct attribute is retrieved.
 }
 \examples{
-\dontrun{
+\donttest{
   # Assuming cs_obj is a valid SeaSondeRCS object with an "APM" attribute
   apm_value <- seasonder_getSeaSondeRCS_APM(cs_obj)
   print(apm_value)

@@ -58,7 +58,7 @@ This filtering ensures that only strong, reliable first-order Bragg signals are 
 the impact of noise and second-order contamination.
 }
 \examples{
-\dontrun{
+\donttest{
 # Apply amplitude filtering to the FOR detection
 cs_obj <- seasonder_filterFORAmplitudes(cs_obj)
 }

@@ -19,7 +19,7 @@ This function sets the maximum radial velocity (\code{currmax}) allowed in the f
 for the SeaSondeRCS object.
 }
 \examples{
-\dontrun{
+\donttest{
   cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
   cs_obj <- seasonder_setFOR_currmax(cs_obj, 2.5)
 }

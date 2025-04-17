@@ -68,7 +68,7 @@ This function is particularly useful in environments where noise or ionospheric 
 ensuring that only valid first-order Bragg peaks are retained.
 }
 \examples{
-\dontrun{
+\donttest{
 # Evaluate a single peak for noise/ionospheric contamination
 peak <- c(100, 101, 102)
 cs_obj <- seasonder_rejectNoiseIonosphericTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")

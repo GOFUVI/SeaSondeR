@@ -29,7 +29,7 @@
 #' @importFrom dplyr last
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Example for processing command 0x9C (unsigned 32-bit integer):
 #'   # 0x9C is followed by 4 bytes that represent 1000 (big endian: 0x00, 0x00, 0x03, 0xE8).
 #'   raw_vec <- as.raw(c(0x9C, 0x00, 0x00, 0x03, 0xE8))
@@ -248,7 +248,7 @@ seasonder_read_reduced_encoded_data <- function(connection, key, endian = "big")
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create a raw connection with sample data:
 #' con <- rawConnection(as.raw(c(0x42, 0x29, 0xa3, 0xd7, 0xFF, 0x00)))
 #' key <- list(size = 6, key = "csign")
@@ -325,7 +325,7 @@ seasonder_CSSY_read_csign <- function(connection, key) {
 #'   and contains integers (0 or 1) corresponding to the bits (in little-endian order) extracted from the raw data.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- rawConnection(as.raw(c(0x01, 0x02, 0x03)))
 #'   key <- list(size = 3, key = "asgn")
 #'   result <- seasonder_CSSY_read_asign(con, key)
@@ -420,7 +420,7 @@ seasonder_readCSSYFields <- function(connection, specs, endian, parent_key= NULL
 #' voltage values. Special integer values equal to 0xFFFFFFFF are converted to NaN.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Example usage:
 #' values <- list(c(1000, 0xFFFFFFFF, 2000))
 #' scaled <- seasonder_SeaSondeRCSSYApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, 
@@ -516,7 +516,7 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 #' @return A list representing a cell in the CSSY body.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- rawConnection(as.raw(c(0x00)))
 #'   specs <- list(indx = list(type = "int"))
 #'   result <- seasonder_readCSSYBodyRangeCell(con, specs, dbRef = 0, endian = "big")
@@ -644,7 +644,7 @@ seasonder_readCSSYLims <- function(connection, n_values, endian = "big") {
 #' @import glue
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   con <- file("path/to/file.cssy", "rb")
 #'   specs <- seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CSSY"), "header")
 #'   header <- seasonder_readCSSYHeader(con, specs, endian = "big")
@@ -713,7 +713,7 @@ seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", 
 #'         are stored in the 'header_csr' element.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   header <- list(cs4h = list(dummy = "data"), other_field = "info")
 #'   result <- seasonder_CSSY2CSHeader(header)
 #' }
@@ -766,7 +766,7 @@ seasonder_CSSY2CSHeader <- function(header) {
 #' of the matrices as indicated by the cell's \code{indx$index} value.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Example with a single cell
 #'   cell <- list(
 #'     indx  = list(index = 1),
@@ -922,7 +922,7 @@ seasonder_applyCSSYSigns <- function(cs_data) {
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Assuming "path/to/file.rcssy" is a valid SeaSonde RCSSY file and the specifications file exists:
 #'   cs_obj <- seasonder_readSeaSondeRCSSYFile("path/to/file.rcssy")
 #'
