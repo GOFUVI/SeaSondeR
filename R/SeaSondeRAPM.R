@@ -390,6 +390,8 @@ seasonder_validateCalibrationMatrixSeaSondeRAPM <- function(matrix) {
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
 #' valid <- seasonder_validateAttributesSeaSondeRAPM(obj)
 seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {
   # Validate each attribute of the SeaSondeRAPM object using their respective validation functions
@@ -425,6 +427,9 @@ seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
+#' # Create a default SeaSondeRAPM object and retrieve its quality_matrix
+#' obj <- seasonder_createSeaSondeRAPM()
+#' q_matrix <- attributes(obj)$quality_matrix
 #' valid <- SeaSondeR:::validate_SeaSondeRAPM_quality_matrix(q_matrix, obj)
 validate_SeaSondeRAPM_quality_matrix <- function(matrix, seasonde_apm_obj) {
   # Check that the matrix is a valid 3-row complex matrix
@@ -456,7 +461,10 @@ validate_SeaSondeRAPM_quality_matrix <- function(matrix, seasonde_apm_obj) {
 #' @return Returns TRUE if the validation passes.
 #'
 #' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_BEAR(c(0, 45, 90), obj)
+#' # Create a default SeaSondeRAPM object and retrieve its BEAR vector
+#' obj <- seasonder_createSeaSondeRAPM()
+#' bear <- attributes(obj)$BEAR
+#' valid <- SeaSondeR:::validate_SeaSondeRAPM_BEAR(bear, obj)
 validate_SeaSondeRAPM_BEAR <- function(vector, seasonde_apm_obj) {
   # Ensure BEAR is numeric
   if (!is.numeric(vector)) {
@@ -784,6 +792,8 @@ validate_SeaSondeRAPM_PhaseCorrections <- function(corrections) {
 #' @return The version value.
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
 #' version <- seasonder_getVersion.SeaSondeRAPM(obj)
 seasonder_getVersion.SeaSondeRAPM <- function(seasonder_obj) {
   # Retrieve the "version" attribute from the object
@@ -798,6 +808,8 @@ seasonder_getVersion.SeaSondeRAPM <- function(seasonder_obj) {
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
 #' quality_matrix <- seasonder_getSeaSondeRAPM_quality_matrix(obj)
 seasonder_getSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj) {
   # Return the quality_matrix attribute from the object
@@ -813,6 +825,11 @@ seasonder_getSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
+#' # Retrieve the existing quality_matrix
+#' new_quality_matrix <- attributes(obj)$quality_matrix
+#' # Update quality_matrix in the object
 #' obj <- seasonder_setSeaSondeRAPM_quality_matrix(obj, new_quality_matrix)
 seasonder_setSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj, new_value) {
   # Validate the new quality_matrix value against the object
@@ -836,6 +853,8 @@ seasonder_setSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj, new_value
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
 #' bear <- seasonder_getSeaSondeRAPM_BEAR(obj)
 seasonder_getSeaSondeRAPM_BEAR <- function(seasonde_apm_obj) {
   # Return the BEAR attribute (bearing values) from the object
@@ -851,6 +870,11 @@ seasonder_getSeaSondeRAPM_BEAR <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
+#' # Define a new BEAR vector (e.g., from the object)
+#' new_bear <- attributes(obj)$BEAR
+#' # Update BEAR in the object
 #' obj <- seasonder_setSeaSondeRAPM_BEAR(obj, new_bear)
 seasonder_setSeaSondeRAPM_BEAR <- function(seasonde_apm_obj, new_value) {
   # Validate the new BEAR value
@@ -869,6 +893,8 @@ seasonder_setSeaSondeRAPM_BEAR <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
 #' phase_corrections <- seasonder_getSeaSondeRAPM_PhaseCorrections(obj)
 seasonder_getSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj) {
   # Return the PhaseCorrections attribute from the object
@@ -884,6 +910,11 @@ seasonder_getSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
+#' # Define new_phase_corrections (e.g., from the object)
+#' new_phase_corrections <- attributes(obj)$PhaseCorrections
+#' # Update PhaseCorrections in the object
 #' obj <- seasonder_setSeaSondeRAPM_PhaseCorrections(obj, new_phase_corrections)
 seasonder_setSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj, new_value) {
   # Validate the new PhaseCorrections value
@@ -902,6 +933,8 @@ seasonder_setSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj, new_val
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
 #' type <- seasonder_getSeaSondeRAPM_Type(obj)
 seasonder_getSeaSondeRAPM_Type <- function(seasonde_apm_obj) {
   # Return the Type attribute from the object
@@ -917,6 +950,11 @@ seasonder_getSeaSondeRAPM_Type <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
+#' # Define a new Type value (e.g., from the object)
+#' new_type <- attributes(obj)$Type
+#' # Update Type in the object
 #' obj <- seasonder_setSeaSondeRAPM_Type(obj, new_type)
 seasonder_setSeaSondeRAPM_Type <- function(seasonde_apm_obj, new_value) {
   # Validate the new Type value
@@ -935,6 +973,8 @@ seasonder_setSeaSondeRAPM_Type <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
 #' creator <- seasonder_getSeaSondeRAPM_Creator(obj)
 seasonder_getSeaSondeRAPM_Creator <- function(seasonde_apm_obj) {
   # Return the Creator attribute from the object
@@ -950,6 +990,11 @@ seasonder_getSeaSondeRAPM_Creator <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
+#' # Define new_creator (e.g., from the object)
+#' new_creator <- attributes(obj)$Creator
+#' # Update Creator in the object
 #' obj <- seasonder_setSeaSondeRAPM_Creator(obj, new_creator)
 seasonder_setSeaSondeRAPM_Creator <- function(seasonde_apm_obj, new_value) {
   # Validate the new Creator value
@@ -968,6 +1013,8 @@ seasonder_setSeaSondeRAPM_Creator <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
 #' site_name <- seasonder_getSeaSondeRAPM_SiteName(obj)
 seasonder_getSeaSondeRAPM_SiteName <- function(seasonde_apm_obj) {
   # Return the SiteName attribute from the object
@@ -983,6 +1030,11 @@ seasonder_getSeaSondeRAPM_SiteName <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
+#' # Create a default SeaSondeRAPM object
+#' obj <- seasonder_createSeaSondeRAPM()
+#' # Define new_site_name (e.g., from the object)
+#' new_site_name <- attributes(obj)$SiteName
+#' # Update SiteName in the object
 #' obj <- seasonder_setSeaSondeRAPM_SiteName(obj, new_site_name)
 seasonder_setSeaSondeRAPM_SiteName <- function(seasonde_apm_obj, new_value) {
   # Validate the new SiteName value
