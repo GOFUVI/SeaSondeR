@@ -294,9 +294,9 @@ seasonder_setFOR_parameters <- function(seasonder_cs_object, FOR_parameters) {
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_setFORParameters_step_text())
 if(!is.null(FOR_parameters$noisefact) && (is.null(old_parameters$noisefact)  ||  old_parameters$noisefact != FOR_parameters$noisefact)){
 
-  seasonder_cs_object %<>% seasonder_computeNoiseLevel(antenna = 1,smoothed= T)
-  seasonder_cs_object %<>% seasonder_computeNoiseLevel(antenna = 2,smoothed= T)
-  seasonder_cs_object %<>% seasonder_computeNoiseLevel(antenna = 3,smoothed= T)
+  seasonder_cs_object %<>% seasonder_computeNoiseLevel(antenna = 1,smoothed= TRUE)
+  seasonder_cs_object %<>% seasonder_computeNoiseLevel(antenna = 2,smoothed= TRUE)
+  seasonder_cs_object %<>% seasonder_computeNoiseLevel(antenna = 3,smoothed= TRUE)
 
 
 }

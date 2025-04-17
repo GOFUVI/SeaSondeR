@@ -54,30 +54,30 @@ describe("seasonder_raw_to_int",{
   it("should convert a signed 64bit integer correctly", {
 
     r <- seasonder_int_to_raw(0)
-    expect_equal(as.character(seasonder_raw_to_int(r, signed=T)),  "0")
+    expect_equal(as.character(seasonder_raw_to_int(r, signed=TRUE)),  "0")
 
     r <- as.raw(c(0x12,0x34,0x56,0x78,0x90,0xAB,0xCD,0xEF))
-    expect_equal(as.character(seasonder_raw_to_int(r, signed=T)),  "1311768467294899695")
+    expect_equal(as.character(seasonder_raw_to_int(r, signed=TRUE)),  "1311768467294899695")
 
 
     r <- seasonder_int_to_raw(-2)
-    expect_equal(as.character(seasonder_raw_to_int(r, signed=T)),  "-2")
+    expect_equal(as.character(seasonder_raw_to_int(r, signed=TRUE)),  "-2")
 
     r <- seasonder_int_to_raw(-1)
-    expect_equal(as.character(seasonder_raw_to_int(r, signed=T)),  "-1")
+    expect_equal(as.character(seasonder_raw_to_int(r, signed=TRUE)),  "-1")
 
 
 
     r <- seasonder_int_to_raw(bit64::lim.integer64()[1])
-    expect_equal(as.character(seasonder_raw_to_int(r, signed=T)), as.character(bit64::lim.integer64()[1]))
+    expect_equal(as.character(seasonder_raw_to_int(r, signed=TRUE)), as.character(bit64::lim.integer64()[1]))
 
 
 
     r <- seasonder_int_to_raw(bit64::lim.integer64()[2])
-    expect_equal(as.character(seasonder_raw_to_int(r, signed=T)), as.character(bit64::lim.integer64()[2]))
+    expect_equal(as.character(seasonder_raw_to_int(r, signed=TRUE)), as.character(bit64::lim.integer64()[2]))
 
     r <- seasonder_int_to_raw(NA)
-    expect_equal(as.character(seasonder_raw_to_int(r, signed=T)), as.character(NA))
+    expect_equal(as.character(seasonder_raw_to_int(r, signed=TRUE)), as.character(NA))
 
 
   })
@@ -2530,7 +2530,7 @@ describe("SeaSondeRCS",{
 
       test <- seasonder_asJSONSeaSondeRCSHeader(seasonder_cs_obj)
 
-      try(expect_snapshot_value(test,style = "serialize"),silent = T)
+      try(expect_snapshot_value(test,style = "serialize"),silent = TRUE)
     })
 
     describe("when we provide a path",{
@@ -2699,11 +2699,11 @@ describe("SeaSondeRCS",{
 
             seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 4,plot_FORs = TRUE)
 
-            seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T, reject_noise_ionospheric = F))
+            seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = TRUE, reject_noise_ionospheric = F))
 
             seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj, 3 , 4,plot_FORs = TRUE)
 
-            seasonder_cs_obj_v4 %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T, reject_noise_ionospheric = T))
+            seasonder_cs_obj_v4 %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = TRUE, reject_noise_ionospheric = TRUE))
 
             seasonder_SeaSondeRCS_plotSelfSpectrum(seasonder_cs_obj_v4, 3 , 20,plot_FORs = TRUE)
 
@@ -2911,7 +2911,7 @@ describe("SeaSondeRCS",{
 
       {
 
-        test <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = T)
+        test <- seasonder_getDopplerBinsFrequency(seasonder_cs_obj, normalized = TRUE)
 
         expect_equal(test[512], 0)
 

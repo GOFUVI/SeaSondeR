@@ -4,7 +4,7 @@
 \alias{seasonder_getCSHeaderByPath}
 \title{Retrieve a value from the SeaSondeRCS header by a specific path}
 \usage{
-seasonder_getCSHeaderByPath(seasonder_obj, path, warn_missing = T)
+seasonder_getCSHeaderByPath(seasonder_obj, path, warn_missing = TRUE)
 }
 \arguments{
 \item{seasonder_obj}{A SeaSondeRCS object.}

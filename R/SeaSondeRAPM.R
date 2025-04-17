@@ -1694,7 +1694,7 @@ seasonder_extrapolateAPM <- function(seasonder_apm_object, n = 1) {
   colnames(new_M) <- as.character(new_BEAR)
   attr(new_M, "BEAR") <- new_BEAR
 
-  quality_m <- attr(seasonder_apm_object, "quality_matrix", exact = T)
+  quality_m <- attr(seasonder_apm_object, "quality_matrix", exact = TRUE)
   new_q <- cbind(matrix(rep(-1+0i, n*3), ncol = n),quality_m,  matrix(rep(-1+0i, n*3), ncol = n))
   colnames(new_q) <- as.character(new_BEAR)
   attr(new_M,"quality_matrix") <- new_q

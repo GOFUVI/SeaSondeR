@@ -24,9 +24,9 @@ seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
 
 
 
-   plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[1,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
+   plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Arg(seasonder_apm_obj[1,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
 
-    plot(attr(seasonder_apm_obj, "BEAR",exact = T),Mod(seasonder_apm_obj[1,]),xlim = c(-180,180))
+    plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Mod(seasonder_apm_obj[1,]),xlim = c(-180,180))
 
 
   FOS <-   list(nsm = 2,
@@ -64,7 +64,7 @@ seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
 # SSA_csd <- csd_data$SSA3
 #
 # x <- (SSA_csd-SSA_interp)
-# which(abs(x) > 1e-12,arr.ind = T)
+# which(abs(x) > 1e-12,arr.ind = TRUE)
 
   MUSIC <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
   #
@@ -281,21 +281,21 @@ combined_apm_obj <- smoothed_seasonder_apm_obj
 
 # combined_apm_obj[,as.character(as.integer(dimnames(seasonder_apm_obj)[[2]]))] <- seasonder_apm_obj
 
-plot(attr(combined_apm_obj, "BEAR",exact = T),Arg(combined_apm_obj[1,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
+plot(attr(combined_apm_obj, "BEAR",exact = TRUE),Arg(combined_apm_obj[1,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
 
-plot(attr(combined_apm_obj, "BEAR",exact = T),Mod(combined_apm_obj[1,]),xlim = c(-180,180))
+plot(attr(combined_apm_obj, "BEAR",exact = TRUE),Mod(combined_apm_obj[1,]),xlim = c(-180,180))
 
 
-plot(attr(combined_apm_obj, "BEAR",exact = T),Arg(combined_apm_obj[2,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
+plot(attr(combined_apm_obj, "BEAR",exact = TRUE),Arg(combined_apm_obj[2,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
 
-plot(attr(combined_apm_obj, "BEAR",exact = T),Mod(combined_apm_obj[2,]),xlim = c(-180,180))
+plot(attr(combined_apm_obj, "BEAR",exact = TRUE),Mod(combined_apm_obj[2,]),xlim = c(-180,180))
 
 ggplot2::ggplot() + ggplot2::coord_polar(theta = "x", start = 0) + ggplot2::xlim(0,360) +
-  ggplot2::geom_point(data=data.frame(theta = attr(ideal_seasonder_apm_obj, "BEAR",exact = T) %% 360, mag = Mod(ideal_seasonder_apm_obj[1,])),  ggplot2::aes(x = theta, y = mag), color = "black") +
-  ggplot2::geom_point(data=data.frame(theta = attr(ideal_seasonder_apm_obj, "BEAR",exact = T) %% 360, mag = Mod(ideal_seasonder_apm_obj[2,])),  ggplot2::aes(x = theta, y = mag), color = "black") +
+  ggplot2::geom_point(data=data.frame(theta = attr(ideal_seasonder_apm_obj, "BEAR",exact = TRUE) %% 360, mag = Mod(ideal_seasonder_apm_obj[1,])),  ggplot2::aes(x = theta, y = mag), color = "black") +
+  ggplot2::geom_point(data=data.frame(theta = attr(ideal_seasonder_apm_obj, "BEAR",exact = TRUE) %% 360, mag = Mod(ideal_seasonder_apm_obj[2,])),  ggplot2::aes(x = theta, y = mag), color = "black") +
 
-  ggplot2::geom_point(data=data.frame(theta = attr(combined_apm_obj, "BEAR",exact = T) %% 360, mag = Mod(combined_apm_obj[1,])),  ggplot2::aes(x = theta, y = mag), color = "red") +
-  ggplot2::geom_point(data=data.frame(theta = attr(combined_apm_obj, "BEAR",exact = T) %% 360, mag = Mod(combined_apm_obj[2,])),  ggplot2::aes(x = theta, y = mag), color = "blue") +
+  ggplot2::geom_point(data=data.frame(theta = attr(combined_apm_obj, "BEAR",exact = TRUE) %% 360, mag = Mod(combined_apm_obj[1,])),  ggplot2::aes(x = theta, y = mag), color = "red") +
+  ggplot2::geom_point(data=data.frame(theta = attr(combined_apm_obj, "BEAR",exact = TRUE) %% 360, mag = Mod(combined_apm_obj[2,])),  ggplot2::aes(x = theta, y = mag), color = "blue") +
   ggplot2::scale_x_continuous(n.breaks = 18)
 
 
@@ -341,7 +341,7 @@ ggplot2::ggplot() + ggplot2::coord_polar(theta = "x", start = 0) + ggplot2::xlim
       # SSA_csd <- csd_data$SSA3
       #
       # x <- (SSA_csd-SSA_interp)
-      # which(abs(x) > 1e-12,arr.ind = T)
+      # which(abs(x) > 1e-12,arr.ind = TRUE)
 
       MUSIC <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
       #
@@ -527,9 +527,9 @@ to.plot %>% dplyr::group_by(range) %>% dplyr::summarise(P = mean(P)) %>% ggplot2
 
 
 
-      plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[1,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
+      plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Arg(seasonder_apm_obj[1,])*180/pi,xlim = c(-180,180),ylim = c(-180, 180))
 
-      plot(attr(seasonder_apm_obj, "BEAR",exact = T),Mod(seasonder_apm_obj[1,]),xlim = c(-180,180))
+      plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Mod(seasonder_apm_obj[1,]),xlim = c(-180,180))
 
 
       FOS <-   list(nsm = 2,
@@ -567,7 +567,7 @@ to.plot %>% dplyr::group_by(range) %>% dplyr::summarise(P = mean(P)) %>% ggplot2
       # SSA_csd <- csd_data$SSA3
       #
       # x <- (SSA_csd-SSA_interp)
-      # which(abs(x) > 1e-12,arr.ind = T)
+      # which(abs(x) > 1e-12,arr.ind = TRUE)
 
       MUSIC <- seasonder_cs_obj %>% seasonder_getSeaSondeRCS_MUSIC()
       #
@@ -733,8 +733,8 @@ describe("radials computation",{
 
 
 
-    plot(attr(seasonder_apm_obj, "BEAR",exact = T),Mod(seasonder_apm_obj[2,]),xlim = c(-180,180))
-    plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[2,]),xlim = c(-180,180))
+    plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Mod(seasonder_apm_obj[2,]),xlim = c(-180,180))
+    plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Arg(seasonder_apm_obj[2,]),xlim = c(-180,180))
 
 
     FOS <-   list(nsm = 2,
@@ -848,7 +848,7 @@ describe("radials computation",{
 
 
 
-    test$distances[sample(1:nrow(to.plot),10)] %>% purrr::compact() %>% purrr::map2(factor(seq_along(.)),\(dist,i) data.frame(i = i, dist = 1/pracma::Real(dist["single",, drop=T]) , bearing = attr(dist,"bearings", exact = T))) %>% dplyr::bind_rows() %>%   ggplot2::ggplot(ggplot2::aes(y=dist, x=bearing, color = i)) + ggplot2::geom_point(alpha = 0.5) + ggplot2::xlim(-180,180)
+    test$distances[sample(1:nrow(to.plot),10)] %>% purrr::compact() %>% purrr::map2(factor(seq_along(.)),\(dist,i) data.frame(i = i, dist = 1/pracma::Real(dist["single",, drop=TRUE]) , bearing = attr(dist,"bearings", exact = TRUE))) %>% dplyr::bind_rows() %>%   ggplot2::ggplot(ggplot2::aes(y=dist, x=bearing, color = i)) + ggplot2::geom_point(alpha = 0.5) + ggplot2::xlim(-180,180)
 
 
     ruv <- data.table::fread("tests/testthat/data/TORA/RDLi_TORA_2024_03_19_1630.ruv",skip = 56, header = F)

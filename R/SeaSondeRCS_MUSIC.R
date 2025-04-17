@@ -1997,7 +1997,7 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
 #'   # Assume cs_obj is a valid SeaSondeRCS object with MUSIC data already computed.
 #'   updated_obj <- seasonder_MUSICCheckSignalMatrix(cs_obj)
 #'   # The updated object now has an added diag_off_diag_power_ratio column and 
-#' updated retained_solution fields.
+#'   #updated retained_solution fields.
 #'   print(updated_obj)
 #' }
 #'
@@ -2389,9 +2389,9 @@ seasonder_computeSignalSNR <- function(seasonder_cs_object){
   MA1S <- MA2S <- MA3S <- rlang::zap()
   # Retrieve the MUSIC data object from the input
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
-NL1 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1)
-NL2 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 2)
-NL3 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 3)
+NL1 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = TRUE, antenna = 1)
+NL2 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = TRUE, antenna = 2)
+NL3 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = TRUE, antenna = 3)
 
 new_columns <-  purrr::map2(MUSIC$cov, MUSIC$range_cell, \(C, rc,n1 = NL1, n2 = NL2, n3 = NL3){
   C_diag <- diag(C)
@@ -2414,7 +2414,7 @@ new_columns <-  purrr::map2(MUSIC$cov, MUSIC$range_cell, \(C, rc,n1 = NL1, n2 = 
 
 }
 
-seasonder_SNRCheck <- function(seasonder_cs_object, discard_low_SNR  = T){
+seasonder_SNRCheck <- function(seasonder_cs_object, discard_low_SNR  = TRUE){
   # Initialize globals for seasonder_SNRCheck
   MA1S <- MA2S <- MA3S <- VFLG <- rlang::zap()
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
@@ -3834,9 +3834,9 @@ seasonder_exportRangeInfo <- function(seasonder_cs_object){
 
   rc <- rm %>% dplyr::mutate(is_single = MSEL == "single", is_dual = MSEL == "dual") %>% dplyr::summarise(NVSC = sum(is_single), NVDC = sum(is_dual), NVAC = NVSC + NVDC * 2,.by = c(SPRC, RNGC))
 
-  NF01 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 1)
-  NF02 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 2)
-  NF03 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = T, antenna = 3)
+  NF01 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = TRUE, antenna = 1)
+  NF02 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = TRUE, antenna = 2)
+  NF03 <- seasonder_cs_object %>% seasonder_getSeaSondeRCS_NoiseLevel(dB = TRUE, antenna = 3)
   Noise <- data.frame(NF01 = NF01, NF02 = NF02, NF03 = NF03) %>% dplyr::mutate(SPRC = dplyr::row_number())
 
   FOR <-   seasonder_SeaSondeRCSExportFORBoundaries(seasonder_cs_object) %>% magrittr::set_colnames(c("SPRC","ALM1","ALM2","ALM3","ALM4"))
@@ -3972,9 +3972,9 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
     MDW2 = tidyr::replace_na(MDW2, 0),
     MP13 = purrr::map_dbl(cov, \(x) Arg(x[1,3])*180/pi),
     MP23 = purrr::map_dbl(cov, \(x) Arg(x[2,3])*180/pi),
-    Noise_3 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T, antenna = 3)[SPRC],
-    Noise_2 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T, antenna = 2)[SPRC],
-    Noise_1 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T, antenna = 1)[SPRC],
+    Noise_3 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = TRUE, antenna = 3)[SPRC],
+    Noise_2 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = TRUE, antenna = 2)[SPRC],
+    Noise_1 = seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = TRUE, antenna = 1)[SPRC],
     MAXS = purrr::map(cov, \(x) self_spectra_to_dB(c(x[1,1], x[2,2], x[3,3]), receiver_gain)),
     MAS3 = purrr::map2_dbl(MAXS, Noise_3, \(x,y, cs=seasonder_cs_object) x[3]- y),
     MAS2 = purrr::map2_dbl(MAXS, Noise_2, \(x,y, cs=seasonder_cs_object) x[2]- y),

@@ -956,7 +956,7 @@ seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_object, path = NULL) {
 #' @export
 seasonder_getSeaSondeRCS_APM <- function(seasonder_cs_object){
 
-  out <- attr(seasonder_cs_object, "APM", exact = T)
+  out <- attr(seasonder_cs_object, "APM", exact = TRUE)
 
   return(out)
 
@@ -1416,7 +1416,7 @@ seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj) {
 #' non_existent_field_value <- seasonder_getCSHeaderByPath(cs_object, c("nonExistentField"))
 #' } 
 #' @export
-seasonder_getCSHeaderByPath <- function(seasonder_obj, path, warn_missing = T) {
+seasonder_getCSHeaderByPath <- function(seasonder_obj, path, warn_missing = TRUE) {
 
   header <- seasonder_getSeaSondeRCS_header(seasonder_obj)
 
@@ -2949,7 +2949,7 @@ seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_object, antenna,
 
 
 
-    noise_level <- seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = T)[range_cell] %>% magrittr::set_names(NULL)
+    noise_level <- seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_object, dB = TRUE)[range_cell] %>% magrittr::set_names(NULL)
 
     reference_noise_normalized_limits <- seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits(seasonder_cs_object)
 
@@ -3426,7 +3426,7 @@ seasonder_readCSField <- function(con, type, endian = "big") {
   },
   {
     # Ensure the connection is open before proceeding.
-    open_con <- try(isOpen(con), silent = T)
+    open_con <- try(isOpen(con), silent = TRUE)
     if (!inherits(open_con, "try-error")) {
       if (!open_con) {
         rlang::inject(seasonder_logAndAbort("Connection is not open.", !!!conditions_params))
@@ -3436,7 +3436,7 @@ seasonder_readCSField <- function(con, type, endian = "big") {
     }
 
     # Helper function to safely read from the connection.
-    read_values <- function(bytes, format, n = 1, signed = T) {
+    read_values <- function(bytes, format, n = 1, signed = TRUE) {
       res <- rlang::try_fetch({
         out <- readBin(con, what = format, n = n, size = bytes, endian = endian, signed = signed)
         # If nothing is read, it could be the end of the file.

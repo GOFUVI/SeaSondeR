@@ -132,11 +132,11 @@ target <- matrix(rep(NA_complex_,9),ncol=3)
 
       target_distances <- rep(NA_complex_,ncol(seasonder_apm_obj))
 
-      for(i in seq_along(attr(seasonder_apm_obj, "BEAR",exact = T))){
+      for(i in seq_along(attr(seasonder_apm_obj, "BEAR",exact = TRUE))){
         target_distances[i] <- Conj(t(seasonder_apm_obj[,i, drop=F])) %*% G %*% Conj(t(G)) %*% seasonder_apm_obj[,i, drop = F]
       }
 
-      plot(attr(seasonder_apm_obj, "BEAR",exact = T),1/pracma::Real(target_distances))
+      plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),1/pracma::Real(target_distances))
 
       expect_equal(target_distances,test["dual",])
 
@@ -146,19 +146,19 @@ target <- matrix(rep(NA_complex_,9),ncol=3)
 
       target_distances <- rep(NA_complex_,ncol(seasonder_apm_obj))
 
-      for(i in seq_along(attr(seasonder_apm_obj, "BEAR",exact = T))){
+      for(i in seq_along(attr(seasonder_apm_obj, "BEAR",exact = TRUE))){
         target_distances[i] <- Conj(t(seasonder_apm_obj[,i, drop=F])) %*% G %*% Conj(t(G)) %*% seasonder_apm_obj[,i, drop = F]
       }
 
-      plot(attr(seasonder_apm_obj, "BEAR",exact = T),1/pracma::Real(target_distances))
+      plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),1/pracma::Real(target_distances))
 
       expect_equal(target_distances,test["single",])
-# plot(attr(seasonder_apm_obj, "BEAR",exact = T),Mod(seasonder_apm_obj[1,]))
-      # plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[1,]))
+# plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Mod(seasonder_apm_obj[1,]))
+      # plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Arg(seasonder_apm_obj[1,]))
 # plot(Mod(test["dual",]))
 
-      # plot(attr(seasonder_apm_obj, "BEAR",exact = T),Mod(target_distances))
-      # plot(attr(seasonder_apm_obj, "BEAR",exact = T),Mod(test["dual",]))
+      # plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Mod(target_distances))
+      # plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Mod(test["dual",]))
 
 
       expect_snapshot_value(test,style = "serialize")
@@ -204,7 +204,7 @@ target <- matrix(rep(NA_complex_,9),ncol=3)
 
 distances <- MUSIC$distances[[1]]
 
-target_bearing <- attr(distances, "bearings",exact = T)[which.max(1/Mod(distances["single",]))]
+target_bearing <- attr(distances, "bearings",exact = TRUE)[which.max(1/Mod(distances["single",]))]
 
 expect_equal(target_bearing,test$single$bearing)
 
@@ -216,7 +216,7 @@ expect_equal(target_a,test$single$a)
 
 peaks <- pracma::findpeaks(1/Mod(distances["dual",]),npeaks = 2, sortstr = TRUE)
 
-target_bearing <- attr(distances, "bearings",exact = T)[peaks[,2]]
+target_bearing <- attr(distances, "bearings",exact = TRUE)[peaks[,2]]
 
 expect_equal(target_bearing,test$dual$bearing)
 
@@ -350,7 +350,7 @@ describe("seasonder_runMUSIC_in_FOR",{
 #
 #
 #
-#     seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = T, reject_noise_ionospheric = T, currmax = 1))
+#     seasonder_cs_obj %<>% seasonder_computeFORs(method = "SeaSonde", FOR_control = list(nsm = 2, flim = 100, noisefact = 10, reject_distant_bragg = TRUE, reject_noise_ionospheric = TRUE, currmax = 1))
 #
 #     test_obj <- seasonder_runMUSIC_in_FOR(seasonder_cs_obj)
 #
@@ -393,14 +393,14 @@ describe("seasonder_runMUSIC_in_FOR",{
 
 #     smoothing <- 10
 #
-#     seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[1,]),before = smoothing, na_rm = T), imaginary =
-# slider::slide_mean(pracma::Imag(seasonder_apm_obj[1,]),before = smoothing, na_rm = T))
+#     seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[1,]),before = smoothing, na_rm = TRUE), imaginary =
+# slider::slide_mean(pracma::Imag(seasonder_apm_obj[1,]),before = smoothing, na_rm = TRUE))
 #
-#     seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[2,]),before = smoothing, na_rm = T), imaginary =
-#                                        slider::slide_mean(pracma::Imag(seasonder_apm_obj[2,]),before = smoothing, na_rm = T))
+#     seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[2,]),before = smoothing, na_rm = TRUE), imaginary =
+#                                        slider::slide_mean(pracma::Imag(seasonder_apm_obj[2,]),before = smoothing, na_rm = TRUE))
 
-    plot(attr(seasonder_apm_obj, "BEAR",exact = T),Mod(seasonder_apm_obj[2,]),xlim = c(-180,180))
-    plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[2,]),xlim = c(-180,180))
+    plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Mod(seasonder_apm_obj[2,]),xlim = c(-180,180))
+    plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Arg(seasonder_apm_obj[2,]),xlim = c(-180,180))
 
 
     FOS <-   list(nsm = 2,
@@ -514,7 +514,7 @@ radials <- to.plot %>%
 
 
 
-test$distances[sample(1:nrow(to.plot),10)] %>% purrr::compact() %>% purrr::map2(factor(seq_along(.)),\(dist,i) data.frame(i = i, dist = 1/pracma::Real(dist["single",, drop=T]) , bearing = attr(dist,"bearings", exact = T))) %>% dplyr::bind_rows() %>%   ggplot2::ggplot(ggplot2::aes(y=dist, x=bearing, color = i)) + ggplot2::geom_point(alpha = 0.5) + ggplot2::xlim(-180,180)
+test$distances[sample(1:nrow(to.plot),10)] %>% purrr::compact() %>% purrr::map2(factor(seq_along(.)),\(dist,i) data.frame(i = i, dist = 1/pracma::Real(dist["single",, drop=TRUE]) , bearing = attr(dist,"bearings", exact = TRUE))) %>% dplyr::bind_rows() %>%   ggplot2::ggplot(ggplot2::aes(y=dist, x=bearing, color = i)) + ggplot2::geom_point(alpha = 0.5) + ggplot2::xlim(-180,180)
 
 
   ruv <- data.table::fread("tests/testthat/data/TORA/RDLi_TORA_2024_03_19_1630.ruv",skip = 56, header = F)
@@ -593,14 +593,14 @@ ggplot2::ggplot(to.plot_ruv,ggplot2::aes(y=range_cell, x = bearing )) +
 
     #     smoothing <- 10
     #
-    #     seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[1,]),before = smoothing, na_rm = T), imaginary =
-    # slider::slide_mean(pracma::Imag(seasonder_apm_obj[1,]),before = smoothing, na_rm = T))
+    #     seasonder_apm_obj[1,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[1,]),before = smoothing, na_rm = TRUE), imaginary =
+    # slider::slide_mean(pracma::Imag(seasonder_apm_obj[1,]),before = smoothing, na_rm = TRUE))
     #
-    #     seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[2,]),before = smoothing, na_rm = T), imaginary =
-    #                                        slider::slide_mean(pracma::Imag(seasonder_apm_obj[2,]),before = smoothing, na_rm = T))
+    #     seasonder_apm_obj[2,] <- complex(real = slider::slide_mean(pracma::Real(seasonder_apm_obj[2,]),before = smoothing, na_rm = TRUE), imaginary =
+    #                                        slider::slide_mean(pracma::Imag(seasonder_apm_obj[2,]),before = smoothing, na_rm = TRUE))
 
-    plot(attr(seasonder_apm_obj, "BEAR",exact = T),Mod(seasonder_apm_obj[2,]),xlim = c(-180,180))
-    plot(attr(seasonder_apm_obj, "BEAR",exact = T),Arg(seasonder_apm_obj[2,]),xlim = c(-180,180))
+    plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Mod(seasonder_apm_obj[2,]),xlim = c(-180,180))
+    plot(attr(seasonder_apm_obj, "BEAR",exact = TRUE),Arg(seasonder_apm_obj[2,]),xlim = c(-180,180))
 
 
 
@@ -702,7 +702,7 @@ test_measured <- test
 
 
 
-    test$distances[sample(1:nrow(to.plot),10)] %>% purrr::compact() %>% purrr::map2(factor(seq_along(.)),\(dist,i) data.frame(i = i, dist = pracma::Real(dist["dual",, drop=T]) , bearing = attr(dist,"bearings", exact = T))) %>% dplyr::bind_rows() %>%   ggplot2::ggplot(ggplot2::aes(y=dist, x=bearing, color = i)) + ggplot2::geom_point(alpha = 0.5) + ggplot2::xlim(-180,180)
+    test$distances[sample(1:nrow(to.plot),10)] %>% purrr::compact() %>% purrr::map2(factor(seq_along(.)),\(dist,i) data.frame(i = i, dist = pracma::Real(dist["dual",, drop=TRUE]) , bearing = attr(dist,"bearings", exact = TRUE))) %>% dplyr::bind_rows() %>%   ggplot2::ggplot(ggplot2::aes(y=dist, x=bearing, color = i)) + ggplot2::geom_point(alpha = 0.5) + ggplot2::xlim(-180,180)
 
 
     ruv <- data.table::fread("tests/testthat/data/TORA/RDLm_TORA_2024_03_19_1630.ruv",skip = 56, header = F)
@@ -990,7 +990,7 @@ describe("seasonder_exportMUSICTable", {
 
   seasonder_cs_obj <- seasonder_computeNoiseLevel(seasonder_cs_obj)
 
-  SNR <- data.frame(range_cell = 1:seasonder_getnRangeCells(seasonder_cs_obj), noise_level =  seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_obj, dB = T))
+  SNR <- data.frame(range_cell = 1:seasonder_getnRangeCells(seasonder_cs_obj), noise_level =  seasonder_getSeaSondeRCS_NoiseLevel(seasonder_cs_obj, dB = TRUE))
 
   test <- seasonder_computeSignalSNR(MUSIC_table, SNR  = SNR,receiver_gain = receiver_gain)
 
