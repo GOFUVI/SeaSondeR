@@ -4104,7 +4104,7 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
 #' @examples
 #' \dontrun{
 #'   # Assuming cs_object is a valid SeaSondeRCS object with MUSIC data:
-#'   radial_metrics <- seasonder_exportLLUVRadialMetrics(cs_object, "output/LLUV.txt")
+#'   radial_metrics <- seasonder_exportLLUVRadialMetrics(cs_object, tempfile(fileext = ".ruv"))
 #'   print(radial_metrics)
 #' }
 #'
@@ -4296,7 +4296,7 @@ seasonder_exportCTFRangeInfo_string <- function(seasonder_cs_object, tableStart 
 #' @examples
 #' \dontrun{
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file")
-#'   range_info <- seasonder_exportCTFRangeInfo(cs_obj, "range_info.txt")
+#'   range_info <- seasonder_exportCTFRangeInfo(cs_obj, tempfile(fileext = ".txt"))
 #' }
 #'
 #' @export

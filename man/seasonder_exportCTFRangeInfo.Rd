@@ -27,7 +27,7 @@ invisibly, allowing further processing if necessary.
 \examples{
 \dontrun{
   cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file")
-  range_info <- seasonder_exportCTFRangeInfo(cs_obj, "range_info.txt")
+  range_info <- seasonder_exportCTFRangeInfo(cs_obj, tempfile(fileext = ".txt"))
 }
 
 }

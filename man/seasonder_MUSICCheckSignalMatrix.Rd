@@ -51,7 +51,7 @@ off-diagonal element.
   # Assume cs_obj is a valid SeaSondeRCS object with MUSIC data already computed.
   updated_obj <- seasonder_MUSICCheckSignalMatrix(cs_obj)
   # The updated object now has an added diag_off_diag_power_ratio column and 
-updated retained_solution fields.
+  #updated retained_solution fields.
   print(updated_obj)
 }
 
