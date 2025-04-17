@@ -34,11 +34,8 @@ Once validated, the function extracts the requested matrix from the \code{data} 
 SeaSondeRCS object.
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid SeaSondeRCS object
 ssa1_matrix <- seasonder_getSeaSondeRCS_dataMatrix(cs_object, "SSA1")
 print(ssa1_matrix)
-}
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_data}} for retrieving the complete data structure.

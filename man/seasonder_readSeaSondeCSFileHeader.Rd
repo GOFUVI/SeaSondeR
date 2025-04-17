@@ -22,17 +22,11 @@ the general header (Version 1) to determine the file version. Subsequent headers
 based on the file version.
 }
 \examples{
-\donttest{
-  con <- rawConnection(as.raw(rep(0, 300)))
-  specs <- list(
-    V1 = list(...),
-    V2 = list(...),
-    V3 = list(...)
-  )
-  header <- seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
-  print(header)
-  close(con)
-}
+specs <- list(V1 = ..., V2 = ..., V3 = ...)
+con <- rawConnection(as.raw(rep(0, 300)))
+header <- seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
+print(header)
+close(con)
 }
 \seealso{
 \code{\link{seasonder_readSeaSondeCSFileHeaderV1}}

@@ -51,15 +51,7 @@ The function performs the following steps:
 }
 }
 \examples{
-\donttest{
-  # Assuming cs_object is a valid SeaSondeRCS object and antenna 1, range cell 5 are valid:
-  p <- seasonder_SeaSondeRCS_plotSelfSpectrum(cs_object, antenna = 1, range_cell = 5)
-  print(p)
-
-  # Plot with Doppler frequencies in Hz and overlay FOR-related elements:
-  p <- seasonder_SeaSondeRCS_plotSelfSpectrum(cs_object, antenna = 2, range_cell = 10,
-  doppler_units = "doppler frequency", plot_FORs = TRUE)
-  print(p)
-}
+p <- seasonder_SeaSondeRCS_plotSelfSpectrum(cs_obj, antenna = 1, range_cell = 5)
+print(p)
 
 }

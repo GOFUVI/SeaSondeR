@@ -52,19 +52,8 @@ The unit conversions follow this logic:
 Overall, the functions used for Doppler units conversion mimic the implementation of Doppler units displayed in  SpectraPlotterMap 12 in Radial Suite R8
 }
 \examples{
-\donttest{
-# Convert Doppler frequencies (Hz) to normalized Doppler frequency
-cs_obj <- seasonder_createSeaSondeRCS(...)
-doppler_values <- c(-0.3, 0, 0.6)  # Doppler values in Hz
-normalized_freqs <- seasonder_SwapDopplerUnits(cs_obj, doppler_values, 
-"doppler frequency", "normalized doppler frequency")
+normalized_freqs <- seasonder_SwapDopplerUnits(cs_obj, values, in_units = "bins", out_units = "doppler frequency")
 print(normalized_freqs)
-
-# Convert Doppler bins to Doppler frequency (Hz)
-bins <- c(10, 20, 30)
-freqs <- seasonder_SwapDopplerUnits(cs_obj, bins, "bins", "doppler frequency")
-print(freqs)
-}
 }
 \references{
 COS. SeaSonde Radial Suite Release 8; CODAR Ocean Sensors (COS): Mountain View, CA, USA, 2016.

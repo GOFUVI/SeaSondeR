@@ -44,12 +44,7 @@ This function utilizes the \code{rlang} package to manage conditions and provide
 }
 
 \examples{
-\donttest{
-  header <- list(nV1Extent = 62, nCsFileVersion = 4, nV2Extent = 56,
-                 nV3Extent = 48, nV4Extent = 0, nRangeCells = 100,
-                 nDopplerCells = 512, nCsKind = 1)
-  seasonder_validateCSFileData("example.cs", header)
-}
+seasonder_validateCSFileData("example.cs", header)
 }
 \references{
 Cross Spectra File Format Version 6. CODAR. 2016

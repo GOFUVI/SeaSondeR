@@ -33,11 +33,8 @@ The wave number is an essential parameter for analyzing radar signals and
 their interaction with the medium being measured.
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object
-wave_number <- seasonder_getRadarWaveNumber(cs_object)
+wave_number <- seasonder_getRadarWaveNumber(cs_obj)
 print(wave_number)
-}
 }
 \seealso{
 \code{\link{seasonder_getRadarWaveLength}} to compute the radar wavelength.

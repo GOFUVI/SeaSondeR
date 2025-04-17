@@ -23,8 +23,6 @@ During the execution of the \code{seasonder_readCSField} function, errors or con
 The \code{seasonder_skip_cs_field} function provides an easy way to invoke this restart. When called within a custom condition handler, it signals the intention to skip the current CSField reading due to an error and specifies a return value.
 }
 \examples{
-\donttest{
-  result <- seasonder_skip_cs_field(simpleError("test error"), "default")
-  print(result)
-}
+result <- seasonder_skip_cs_field(simpleError("test error"), "default")
+print(result)
 }

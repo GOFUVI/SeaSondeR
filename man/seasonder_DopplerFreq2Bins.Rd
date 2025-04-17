@@ -26,13 +26,8 @@ The number of Doppler bins is then determined using \code{\link{seasonder_getnDo
 With this information, the function calls \code{\link{seasonder_computeDopplerFreq2Bins}} to determine the corresponding bin indices for each input Doppler frequency.
 }
 \examples{
-\donttest{
-# Convert Doppler frequencies to bin indices
-cs_obj <- seasonder_createSeaSondeRCS(...)
-doppler_values <- c(-0.2, 0, 0.5)  # Example Doppler frequencies in Hz
 bins <- seasonder_DopplerFreq2Bins(cs_obj, doppler_values)
 print(bins)
-}
 }
 \seealso{
 \code{\link{seasonder_Bins2NormalizedDopplerFreq}} for the reverse operation.

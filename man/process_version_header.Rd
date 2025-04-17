@@ -53,18 +53,11 @@ functions are available in the global environment.
 }
 
 \examples{
-\donttest{
-  con <- rawConnection(as.raw(rep(0, 300)))
-  specs <- list(
-    V1 = list(...),
-    V2 = list(...),
-    V3 = list(...)
-  )
-  pool <- list()
-  header <- process_version_header(pool, 3, specs, con, endian = "big")
-  print(header)
-  close(con)
-}
+con <- rawConnection(as.raw(rep(0, 300)))
+specs <- list(V1 = ..., V2 = ..., V3 = ...)
+header <- process_version_header(pool, 3, specs, con, endian = "big")
+print(header)
+close(con)
 }
 \seealso{
 \code{\link{seasonder_readSeaSondeCSFileHeaderV2}}

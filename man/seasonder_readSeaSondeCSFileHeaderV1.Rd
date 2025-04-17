@@ -28,17 +28,8 @@ Reads the header of a SeaSonde file (Version 1) based on the provided specificat
 Transforms the date-time fields and returns the results.
 }
 \examples{
-\donttest{
-  con <- rawConnection(as.raw(rep(0, 100)))
-  specs <- list(
-    nCsFileVersion = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nDateTime = list(type = "UInt32", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nV1Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
-  )
-  header <- seasonder_readSeaSondeCSFileHeaderV1(specs, con, endian = "big")
-  print(header)
-  close(con)
-}
+header <- seasonder_readSeaSondeCSFileHeaderV1(specs, con, endian = "big")
+print(header)
 }
 \seealso{
 \code{\link{seasonder_check_specs}}

@@ -36,12 +36,8 @@ The Bragg frequency is negative for bins with frequencies below zero and positiv
 for bins with frequencies above zero.
 }
 \examples{
-\donttest{
-  cs_obj <- seasonder_createSeaSondeRCS(...)
-  freq <- seq(-10, 10, length.out = 128)
-  rv <- seasonder_computeBinsRadialVelocity(cs_obj, freq)
-  print(rv)
-}
+rv <- seasonder_computeBinsRadialVelocity(cs_obj, freq)
+print(rv)
 }
 \seealso{
 \code{\link{seasonder_getBraggDopplerAngularFrequency}} to retrieve the Bragg angular frequencies.

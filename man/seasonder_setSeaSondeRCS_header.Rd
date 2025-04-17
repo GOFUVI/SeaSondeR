@@ -18,12 +18,8 @@ A SeaSondeRCS object with updated header.
 Setter for header
 }
 \examples{
-\donttest{
-  # Assuming cs_obj is a valid SeaSondeRCS object and new_header is a valid header list
-  cs_obj <- seasonder_setSeaSondeRCS_header(cs_obj, new_header)
- # Check the updated header
-  print(seasonder_getSeaSondeRCS_header(cs_obj))
-}
+cs_obj <- seasonder_setSeaSondeRCS_header(cs_obj, new_header)
+print(seasonder_getSeaSondeRCS_header(cs_obj))
 }
 \seealso{
 \code{\link{seasonder_validateCSHeaderStructure}}

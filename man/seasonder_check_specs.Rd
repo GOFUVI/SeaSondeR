@@ -37,10 +37,8 @@ This function utilizes the \code{rlang} package to manage conditions, and provid
 }
 
 \examples{
-\donttest{
-  specs <- list(field1 = "spec1", field2 = "spec2")
-  fields <- c("field1", "field2", "field3")
-  seasonder_check_specs(specs, fields) # Throws an error since spec for 'field3' is missing
-}
+specs <- list(field1 = "spec1", field2 = "spec2")
+fields <- c("field1", "field2", "field3")
+seasonder_check_specs(specs, fields)
 
 }

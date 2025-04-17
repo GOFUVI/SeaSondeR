@@ -39,13 +39,8 @@ where:
 This function ensures consistency by mapping input frequencies to their closest bin representation before normalization.
 }
 \examples{
-\donttest{
-# Convert Doppler frequencies to normalized Doppler frequencies
-cs_obj <- seasonder_createSeaSondeRCS(...)
-doppler_values <- c(-0.3, 0, 0.6)  # Example Doppler frequencies in Hz
 normalized_freqs <- seasonder_DopplerFreq2NormalizedDopplerFreq(cs_obj, doppler_values)
 print(normalized_freqs)
-}
 }
 \seealso{
 \code{\link{seasonder_DopplerFreq2Bins}} for converting Doppler frequencies to bin indices.

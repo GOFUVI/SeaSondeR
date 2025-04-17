@@ -32,11 +32,8 @@ scattering from the sea surface, which is fundamental to the operation of
 HF radar systems.
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object
-bragg_wavelength <- seasonder_getBraggWaveLength(cs_object)
+bragg_wavelength <- seasonder_getBraggWaveLength(cs_obj)
 print(bragg_wavelength)
-}
 }
 \seealso{
 \code{\link{seasonder_getRadarWaveLength}} to compute the radar wavelength.

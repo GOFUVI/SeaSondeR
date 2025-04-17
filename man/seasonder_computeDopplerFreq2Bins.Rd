@@ -42,17 +42,8 @@ The function then applies \code{\link{findInterval}} to determine the correspond
 After determining the bin indices, values that are out of range (\code{bins < 1} or \code{bins > nDoppler}) are set to \code{NA}.
 }
 \examples{
-\donttest{
-# Convert Doppler frequencies to bin indices
-cs_obj <- seasonder_createSeaSondeRCS(...)
-doppler_values <- c(-0.2, 0, 0.5)
-doppler_freqs <- seq(-1, 1, length.out = 101) # Example Doppler bin frequencies
-delta_freq <- diff(doppler_freqs)[1]
-nDoppler <- length(doppler_freqs)
-bins <- seasonder_computeDopplerFreq2Bins(cs_obj, doppler_values, doppler_freqs,
- delta_freq, nDoppler)
+bins <- seasonder_computeDopplerFreq2Bins(cs_obj, doppler_values, doppler_freqs, delta_freq, nDoppler)
 print(bins)
-}
 }
 \seealso{
 \code{\link{seasonder_Bins2NormalizedDopplerFreq}} for converting bins back to normalized Doppler frequencies.

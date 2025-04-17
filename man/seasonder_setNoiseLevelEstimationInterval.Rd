@@ -30,20 +30,10 @@ object with \code{interval_value}. It then computes new reference noise normaliz
 Finally, it sets the new noise limits in the FOR parameters using \code{seasonder_setFORParameter}.
 }
 \examples{
-\donttest{
-  # Define a new noise level estimation interval
-  new_interval <- list(low_limit = 0.9, high_limit = 1.0)
-
-  # Create or load a SeaSondeRCS object (cs_obj)
-  cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
-
-  # Set the noise level estimation interval
-  cs_obj <- seasonder_setNoiseLevelEstimationInterval(cs_obj, new_interval)
-
-  # Verify the update by checking the attribute and FOR parameter
-  print(attr(cs_obj, "reference_noise_normalized_limits_estimation_interval"))
-  noise_limits <- seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
-  print(noise_limits)
-}
-
+new_interval <- list(low_limit = 0.9, high_limit = 1.0)
+cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
+cs_obj <- seasonder_setNoiseLevelEstimationInterval(cs_obj, new_interval)
+print(attr(cs_obj, "reference_noise_normalized_limits_estimation_interval"))
+noise_limits <- seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
+print(noise_limits)
 }

@@ -18,8 +18,6 @@ The original field_value if it matches the expected_type; otherwise, an error is
 This function verifies if a given value is of the expected type.
 }
 \examples{
-\donttest{
-  result <- qc_check_type(42, "numeric")
-  print(result)
-}
+result <- qc_check_type(42, "numeric")
+print(result)
 }

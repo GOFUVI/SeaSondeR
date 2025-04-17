@@ -32,11 +32,8 @@ This calculation is fundamental for understanding the frequency spacing between
 adjacent Doppler bins in the radar spectrum.
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object
-spectral_res <- seasonder_getDopplerSpectrumResolution(cs_object)
+spectral_res <- seasonder_getDopplerSpectrumResolution(cs_obj)
 print(spectral_res)
-}
 }
 \seealso{
 \code{\link{seasonder_getnDopplerCells}} to retrieve the number of Doppler cells.

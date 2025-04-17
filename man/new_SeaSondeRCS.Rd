@@ -42,28 +42,22 @@ initializes FOR parameters, and sets up the FOR configuration by calling
 \code{seasonder_initSeaSondeRCS_FOR}. A processing step message is logged to indicate successful creation.
 }
 \examples{
-\donttest{
-  # Example header and data lists (replace with actual header and data content)
-  my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0, 
-nFirstRangeCell = 1)
-  my_data <- list(
-    SSA1 = matrix(NA_real_, nrow = 100, ncol = 256),
-    SSA2 = matrix(NA_real_, nrow = 100, ncol = 256),
-    SSA3 = matrix(NA_real_, nrow = 100, ncol = 256),
-    CS12 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
-    CS13 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
-    CS23 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
-    QC = matrix(NA_real_, nrow = 100, ncol = 256)
-  )
-
-  # Create a new SeaSondeRCS object (optionally, an APM object can be provided)
-  rcs_object <- new_SeaSondeRCS(my_header, my_data)
-
-  # Check the header and APM attributes
-  print(seasonder_getSeaSondeRCS_header(rcs_object))
-  print(attr(rcs_object, "APM"))
-}
-
+# Example header and data lists (replace with actual header and data content)
+my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0, 
+                  nFirstRangeCell = 1)
+my_data <- list(
+  SSA1 = matrix(NA_real_, nrow = 100, ncol = 256),
+  SSA2 = matrix(NA_real_, nrow = 100, ncol = 256),
+  SSA3 = matrix(NA_real_, nrow = 100, ncol = 256),
+  CS12 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
+  CS13 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
+  CS23 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
+  QC  = matrix(NA_real_, nrow = 100, ncol = 256)
+)
+rcs_object <- SeaSondeR:::new_SeaSondeRCS(my_header, my_data)
+# Check the header and APM attributes
+print(seasonder_getSeaSondeRCS_header(rcs_object))
+print(attr(rcs_object, "APM"))
 }
 \seealso{
 \code{\link{seasonder_setSeaSondeRCS_header}},

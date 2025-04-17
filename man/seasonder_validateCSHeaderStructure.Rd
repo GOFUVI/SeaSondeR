@@ -40,8 +40,6 @@ detailed and structured condition messages:
 }
 
 \examples{
-\donttest{
 header <- list(nRangeCells = 100, nDopplerCells = 256)
 seasonder_validateCSHeaderStructure(header)
-}
 }

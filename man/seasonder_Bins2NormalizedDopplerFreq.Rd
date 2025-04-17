@@ -31,13 +31,8 @@ where:
 }
 }
 \examples{
-\donttest{
-# Convert specific Doppler bins to normalized Doppler frequency
-cs_obj <- seasonder_createSeaSondeRCS(...)
-bins <- c(10, 20, 30)
 normalized_freqs <- seasonder_Bins2NormalizedDopplerFreq(cs_obj, bins)
 print(normalized_freqs)
-}
 }
 \seealso{
 \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving Doppler bin frequencies.

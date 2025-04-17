@@ -268,7 +268,13 @@ seasonder_validateFOR_parameters <- function(seasonder_cs_object, FOR_parameters
 #' If the \code{noisefact} parameter changes, the noise level is recomputed for antennas 1, 2, and 3.
 #'
 #' @examples
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' new_params <- list(nsm = 3, noisefact = 4, fdown = 12, flim = 80, currmax = 2.5)
 #' cs_obj <- seasonder_setFOR_parameters(cs_obj, new_params)
 #' @export
@@ -307,7 +313,13 @@ if(!is.null(FOR_parameters$noisefact) && (is.null(old_parameters$noisefact)  || 
 #' @return The updated SeaSondeRCS object with the new parameter value.
 #'
 #' @examples
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- seasonder_setFORParameter(cs_obj, "nsm", 4)
 #' @export
 seasonder_setFORParameter <- function(seasonder_cs_object, FOR_parameter, value){
@@ -333,7 +345,13 @@ return(seasonder_cs_object)
 #' @return The updated SeaSondeRCS object with the new \code{nsm} value.
 #'
 #' @examples
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- seasonder_setFOR_nsm(cs_obj, 3)
 #' @export
 seasonder_setFOR_nsm <- function(seasonder_cs_object, nsm) {
@@ -352,7 +370,13 @@ seasonder_setFOR_nsm <- function(seasonder_cs_object, nsm) {
 #' @return The updated SeaSondeRCS object with the new \code{noisefact} value.
 #'
 #' @examples
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- seasonder_setFOR_noisefact(cs_obj, 4)
 #' @export
 seasonder_setFOR_noisefact <- function(seasonder_cs_object, noisefact){
@@ -374,7 +398,13 @@ seasonder_setFOR_noisefact <- function(seasonder_cs_object, noisefact){
 #' @return The updated SeaSondeRCS object with the new \code{flim} value.
 #'
 #' @examples
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- seasonder_setFOR_flim(cs_obj, 100)
 #' @export
 seasonder_setFOR_flim <- function(seasonder_cs_object, flim){
@@ -396,7 +426,13 @@ seasonder_setFOR_flim <- function(seasonder_cs_object, flim){
 #' @return The updated SeaSondeRCS object with the new \code{fdown} value.
 #'
 #' @examples
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- seasonder_setFOR_fdown(cs_obj, 12)
 #' @export
 seasonder_setFOR_fdown <- function(seasonder_cs_object, fdown){
@@ -419,7 +455,13 @@ seasonder_setFOR_fdown <- function(seasonder_cs_object, fdown){
 #' @return The updated SeaSondeRCS object with the new \code{currmax} value.
 #'
 #' @examples
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- seasonder_setFOR_currmax(cs_obj, 2.5)
 #' @export
 seasonder_setFOR_currmax <- function(seasonder_cs_object, currmax) {
@@ -445,7 +487,13 @@ seasonder_setFOR_currmax <- function(seasonder_cs_object, currmax) {
 #' as part of the FOR processing workflow.
 #'
 #' @examples
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' sample_FOR <- list(
 #'   negative_FOR = c(1, 2, 3),
 #'   positive_FOR = c(10, 11, 12)
@@ -522,7 +570,13 @@ seasonder_setSeaSondeRCS_FOR_SS_Smoothed <- function(seasonder_cs_object, FOR_SS
 #' is later used in the processing workflow to guide FOR computation.
 #'
 #' @examples
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR_method(cs_obj, "SeaSonde")
 #' for_method <- attr(cs_obj, "FOR_data")$FOR_method
 #' print(for_method)
@@ -563,6 +617,13 @@ seasonder_setSeaSondeRCS_FOR_method <- function(seasonder_cs_object, FOR_method)
 #' - \code{\link{seasonder_setSeaSondeRCS_FOR_MAXP.bin}} for setting maximum power bin indices.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR_MAXP(cs_obj, MAXP_values)
 seasonder_setSeaSondeRCS_FOR_MAXP <- function(seasonder_cs_object, FOR_MAXP) {
 
@@ -598,6 +659,13 @@ seasonder_setSeaSondeRCS_FOR_MAXP <- function(seasonder_cs_object, FOR_MAXP) {
 #' - \code{\link{seasonder_setSeaSondeRCS_FOR_MAXP}} for setting maximum power values.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR_MAXP.bin(cs_obj, MAXP_bin_values)
 seasonder_setSeaSondeRCS_FOR_MAXP.bin <- function(seasonder_cs_object, FOR_MAXP.bin) {
 
@@ -623,7 +691,13 @@ seasonder_setSeaSondeRCS_FOR_MAXP.bin <- function(seasonder_cs_object, FOR_MAXP.
 #' @return The updated SeaSondeRCS object with the modified "NoiseLevel" attribute.
 #'
 #' @examples
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' new_noise_level <- 0.05
 #' cs_obj <- seasonder_setSeaSondeRCS_NoiseLevel(cs_obj, new_noise_level, antenna = 3)
 #' print(attr(cs_obj, "NoiseLevel")[[3]])
@@ -1026,6 +1100,13 @@ SeaSondeRCS_setFORParameters_step_text <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving Doppler bin frequencies.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' noise_limits <- SeaSondeR:::seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj)
 #' print(noise_limits)
 #' noise_limits <- SeaSondeR:::seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj, low_limit = 0.565, high_limit = 1.0)
@@ -1094,6 +1175,13 @@ seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_object
 #' - \code{\link{seasonder_setSeaSondeRCS_NoiseLevel}} for storing the computed noise level.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_computeNoiseLevel(cs_obj)
 #' cs_obj <- SeaSondeR:::seasonder_computeNoiseLevel(cs_obj, antenna = 3, smoothed = TRUE)
 #'
@@ -1186,6 +1274,13 @@ seasonder_computeSeaSondeRCSAntennaNoise <- function(seasonder_cs_object, antenn
 #' - \code{\link{seasonder_getFOR_parameters}} for retrieving default \code{nsm} values.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_SmoothFORSS(cs_obj)
 seasonder_SmoothFORSS <- function(seasonder_cs_object) {
 
@@ -1487,6 +1582,13 @@ seasonder_findFORNullsInSpectrum <- function(seasonder_cs_object, spectrum, dopp
 #' - \code{\link{seasonder_findFORNulls}} for high-level null detection across all spectra.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' FOR_nulls <- SeaSondeR:::seasonder_findFORNullsInSSMatrix(cs_obj, SS_matrix, doppler_bins)
 #' print(FOR_nulls)
 seasonder_findFORNullsInSSMatrix <- function(seasonder_cs_object, SS, doppler_bins, negative_Bragg_region = FALSE) {
@@ -1542,6 +1644,13 @@ seasonder_findFORNullsInSSMatrix <- function(seasonder_cs_object, SS, doppler_bi
 #' - \code{\link{seasonder_getSeaSondeRCS_FOR_SS_Smoothed}} for retrieving smoothed SS data.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_findFORNulls(cs_obj)
 seasonder_findFORNulls <- function(seasonder_cs_object) {
 
@@ -1717,6 +1826,13 @@ seasonder_extractFOR <- function(seasonder_cs_object, spectrum, FOR) {
 #' - \code{\link{seasonder_setSeaSondeRCS_FOR}} for storing the filtered FOR data.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_filterFORAmplitudes(cs_obj)
 seasonder_filterFORAmplitudes <- function(seasonder_cs_object) {
 
@@ -1815,6 +1931,13 @@ seasonder_filterFORAmplitudes <- function(seasonder_cs_object) {
 #' - \code{\link{seasonder_setSeaSondeRCS_FOR}} for storing updated FOR data.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_limitFORCurrentRange(cs_obj)
 seasonder_limitFORCurrentRange <- function(seasonder_cs_object) {
 
@@ -1889,6 +2012,13 @@ seasonder_limitFORCurrentRange <- function(seasonder_cs_object) {
 #' @references COS. SpectraPlotterMap 12 User Guide. CODAR Ocean Sensors (COS), Mountain View, CA, USA, 2016.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' peak <- c(100, 101, 102)
 #' cs_obj <- SeaSondeR:::seasonder_rejectDistantBraggPeakTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")
 seasonder_rejectDistantBraggPeakTest <- function(seasonder_cs_object, peak, range = NA, peak_name = "") {
@@ -1972,6 +2102,13 @@ seasonder_rejectDistantBraggPeakTest <- function(seasonder_cs_object, peak, rang
 #' @references COS. SpectraPlotterMap 12 User Guide. CODAR Ocean Sensors (COS), Mountain View, CA, USA, 2016.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_rejectDistantBragg(cs_obj)
 seasonder_rejectDistantBragg <- function(seasonder_cs_object) {
 
@@ -2051,6 +2188,13 @@ seasonder_rejectDistantBragg <- function(seasonder_cs_object) {
 #' - \code{\link{seasonder_SelfSpectra2dB}} for power conversion to dB.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' peak <- c(100, 101, 102)
 #' cs_obj <- SeaSondeR:::seasonder_rejectNoiseIonosphericTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")
 seasonder_rejectNoiseIonosphericTest <- function(seasonder_cs_object, peak, range = NA, peak_name = "") {
@@ -2152,6 +2296,13 @@ seasonder_rejectNoiseIonosphericTest <- function(seasonder_cs_object, peak, rang
 #' - \code{\link{seasonder_setSeaSondeRCS_FOR}} for updating FOR data.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_rejectNoiseIonospheric(cs_obj)
 seasonder_rejectNoiseIonospheric <- function(seasonder_cs_object) {
 
@@ -2226,6 +2377,13 @@ seasonder_rejectNoiseIonospheric <- function(seasonder_cs_object) {
 #' - \code{\link{seasonder_rejectNoiseIonospheric}} for rejecting noise/ionospheric contamination.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- seasonder_computeFORsSeaSondeMethod(cs_obj)
 seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_object) {
 
@@ -2295,6 +2453,13 @@ seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_object) {
 #' - \code{\link{seasonder_setFOR_parameters}} for configuring FOR parameters.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- seasonder_computeFORs(cs_obj, method = "SeaSonde")
 #' cs_obj <- seasonder_computeFORs(cs_obj, FOR_control = FOR_control)
 #' @export
@@ -2358,6 +2523,13 @@ seasonder_computeFORs <- function(seasonder_cs_object, method = NULL, FOR_contro
 #' - \code{\link{seasonder_getSeaSondeRCS_FOR}} for retrieving the FOR data.
 #'
 #' @examples
+#' # Set sample file paths
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' # Read the antenna pattern file to create a SeaSondeRAPM object
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' # Create a SeaSondeRCS object from a spectral file
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' boundaries <- seasonder_SeaSondeRCSExportFORBoundaries(cs_obj)
 #' print(boundaries)
 #' @export

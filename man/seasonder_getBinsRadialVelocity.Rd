@@ -34,11 +34,8 @@ shift frequency for the bin, \eqn{BraggFreq} is the Bragg frequency
 and \eqn{k_0} is the radar wave number divided by 2\eqn{\pi}.
 }
 \examples{
-\donttest{
-  cs_obj <- seasonder_createSeaSondeRCS(...)
-  velocities <- seasonder_getBinsRadialVelocity(cs_obj)
-  print(velocities)
-}
+velocities <- seasonder_getBinsRadialVelocity(cs_obj)
+print(velocities)
 }
 \seealso{
 \code{\link{seasonder_getDopplerBinsFrequency}},

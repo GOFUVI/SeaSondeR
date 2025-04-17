@@ -60,6 +60,13 @@ This test is particularly important in scenarios where strong non-Bragg signals,
 ships or other high-intensity noise sources, might otherwise be misclassified as first-order Bragg.
 }
 \examples{
+# Set sample file paths
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+# Read the antenna pattern file to create a SeaSondeRAPM object
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+# Create a SeaSondeRCS object from a spectral file
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 peak <- c(100, 101, 102)
 cs_obj <- SeaSondeR:::seasonder_rejectDistantBraggPeakTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")
 }

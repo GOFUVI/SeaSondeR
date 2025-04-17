@@ -39,17 +39,15 @@ Additionally, a processing step is appended to the object using \code{seasonder_
 with a creation step text that indicates the source.
 }
 \examples{
-\donttest{
-  # Creating a SeaSondeRCS object from a list
-  cs_list <- list(header = my_header, data = my_data)
-  rcs_object <- seasonder_createSeaSondeRCS(cs_list)
+# Creating a SeaSondeRCS object from a list
+cs_list <- list(header = my_header, data = my_data)
+rcs_object <- seasonder_createSeaSondeRCS(cs_list)
 
-  # Creating a SeaSondeRCS object from a file path using default YAML specifications
-  rcs_object <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
+# Creating a SeaSondeRCS object from a file path using default YAML specifications
+rcs_object <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
 
-  # Creating a SeaSondeRCS object from a file path with a specified YAML specifications file
-  rcs_object <- seasonder_createSeaSondeRCS("path/to/cs_file.cs", specs_path = "path/to/specs.yaml")
-}
+# Creating a SeaSondeRCS object from a file path with a specified YAML specifications file
+rcs_object <- seasonder_createSeaSondeRCS("path/to/cs_file.cs", specs_path = "path/to/specs.yaml")
 }
 \seealso{
 \code{\link{new_SeaSondeRCS}},

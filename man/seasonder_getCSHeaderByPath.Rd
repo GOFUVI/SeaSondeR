@@ -36,16 +36,6 @@ This function utilizes the \code{rlang} package to manage errors and conditions,
 }
 
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid SeaSondeRCS object
-# Retrieve a specific field from the header
 field_value <- seasonder_getCSHeaderByPath(cs_object, c("nRangeCells"))
-# Retrieve a nested field from the header
-nested_field_value <- seasonder_getCSHeaderByPath(cs_object, c("header", "nRangeCells"))
-# Print the retrieved values
 print(field_value)
-print(nested_field_value)
-# Retrieve a field that does not exist (will issue a warning)
-non_existent_field_value <- seasonder_getCSHeaderByPath(cs_object, c("nonExistentField"))
-} 
 }

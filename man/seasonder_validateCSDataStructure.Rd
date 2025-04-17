@@ -45,13 +45,10 @@ This function utilizes the \code{rlang} package to manage errors and provide det
 }
 
 \examples{
-\donttest{
 data <- list(
   SSA1 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
-  SSA2 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
-  # ... other fields
+  SSA2 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE)
 )
 seasonder_validateCSDataStructure(data, 10, 20)
-}
 
 }

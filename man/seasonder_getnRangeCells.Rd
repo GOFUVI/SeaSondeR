@@ -16,9 +16,6 @@ The nRangeCells value.
 Get the nRangeCells value from a SeaSondeRCS object
 }
 \examples{
-\donttest{
- # Assuming cs_obj is a valid SeaSondeRCS object
- n_range_cells <- seasonder_getnRangeCells(cs_obj)
- print(n_range_cells)
-}
+n_range_cells <- seasonder_getnRangeCells(cs_obj)
+print(n_range_cells)
 }

@@ -18,9 +18,6 @@ SeaSondeRCS object. It accesses the header field named "CenterFreq" using
 \code{seasonder_getSeaSondeRCS_headerField}.
 }
 \examples{
-\donttest{
-  # Assuming cs_obj is a valid SeaSondeRCS object with a "CenterFreq" header field
-  center_freq <- seasonder_getCenterFreqMHz(cs_obj)
-  print(center_freq)
-}
+center_freq <- seasonder_getCenterFreqMHz(cs_obj)
+print(center_freq)
 }

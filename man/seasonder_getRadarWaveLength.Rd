@@ -31,11 +31,8 @@ The center frequency is initially stored in MHz and is converted to Hz by multip
 it by \eqn{10^6}.
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object
-wavelength <- seasonder_getRadarWaveLength(cs_object)
+wavelength <- seasonder_getRadarWaveLength(cs_obj)
 print(wavelength)
-}
 }
 \seealso{
 \code{\link{seasonder_getCenterFreqMHz}} to retrieve the radar's center frequency.

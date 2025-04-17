@@ -25,10 +25,7 @@ The center Doppler bin is computed by retrieving the total number of Doppler cel
 zero-based indexing, R uses one-based indexing.
 }
 \examples{
-\donttest{
-  # Assuming cs_obj is a valid SeaSondeRCS object:
-  center_bin <- seasonder_getCenterDopplerBin(cs_obj)
-  print(center_bin)
-}
+center_bin <- seasonder_getCenterDopplerBin(cs_obj)
+print(center_bin)
 
 }

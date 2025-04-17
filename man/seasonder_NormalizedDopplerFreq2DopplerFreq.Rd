@@ -37,13 +37,8 @@ where:
 }
 }
 \examples{
-\donttest{
-# Convert normalized Doppler frequencies to Doppler frequencies
-cs_obj <- seasonder_createSeaSondeRCS(...)
-normalized_values <- c(-0.3, 0, 0.6)  # Example normalized Doppler frequencies
 doppler_freqs <- seasonder_NormalizedDopplerFreq2DopplerFreq(cs_obj, normalized_values)
 print(doppler_freqs)
-}
 }
 \seealso{
 \code{\link{seasonder_NormalizedDopplerFreq2Bins}} for converting normalized Doppler frequencies to bin indices.

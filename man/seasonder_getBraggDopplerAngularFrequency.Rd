@@ -20,8 +20,9 @@ system. These frequencies represent the characteristic Doppler shifts due to
 wave resonance at the Bragg wavelength.
 }
 \details{
-The Bragg Doppler angular frequency \eqn{\omega_B} is calculated using the formula:
-\eqn{\omega_B = \frac{\sqrt{2 \cdot g \cdot k}}{2\pi} \; \pm \;} where:
+The Bragg Doppler angular frequency \eqn{\omega_B} is calculated using the formula
+\eqn{\omega_B = \sqrt{2 \cdot g \cdot k}}
+where:
 \itemize{
 \item \eqn{g} is the gravitational acceleration (approximately \eqn{9.8 \, m/s^2}),
 \item \eqn{k} is the radar wave number in radians per meter.
@@ -30,11 +31,8 @@ The Bragg Doppler angular frequency \eqn{\omega_B} is calculated using the formu
 The returned vector contains the negative (\eqn{-\omega_B}) and positive (\eqn{+\omega_B}) angular frequencies.
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object
-bragg_angular_freq <- seasonder_getBraggDopplerAngularFrequency(cs_object)
+bragg_angular_freq <- seasonder_getBraggDopplerAngularFrequency(cs_obj)
 print(bragg_angular_freq)
-}
 }
 \seealso{
 \code{\link{seasonder_getRadarWaveNumber}} to compute the radar wave number.

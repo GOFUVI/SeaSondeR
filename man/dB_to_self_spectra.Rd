@@ -28,13 +28,8 @@ where:
 }
 }
 \examples{
-\donttest{
-# Convert dB values to self-spectra power
-dB_vals <- c(-100, -80, -60)
-receiver_gain <- -34.2
 spectrum_vals <- dB_to_self_spectra(dB_vals, receiver_gain)
 print(spectrum_vals)
-}
 }
 \seealso{
 \code{\link{self_spectra_to_dB}} for the inverse operation.

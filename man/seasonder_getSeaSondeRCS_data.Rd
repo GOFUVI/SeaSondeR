@@ -17,12 +17,8 @@ the data structure with the number of range and Doppler cells.
 Getter for data
 }
 \examples{
-\donttest{
- # Assuming `cs_object` is a valid SeaSondeRCS object
- data_list <- seasonder_getSeaSondeRCS_data(cs_object)
- # Print the data list
- print(data_list)
-}
+data_list <- seasonder_getSeaSondeRCS_data(cs_object)
+print(data_list)
 }
 \seealso{
 \code{\link{seasonder_getnRangeCells}}

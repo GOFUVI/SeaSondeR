@@ -68,27 +68,8 @@ Proper error management ensures the integrity of the reading process and provide
 }
 
 \examples{
-# Example of reading SeaSonde CS File Header Version 6
-
-# Create a raw connection with 300 zero bytes.
-con <- rawConnection(as.raw(rep(0, 300)))
-
-# Define minimal specifications for reading the header.
-# In this example, nCS6ByteSize is expected to be read from the first 2 bytes.
-# Since the connection contains zeros, it will return 0 and no blocks will be processed.
-specs <- list(
-  nCS6ByteSize = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
-  block_spec = list(),  # Minimal block_spec; no block fields are defined.
-  blocks = list()       # No blocks will be read.
-)
-
-# Read the SeaSonde CS File Header Version 6.
 header <- seasonder_readSeaSondeCSFileHeaderV6(specs, con, endian = "big")
-
-# Print the resulting header.
 print(header)
-
-# Close the connection.
 close(con)
 }
 \seealso{

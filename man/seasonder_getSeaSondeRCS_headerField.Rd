@@ -23,11 +23,8 @@ and then attempts to extract the requested field using \code{\link[purrr]{pluck}
 flattened before extraction to accommodate nested structures.
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid SeaSondeRCS object
 field_value <- seasonder_getSeaSondeRCS_headerField(cs_object, "nDopplerCells")
 print(field_value)
-}
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_header}} for retrieving the full header.

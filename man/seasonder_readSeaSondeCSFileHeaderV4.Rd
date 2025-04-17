@@ -28,26 +28,8 @@ Reads the header of a SeaSonde file (Version 4) based on the provided specificat
 Transforms the CenterFreq field and returns the results.
 }
 \examples{
-\donttest{
-  con <- rawConnection(as.raw(rep(0, 200)))
-  specs <- list(
-    nCoverMinutes = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
-    bDeletedSource = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
-    bOverrideSrcInfo = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
-    fStartFreqMHz = list(type = "Float", qc_fun = "qc_check_unsigned", qc_params = list()),
-    fRepFreqHz = list(type = "Float", qc_fun = "qc_check_unsigned", qc_params = list()),
-    fBandwidthKHz = list(type = "Float", qc_fun = "qc_check_unsigned", qc_params = list()),
-    bSweepUp = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nDopplerCells = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nRangeCells = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nFirstRangeCell = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
-    fRangeCellDistKm = list(type = "Float", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nV4Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
-  )
-  header <- seasonder_readSeaSondeCSFileHeaderV4(specs, con, endian = "big")
-  print(header)
-  close(con)
-}
+header <- seasonder_readSeaSondeCSFileHeaderV4(specs, con, endian = "big")
+print(header)
 }
 \seealso{
 \code{\link{seasonder_check_specs}}

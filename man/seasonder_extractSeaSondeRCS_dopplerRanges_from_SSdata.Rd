@@ -22,16 +22,8 @@ The function extracts a subset of columns from the self-spectra matrix. No expli
 performed to verify that the provided Doppler cell indices fall within the range of the matrix columns.
 }
 \examples{
-\donttest{
-  # Create a sample self-spectra matrix with 5 range cells and 10 Doppler bins
-  sample_matrix <- matrix(1:50, nrow = 5, ncol = 10)
-
-  # Suppose we want to extract Doppler bins 3 to 7
-  selected_bins <- 3:7
-
-  # Extract the corresponding subset of the self-spectra matrix
-  sliced_matrix <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(sample_matrix,
- selected_bins)
-  print(sliced_matrix)
-}
+sample_matrix <- matrix(1:50, nrow = 5, ncol = 10)
+selected_bins <- 3:7
+sliced_matrix <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(sample_matrix, selected_bins)
+print(sliced_matrix)
 }

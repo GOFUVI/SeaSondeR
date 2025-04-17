@@ -27,16 +27,8 @@ A list with the read results.
 Reads the header of a SeaSonde file (Version 2) based on the provided specifications.
 }
 \examples{
-\donttest{
-  con <- rawConnection(as.raw(rep(0, 100)))
-  specs <- list(
-    nCsKind = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nV2Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
-  )
-  header <- seasonder_readSeaSondeCSFileHeaderV2(specs, con, endian = "big")
-  print(header)
-  close(con)
-}
+header <- seasonder_readSeaSondeCSFileHeaderV2(specs, con, endian = "big")
+print(header)
 }
 \seealso{
 \code{\link{seasonder_check_specs}}

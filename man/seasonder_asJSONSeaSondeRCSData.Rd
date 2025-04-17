@@ -21,13 +21,8 @@ This function extracts the data from a \code{seasonder_cs_object}, representing 
 If a path is provided and there is an issue writing to the file, the function logs an error message using \code{seasonder_logAndMessage} and returns the JSON data as a string.
 }
 \examples{
-\donttest{
-# Assuming cs_obj is a valid SeaSondeRCS object
-# Convert the SeaSondeRCS object to JSON and save it to a file
 json_output <- seasonder_asJSONSeaSondeRCSData(cs_obj, path = "output.json")
-# Print the JSON output
 print(json_output)
-}
 }
 \seealso{
 \code{\link{seasonder_createSeaSondeRCS}}, \code{\link{seasonder_getSeaSondeRCS_data}}

@@ -23,10 +23,6 @@ SeaSondeRCS object's attributes. These limits are stored under the attribute nam
 This interval is typically used during the noise level estimation process for the SeaSondeRCS object.
 }
 \examples{
-\donttest{
-  # Assuming cs_obj is a valid SeaSondeRCS object with noise limits estimation interval set
-  interval <- seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval(cs_obj)
-  print(interval)
-}
-
+interval <- seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval(cs_obj)
+print(interval)
 }

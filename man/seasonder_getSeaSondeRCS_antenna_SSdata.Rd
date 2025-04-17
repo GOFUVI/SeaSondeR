@@ -24,11 +24,8 @@ The function constructs the matrix name dynamically by appending the antenna num
 matrix from the SeaSondeRCS data using \code{\link{seasonder_getSeaSondeRCS_dataMatrix}}.
 }
 \examples{
-\donttest{
-# Assuming `cs_object` is a valid SeaSondeRCS object
 ssa1_data <- seasonder_getSeaSondeRCS_antenna_SSdata(cs_object, 1)
 print(ssa1_data)
-}
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_dataMatrix}} for extracting specific data matrices.
