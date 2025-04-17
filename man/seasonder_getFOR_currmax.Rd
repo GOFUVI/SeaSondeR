@@ -17,8 +17,6 @@ This function retrieves the maximum radial velocity ('currmax') parameter from t
 in a SeaSondeRCS object.
 }
 \examples{
-\donttest{
-  currmax_value <- seasonder_getFOR_currmax(cs_obj)
-  print(currmax_value)
-}
+currmax_value <- seasonder_getFOR_currmax(cs_obj)
+print(currmax_value)
 }

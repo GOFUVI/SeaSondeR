@@ -39,10 +39,7 @@ The function follows these steps:
 }
 }
 \examples{
-\donttest{
-# Find First Order Nulls for a SeaSondeRCS object
-cs_obj <- seasonder_findFORNulls(cs_obj)
-}
+cs_obj <- SeaSondeR:::seasonder_findFORNulls(cs_obj)
 }
 \seealso{
 \itemize{

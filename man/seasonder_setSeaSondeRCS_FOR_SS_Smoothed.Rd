@@ -32,11 +32,8 @@ ensuring its dimensions match the original self-spectra structure.
 }
 }
 \examples{
-\donttest{
-# Smooth and assign self-spectra for FOR processing
-smoothed_SS <- seasonder_SmoothSS(cs_obj, antenna = 3)
-cs_obj <- seasonder_setSeaSondeRCS_FOR_SS_Smoothed(cs_obj, smoothed_SS)
-}
+smoothed_SS <- SeaSondeR:::seasonder_SmoothSS(cs_obj, antenna = 3)
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR_SS_Smoothed(cs_obj, smoothed_SS)
 }
 \seealso{
 \itemize{

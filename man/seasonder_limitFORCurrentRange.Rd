@@ -49,10 +49,7 @@ This function ensures that only Doppler bins corresponding to physically realist
 radial velocities are included in the first-order Bragg region.
 }
 \examples{
-\donttest{
-# Apply maximum radial velocity filtering
-cs_obj <- seasonder_limitFORCurrentRange(cs_obj)
-}
+cs_obj <- SeaSondeR:::seasonder_limitFORCurrentRange(cs_obj)
 }
 \seealso{
 \itemize{

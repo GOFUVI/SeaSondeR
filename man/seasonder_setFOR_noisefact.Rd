@@ -19,8 +19,6 @@ This function sets the noise factor (\code{noisefact}) used in FOR processing
 for the given SeaSondeRCS object.
 }
 \examples{
-\donttest{
-  cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
-  cs_obj <- seasonder_setFOR_noisefact(cs_obj, 4)
-}
+cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+cs_obj <- seasonder_setFOR_noisefact(cs_obj, 4)
 }

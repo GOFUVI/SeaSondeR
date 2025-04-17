@@ -36,11 +36,8 @@ and assigns default values where necessary.
 }
 }
 \examples{
-\donttest{
-# Retrieve FOR parameters for a SeaSondeRCS object
-for_params <- seasonder_getFOR_parameters(cs_obj)
+for_params <- SeaSondeR:::seasonder_getFOR_parameters(cs_obj)
 print(for_params)
-}
 }
 \seealso{
 \code{\link{seasonder_validateFOR_parameters}} for initializing and validating FOR parameters.

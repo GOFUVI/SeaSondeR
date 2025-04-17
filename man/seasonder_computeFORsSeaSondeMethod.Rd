@@ -56,10 +56,7 @@ This function is designed for processing SeaSonde radar data to accurately ident
 First Order Regions, ensuring reliable current and wave measurements.
 }
 \examples{
-\donttest{
-# Compute First Order Regions using the SeaSonde method
 cs_obj <- seasonder_computeFORsSeaSondeMethod(cs_obj)
-}
 }
 \seealso{
 \itemize{

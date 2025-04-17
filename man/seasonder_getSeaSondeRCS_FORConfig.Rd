@@ -26,10 +26,7 @@ FOR processing. This function aggregates these components by calling \code{seaso
 \code{seasonder_getSeaSondeRCS_NoiseLevel()}.
 }
 \examples{
-\donttest{
-  # Assuming cs_obj is a valid SeaSondeRCS object with configured FOR parameters and noise level
-  config <- seasonder_getSeaSondeRCS_FORConfig(cs_obj)
-  print(config)
-}
+config <- seasonder_getSeaSondeRCS_FORConfig(cs_obj)
+print(config)
 
 }

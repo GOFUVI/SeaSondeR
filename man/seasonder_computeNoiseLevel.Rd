@@ -54,13 +54,8 @@ the row-wise mean is calculated to estimate the average noise level.
 The resulting noise level is essential for setting accurate thresholds during FOR detection.
 }
 \examples{
-\donttest{
-  # Compute the noise level for a SeaSondeRCS object using antenna 3 and unsmoothed spectra
-  cs_obj <- seasonder_computeNoiseLevel(cs_obj)
-
-  # Alternatively, compute using smoothed self-spectra
-  cs_obj <- seasonder_computeNoiseLevel(cs_obj, antenna = 3, smoothed = TRUE)
-}
+cs_obj <- SeaSondeR:::seasonder_computeNoiseLevel(cs_obj)
+cs_obj <- SeaSondeR:::seasonder_computeNoiseLevel(cs_obj, antenna = 3, smoothed = TRUE)
 
 }
 \seealso{

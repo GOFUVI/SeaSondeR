@@ -19,8 +19,6 @@ This function sets the Doppler smoothing factor (\code{nsm}) in the SeaSondeRCS 
 for FOR processing.
 }
 \examples{
-\donttest{
-  cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
-  cs_obj <- seasonder_setFOR_nsm(cs_obj, 3)
-}
+cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+cs_obj <- seasonder_setFOR_nsm(cs_obj, 3)
 }

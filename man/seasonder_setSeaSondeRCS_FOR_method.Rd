@@ -26,15 +26,8 @@ The function first validates the provided method. If the method is valid, it is 
 is later used in the processing workflow to guide FOR computation.
 }
 \examples{
-\donttest{
-  # Create a SeaSondeRCS object (assuming seasonder_createSeaSondeRCS is defined)
-  cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
-
-  # Set the FOR method to "SeaSonde"
-  cs_obj <- seasonder_setSeaSondeRCS_FOR_method(cs_obj, "SeaSonde")
-
-  # Retrieve and check the FOR method
-  for_method <- attr(cs_obj, "FOR_data")$FOR_method
-  print(for_method)
-}
+cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR_method(cs_obj, "SeaSonde")
+for_method <- attr(cs_obj, "FOR_data")$FOR_method
+print(for_method)
 }

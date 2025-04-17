@@ -48,16 +48,10 @@ floor closely matched the reference provided by the AnalyseSpectra Tool in Radia
 This approach is crucial for setting the signal-to-noise ratio (SNR) thresholds used in FOR detection.
 }
 \examples{
-\donttest{
-  # Estimate the reference noise limits for a SeaSondeRCS object using default scaling factors
-  noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj)
-  print(noise_limits)
-
-  # Estimate the reference noise limits with a modified lower limit (e.g., 56.5\% of max frequency)
-  noise_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj, 
-low_limit = 0.565, high_limit = 1.0)
-  print(noise_limits)
-}
+noise_limits <- SeaSondeR:::seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj)
+print(noise_limits)
+noise_limits <- SeaSondeR:::seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj, low_limit = 0.565, high_limit = 1.0)
+print(noise_limits)
 
 }
 \seealso{

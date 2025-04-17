@@ -16,8 +16,6 @@ The value of the 'noisefact' parameter.
 This function retrieves the noise factor ('noisefact') used in FOR processing from a SeaSondeRCS object.
 }
 \examples{
-\donttest{
-  noise_factor <- seasonder_getFOR_noisefact(cs_obj)
-  print(noise_factor)
-}
+noise_factor <- seasonder_getFOR_noisefact(cs_obj)
+print(noise_factor)
 }

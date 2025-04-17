@@ -17,8 +17,6 @@ This function retrieves the Doppler smoothing factor ('nsm') from the FOR parame
 in a SeaSondeRCS object.
 }
 \examples{
-\donttest{
-  smoothing_factor <- seasonder_getFOR_nsm(cs_obj)
-  print(smoothing_factor)
-}
+smoothing_factor <- seasonder_getFOR_nsm(cs_obj)
+print(smoothing_factor)
 }

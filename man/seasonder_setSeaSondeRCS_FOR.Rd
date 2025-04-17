@@ -26,17 +26,10 @@ to the "FOR" field within the object's "FOR_data" attribute. It is intended to b
 as part of the FOR processing workflow.
 }
 \examples{
-\donttest{
-# Assuming a function seasonder_createSeaSondeRCS() exists to create the SeaSondeRCS object:
 cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
-
-# Define a sample FOR data structure
 sample_FOR <- list(
   negative_FOR = c(1, 2, 3),
   positive_FOR = c(10, 11, 12)
 )
-
-# Set the FOR data in the SeaSondeRCS object
-cs_obj <- seasonder_setSeaSondeRCS_FOR(cs_obj, sample_FOR)
-}
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR(cs_obj, sample_FOR)
 }

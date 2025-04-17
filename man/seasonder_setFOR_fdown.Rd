@@ -18,8 +18,6 @@ The updated SeaSondeRCS object with the new \code{fdown} value.
 This function sets the power dropoff threshold (\code{fdown}) used to define the lower limit of the first-order region.
 }
 \examples{
-\donttest{
-  cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
-  cs_obj <- seasonder_setFOR_fdown(cs_obj, 12)
-}
+cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+cs_obj <- seasonder_setFOR_fdown(cs_obj, 12)
 }

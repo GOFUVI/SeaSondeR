@@ -48,11 +48,8 @@ This function is primarily used for filtering and validating the first-order Bra
 SeaSonde radar processing.
 }
 \examples{
-\donttest{
-# Extract spectral power for FOR bins
-FOR_data <- seasonder_extractFOR(cs_obj, spectrum_matrix, detected_FOR_bins)
+FOR_data <- SeaSondeR:::seasonder_extractFOR(cs_obj, spectrum_matrix, detected_FOR_bins)
 print(FOR_data)
-}
 }
 \seealso{
 \itemize{

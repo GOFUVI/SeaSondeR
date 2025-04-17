@@ -50,14 +50,8 @@ This function provides a flexible interface for computing FORs, allowing users t
 methods and configure parameters without modifying the internal object structure.
 }
 \examples{
-\donttest{
-# Compute FORs using the SeaSonde method
 cs_obj <- seasonder_computeFORs(cs_obj, method = "SeaSonde")
-
-# Compute FORs with custom parameters
-FOR_control <- list(currmax = 2, noisefact = 4)
 cs_obj <- seasonder_computeFORs(cs_obj, FOR_control = FOR_control)
-}
 }
 \seealso{
 \itemize{
