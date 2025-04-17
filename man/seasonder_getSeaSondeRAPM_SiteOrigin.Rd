@@ -16,7 +16,5 @@ The SiteOrigin attribute from the object.
 Getter for SiteOrigin
 }
 \examples{
-\donttest{
-  site_origin <- seasonder_getSeaSondeRAPM_SiteOrigin(obj)
-}
+site_origin <- seasonder_getSeaSondeRAPM_SiteOrigin(obj)
 }

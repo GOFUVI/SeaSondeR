@@ -18,7 +18,5 @@ The SeaSonde RAPM object with trimmed antenna pattern data and updated attribute
 This function trims a specified number of points from the beginning and end of the antenna pattern data.
 }
 \examples{
-\donttest{
-  trimmed_obj <- seasonder_trimAPM(obj, 3)
-}
+trimmed_obj <- seasonder_trimAPM(obj, 3)
 }

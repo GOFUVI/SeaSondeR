@@ -34,10 +34,8 @@ The function performs the following operations:
 For more details on the attributes, see \code{\link{seasonder_initializeAttributesSeaSondeRAPM}}.
 }
 \examples{
-\donttest{
   # Create a default SeaSondeRAPM object
   obj <- seasonder_createSeaSondeRAPM()
-}
 }
 \seealso{
 \code{\link{seasonder_validateCalibrationMatrixSeaSondeRAPM}},

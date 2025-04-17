@@ -16,7 +16,5 @@ The SiteName attribute from the object.
 Getter for SiteName
 }
 \examples{
-\donttest{
-  site_name <- seasonder_getSeaSondeRAPM_SiteName(obj)
-}
+site_name <- seasonder_getSeaSondeRAPM_SiteName(obj)
 }

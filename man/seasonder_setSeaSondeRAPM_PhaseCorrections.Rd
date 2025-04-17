@@ -18,7 +18,5 @@ The modified SeaSondeRAPM object with updated PhaseCorrections.
 Setter for PhaseCorrections
 }
 \examples{
-\donttest{
-  obj <- seasonder_setSeaSondeRAPM_PhaseCorrections(obj, new_phase_corrections)
-}
+obj <- seasonder_setSeaSondeRAPM_PhaseCorrections(obj, new_phase_corrections)
 }

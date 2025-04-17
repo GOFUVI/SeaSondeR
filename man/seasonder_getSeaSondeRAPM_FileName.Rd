@@ -16,7 +16,5 @@ The FileName attribute from the object.
 Getter for FileName
 }
 \examples{
-\donttest{
-  file_name <- seasonder_getSeaSondeRAPM_FileName(obj)
-}
+file_name <- seasonder_getSeaSondeRAPM_FileName(obj)
 }

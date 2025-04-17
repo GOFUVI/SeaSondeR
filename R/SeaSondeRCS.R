@@ -4079,14 +4079,29 @@ seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "bi
 #'
 #' @examples
 #' \donttest{
+#'   # Create a raw connection containing 300 zero bytes
 #'   con <- rawConnection(as.raw(rep(0, 300)))
+#'
+#'   # Define a minimal specification list for reading Version 6 block data.
+#'   # In this dummy example:
+#'   # - "nCS6ByteSize" is read as a UInt16 using qc_check_unsigned.
+#'   # - "block_spec" contains a dummy field "field1" (read as a UInt8 using qc_check_unsigned).
+#'   # - "blocks" is an empty list (no repeated blocks are defined).
 #'   specs <- list(
 #'     nCS6ByteSize = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
-#'     block_spec = list( /* block spec details placeholder */ ),
+#'     block_spec  = list(
+#'       field1 = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list())
+#'     ),
 #'     blocks = list()
 #'   )
-#'   header <- readV6BlockData(specs, con, endian = "big")
-#'   print(header)
+#'
+#'   # Read the Version 6 block data using the specifications and connection
+#'   result <- readV6BlockData(specs, con, endian = "big")
+#'
+#'   # Print the resulting data structure
+#'   print(result)
+#'
+#'   # Close the connection
 #'   close(con)
 #' }
 #' @export
@@ -4248,17 +4263,28 @@ seasonder_v6_skip_transformation <- function(cond, value) {
 #'
 #'
 #' @examples
-#' \donttest{
-#'   con <- rawConnection(as.raw(rep(0, 300)))
-#'   specs <- list(
-#'     nCS6ByteSize = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
-#'     block_spec = list( /* block spec details placeholder */ ),
-#'     blocks = list()
-#'   )
-#'   header <- seasonder_readSeaSondeCSFileHeaderV6(specs, con, endian = "big")
-#'   print(header)
-#'   close(con)
-#' }
+#' # Example of reading SeaSonde CS File Header Version 6
+#' 
+#' # Create a raw connection with 300 zero bytes.
+#' con <- rawConnection(as.raw(rep(0, 300)))
+#' 
+#' # Define minimal specifications for reading the header.
+#' # In this example, nCS6ByteSize is expected to be read from the first 2 bytes.
+#' # Since the connection contains zeros, it will return 0 and no blocks will be processed.
+#' specs <- list(
+#'   nCS6ByteSize = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
+#'   block_spec = list(),  # Minimal block_spec; no block fields are defined.
+#'   blocks = list()       # No blocks will be read.
+#' )
+#' 
+#' # Read the SeaSonde CS File Header Version 6.
+#' header <- seasonder_readSeaSondeCSFileHeaderV6(specs, con, endian = "big")
+#' 
+#' # Print the resulting header.
+#' print(header)
+#' 
+#' # Close the connection.
+#' close(con)
 #' @export
 seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "big", prev_data = NULL) {
   conditions_params <- list(calling_function = "seasonder_readSeaSondeCSFileHeaderV6")

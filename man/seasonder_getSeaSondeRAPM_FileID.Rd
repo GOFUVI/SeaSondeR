@@ -16,7 +16,5 @@ The FileID attribute from the object.
 Getter for FileID
 }
 \examples{
-\donttest{
-  file_id <- seasonder_getSeaSondeRAPM_FileID(obj)
-}
+file_id <- seasonder_getSeaSondeRAPM_FileID(obj)
 }

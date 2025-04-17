@@ -18,7 +18,5 @@ The modified SeaSondeRAPM object with updated SiteOrigin.
 Setter for SiteOrigin
 }
 \examples{
-\donttest{
-  obj <- seasonder_setSeaSondeRAPM_SiteOrigin(obj, new_site_origin)
-}
+obj <- seasonder_setSeaSondeRAPM_SiteOrigin(obj, new_site_origin)
 }

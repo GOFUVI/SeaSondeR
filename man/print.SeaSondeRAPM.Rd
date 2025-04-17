@@ -22,7 +22,5 @@ original file name, site origin (latitude and longitude), and antenna bearing.
 It is primarily used for displaying the object's metadata in a human-readable format.
 }
 \examples{
-\donttest{
-  print(obj)
-}
+print(obj)
 }

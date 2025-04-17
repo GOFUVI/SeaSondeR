@@ -16,7 +16,5 @@ The ProcessingSteps attribute from the object.
 Getter for ProcessingSteps
 }
 \examples{
-\donttest{
-  processing_steps <- seasonder_getSeaSondeRAPM_ProcessingSteps(obj)
-}
+processing_steps <- seasonder_getSeaSondeRAPM_ProcessingSteps(obj)
 }

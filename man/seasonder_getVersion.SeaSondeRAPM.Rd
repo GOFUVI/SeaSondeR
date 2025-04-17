@@ -16,7 +16,5 @@ The version value.
 Get the version value from a SeaSondeRAPM object
 }
 \examples{
-\donttest{
-  version <- seasonder_getVersion.SeaSondeRAPM(obj)
-}
+version <- seasonder_getVersion.SeaSondeRAPM(obj)
 }

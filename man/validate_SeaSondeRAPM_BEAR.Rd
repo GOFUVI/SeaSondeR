@@ -20,7 +20,5 @@ matches the number of columns in the calibration_matrix of the given SeaSondeRAP
 It also validates that the bearings are between -180 and 180 degrees.
 }
 \examples{
-\donttest{
-  valid <- validate_SeaSondeRAPM_BEAR(c(0,45,90), obj)
-}
+valid <- SeaSondeR:::validate_SeaSondeRAPM_BEAR(c(0, 45, 90), obj)
 }

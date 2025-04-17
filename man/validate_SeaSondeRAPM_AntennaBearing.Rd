@@ -16,7 +16,5 @@ Returns TRUE if the validation passes.
 This function validates if the provided AntennaBearing is a numeric value.
 }
 \examples{
-\donttest{
-  valid <- validate_SeaSondeRAPM_AntennaBearing(45)
-}
+valid <- SeaSondeR:::validate_SeaSondeRAPM_AntennaBearing(45)
 }

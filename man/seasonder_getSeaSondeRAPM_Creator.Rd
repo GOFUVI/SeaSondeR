@@ -16,7 +16,5 @@ The Creator attribute from the object.
 Getter for Creator
 }
 \examples{
-\donttest{
-  creator <- seasonder_getSeaSondeRAPM_Creator(obj)
-}
+creator <- seasonder_getSeaSondeRAPM_Creator(obj)
 }

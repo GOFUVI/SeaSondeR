@@ -18,7 +18,5 @@ The modified SeaSondeRAPM object with updated Smoothing.
 Setter for Smoothing
 }
 \examples{
-\donttest{
-  obj <- seasonder_setSeaSondeRAPM_Smoothing(obj, new_smoothing)
-}
+obj <- seasonder_setSeaSondeRAPM_Smoothing(obj, new_smoothing)
 }

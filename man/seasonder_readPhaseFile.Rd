@@ -16,7 +16,5 @@ A numeric vector with two elements: phase corrections for the two channels.
 This function reads a phase correction file and extracts phase correction values.
 }
 \examples{
-\donttest{
-  phase_corrections <- seasonder_readPhaseFile("path/to/phase_file.txt")
-}
+phase_corrections <- seasonder_readPhaseFile("path/to/phase_file.txt")
 }

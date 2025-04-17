@@ -24,7 +24,5 @@ The modified SeaSondeRAPM object with updated ProcessingSteps.
 Setter for ProcessingSteps
 }
 \examples{
-\donttest{
-  obj <- seasonder_setSeaSondeRAPM_ProcessingSteps(obj, new_processing_steps)
-}
+obj <- seasonder_setSeaSondeRAPM_ProcessingSteps(obj, new_processing_steps)
 }

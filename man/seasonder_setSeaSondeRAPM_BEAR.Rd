@@ -18,7 +18,5 @@ The modified SeaSondeRAPM object with updated BEAR.
 Setter for BEAR
 }
 \examples{
-\donttest{
-  obj <- seasonder_setSeaSondeRAPM_BEAR(obj, new_bear)
-}
+obj <- seasonder_setSeaSondeRAPM_BEAR(obj, new_bear)
 }

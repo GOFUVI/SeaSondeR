@@ -18,7 +18,5 @@ The modified SeaSondeRAPM object with updated Type.
 Setter for Type
 }
 \examples{
-\donttest{
-  obj <- seasonder_setSeaSondeRAPM_Type(obj, new_type)
-}
+obj <- seasonder_setSeaSondeRAPM_Type(obj, new_type)
 }

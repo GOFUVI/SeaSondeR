@@ -23,11 +23,9 @@ The default parameters are:
 }
 }
 \examples{
-\donttest{
 # Retrieve default parameters
 params <- seasonder_defaultMUSIC_parameters()
 print(params)
-}
 }
 \seealso{
 \code{\link{seasonder_MUSICTestDualSolutions}} to understand the parameters in context.

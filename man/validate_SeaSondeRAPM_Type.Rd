@@ -16,7 +16,5 @@ Returns TRUE if the validation passes.
 This function validates if the provided Type is a character string.
 }
 \examples{
-\donttest{
-  valid <- validate_SeaSondeRAPM_Type("Measured")
-}
+valid <- SeaSondeR:::validate_SeaSondeRAPM_Type("Measured")
 }

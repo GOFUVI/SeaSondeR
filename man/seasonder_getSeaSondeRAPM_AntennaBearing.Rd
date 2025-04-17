@@ -16,7 +16,5 @@ The AntennaBearing attribute from the object.
 Getter for AntennaBearing
 }
 \examples{
-\donttest{
-  antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(obj)
-}
+antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(obj)
 }

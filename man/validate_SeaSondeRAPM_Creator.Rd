@@ -16,7 +16,5 @@ Returns TRUE if the validation passes.
 This function validates if the provided Creator is a character string.
 }
 \examples{
-\donttest{
-  valid <- validate_SeaSondeRAPM_Creator("John Doe")
-}
+valid <- SeaSondeR:::validate_SeaSondeRAPM_Creator("John Doe")
 }

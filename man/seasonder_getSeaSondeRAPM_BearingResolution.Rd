@@ -16,7 +16,5 @@ The BearingResolution attribute from the object.
 Getter for BearingResolution
 }
 \examples{
-\donttest{
-  bearing_resolution <- seasonder_getSeaSondeRAPM_BearingResolution(obj)
-}
+bearing_resolution <- seasonder_getSeaSondeRAPM_BearingResolution(obj)
 }

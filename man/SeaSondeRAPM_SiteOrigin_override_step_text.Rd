@@ -16,7 +16,5 @@ A character string with the updated SiteOrigin details.
 This function generates a message indicating that the SiteOrigin has been overridden.
 }
 \examples{
-\donttest{
-  msg <- SeaSondeRAPM_SiteOrigin_override_step_text(c(37.7749, -122.4194))
-}
+msg <- SeaSondeR:::SeaSondeRAPM_SiteOrigin_override_step_text(c(37.7749, -122.4194))
 }

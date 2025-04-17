@@ -18,7 +18,5 @@ The modified SeaSondeRAPM object with updated Creator.
 Setter for Creator
 }
 \examples{
-\donttest{
-  obj <- seasonder_setSeaSondeRAPM_Creator(obj, new_creator)
-}
+obj <- seasonder_setSeaSondeRAPM_Creator(obj, new_creator)
 }

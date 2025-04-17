@@ -22,7 +22,5 @@ as an array of text lines. It is used to facilitate reading data from
 SeaSonde APM files.
 }
 \examples{
-\donttest{
-  row <- read_matrix_row(lines, 1, 3)
-}
+row <- SeaSondeR:::read_matrix_row(lines, 1, 3)
 }

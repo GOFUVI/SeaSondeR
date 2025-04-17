@@ -18,7 +18,5 @@ The modified SeaSondeRAPM object with updated SiteName.
 Setter for SiteName
 }
 \examples{
-\donttest{
-  obj <- seasonder_setSeaSondeRAPM_SiteName(obj, new_site_name)
-}
+obj <- seasonder_setSeaSondeRAPM_SiteName(obj, new_site_name)
 }

@@ -16,7 +16,5 @@ The CreateTimeStamp attribute from the object.
 Getter for CreateTimeStamp
 }
 \examples{
-\donttest{
-  create_time_stamp <- seasonder_getSeaSondeRAPM_CreateTimeStamp(obj)
-}
+create_time_stamp <- seasonder_getSeaSondeRAPM_CreateTimeStamp(obj)
 }

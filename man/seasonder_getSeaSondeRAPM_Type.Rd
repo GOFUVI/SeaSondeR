@@ -16,7 +16,5 @@ The Type attribute from the object.
 Getter for Type
 }
 \examples{
-\donttest{
-  type <- seasonder_getSeaSondeRAPM_Type(obj)
-}
+type <- seasonder_getSeaSondeRAPM_Type(obj)
 }

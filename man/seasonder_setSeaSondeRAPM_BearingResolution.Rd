@@ -18,7 +18,5 @@ The modified SeaSondeRAPM object with updated BearingResolution.
 Setter for BearingResolution
 }
 \examples{
-\donttest{
-  obj <- seasonder_setSeaSondeRAPM_BearingResolution(obj, new_bearing_resolution)
-}
+obj <- seasonder_setSeaSondeRAPM_BearingResolution(obj, new_bearing_resolution)
 }

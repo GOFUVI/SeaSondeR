@@ -16,7 +16,5 @@ The StationCode attribute from the object.
 Getter for StationCode
 }
 \examples{
-\donttest{
-  station_code <- seasonder_getSeaSondeRAPM_StationCode(obj)
-}
+station_code <- seasonder_getSeaSondeRAPM_StationCode(obj)
 }

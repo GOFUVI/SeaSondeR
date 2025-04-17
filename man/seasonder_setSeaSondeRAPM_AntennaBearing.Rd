@@ -18,7 +18,5 @@ The modified SeaSondeRAPM object with updated AntennaBearing.
 Setter for AntennaBearing
 }
 \examples{
-\donttest{
-  obj <- seasonder_setSeaSondeRAPM_AntennaBearing(obj, new_antenna_bearing)
-}
+obj <- seasonder_setSeaSondeRAPM_AntennaBearing(obj, new_antenna_bearing)
 }

@@ -13,7 +13,5 @@ A character vector containing only the default debug point "none".
 This function resets the debug points to the default state ("none").
 }
 \examples{
-\donttest{
   seasonder_disable_all_debug_points()
-}
 }

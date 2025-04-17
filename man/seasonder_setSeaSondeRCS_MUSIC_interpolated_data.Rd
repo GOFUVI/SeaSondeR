@@ -29,13 +29,39 @@ The function assigns the provided interpolated data (or initializes a new data s
 MUSIC processing steps, where interpolated cross-spectral data is required for refining the estimation of Doppler bins.
 }
 \examples{
-\donttest{
-  # Assuming cs_obj is a valid SeaSondeRCS object and you have computed interpolated data:
-  interpolated <- my_interpolated_data  # Replace with actual interpolated data structure
-  cs_obj <- seasonder_setSeaSondeRCS_MUSIC_interpolated_data(cs_obj, interpolated)
+# Example: Set Interpolated MUSIC Data in a SeaSondeRCS Object
 
-  # Alternatively, if no interpolated data is provided, the function initializes a 
-default structure:
-  cs_obj <- seasonder_setSeaSondeRCS_MUSIC_interpolated_data(cs_obj, NULL)
-}
+# Set sample file paths
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+
+# Read the antenna pattern file to create a SeaSondeRAPM object
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+
+# Create a SeaSondeRCS object from a spectral file
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+
+# Create a dummy interpolated data structure (e.g., a list of matrices)
+interpolated <- list(
+  SSA1 = matrix(1:4, nrow = 2),
+  SSA2 = matrix(5:8, nrow = 2),
+  SSA3 = matrix(9:12, nrow = 2),
+  CS12 = matrix(13:16, nrow = 2),
+  CS13 = matrix(17:20, nrow = 2),
+  CS23 = matrix(21:24, nrow = 2),
+  QC   = matrix(rep(0L, 4), nrow = 2)
+)
+
+# Set the interpolated data using the function
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_MUSIC_interpolated_data(cs_obj, interpolated)
+
+# Inspect the MUSIC_data attribute to verify the interpolated_data field was set
+str(attr(cs_obj, "MUSIC_data")$interpolated_data)
+
+# Alternatively, if no interpolated data is provided, the function initializes a default structure:
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_MUSIC_interpolated_data(cs_obj, NULL)
+
+# Verify that the interpolated_data field now contains the default initialized structure
+str(attr(cs_obj, "MUSIC_data")$interpolated_data)
 }
