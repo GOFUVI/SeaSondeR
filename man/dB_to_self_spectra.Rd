@@ -28,7 +28,10 @@ where:
 }
 }
 \examples{
-spectrum_vals <- dB_to_self_spectra(dB_vals, receiver_gain)
+## Example for internal conversion from dB to linear power
+dB_vals <- c(-10, 0, 10)
+receiver_gain <- 20
+spectrum_vals <- SeaSondeR:::dB_to_self_spectra(dB_vals, receiver_gain)
 print(spectrum_vals)
 }
 \seealso{

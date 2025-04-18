@@ -230,8 +230,9 @@ seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 #' \code{seasonder_initSeaSondeRCS_FOR}. A processing step message is logged to indicate successful creation.
 #'
 #' @examples
+#' \dontrun{
 #' # Example header and data lists (replace with actual header and data content)
-#' my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0, 
+#' my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0,
 #'                   nFirstRangeCell = 1)
 #' my_data <- list(
 #'   SSA1 = matrix(NA_real_, nrow = 100, ncol = 256),
@@ -246,6 +247,7 @@ seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 #' # Check the header and APM attributes
 #' print(seasonder_getSeaSondeRCS_header(rcs_object))
 #' print(attr(rcs_object, "APM"))
+#' }
 new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 
 
@@ -2085,7 +2087,10 @@ seasonder_rangeCellsDists2RangeNumber <- function(seasonder_cs_object,cells_dist
 #'
 #'
 #' @examples
-#' spectrum_vals <- dB_to_self_spectra(dB_vals, receiver_gain)
+#' ## Example for internal conversion from dB to linear power
+#' dB_vals <- c(-10, 0, 10)
+#' receiver_gain <- 20
+#' spectrum_vals <- SeaSondeR:::dB_to_self_spectra(dB_vals, receiver_gain)
 #' print(spectrum_vals)
 dB_to_self_spectra <- function(dB_values, receiver_gain){
 
@@ -2122,7 +2127,10 @@ dB_to_self_spectra <- function(dB_values, receiver_gain){
 #'
 #'
 #' @examples
-#' dB_vals <- self_spectra_to_dB(spectrum_vals, receiver_gain)
+#' ## Example for internal conversion from linear power to dB
+#' spectrum_vals <- c(0.1, 1, 10)
+#' receiver_gain <- 20
+#' dB_vals <- SeaSondeR:::self_spectra_to_dB(spectrum_vals, receiver_gain)
 #' print(dB_vals)
 self_spectra_to_dB <- function(spectrum_values, receiver_gain){
 
@@ -4034,14 +4042,14 @@ process_version_header <- function(pool, version, specs, connection, endian = "b
 #' \code{\link{seasonder_readSeaSondeCSFileHeaderV1}}
 #' \code{\link{process_version_header}}
 #'
-#' @return A combined list of all processed headers up to the file version.
+ #' @return A combined list of all processed headers up to the file version.
 #' @examples
 #' specs <- list(V1 = ..., V2 = ..., V3 = ...)
 #' con <- rawConnection(as.raw(rep(0, 300)))
 #' header <- seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
 #' print(header)
 #' close(con)
-seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big") {
+ seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big") {
   # Read the general header (Version 1)
   withCallingHandlers({
     header_v1 <- seasonder_readSeaSondeCSFileHeaderV1(specs$V1, connection, endian)

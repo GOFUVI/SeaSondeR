@@ -1,0 +1,50 @@
+Loading required package: usethis
+ℹ Loading SeaSondeR
+ℹ Updating SeaSondeR documentation
+ℹ Loading SeaSondeR
+Writing 'process_version_header.Rd'
+Writing 'seasonder_readSeaSondeCSFileHeader.Rd'
+── Running 307 example files ────────────────────────────────────── SeaSondeR ──
+ℹ Loading SeaSondeR
+
+> dB_vals <- c(-10, 0, 10)
+
+> receiver_gain <- 20
+
+> spectrum_vals <- SeaSondeR:::dB_to_self_spectra(dB_vals, 
++     receiver_gain)
+
+> print(spectrum_vals)
+[1]   10  100 1000
+
+> metadata <- SeaSondeR:::parse_metadata_line("value ! attribute")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> print(obj)
+Station CodeTORA
+Original File: MeasPattern.txt
+Site Origin: 42.2012667 -8.8018833
+Antenna Bearing: 13
+
+> obj <- list(header = list(nSiteCodeName = "Station1", 
++     nDateTime = Sys.time(), nDopplerCells = 256, nRangeCells = 100))
+
+> class(obj) <- "SeaSondeRCS"
+
+> print(obj)
+Station Code: Station1
+Time: 2025-04-17 21:40:28.798778
+N Doppler Cells: 256
+N Range Cells: 100
+
+> result <- qc_check_range(5, 0, 10)
+Error in qc_check_range(5, 0, 10) : 
+  could not find function "qc_check_range"
+Calls: run_examples ... lapply -> FUN -> source -> withVisible -> eval -> eval
+ℹ Loading SeaSondeR
+Execution halted

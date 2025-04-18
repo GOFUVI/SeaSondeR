@@ -30,7 +30,10 @@ where:
 Absolute values of power are used to ensure valid logarithmic calculations.
 }
 \examples{
-dB_vals <- self_spectra_to_dB(spectrum_vals, receiver_gain)
+## Example for internal conversion from linear power to dB
+spectrum_vals <- c(0.1, 1, 10)
+receiver_gain <- 20
+dB_vals <- SeaSondeR:::self_spectra_to_dB(spectrum_vals, receiver_gain)
 print(dB_vals)
 }
 \seealso{
