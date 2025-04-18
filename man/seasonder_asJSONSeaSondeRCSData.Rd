@@ -21,7 +21,9 @@ This function extracts the data from a \code{seasonder_cs_object}, representing 
 If a path is provided and there is an issue writing to the file, the function logs an error message using \code{seasonder_logAndMessage} and returns the JSON data as a string.
 }
 \examples{
-json_output <- seasonder_asJSONSeaSondeRCSData(cs_obj, path = "output.json")
+# Example: create a simple SeaSondeRCS object and convert its data to JSON
+cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
+json_output <- seasonder_asJSONSeaSondeRCSData(cs_obj)
 print(json_output)
 }
 \seealso{

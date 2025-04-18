@@ -43,7 +43,16 @@ repeated blocks are processed recursively based on a set of loops provided
 in the specifications.
 }
 \examples{
-result <- readV6BlockData(specs, con, endian = "big")
+# Example: read a single UInt8 value using internal helper
+specs <- list(
+  field1 = list(
+    type = "UInt8",
+    qc_fun = "qc_check_unsigned",
+    qc_params = list()
+  )
+)
+con <- rawConnection(as.raw(c(10)), "rb")
+result <- SeaSondeR:::readV6BlockData(specs, con, endian = "big")
 print(result)
 close(con)
 }

@@ -28,6 +28,6 @@ check if the field value matches a specified data type before performing the
 unsigned check.
 }
 \examples{
-result <- qc_check_unsigned(10)
+result <- SeaSondeR:::qc_check_unsigned(10)
 print(result)
 }

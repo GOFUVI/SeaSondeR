@@ -2222,7 +2222,16 @@ seasonder_SelfSpectra2dB <- function(seasonder_cs_object, spectrum_values) {
 #' \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving Doppler bin frequencies.
 #'
 #' @examples
-#' normalized_freqs <- seasonder_Bins2NormalizedDopplerFreq(cs_obj, bins)
+#' # Read a sample Cross-Spectral (CS) file to create a SeaSondeRCS object
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' cs_obj <- seasonder_readSeaSondeCSFile(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   specs_path
+#' )
+#' # Define Doppler bin indices (from 1 to number of bins)
+#' bins <- seq_len(as.integer(seasonder_getnDopplerCells(cs_obj)))
+#' # Retrieve normalized Doppler frequencies for the specified bins (internal function)
+#' normalized_freqs <- SeaSondeR:::seasonder_Bins2NormalizedDopplerFreq(cs_obj, bins)
 #' print(normalized_freqs)
 seasonder_Bins2NormalizedDopplerFreq <- function(seasonder_cs_object, bins) {
 
@@ -2415,7 +2424,16 @@ seasonder_DopplerFreq2Bins <- function(seasonder_cs_object, doppler_values) {
 #'
 #'
 #' @examples
-#' freqs <- seasonder_Bins2DopplerFreq(cs_obj, bins)
+#' # Read a sample Cross-Spectral (CS) file to create a SeaSondeRCS object
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' cs_obj <- seasonder_readSeaSondeCSFile(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   specs_path
+#' )
+#' # Define Doppler bin indices (from 1 to number of bins)
+#' bins <- seq_len(as.integer(seasonder_getnDopplerCells(cs_obj)))
+#' # Retrieve Doppler frequencies for the specified bins (internal function)
+#' freqs <- SeaSondeR:::seasonder_Bins2DopplerFreq(cs_obj, bins)
 #' print(freqs)
 seasonder_Bins2DopplerFreq <- function(seasonder_cs_object, bins) {
 

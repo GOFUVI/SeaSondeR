@@ -21,8 +21,16 @@ This function extracts the header data from a \code{seasonder_cs_object}, repres
 If a path is provided and there is an issue writing to the file, the function logs an error message using \code{seasonder_logAndMessage} and returns the JSON data as a string.
 }
 \examples{
-json_output <- seasonder_asJSONSeaSondeRCSHeader(cs_obj, path = "header_output.json")
-print(json_output)
+# Example: create a simple SeaSondeRCS object and convert its header to JSON
+cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
+attr(cs_obj, "header") <- list(
+  nSiteCodeName = "Station1",
+  nDateTime = Sys.time(),
+  nDopplerCells = 2,
+  nRangeCells = 3
+)
+json_header <- seasonder_asJSONSeaSondeRCSHeader(cs_obj)
+print(json_header)
 }
 \seealso{
 \code{\link{seasonder_createSeaSondeRCS}}, \code{\link{seasonder_getSeaSondeRCS_header}}
