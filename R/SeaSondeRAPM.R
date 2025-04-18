@@ -1641,7 +1641,10 @@ seasonder_extrapolateAPM <- function(seasonder_apm_object, n = 1) {
 #' @return A numeric vector containing the row values.
 #'
 #' @examples
+#' # Example: read a 3-line matrix row from text lines
+#' lines <- c("1 2 3", "4 5 6", "7 8 9")
 #' row <- SeaSondeR:::read_matrix_row(lines, 1, 3)
+#' print(row)
 read_matrix_row <- function(lines, start, number_of_lines_to_read) {
   # Concatenate the specified lines into a single string with spaces between them
   row_str <- paste(lines[start:(start + number_of_lines_to_read - 1)], collapse = " ")
