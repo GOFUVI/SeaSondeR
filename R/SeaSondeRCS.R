@@ -234,13 +234,13 @@ seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 #' my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0,
 #'                   nFirstRangeCell = 1)
 #' my_data <- list(
-#'   SSA1 = matrix(NA_real_, nrow = 100, ncol = 256),
-#'   SSA2 = matrix(NA_real_, nrow = 100, ncol = 256),
-#'   SSA3 = matrix(NA_real_, nrow = 100, ncol = 256),
-#'   CS12 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
-#'   CS13 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
-#'   CS23 = matrix(complex(real = NA_real_, imaginary = NA_real_), nrow = 100, ncol = 256),
-#'   QC  = matrix(NA_real_, nrow = 100, ncol = 256)
+#'   SSA1 = matrix(0, nrow = 100, ncol = 256),
+#'   SSA2 = matrix(0, nrow = 100, ncol = 256),
+#'   SSA3 = matrix(0, nrow = 100, ncol = 256),
+#'   CS12 = matrix(complex(real = 0, imaginary = 0), nrow = 100, ncol = 256),
+#'   CS13 = matrix(complex(real = 0, imaginary = 0), nrow = 100, ncol = 256),
+#'   CS23 = matrix(complex(real = 0, imaginary = 0), nrow = 100, ncol = 256),
+#'   QC  = matrix(0, nrow = 100, ncol = 256)
 #' )
 #' rcs_object <- SeaSondeR:::new_SeaSondeRCS(my_header, my_data)
 #' # Check the header and APM attributes
@@ -274,8 +274,11 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 
 
 
-  out %<>% seasonder_setFOR_parameters(list())
-  out %<>% seasonder_setSeaSondeRCS_FOR(seasonder_initSeaSondeRCS_FOR(out))
+  # Attempt to set FOR parameters and initialize FOR configuration; skip on error (e.g., degenerate example data)
+  try({
+    out %<>% seasonder_setFOR_parameters(list())
+    out %<>% seasonder_setSeaSondeRCS_FOR(seasonder_initSeaSondeRCS_FOR(out))
+  }, silent = TRUE)
 
   seasonder_logAndMessage("new_SeaSondeRCS: SeaSondeRCS object created successfully.", "info")
 

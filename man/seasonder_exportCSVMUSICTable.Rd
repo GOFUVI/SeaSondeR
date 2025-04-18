@@ -26,11 +26,14 @@ This function performs the following steps:
 }
 }
 \examples{
-  # Prepare a SeaSondeRCS object for examples
+  # Prepare a SeaSondeRCS object for examples, including APM
+  apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+  apm_obj <- SeaSondeR:::seasonder_readSeaSondeRAPMFile(apm_file)
   specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
-  cs_obj <- seasonder_readSeaSondeCSFile(
+  cs_obj <- seasonder_createSeaSondeRCS(
     system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
-    specs_path
+    specs_path = specs_path,
+    seasonder_apm_object = apm_obj
   )
   # Export MUSIC table to a temporary CSV file
   tmpfile <- tempfile(fileext = ".csv")
