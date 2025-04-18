@@ -819,8 +819,16 @@ seasonder_getSeaSondeRCS_header <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_createSeaSondeRCS}}, \code{\link{seasonder_getSeaSondeRCS_header}}
 #'
 #' @examples
-#' json_output <- seasonder_asJSONSeaSondeRCSHeader(cs_obj, path = "header_output.json")
-#' print(json_output)
+#' # Example: create a simple SeaSondeRCS object and convert its header to JSON
+#' cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
+#' attr(cs_obj, "header") <- list(
+#'   nSiteCodeName = "Station1",
+#'   nDateTime = Sys.time(),
+#'   nDopplerCells = 2,
+#'   nRangeCells = 3
+#' )
+#' json_header <- seasonder_asJSONSeaSondeRCSHeader(cs_obj)
+#' print(json_header)
 #' @note
 #' If a path is provided and there is an issue writing to the file, the function logs an error message using `seasonder_logAndMessage` and returns the JSON data as a string.
 seasonder_asJSONSeaSondeRCSHeader <- function(seasonder_cs_object, path = NULL) {
@@ -854,7 +862,9 @@ seasonder_asJSONSeaSondeRCSHeader <- function(seasonder_cs_object, path = NULL) 
 #' \code{\link{seasonder_createSeaSondeRCS}}, \code{\link{seasonder_getSeaSondeRCS_data}}
 #'
 #' @examples
-#' json_output <- seasonder_asJSONSeaSondeRCSData(cs_obj, path = "output.json")
+#' # Example: create a simple SeaSondeRCS object and convert its data to JSON
+#' cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
+#' json_output <- seasonder_asJSONSeaSondeRCSData(cs_obj)
 #' print(json_output)
 #' @note
 #' If a path is provided and there is an issue writing to the file, the function logs an error message using `seasonder_logAndMessage` and returns the JSON data as a string.
@@ -1533,8 +1543,8 @@ seasonder_computeCenterDopplerBin <- function(seasonder_cs_object, nDoppler) {
 #' zero-based indexing, R uses one-based indexing.
 #'
 #' @examples
-#' center_bin <- seasonder_getCenterDopplerBin(cs_obj)
-#' print(center_bin)
+#' center_bin <- seasonder_computeCenterDopplerBin(cs_obj, seasonder_getnDopplerCells(cs_obj))
+#' # print(center_bin)
 #'
 seasonder_getCenterDopplerBin <- function(seasonder_cs_object) {
 
@@ -3325,7 +3335,7 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun) {
 #' @examples
 #' field_spec <- list(type = "UInt8", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer"))
 #' con <- rawConnection(as.raw(c(0x01)))
-#' result <- read_and_qc_field(field_spec, con, endian = "big")
+#' result <- SeaSondeR:::read_and_qc_field(field_spec, con, endian = "big")
 #' print(result)
 #' close(con)
 read_and_qc_field <- function(field_spec, connection, endian = "big") {
@@ -3499,9 +3509,10 @@ seasonder_readSeaSondeCSFileBlock <- function(spec, connection,endian = "big") {
 #'
 #' @return Invisibly returns NULL.
 #' @examples
-#' specs <- list(field1 = "spec1", field2 = "spec2")
+#' # Example: validate presence of all fields in specs
+#' specs <- list(field1 = "spec1", field2 = "spec2", field3 = "spec3")
 #' fields <- c("field1", "field2", "field3")
-#' seasonder_check_specs(specs, fields)
+#' SeaSondeR:::seasonder_check_specs(specs, fields)
 #'
 seasonder_check_specs <- function(specs, fields) {
 
@@ -3745,7 +3756,16 @@ seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "bi
 #'
 #'
 #' @examples
-#' result <- readV6BlockData(specs, con, endian = "big")
+#' # Example: read a single UInt8 value using internal helper
+#' specs <- list(
+#'   field1 = list(
+#'     type = "UInt8",
+#'     qc_fun = "qc_check_unsigned",
+#'     qc_params = list()
+#'   )
+#' )
+#' con <- rawConnection(as.raw(c(10)), "rb")
+#' result <- SeaSondeR:::readV6BlockData(specs, con, endian = "big")
 #' print(result)
 #' close(con)
 #' @export
@@ -4000,15 +4020,28 @@ seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "bi
 #'
 #' @return List. A combination of the initial `pool` and the processed header for the given `version`.
 #'         Fields in the current header will overwrite or append to the pool as described above.
-##' @examples
-#' con <- rawConnection(as.raw(rep(0, 300)))
-#' specs <- list(
-#'   V1 = list(),
-#'   V2 = list(),
-#'   V3 = list(nSiteCodeName = list(), nV3Extent = list())
+#' @examples
+#' # Example: process version-specific header using real specs and file
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, "header")
+#' con <- file(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   "rb"
 #' )
-#' header <- SeaSondeR:::process_version_header(list(), 3, specs, con, endian = "big")
-#' print(header)
+#' header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
+#'   specs$V1,
+#'   con,
+#'   endian = "big"
+#' )
+#' header_v2 <- SeaSondeR:::process_version_header(
+#'   pool = header_v1,
+#'   version = 2,
+#'   specs = specs,
+#'   connection = con,
+#'   endian = "big",
+#'   prev_data = header_v1
+#' )
+#' print(header_v2)
 #' close(con)
 process_version_header <- function(pool, version, specs, connection, endian = "big", prev_data = NULL) {
   # Construct the function name based on the provided version
@@ -4338,7 +4371,7 @@ qc_check_range <- function(field_value, min, max, expected_type = NULL) {
 #'         type (if `expected_type` is not NULL) and is non-negative. If any of the
 #'         checks fail, the function logs an error message and aborts execution.
 #' @examples
-#' result <- qc_check_unsigned(10)
+#' result <- SeaSondeR:::qc_check_unsigned(10)
 #' print(result)
 qc_check_unsigned <- function(field_value,  expected_type = NULL) {
 
