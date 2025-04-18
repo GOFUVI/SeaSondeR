@@ -65,7 +65,6 @@ seasonder_defaultSpecsFilePath <- function(type = "CS") {
 #'  \item Error in reading the YAML content.
 #'  \item If the read YAML content is not of list type.
 #'  \item If no data is found for the provided path in the YAML content.
-#' }
 #' Errors generated are of class \code{"seasonder_read_yaml_file_error"}.
 #' Detailed error information including the file path and path within the file
 #' is provided. For logging and aborting, this function utilizes the
@@ -74,11 +73,9 @@ seasonder_defaultSpecsFilePath <- function(type = "CS") {
 #' @importFrom yaml read_yaml
 #'
 #' @examples
-#' \donttest{
 #' # Assuming a YAML file named "example.yaml" exists with appropriate content
 #' result <- seasonder_readYAMLSpecs("example.yaml", c("header", "versions", "V2"))
 #' print(result)
-#' }
 #'
 seasonder_readYAMLSpecs <- function(file_path, path = rlang::zap()) {
 
@@ -136,11 +133,9 @@ seasonder_readYAMLSpecs <- function(file_path, path = rlang::zap()) {
 #' @importFrom glue glue
 #'
 #' @examples
-#' \donttest{
 #'   # Determine the spectra file type for a given file path
 #'   file_type <- seasonder_find_spectra_file_type("path/to/spectra_file.bin")
 #'   print(file_type)
-#' }
 seasonder_find_spectra_file_type <- function(filepath, endian = "big") {
   # Set up error handling parameters with function name, error class, and file path
   conditions_params <- list(

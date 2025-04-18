@@ -30,7 +30,6 @@ detailed error messages in case of:
 \item Error in reading the YAML content.
 \item If the read YAML content is not of list type.
 \item If no data is found for the provided path in the YAML content.
-}
 Errors generated are of class \code{"seasonder_read_yaml_file_error"}.
 Detailed error information including the file path and path within the file
 is provided. For logging and aborting, this function utilizes the
@@ -38,11 +37,9 @@ is provided. For logging and aborting, this function utilizes the
 }
 
 \examples{
-\donttest{
 # Assuming a YAML file named "example.yaml" exists with appropriate content
 result <- seasonder_readYAMLSpecs("example.yaml", c("header", "versions", "V2"))
 print(result)
-}
 
 }
 \seealso{

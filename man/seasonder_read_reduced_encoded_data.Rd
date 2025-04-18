@@ -38,7 +38,6 @@ A 24-bit signed integer is computed by reading 3 bytes and then adjusting the va
 computed value is greater than or equal to 8388608 to account for the two's complement representation.
 }
 \examples{
-\donttest{
   # Example for processing command 0x9C (unsigned 32-bit integer):
   # 0x9C is followed by 4 bytes that represent 1000 (big endian: 0x00, 0x00, 0x03, 0xE8).
   raw_vec <- as.raw(c(0x9C, 0x00, 0x00, 0x03, 0xE8))
@@ -47,5 +46,4 @@ computed value is greater than or equal to 8388608 to account for the two's comp
   result <- seasonder_read_reduced_encoded_data(con, key, endian = "big")
   close(con)
   print(result)  # Expected output: 1000
-}
 }

@@ -16,7 +16,5 @@ A character vector of the \code{n} most recent log entries from the global log.
 This function fetches the most recent log entries from the global log variable \code{seasonder_the$log}.
 }
 \examples{
-\donttest{
   seasonder_getLog()
-}
 }

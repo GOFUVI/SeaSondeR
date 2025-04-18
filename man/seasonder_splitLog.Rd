@@ -28,7 +28,5 @@ The function splits the log entries into blocks based on time gaps between times
 for splitting can be provided or calculated based on the gaps in the log timestamps.
 }
 \examples{
-\donttest{
   seasonder_splitLog()
-}
 }

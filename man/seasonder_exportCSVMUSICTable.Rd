@@ -26,7 +26,6 @@ This function performs the following steps:
 }
 }
 \examples{
-\donttest{
   # Prepare a SeaSondeRCS object for examples
   specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
   cs_obj <- seasonder_readSeaSondeCSFile(
@@ -37,7 +36,6 @@ This function performs the following steps:
   tmpfile <- tempfile(fileext = ".csv")
   seasonder_exportCSVMUSICTable(cs_obj, tmpfile)
   print(tmpfile)
-}
 }
 \seealso{
 \itemize{

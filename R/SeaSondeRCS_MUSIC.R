@@ -3522,7 +3522,6 @@ seasonder_MUSICLonLat <- seasonder_MUSIC_LonLat
 #' @export
 #'
 #' @examples
-#' \donttest{
 #'   # Load sample CSS and APM files
 #'   cs_file  <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #'   apm_file <- system.file("css_data/MeasPattern.txt",       package = "SeaSondeR")
@@ -3534,7 +3533,6 @@ seasonder_MUSICLonLat <- seasonder_MUSIC_LonLat
 #'   # Export MUSIC table
 #'   music_table <- seasonder_exportMUSICTable(cs_obj)
 #'   print(music_table)
-#' }
 seasonder_exportMUSICTable <- function(seasonder_cs_object) {
   # Initialize globals for seasonder_exportMUSICTable
   range_cell <- doppler_bin <- freq <- radial_v <- DOA <- lonlat <- 
@@ -3651,7 +3649,6 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object) {
 #' @importFrom data.table fwrite
 #'
 #' @examples
-#' \donttest{
 #'   # Prepare a SeaSondeRCS object for examples
 #'   specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
 #'   cs_obj <- seasonder_readSeaSondeCSFile(
@@ -3662,7 +3659,6 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object) {
 #'   tmpfile <- tempfile(fileext = ".csv")
 #'   seasonder_exportCSVMUSICTable(cs_obj, tmpfile)
 #'   print(tmpfile)
-#' }
 #' @export
 seasonder_exportCSVMUSICTable <- function(seasonder_cs_object, filepath) {
 
@@ -4201,10 +4197,8 @@ seasonder_exportCTFRangeInfo_string <- function(seasonder_cs_object, tableStart 
 #' @return Invisibly returns a data frame containing the range information.
 #'
 #' @examples
-#' \donttest{
 #'   cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file")
 #'   range_info <- seasonder_exportCTFRangeInfo(cs_obj, tempfile(fileext = ".txt"))
-#' }
 #'
 #' @export
 seasonder_exportCTFRangeInfo <- function(seasonder_cs_object, file, tableStart = "") {

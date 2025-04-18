@@ -44,7 +44,6 @@ This function performs the following operations:
 }
 }
 \examples{
-\donttest{
   # Load sample CSS and APM files
   cs_file  <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
   apm_file <- system.file("css_data/MeasPattern.txt",       package = "SeaSondeR")
@@ -56,7 +55,6 @@ This function performs the following operations:
   # Export MUSIC table
   music_table <- seasonder_exportMUSICTable(cs_obj)
   print(music_table)
-}
 }
 \seealso{
 \itemize{

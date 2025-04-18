@@ -16,7 +16,5 @@ A character vector representing the last log entry.
 This function fetches and splits the log entries, then returns the last entry.
 }
 \examples{
-\donttest{
   seasonder_lastLog()
-}
 }

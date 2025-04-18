@@ -28,7 +28,5 @@ Archives log entries based on their levels: INFO, ERROR, or FATAL. If paths are 
 temporary files will be used.
 }
 \examples{
-\donttest{
   seasonder_logArchiver()
-}
 }

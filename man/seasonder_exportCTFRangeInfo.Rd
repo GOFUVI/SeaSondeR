@@ -25,9 +25,7 @@ It then writes this output string to the specified file. Additionally, it return
 invisibly, allowing further processing if necessary.
 }
 \examples{
-\donttest{
   cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file")
   range_info <- seasonder_exportCTFRangeInfo(cs_obj, tempfile(fileext = ".txt"))
-}
 
 }

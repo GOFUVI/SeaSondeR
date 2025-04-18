@@ -16,7 +16,6 @@ The modified list of CSSW data cells with sign corrections applied.
 Applies sign corrections to both cross-spectra and auto-spectra fields within a list of CSSW data cells.
 }
 \examples{
-\donttest{
 # Example usage:
 cs_data <- list(
   list(csgn = list(c12m = 1, c12a = 0, c13m = 1, c13a = 0, c23m = 1, c23a = 0),
@@ -25,5 +24,4 @@ cs_data <- list(
 )
 corrected <- SeaSondeR:::seasonder_applyCSSWSigns(cs_data)
 print(corrected)
-}
 }

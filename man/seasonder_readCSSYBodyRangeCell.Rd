@@ -46,10 +46,8 @@ The function continues reading keys until it detects the 'END ' marker or a repe
 the end of the block.
 }
 \examples{
-\donttest{
   con <- rawConnection(as.raw(c(0x00)))
   specs <- list(indx = list(type = "int"))
   result <- seasonder_readCSSYBodyRangeCell(con, specs, dbRef = 0, endian = "big")
   close(con)
-}
 }

@@ -45,7 +45,6 @@ vectors from the first cell where they appear. Finally, each cell's data is inse
 of the matrices as indicated by the cell's \code{indx$index} value.
 }
 \examples{
-\donttest{
   # Example with a single cell
   cell <- list(
     indx  = list(index = 1),
@@ -63,6 +62,5 @@ of the matrices as indicated by the cell's \code{indx$index} value.
   body <- list(cell)
   transformed <- seasonder_CSSY2CSData(body)
   print(transformed)
-}
 
 }

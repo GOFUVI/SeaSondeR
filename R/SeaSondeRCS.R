@@ -230,7 +230,6 @@ seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 #' \code{seasonder_initSeaSondeRCS_FOR}. A processing step message is logged to indicate successful creation.
 #'
 #' @examples
-#' \dontrun{
 #' # Example header and data lists (replace with actual header and data content)
 #' my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0,
 #'                   nFirstRangeCell = 1)
@@ -247,7 +246,6 @@ seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 #' # Check the header and APM attributes
 #' print(seasonder_getSeaSondeRCS_header(rcs_object))
 #' print(attr(rcs_object, "APM"))
-#' }
 new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 
 

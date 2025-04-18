@@ -41,13 +41,11 @@ The function executes the following steps:
 }
 }
 \examples{
-\donttest{
   # Assuming "path/to/file.rcssy" is a valid SeaSonde RCSSW file and the specifications file exists:
   cs_obj <- seasonder_readSeaSondeRCSSWFile("path/to/file.rcssy")
 
   # Inspect the resulting SeaSondeRCS object:
   print(attr(cs_obj, "header"))
   print(attr(cs_obj, "data"))
-}
 
 }

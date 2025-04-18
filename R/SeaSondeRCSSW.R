@@ -88,14 +88,12 @@ seasonder_CSSW_read_asign <- function(connection, key) {
 #' @return A named list as returned by seasonder_readSeaSondeCSFileBlock consistent with the provided specifications.
 #'
 #' @examples
-#' \donttest{
 #' # Example usage:
 #' con <- rawConnection(as.raw(1:10))
 #' specs <- list(field = list(type = "integer"))
 #' result <- seasonder_readCSSWFields(con, specs, "big")
 #' print(result)
 #' close(con)
-#' }
 seasonder_readCSSWFields <- function(connection, specs, endian, parent_key= NULL){
   variable_char_types <- purrr::map_lgl(specs, \(x) x$type == "CharX")
   if(any(variable_char_types)){
@@ -139,13 +137,11 @@ seasonder_readCSSWFields <- function(connection, specs, endian, parent_key= NULL
 #' voltage values. Special integer values equal to 0xFFFFFFFF are converted to NaN.
 #'
 #' @examples
-#' \donttest{
 #' # Example usage:
 #' values <- list(c(1000, 0xFFFFFFFF, 2000))
 #' scaled <- seasonder_SeaSondeRCSSWApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, 
 #' dbRef = -20)
 #' print(scaled)
-#'}
 #' @details
 #' The scaling process performs the following steps for each input value:
 #'   1. Checks whether the value equals 0xFFFFFFFF. If so, it returns NaN immediately because this value indicates a
@@ -239,14 +235,12 @@ if(computeVoltage){
 #'         the raw decoded data or the scaled voltage values if a 'scal' block had been applied.
 #'
 #' @examples
-#' \donttest{
 #'   # Example usage:
 #'   con <- rawConnection(as.raw(1:100))
 #'   specs <- list(sampleKey = list(type = "double"))
 #'   result <- seasonder_readCSSWBodyRangeCell(con, specs, dbRef = -20, endian = "big")
 #'   print(result)
 #'   close(con)
-#' }
 seasonder_readCSSWBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
   indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
   scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
@@ -312,14 +306,12 @@ seasonder_readCSSWBodyRangeCell <- function(connection, specs, dbRef, endian = "
 #' @return A list of processed body cells with applied sign corrections.
 #'
 #' @examples
-#' \donttest{
 #' # Example usage:
 #' con <- rawConnection(as.raw(1:100))
 #' specs <- list(sampleKey = list(type = "double"))
 #' result <- seasonder_readCSSWBody(con, specs, 100, dbRef = -20, endian = "big")
 #' print(result)
 #' close(con)
-#' }
 seasonder_readCSSWBody <- function(connection, specs, size, dbRef, endian = "big", specs_key_size = NULL){
 
   end_point <- seek(connection) + size
@@ -344,13 +336,11 @@ seasonder_readCSSWBody <- function(connection, specs, size, dbRef, endian = "big
 #' @return A numeric matrix with four columns: LeftBraggLeftLimit, LeftBraggRightLimit, RightBraggLeftLimit, and RightBraggRightLimit.
 #'
 #' @examples
-#' \donttest{
 #' # Example usage:
 #' con <- rawConnection(as.raw(rep(0x01, 16)))
 #' lims <- seasonder_readCSSWLims(con, 4, endian = "big")
 #' print(lims)
 #' close(con)
-#' }
 seasonder_readCSSWLims <- function(connection, n_values, endian = "big") {
 
   # Read n_values of 32-bit unsigned integers
@@ -402,12 +392,10 @@ seasonder_readCSSWLims <- function(connection, n_values, endian = "big") {
 #' @import glue
 #'
 #' @examples
-#' \donttest{
 #'   con <- file("path/to/file.cssy", "rb")
 #'   specs <- seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CSSW"), "header")
 #'   header <- seasonder_readCSSWHeader(con, specs, endian = "big")
 #'   close(con)
-#' }
 seasonder_readCSSWHeader <- function(connection, current_specs, endian = "big", parent_key = NULL, keys_so_far = c("CSSW", "HEAD"), specs_key_size = NULL){
   # Initialize an empty output list for accumulating header values
   out <- list()
@@ -523,7 +511,6 @@ seasonder_CSSW2CSHeader <- function(header) {
 #' of the matrices as indicated by the cell's \code{indx$index} value.
 #'
 #' @examples
-#' \donttest{
 #'   # Example with a single cell
 #'   cell <- list(
 #'     indx  = list(index = 1),
@@ -541,7 +528,6 @@ seasonder_CSSW2CSHeader <- function(header) {
 #'   body <- list(cell)
 #'   transformed <- seasonder_CSSW2CSData(body)
 #'   print(transformed)
-#' }
 #'
 #' @export
 
@@ -624,7 +610,6 @@ seasonder_CSSW2CSData <- function(body) {
 #' @return The modified list of CSSW data cells with sign corrections applied.
 #'
 #' @examples
-#' \donttest{
 #' # Example usage:
 #' cs_data <- list(
 #'   list(csgn = list(c12m = 1, c12a = 0, c13m = 1, c13a = 0, c23m = 1, c23a = 0),
@@ -633,7 +618,6 @@ seasonder_CSSW2CSData <- function(body) {
 #' )
 #' corrected <- SeaSondeR:::seasonder_applyCSSWSigns(cs_data)
 #' print(corrected)
-#' }
 seasonder_applyCSSWSigns <- function(cs_data) {
   for (i in seq_along(cs_data)) {
     cell <- cs_data[[i]]
@@ -682,14 +666,12 @@ seasonder_applyCSSWSigns <- function(cs_data) {
 #' }
 #'
 #' @examples
-#' \donttest{
 #'   # Assuming "path/to/file.rcssy" is a valid SeaSonde RCSSW file and the specifications file exists:
 #'   cs_obj <- seasonder_readSeaSondeRCSSWFile("path/to/file.rcssy")
 #'
 #'   # Inspect the resulting SeaSondeRCS object:
 #'   print(attr(cs_obj, "header"))
 #'   print(attr(cs_obj, "data"))
-#' }
 #'
 seasonder_readSeaSondeRCSSWFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSW"), endian = "big"){
 

@@ -33,12 +33,10 @@ A list of processed body cells with applied sign corrections.
 Reads the body section of a CSSW file, processing each cell block until the designated endpoint.
 }
 \examples{
-\donttest{
 # Example usage:
 con <- rawConnection(as.raw(1:100))
 specs <- list(sampleKey = list(type = "double"))
 result <- seasonder_readCSSWBody(con, specs, 100, dbRef = -20, endian = "big")
 print(result)
 close(con)
-}
 }
