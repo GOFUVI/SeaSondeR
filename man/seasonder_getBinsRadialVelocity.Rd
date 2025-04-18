@@ -34,6 +34,12 @@ shift frequency for the bin, \eqn{BraggFreq} is the Bragg frequency
 and \eqn{k_0} is the radar wave number divided by 2\eqn{\pi}.
 }
 \examples{
+# Read a SeaSonde CS file
+cs_obj <- seasonder_readSeaSondeCSFile(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+  SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+)
+# Compute radial velocities for bins
 velocities <- seasonder_getBinsRadialVelocity(cs_obj)
 print(velocities)
 }

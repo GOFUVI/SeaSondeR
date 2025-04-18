@@ -1510,8 +1510,16 @@ seasonder_getReceiverGain_dB <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}} to retrieve the number
 #' of Doppler cells from a SeaSondeRCS object.
 #'
-#' @examples
-#' center_bin <- seasonder_computeCenterDopplerBin(cs_obj, nDoppler)
+ #' @examples
+#' # Read a SeaSonde CS file
+#' cs_obj <- seasonder_readSeaSondeCSFile(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' )
+#' # Get number of Doppler cells
+#' nDoppler <- seasonder_getnDopplerCells(cs_obj)
+#' # Compute center Doppler bin
+#' center_bin <- SeaSondeR:::seasonder_computeCenterDopplerBin(cs_obj, nDoppler)
 #' print(center_bin)
 seasonder_computeCenterDopplerBin <- function(seasonder_cs_object, nDoppler) {
 
@@ -1543,8 +1551,17 @@ seasonder_computeCenterDopplerBin <- function(seasonder_cs_object, nDoppler) {
 #' zero-based indexing, R uses one-based indexing.
 #'
 #' @examples
-#' center_bin <- seasonder_computeCenterDopplerBin(cs_obj, seasonder_getnDopplerCells(cs_obj))
-#' # print(center_bin)
+#' # Read a SeaSonde CS file
+#' cs_obj <- seasonder_readSeaSondeCSFile(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' )
+#' # Compute center Doppler bin using object
+#' center_bin <- SeaSondeR:::seasonder_computeCenterDopplerBin(
+#'   cs_obj,
+#'   seasonder_getnDopplerCells(cs_obj)
+#' )
+#' print(center_bin)
 #'
 seasonder_getCenterDopplerBin <- function(seasonder_cs_object) {
 
@@ -1860,7 +1877,19 @@ seasonder_getBraggLineBins <- function(seasonder_cs_object) {
 #'          \code{\link{seasonder_getBraggDopplerAngularFrequency}}
 #'
 #' @examples
-#' freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, center_bin, spectra_res)
+#' # Read a SeaSonde CS file
+#' cs_obj <- seasonder_readSeaSondeCSFile(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' )
+#' # Prepare parameters
+#' nDoppler <- seasonder_getnDopplerCells(cs_obj)
+#' center_bin <- SeaSondeR:::seasonder_computeCenterDopplerBin(cs_obj, nDoppler)
+#' spectra_res <- SeaSondeR:::seasonder_getDopplerSpectrumResolution(cs_obj)
+#' # Compute Doppler bin frequencies
+#' freqs <- SeaSondeR:::seasonder_computeDopplerBinsFrequency(
+#'   cs_obj, nDoppler, center_bin, spectra_res
+#' )
 #' print(freqs)
 #'
 seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_object, nDoppler, center_bin, spectra_res, normalized = FALSE) {
@@ -1949,7 +1978,15 @@ seasonder_getDopplerBinsFrequency <- function(seasonder_cs_object, normalized = 
 #' \code{\link{seasonder_getRadarWaveNumber}} to obtain the radar wave number.
 #'
 #' @examples
-#' rv <- seasonder_computeBinsRadialVelocity(cs_obj, freq)
+#' # Read a SeaSonde CS file
+#' cs_obj <- seasonder_readSeaSondeCSFile(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' )
+#' # Get Doppler bin frequencies
+#' freqs <- SeaSondeR:::seasonder_getDopplerBinsFrequency(cs_obj)
+#' # Compute radial velocities for bins
+#' rv <- SeaSondeR:::seasonder_computeBinsRadialVelocity(cs_obj, freqs)
 #' print(rv)
 seasonder_computeBinsRadialVelocity <- function(seasonder_cs_object, freq) {
 
@@ -1998,6 +2035,12 @@ seasonder_computeBinsRadialVelocity <- function(seasonder_cs_object, freq) {
 #'          \code{\link{seasonder_getBraggDopplerAngularFrequency}},
 #'          \code{\link{seasonder_getRadarWaveNumber}}
 #' @examples
+#' # Read a SeaSonde CS file
+#' cs_obj <- seasonder_readSeaSondeCSFile(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' )
+#' # Compute radial velocities for bins
 #' velocities <- seasonder_getBinsRadialVelocity(cs_obj)
 #' print(velocities)
 seasonder_getBinsRadialVelocity <- function(seasonder_cs_object) {

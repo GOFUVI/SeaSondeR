@@ -36,7 +36,15 @@ The Bragg frequency is negative for bins with frequencies below zero and positiv
 for bins with frequencies above zero.
 }
 \examples{
-rv <- seasonder_computeBinsRadialVelocity(cs_obj, freq)
+# Read a SeaSonde CS file
+cs_obj <- seasonder_readSeaSondeCSFile(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+  SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+)
+# Get Doppler bin frequencies
+freqs <- SeaSondeR:::seasonder_getDopplerBinsFrequency(cs_obj)
+# Compute radial velocities for bins
+rv <- SeaSondeR:::seasonder_computeBinsRadialVelocity(cs_obj, freqs)
 print(rv)
 }
 \seealso{
