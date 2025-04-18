@@ -2384,7 +2384,7 @@ seasonder_rejectNoiseIonospheric <- function(seasonder_cs_object) {
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' # Create a SeaSondeRCS object from a spectral file
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' cs_obj <- seasonder_computeFORsSeaSondeMethod(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_computeFORsSeaSondeMethod(cs_obj)
 seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_object) {
 
   # Mark the start of the SeaSonde processing steps

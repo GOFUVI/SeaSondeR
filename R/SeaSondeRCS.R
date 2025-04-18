@@ -327,14 +327,20 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 #'
 #' @examples
 #' # Creating a SeaSondeRCS object from a list
-#' cs_list <- list(header = my_header, data = my_data)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' temp_obj <- seasonder_readSeaSondeCSFile(cs_file, specs_path)
+#' cs_list <- list(header = temp_obj$header, data = temp_obj$data)
 #' rcs_object <- seasonder_createSeaSondeRCS(cs_list)
 #'
 #' # Creating a SeaSondeRCS object from a file path using default YAML specifications
-#' rcs_object <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
+#' rcs_object <- seasonder_createSeaSondeRCS(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"))
 #'
 #' # Creating a SeaSondeRCS object from a file path with a specified YAML specifications file
-#' rcs_object <- seasonder_createSeaSondeRCS("path/to/cs_file.cs", specs_path = "path/to/specs.yaml")
+#' rcs_object <- seasonder_createSeaSondeRCS(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   specs_path = SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' )
 #' @export
 seasonder_createSeaSondeRCS <- function(x, specs_path = NULL, ...) {
   UseMethod("seasonder_createSeaSondeRCS")
@@ -362,7 +368,10 @@ seasonder_createSeaSondeRCS <- function(x, specs_path = NULL, ...) {
 #'
 #' @examples
 #' # Given a list with header and data, create a SeaSondeRCS object
-#' cs_list <- list(header = my_header, data = my_data)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' temp_obj <- seasonder_readSeaSondeCSFile(cs_file, specs_path)
+#' cs_list <- list(header = temp_obj$header, data = temp_obj$data)
 #' rcs_object <- seasonder_createSeaSondeRCS(cs_list)
 #' @export
 seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL, ...) {
@@ -426,10 +435,15 @@ seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL, ...) {
 #'
 #' @examples
 #' # Create a SeaSondeRCS object from a file using the default YAML specifications
-#' rcs_object <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
+#' rcs_object <- seasonder_createSeaSondeRCS(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' )
 #'
 #' # Create a SeaSondeRCS object from a file with a specified YAML specifications file
-#' rcs_object <- seasonder_createSeaSondeRCS("path/to/cs_file.cs", specs_path = "path/to/specs.yaml")
+#' rcs_object <- seasonder_createSeaSondeRCS(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   specs_path = SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' )
 #' @export
 seasonder_createSeaSondeRCS.character <- function(x, specs_path = rlang::zap(), endian = "big", ...) {
 
