@@ -26,6 +26,6 @@ The returned list includes:
 }
 \examples{
 # Retrieve the default options for the MUSIC algorithm
-opts <- seasonder_defaultMUSIC_options()
+opts <- SeaSondeR:::seasonder_defaultMUSIC_options()
 print(opts)
 }

@@ -44,10 +44,19 @@ This function performs the following operations:
 }
 }
 \examples{
-# Assuming `seasonder_cs_object` is a valid `SeaSondeRCS` object
-updated_obj <- seasonder_MUSIC_LonLat(seasonder_cs_object)
-music_table <- seasonder_exportMUSICTable(seasonder_cs_object)
-print(music_table)
+\donttest{
+  # Load sample CSS and APM files
+  cs_file  <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+  apm_file <- system.file("css_data/MeasPattern.txt",       package = "SeaSondeR")
+  apm_obj  <- seasonder_readSeaSondeRAPMFile(apm_file)
+  # Create SeaSondeRCS object with APM
+  cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+  # Run MUSIC algorithm if MUSIC data is available:
+  cs_obj <- seasonder_runMUSIC(cs_obj)
+  # Export MUSIC table
+  music_table <- seasonder_exportMUSICTable(cs_obj)
+  print(music_table)
+}
 }
 \seealso{
 \itemize{

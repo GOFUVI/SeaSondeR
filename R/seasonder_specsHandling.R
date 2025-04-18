@@ -15,13 +15,13 @@ seasonder_the$valid_yaml_seasondecssy_versions <- c("1.0.0")  # Valid version fo
 #' @importFrom rlang arg_match
 #'
 #' @examples
-#' \donttest{
+#' 
 #'   # Retrieve the default CS specifications file path
-#'   cs_specs_path <- seasonder_defaultSpecsFilePath("CS")
+#'   cs_specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
 #'
 #'   # Retrieve the default CSSY specifications file path
-#'   cssy_specs_path <- seasonder_defaultSpecsFilePath("CSSY")
-#' }
+#'   cssy_specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSY")
+#' 
 seasonder_defaultSpecsFilePath <- function(type = "CS") {
   # Retrieve the list of default specifications file paths from the shared environment
   default_paths <- list(
@@ -244,11 +244,13 @@ seasonder_find_spectra_file_type <- function(filepath, endian = "big") {
 #' @seealso \code{\link{seasonder_find_spectra_file_type}}, \code{\link{seasonder_defaultSpecsFilePath}}
 #'
 #' @examples
-#' \donttest{
+#' 
 #'   # Get the default specifications path for a given spectra file
-#'   specs_path <- seasonder_defaultSpecsPathForFile("path/to/spectra_file.bin")
+#'   specs_path <- SeaSondeR:::seasonder_defaultSpecsPathForFile(
+#'     system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#'   )
 #'   print(specs_path)
-#' }
+#' 
 seasonder_defaultSpecsPathForFile <- function(filepath, endian = "big") {
   # Determine the file type ("CS" or "CSSY") by analyzing the spectra file
   file_type <- seasonder_find_spectra_file_type(filepath, endian = endian)

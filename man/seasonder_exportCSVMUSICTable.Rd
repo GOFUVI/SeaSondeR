@@ -26,8 +26,18 @@ This function performs the following steps:
 }
 }
 \examples{
-# Assuming `seasonder_cs_object` is a valid `SeaSondeRCS` object
-seasonder_exportCSVMUSICTable(seasonder_cs_object, "output/music_table.csv")
+\donttest{
+  # Prepare a SeaSondeRCS object for examples
+  specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+  cs_obj <- seasonder_readSeaSondeCSFile(
+    system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+    specs_path
+  )
+  # Export MUSIC table to a temporary CSV file
+  tmpfile <- tempfile(fileext = ".csv")
+  seasonder_exportCSVMUSICTable(cs_obj, tmpfile)
+  print(tmpfile)
+}
 }
 \seealso{
 \itemize{

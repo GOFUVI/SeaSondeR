@@ -48,7 +48,7 @@ seasonder_defaultMUSIC_parameters <- seasonder_defaultMUSICParameters <- functio
 #'
 #' @examples
 #' # Retrieve the default options for the MUSIC algorithm
-#' opts <- seasonder_defaultMUSIC_options()
+#' opts <- SeaSondeR:::seasonder_defaultMUSIC_options()
 #' print(opts)
 #' @export
 seasonder_defaultMUSICOptions <- seasonder_defaultMUSIC_options <- function(){
@@ -2259,8 +2259,9 @@ seasonder_MUSICComputeCov <- function(seasonder_cs_object) {
     SeaSondeRCS_MUSIC_compute_cov_start_step_text()
   )
 
-  # Retrieve the MUSIC data object from the input
+  # Retrieve the MUSIC data object from the input and ensure it's a data frame
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
+  MUSIC <- as.data.frame(MUSIC)
 
 SSA1 <- seasonder_getSeaSondeRCS_MUSIC_interpolated_dataMatrix(seasonder_cs_object, "SSA1")
 SSA2 <- seasonder_getSeaSondeRCS_MUSIC_interpolated_dataMatrix(seasonder_cs_object, "SSA2")
@@ -3521,10 +3522,19 @@ seasonder_MUSICLonLat <- seasonder_MUSIC_LonLat
 #' @export
 #'
 #' @examples
-#' # Assuming `seasonder_cs_object` is a valid `SeaSondeRCS` object
-#' updated_obj <- seasonder_MUSIC_LonLat(seasonder_cs_object)
-#' music_table <- seasonder_exportMUSICTable(seasonder_cs_object)
-#' print(music_table)
+#' \donttest{
+#'   # Load sample CSS and APM files
+#'   cs_file  <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#'   apm_file <- system.file("css_data/MeasPattern.txt",       package = "SeaSondeR")
+#'   apm_obj  <- seasonder_readSeaSondeRAPMFile(apm_file)
+#'   # Create SeaSondeRCS object with APM
+#'   cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#'   # Run MUSIC algorithm if MUSIC data is available:
+#'   cs_obj <- seasonder_runMUSIC(cs_obj)
+#'   # Export MUSIC table
+#'   music_table <- seasonder_exportMUSICTable(cs_obj)
+#'   print(music_table)
+#' }
 seasonder_exportMUSICTable <- function(seasonder_cs_object) {
   # Initialize globals for seasonder_exportMUSICTable
   range_cell <- doppler_bin <- freq <- radial_v <- DOA <- lonlat <- 
@@ -3641,8 +3651,18 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object) {
 #' @importFrom data.table fwrite
 #'
 #' @examples
-#' # Assuming `seasonder_cs_object` is a valid `SeaSondeRCS` object
-#' seasonder_exportCSVMUSICTable(seasonder_cs_object, "output/music_table.csv")
+#' \donttest{
+#'   # Prepare a SeaSondeRCS object for examples
+#'   specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#'   cs_obj <- seasonder_readSeaSondeCSFile(
+#'     system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'     specs_path
+#'   )
+#'   # Export MUSIC table to a temporary CSV file
+#'   tmpfile <- tempfile(fileext = ".csv")
+#'   seasonder_exportCSVMUSICTable(cs_obj, tmpfile)
+#'   print(tmpfile)
+#' }
 #' @export
 seasonder_exportCSVMUSICTable <- function(seasonder_cs_object, filepath) {
 

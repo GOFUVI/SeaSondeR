@@ -248,14 +248,12 @@ seasonder_read_reduced_encoded_data <- function(connection, key, endian = "big")
 #'
 #'
 #' @examples
-#' \donttest{
 #' # Create a raw connection with sample data:
 #' con <- rawConnection(as.raw(c(0x42, 0x29, 0xa3, 0xd7, 0xFF, 0x00)))
 #' key <- list(size = 6, key = "csign")
-#' result <- seasonder_CSSY_read_csign(con, key)
+#' result <- SeaSondeR:::seasonder_CSSY_read_csign(con, key)
 #' print(result)
 #' close(con)
-#' }
 seasonder_CSSY_read_csign <- function(connection, key) {
   # Store the number of bytes to read based on the key list.
   total_bytes <- key$size
@@ -325,12 +323,10 @@ seasonder_CSSY_read_csign <- function(connection, key) {
 #'   and contains integers (0 or 1) corresponding to the bits (in little-endian order) extracted from the raw data.
 #'
 #' @examples
-#' \donttest{
 #'   con <- rawConnection(as.raw(c(0x01, 0x02, 0x03)))
 #'   key <- list(size = 3, key = "asgn")
-#'   result <- seasonder_CSSY_read_asign(con, key)
+#'   result <- SeaSondeR:::seasonder_CSSY_read_asign(con, key)
 #'   close(con)
-#' }
 seasonder_CSSY_read_asign <- function(connection, key) {
   # Determine the total number of bytes to read from the connection based on key$size.
   total_bytes <- key$size
@@ -713,10 +709,8 @@ seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", 
 #'         are stored in the 'header_csr' element.
 #'
 #' @examples
-#' \donttest{
 #'   header <- list(cs4h = list(dummy = "data"), other_field = "info")
-#'   result <- seasonder_CSSY2CSHeader(header)
-#' }
+#'   result <- SeaSondeR:::seasonder_CSSY2CSHeader(header)
 seasonder_CSSY2CSHeader <- function(header) {
   if (is.null(header$cs4h)) {
     seasonder_logAndAbort("CSSY header does not contain a cs4h component")

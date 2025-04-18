@@ -2553,8 +2553,18 @@ seasonder_Bins2DopplerFreq <- function(seasonder_cs_object, bins) {
 #'
 #'
 #' @examples
-#' normalized_freqs <- seasonder_DopplerFreq2NormalizedDopplerFreq(cs_obj, doppler_values)
-#' print(normalized_freqs)
+#' 
+#'   # Prepare a SeaSondeRCS object for examples
+#'   specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#'   cs_obj <- seasonder_readSeaSondeCSFile(
+#'     system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'     specs_path
+#'   )
+#'   # Example Doppler frequencies for bins 1 and 2
+#'   freqs <- SeaSondeR:::seasonder_Bins2DopplerFreq(cs_obj, c(1, 2))
+#'   normalized_freqs <- SeaSondeR:::seasonder_DopplerFreq2NormalizedDopplerFreq(cs_obj, freqs)
+#'   print(normalized_freqs)
+#' 
 seasonder_DopplerFreq2NormalizedDopplerFreq <- function(seasonder_cs_object, doppler_values) {
 
   # Convert Doppler frequencies to Doppler bin indices
@@ -2599,8 +2609,17 @@ seasonder_DopplerFreq2NormalizedDopplerFreq <- function(seasonder_cs_object, dop
 #'
 #'
 #' @examples
-#' doppler_freqs <- seasonder_NormalizedDopplerFreq2DopplerFreq(cs_obj, normalized_values)
-#' print(doppler_freqs)
+#'   # Prepare a SeaSondeRCS object for examples
+#'   specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#'   cs_obj <- seasonder_readSeaSondeCSFile(
+#'     system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'     specs_path
+#'   )
+#'   # Example normalized frequencies for bins 1 and 2
+#'   normalized_values <- SeaSondeR:::seasonder_Bins2NormalizedDopplerFreq(cs_obj, c(1, 2))
+#'   doppler_freqs <- SeaSondeR:::seasonder_NormalizedDopplerFreq2DopplerFreq(cs_obj, normalized_values)
+#'   print(doppler_freqs)
+#'
 seasonder_NormalizedDopplerFreq2DopplerFreq <- function(seasonder_cs_object, doppler_values) {
 
   # Convert normalized Doppler frequencies to Doppler bin indices

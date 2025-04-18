@@ -24,14 +24,12 @@
 #'   }
 #'
 #' @examples
-#' \donttest{
 #' # Example usage:
 #' con <- rawConnection(as.raw(c(0xFF, 0x00, 0xAA, 0x55, 0xCC, 0x33, 0x77, 0x88, 0x99)))
 #' key <- list(size = 9, key = "asign")
-#' result <- seasonder_CSSW_read_asign(con, key)
+#' result <- SeaSondeR:::seasonder_CSSW_read_asign(con, key)
 #' print(result)
 #' close(con)
-#' }
 seasonder_CSSW_read_asign <- function(connection, key) {
   # Determine the total number of bytes to read from the connection based on key$size.
   total_bytes <- key$size
@@ -472,12 +470,10 @@ seasonder_readCSSWHeader <- function(connection, current_specs, endian = "big", 
 #' @return A transformed list representing a valid SeaSonde CS header with embedded CSSW header information.
 #'
 #' @examples
-#' \donttest{
 #' # Example usage:
 #' header <- list(cs4h = list(field = 1), someField = 42)
-#' cs_header <- seasonder_CSSW2CSHeader(header)
+#' cs_header <- SeaSondeR:::seasonder_CSSW2CSHeader(header)
 #' print(cs_header)
-#' }
 seasonder_CSSW2CSHeader <- function(header) {
   if (is.null(header$cs4h)) {
     seasonder_logAndAbort("CSSW header does not contain a cs4h component")

@@ -18,8 +18,6 @@ This helper function extracts the 'cs4h' component from a CSSY header, removes i
 and embeds the remaining header information within the 'header_csr' field of the CS header.
 }
 \examples{
-\donttest{
   header <- list(cs4h = list(dummy = "data"), other_field = "info")
-  result <- seasonder_CSSY2CSHeader(header)
-}
+  result <- SeaSondeR:::seasonder_CSSY2CSHeader(header)
 }
