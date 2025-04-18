@@ -635,7 +635,7 @@ seasonder_CSSW2CSData <- function(body) {
 #'        c12m = c(1,2), c12a = c(0,0),
 #'        cs1a = c(3,4))
 #' )
-#' corrected <- seasonder_applyCSSWSigns(cs_data)
+#' corrected <- SeaSondeR:::seasonder_applyCSSWSigns(cs_data)
 #' print(corrected)
 #' }
 seasonder_applyCSSWSigns <- function(cs_data) {
