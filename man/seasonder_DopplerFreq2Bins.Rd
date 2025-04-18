@@ -26,10 +26,13 @@ The number of Doppler bins is then determined using \code{\link{seasonder_getnDo
 With this information, the function calls \code{\link{seasonder_computeDopplerFreq2Bins}} to determine the corresponding bin indices for each input Doppler frequency.
 }
 \examples{
-# Compute Doppler bin indices using wrapper function
-cs_obj <- seasonder_readSeaSondeCSFile(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"), SeaSondeR:::seasonder_defaultSpecsFilePath("CS"))
-doppler_values <- seasonder_getDopplerBinsFrequency(cs_obj, normalized = FALSE)[1:3]
-bins <- seasonder_DopplerFreq2Bins(cs_obj, doppler_values)
+# Compute Doppler bin indices via wrapper (internal functions prefixed)
+cs_obj <- seasonder_readSeaSondeCSFile(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+  SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+)
+doppler_values <- SeaSondeR:::seasonder_getDopplerBinsFrequency(cs_obj, normalized = FALSE)[1:3]
+bins <- SeaSondeR:::seasonder_DopplerFreq2Bins(cs_obj, doppler_values)
 print(bins)
 }
 \seealso{

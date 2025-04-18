@@ -2461,6 +2461,8 @@ seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_object) {
 #' # Create a SeaSondeRCS object from a spectral file
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- seasonder_computeFORs(cs_obj, method = "SeaSonde")
+#' # Retrieve existing FOR control parameters from the object
+#' FOR_control <- seasonder_getSeaSondeRCS_FORConfig(cs_obj)
 #' cs_obj <- seasonder_computeFORs(cs_obj, FOR_control = FOR_control)
 #' @export
 seasonder_computeFORs <- function(seasonder_cs_object, method = NULL, FOR_control = NULL) {

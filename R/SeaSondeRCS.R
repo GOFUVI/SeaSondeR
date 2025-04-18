@@ -2382,13 +2382,18 @@ seasonder_NormalizedDopplerFreq2Bins <- function(seasonder_cs_object, doppler_va
 #' @importFrom magrittr %>%
 #'
 #' @examples
-#' # Compute Doppler bin indices from example cross-spectral file
-#' cs_obj <- seasonder_readSeaSondeCSFile(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"), SeaSondeR:::seasonder_defaultSpecsFilePath("CS"))
-#' doppler_freqs <- seasonder_getDopplerBinsFrequency(cs_obj, normalized = FALSE)
-#' delta_freq <- seasonder_getDopplerSpectrumResolution(cs_obj)
-#' nDoppler <- seasonder_getnDopplerCells(cs_obj)
-#' doppler_values <- doppler_freqs[1:3]
-#' bins <- seasonder_computeDopplerFreq2Bins(cs_obj, doppler_values, doppler_freqs, delta_freq, nDoppler)
+#' # Compute Doppler bin indices from example cross-spectral file (use internal helpers via SeaSondeR:::)
+#' cs_obj <- seasonder_readSeaSondeCSFile(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' )
+#' doppler_freqs   <- SeaSondeR:::seasonder_getDopplerBinsFrequency(cs_obj, normalized = FALSE)
+#' delta_freq      <- SeaSondeR:::seasonder_getDopplerSpectrumResolution(cs_obj)
+#' nDoppler        <- SeaSondeR:::seasonder_getnDopplerCells(cs_obj)
+#' doppler_values  <- doppler_freqs[1:3]
+#' bins <- SeaSondeR:::seasonder_computeDopplerFreq2Bins(
+#'   cs_obj, doppler_values, doppler_freqs, delta_freq, nDoppler
+#' )
 #' print(bins)
 seasonder_computeDopplerFreq2Bins <- function(seasonder_cs_object, doppler_values, doppler_freqs, delta_freq, nDoppler){
 
@@ -2432,10 +2437,13 @@ seasonder_computeDopplerFreq2Bins <- function(seasonder_cs_object, doppler_value
 #'
 #'
 #' @examples
-#' # Compute Doppler bin indices using wrapper function
-#' cs_obj <- seasonder_readSeaSondeCSFile(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"), SeaSondeR:::seasonder_defaultSpecsFilePath("CS"))
-#' doppler_values <- seasonder_getDopplerBinsFrequency(cs_obj, normalized = FALSE)[1:3]
-#' bins <- seasonder_DopplerFreq2Bins(cs_obj, doppler_values)
+#' # Compute Doppler bin indices via wrapper (internal functions prefixed)
+#' cs_obj <- seasonder_readSeaSondeCSFile(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' )
+#' doppler_values <- SeaSondeR:::seasonder_getDopplerBinsFrequency(cs_obj, normalized = FALSE)[1:3]
+#' bins <- SeaSondeR:::seasonder_DopplerFreq2Bins(cs_obj, doppler_values)
 #' print(bins)
 seasonder_DopplerFreq2Bins <- function(seasonder_cs_object, doppler_values) {
 
