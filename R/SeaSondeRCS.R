@@ -4000,10 +4000,14 @@ seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "bi
 #'
 #' @return List. A combination of the initial `pool` and the processed header for the given `version`.
 #'         Fields in the current header will overwrite or append to the pool as described above.
-#' @examples
+##' @examples
 #' con <- rawConnection(as.raw(rep(0, 300)))
-#' specs <- list(V1 = ..., V2 = ..., V3 = ...)
-#' header <- process_version_header(pool, 3, specs, con, endian = "big")
+#' specs <- list(
+#'   V1 = list(),
+#'   V2 = list(),
+#'   V3 = list(nSiteCodeName = list(), nV3Extent = list())
+#' )
+#' header <- SeaSondeR:::process_version_header(list(), 3, specs, con, endian = "big")
 #' print(header)
 #' close(con)
 process_version_header <- function(pool, version, specs, connection, endian = "big", prev_data = NULL) {
@@ -4042,10 +4046,12 @@ process_version_header <- function(pool, version, specs, connection, endian = "b
 #' \code{\link{seasonder_readSeaSondeCSFileHeaderV1}}
 #' \code{\link{process_version_header}}
 #'
- #' @return A combined list of all processed headers up to the file version.
+##' @return A combined list of all processed headers up to the file version.
 #' @examples
-#' specs <- list(V1 = ..., V2 = ..., V3 = ...)
-#' con <- rawConnection(as.raw(rep(0, 300)))
+#' # Example: read header from a sample CS file
+#' specs_path <- seasonder_defaultSpecsFilePath("CS")
+#' specs <- seasonder_readYAMLSpecs(specs_path)
+#' con <- file(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"), "rb")
 #' header <- seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
 #' print(header)
 #' close(con)
@@ -4273,7 +4279,8 @@ seasonder_the$qc_functions <- list()
 #'
 #' @return The original field_value if it matches the expected_type; otherwise, an error is raised.
 #' @examples
-#' result <- qc_check_type(42, "numeric")
+#' # Use unexported qc_check_type via triple colon
+#' result <- SeaSondeR:::qc_check_type(42, "numeric")
 #' print(result)
 qc_check_type <- function(field_value, expected_type) {
   if (!inherits(field_value, expected_type)) {
@@ -4297,7 +4304,8 @@ qc_check_type <- function(field_value, expected_type) {
 #'
 #' @return The original field_value if it's within range and matches the expected_type; otherwise, an error is raised.
 #' @examples
-#' result <- qc_check_range(5, 0, 10)
+#' # Use unexported qc_check_range via triple colon
+#' result <- SeaSondeR:::qc_check_range(5, 0, 10)
 #' print(result)
 qc_check_range <- function(field_value, min, max, expected_type = NULL) {
   # Si se proporciona un tipo esperado, verifica el tipo antes de comprobar el rango

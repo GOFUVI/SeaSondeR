@@ -22,8 +22,10 @@ the general header (Version 1) to determine the file version. Subsequent headers
 based on the file version.
 }
 \examples{
-specs <- list(V1 = ..., V2 = ..., V3 = ...)
-con <- rawConnection(as.raw(rep(0, 300)))
+# Example: read header from a sample CS file
+specs_path <- seasonder_defaultSpecsFilePath("CS")
+specs <- seasonder_readYAMLSpecs(specs_path)
+con <- file(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"), "rb")
 header <- seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
 print(header)
 close(con)

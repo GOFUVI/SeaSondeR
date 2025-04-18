@@ -54,8 +54,12 @@ functions are available in the global environment.
 
 \examples{
 con <- rawConnection(as.raw(rep(0, 300)))
-specs <- list(V1 = ..., V2 = ..., V3 = ...)
-header <- process_version_header(pool, 3, specs, con, endian = "big")
+specs <- list(
+  V1 = list(),
+  V2 = list(),
+  V3 = list(nSiteCodeName = list(), nV3Extent = list())
+)
+header <- SeaSondeR:::process_version_header(list(), 3, specs, con, endian = "big")
 print(header)
 close(con)
 }
