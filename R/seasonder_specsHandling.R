@@ -135,7 +135,7 @@ seasonder_readYAMLSpecs <- function(file_path, path = rlang::zap()) {
 #' @examples
 #'   # Determine the spectra file type for a file included in the package
 #'   spec_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-#'   file_type <- try(seasonder_find_spectra_file_type(spec_file))
+#'   file_type <- SeaSondeR:::seasonder_find_spectra_file_type(spec_file)
 #'   print(file_type)
 seasonder_find_spectra_file_type <- function(filepath, endian = "big") {
   # Set up error handling parameters with function name, error class, and file path
