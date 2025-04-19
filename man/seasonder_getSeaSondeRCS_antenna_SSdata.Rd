@@ -24,7 +24,12 @@ The function constructs the matrix name dynamically by appending the antenna num
 matrix from the SeaSondeRCS data using \code{\link{seasonder_getSeaSondeRCS_dataMatrix}}.
 }
 \examples{
-ssa1_data <- seasonder_getSeaSondeRCS_antenna_SSdata(cs_object, 1)
+# Minimal example for seasonder_getSeaSondeRCS_antenna_SSdata
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+ssa1_data <- SeaSondeR:::seasonder_getSeaSondeRCS_antenna_SSdata(cs_obj, 1)
 print(ssa1_data)
 }
 \seealso{

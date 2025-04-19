@@ -17,6 +17,11 @@ This function retrieves the Doppler smoothing factor ('nsm') from the FOR parame
 in a SeaSondeRCS object.
 }
 \examples{
+# Minimal example for seasonder_getFOR_nsm
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 smoothing_factor <- seasonder_getFOR_nsm(cs_obj)
 print(smoothing_factor)
 }

@@ -16,5 +16,9 @@ The AntennaBearing attribute from the object.
 Getter for AntennaBearing
 }
 \examples{
-antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(obj)
+# Minimal example for seasonder_getSeaSondeRAPM_AntennaBearing
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(apm_obj)
+print(antenna_bearing)
 }

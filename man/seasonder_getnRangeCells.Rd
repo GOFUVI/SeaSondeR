@@ -16,6 +16,11 @@ The nRangeCells value.
 Get the nRangeCells value from a SeaSondeRCS object
 }
 \examples{
+# Minimal example for seasonder_getnRangeCells
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 n_range_cells <- seasonder_getnRangeCells(cs_obj)
 print(n_range_cells)
 }

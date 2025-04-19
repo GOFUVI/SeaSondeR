@@ -16,6 +16,14 @@ A list containing the header data of the SeaSondeRCS object.
 Getter for header
 }
 \examples{
+# Create a minimal SeaSondeRCS object with a header attribute
+cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
+attr(cs_obj, "header") <- list(
+  nSiteCodeName = "Station1",
+  nDateTime = Sys.time(),
+  nDopplerCells = 2,
+  nRangeCells = 3
+)
 header_data <- seasonder_getSeaSondeRCS_header(cs_obj)
 print(header_data)
 }

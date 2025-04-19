@@ -34,8 +34,12 @@ in further data processing or visualization.
 }
 \examples{
 # Map frequencies to bins
-cs_obj <- seasonder_createSeaSondeRCS(...)
-bins <- SeaSondeR:::seasonder_MUSIC_DopplerFreq2Bins(cs_obj, c(0.1,0.2))
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+bins <- SeaSondeR:::seasonder_MUSIC_DopplerFreq2Bins(cs_obj, c(0.1, 0.2))
+print(bins)
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency}},

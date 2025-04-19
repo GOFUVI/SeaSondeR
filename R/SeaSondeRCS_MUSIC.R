@@ -248,8 +248,11 @@ seasonder_MUSICInitEigenDecomp <- function() {
 #' \code{\link{seasonder_initCSDataStructure}} for details on the cross-spectral data structure.
 #'
 #' @examples
-#' # Initialize interpolated data
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Minimal example for interpolated data initialization
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' interpolated_data <- SeaSondeR:::seasonder_MUSICInitInterpolatedData(cs_obj)
 #' print(interpolated_data)
 seasonder_MUSICInitInterpolatedData <- function(seasonder_cs_object) {
@@ -373,16 +376,18 @@ seasonder_NULLSeaSondeRCS_MUSIC <- function() {
 #' \code{\link{seasonder_MUSICInitProjections}}, \code{\link{seasonder_MUSICInitDOASolutions}} for initializing individual components.
 #'
 #' @examples
-#' # Initialize MUSIC data for all range cells and Doppler bins
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Minimal example for initializing MUSIC data structure
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' music_data <- SeaSondeR:::seasonder_initSeaSondeRCS_MUSIC(cs_obj)
 #' print(music_data)
 #'
 #' # Initialize for specific range cells and Doppler bins
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
-#' music_data <- SeaSondeR:::seasonder_initSeaSondeRCS_MUSIC(cs_obj, 
-#' range_cells = c(1, 2), doppler_bins = c(5, 10))
-#' print(music_data)
+#' music_data2 <- SeaSondeR:::seasonder_initSeaSondeRCS_MUSIC(cs_obj,
+#'   range_cells = c(1, 2), doppler_bins = c(5, 10))
+#' print(music_data2)
 seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL) {
 
   # Initialize globals for seasonder_initSeaSondeRCS_MUSIC
@@ -465,12 +470,18 @@ seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = N
 #' \code{\link{seasonder_MUSICInitInterpolatedData}} for interpolated data initialization.
 #'
 #' @examples
-#' # Initialize MUSIC data for all range cells and Doppler bins
-#' cs_object <- seasonder_createSeaSondeRCS(...)
-#' cs_object <- seasonder_initMUSICData(cs_object)
+#' # Minimal example for initializing MUSIC data (all range cells and Doppler bins)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' music_obj <- SeaSondeR:::seasonder_initMUSICData(cs_obj)
+#' str(music_obj)
 #'
-#' # Initialize MUSIC data for specific range cells and Doppler bins
-#' cs_object <- seasonder_initMUSICData(cs_object, range_cells = c(1, 2), doppler_bins = c(5, 10))
+#' # Example: specific range cells and Doppler bins
+#' music_obj2 <- SeaSondeR:::seasonder_initMUSICData(cs_obj,
+#'   range_cells = c(1, 2), doppler_bins = list(c(1,2), c(5,10)))
+#' str(music_obj2)
 seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL, NULL_MUSIC = FALSE) {
 
   # Copy the input SeaSondeR object
@@ -543,7 +554,11 @@ seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, dop
 #'
 #' @examples
 #' # Validate doppler interpolation
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Prepare a minimal SeaSondeRCS object
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' doppler_factor <- SeaSondeR:::SeaSondeRCS_MUSIC_validate_doppler_interpolation(2, cs_obj)
 SeaSondeRCS_MUSIC_validate_doppler_interpolation <- function(value, seasonder_cs_object){
   value <- as.integer(value)
@@ -741,17 +756,18 @@ seasonder_setMUSICOption <- seasonder_setSeaSondeRCS_MUSIC_option <- function(se
 #' steps of the MUSIC processing workflow.
 #'
 #' @examples
-#' # Create a SeaSondeRCS object (assume cs_obj is already created)
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Create a valid SeaSondeRCS object for examples
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #'
-#' # Retrieve default MUSIC parameters
+#' # Retrieve default MUSIC parameters and modify
 #' default_params <- seasonder_defaultMUSIC_parameters()
-#'
-#' # Optionally modify the default parameters
 #' new_params <- default_params * 1.5
 #'
-#' # Update the SeaSondeRCS object with the new MUSIC parameters
-#' cs_obj <- seasonder_setSeaSondeRCS_MUSIC_parameters(cs_obj, new_params)
+#' # Update the SeaSondeRCS object with the new MUSIC parameters (internal function)
+#' cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_MUSIC_parameters(cs_obj, new_params)
 #'
 #' # Verify the update
 #' print(attr(cs_obj, "MUSIC_data")$MUSIC_options$MUSIC_parameters)
@@ -786,8 +802,11 @@ seasonder_setSeaSondeRCS_MUSIC_parameters <- function(seasonder_cs_object, MUSIC
 #' during the MUSIC processing workflow.
 #'
 #' @examples
-#' # Assuming cs_obj is a valid SeaSondeRCS object and music_results contains MUSIC analysis results:
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Create a valid SeaSondeRCS object for examples
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #'
 #' # Example MUSIC data (placeholder)
 #' music_results <- list(result1 = 1, result2 = 2)  # Replace with actual MUSIC results structure
@@ -825,11 +844,14 @@ seasonder_setSeaSondeRCS_MUSIC <- function(seasonder_cs_object, MUSIC) {
 #' This value is later used to assess the prevalence of dual bearing solutions in the MUSIC results.
 #'
 #' @examples
-#' # Assuming cs_obj is a valid SeaSondeRCS object with MUSIC data already initialized
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+#' # Create a valid SeaSondeRCS object for examples
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #'
-#' # Set the dual solutions proportion (example value: 0.35)
-#' cs_obj <- seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion(cs_obj, 0.35)
+#' # Set the dual solutions proportion (example value: 0.35) using internal function
+#' cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion(cs_obj, 0.35)
 #'
 #' # Retrieve and inspect the proportion from the object's MUSIC data attribute
 #' dual_prop <- attr(cs_obj, "MUSIC_data")$dual_solutions_proportion
@@ -867,10 +889,13 @@ seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_c
 #' \code{\link{SeaSondeRCS_MUSIC_validate_doppler_interpolation}} for Doppler interpolation factor validation.
 #'
 #' @examples
-#' # Suppose 'cs_object' is a valid SeaSondeRCS object
-#' cs_object <- seasonder_createSeaSondeRCS(...)
-#' cs_object <- seasonder_setMUSICDopplerInterpolation(cs_object, 2)
-#' # Now the object has the Doppler interpolation factor set to 2
+#' # Create a valid SeaSondeRCS object for examples
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_object <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' # Set the Doppler interpolation factor to 2 (internal alias)
+#' cs_object <- SeaSondeR:::seasonder_setMUSICDopplerInterpolation(cs_object, 2)
 #' @export
 seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation <- seasonder_setMUSICDopplerInterpolation <- function(seasonder_cs_object, doppler_interpolation){
   
@@ -974,8 +999,12 @@ seasonder_setMUSICInterpolatedDopplerCellsIndex <- seasonder_setSeaSondeRCS_MUSI
 #' If not found, it defaults to the values returned by \code{seasonder_defaultMUSIC_parameters()}.
 #'
 #' @examples
-#' # Assuming cs_object is a valid SeaSondeRCS object.
-#' params <- seasonder_getMUSICParameters(cs_object)
+#' # Minimal example for seasonder_getMUSICParameters
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' params <- SeaSondeR:::seasonder_getMUSICParameters(cs_obj)
 #' print(params)
 #' @export
 seasonder_getSeaSondeRCS_MUSIC_parameters <- seasonder_getMUSICParameters <- function(seasonder_cs_object) {
@@ -1003,8 +1032,12 @@ seasonder_getSeaSondeRCS_MUSIC_parameters <- seasonder_getMUSICParameters <- fun
 #' In the absence of user-defined options, it returns the default options provided by \code{seasonder_defaultMUSIC_options()}.
 #'
 #' @examples
-#' # Assuming cs_object is a valid SeaSondeRCS object.
-#' opts <- seasonder_getMUSICOptions(cs_object)
+#' # Minimal example for seasonder_getMUSICOptions
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' opts <- SeaSondeR:::seasonder_getMUSICOptions(cs_obj)
 #' print(opts)
 #' @export
 seasonder_getMUSICOptions <- seasonder_getSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object) {
@@ -1030,8 +1063,12 @@ seasonder_getMUSICOptions <- seasonder_getSeaSondeRCS_MUSIC_options <- function(
 #' If the MUSIC data does not exist in the object, the function initializes it via \code{seasonder_initSeaSondeRCS_MUSIC()}.
 #'
 #' @examples
-#' # Assuming cs_object is a valid SeaSondeRCS object.
-#' music_data <- seasonder_getMUSIC(cs_object)
+#' # Minimal example for seasonder_getMUSIC
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' music_data <- SeaSondeR:::seasonder_getMUSIC(cs_obj)
 #' print(music_data)
 #' @export
 seasonder_getSeaSondeRCS_MUSIC <- seasonder_getMUSIC <-  function(seasonder_cs_object) {
@@ -1059,8 +1096,12 @@ seasonder_getSeaSondeRCS_MUSIC <- seasonder_getMUSIC <-  function(seasonder_cs_o
 #' If not available, it defaults to NA_real_.
 #'
 #' @examples
-#' # Assuming cs_object is a valid SeaSondeRCS object.
-#' dual_prop <- seasonder_getMUSICDualSolutionsProportion(cs_object)
+#' # Minimal example for seasonder_getMUSICDualSolutionsProportion
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' dual_prop <- SeaSondeR:::seasonder_getMUSICDualSolutionsProportion(cs_obj)
 #' print(dual_prop)
 #' @export
 seasonder_getMUSICDualSolutionsProportion <- seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_cs_object) {
@@ -1089,10 +1130,15 @@ seasonder_getMUSICDualSolutionsProportion <- seasonder_getSeaSondeRCS_MUSIC_dual
 #'
 #' @examples
 #' # Assuming cs_object is a valid SeaSondeRCS object.
-#' interp_factor <- seasonder_getMUSICDopplerInterpolation(cs_object)
+#' # Minimal example for seasonder_getMUSICDopplerInterpolation
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' interp_factor <- seasonder_getMUSICDopplerInterpolation(cs_obj)
 #' print(interp_factor)
 #' @export
-seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation <- seasonder_getMUSICDopplerInterpolation <-  function(seasonder_cs_object){
+seasonder_getMUSICDopplerInterpolation <- seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation <-   function(seasonder_cs_object){
 
 
   out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC_options$doppler_interpolation %||% 1L
@@ -1116,8 +1162,12 @@ seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation <- seasonder_getMUSICDopple
 #' If absent, it initializes the data with \code{seasonder_MUSICInitInterpolatedData()}.
 #'
 #' @examples
-#' # Assuming cs_object is a valid SeaSondeRCS object.
-#' interp_data <- seasonder_getMUSICInterpolatedData(cs_object)
+#' # Minimal example for seasonder_getMUSICInterpolatedData
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' interp_data <- seasonder_getMUSICInterpolatedData(cs_obj)
 #' str(interp_data)
 #' @export
 seasonder_getMUSICInterpolatedData <- seasonder_getSeaSondeRCS_MUSIC_interpolated_data <- function(seasonder_cs_object){
@@ -1147,8 +1197,12 @@ seasonder_getMUSICInterpolatedData <- seasonder_getSeaSondeRCS_MUSIC_interpolate
 #' which Doppler bins were introduced during the interpolation process.
 #'
 #' @examples
-#' # Assuming cs_object is a valid SeaSondeRCS object.
-#' doppler_index <- seasonder_getMUSICInterpolatedDopplerCellsIndex(cs_object)
+#' # Minimal example for seasonder_getMUSICInterpolatedDopplerCellsIndex
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' doppler_index <- seasonder_getMUSICInterpolatedDopplerCellsIndex(cs_obj)
 #' print(doppler_index)
 #' @export
 seasonder_getMUSICInterpolatedDopplerCellsIndex <- seasonder_getSeaSondeRCS_MUSIC_interpolated_doppler_cells_index <- function(seasonder_cs_object){
@@ -1176,8 +1230,12 @@ seasonder_getMUSICInterpolatedDopplerCellsIndex <- seasonder_getSeaSondeRCS_MUSI
 #' The configuration is aggregated from the MUSIC_data attribute of the object for easy access.
 #'
 #' @examples
-#' # Assuming cs_object is a valid SeaSondeRCS object.
-#' config <- seasonder_getMUSICConfig(cs_object)
+#' # Minimal example for seasonder_getMUSICConfig
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' config <- seasonder_getMUSICConfig(cs_obj)
 #' print(config)
 #' @export
 seasonder_getMUSICConfig <- seasonder_getSeaSondeRCS_MUSICConfig <- function(seasonder_cs_object){
@@ -1217,9 +1275,13 @@ seasonder_getMUSICConfig <- seasonder_getSeaSondeRCS_MUSICConfig <- function(sea
 #' @importFrom magrittr %<>%
 #'
 #' @examples
-#' # Compute proportion of dual solutions
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Compute proportion of dual solutions for MUSIC data
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' updated_obj <- SeaSondeR:::seasonder_MUSICComputePropDualSols(cs_obj)
+#' print(updated_obj)
 seasonder_MUSICComputePropDualSols <- function(seasonder_cs_object) {
 
   # Retrieve the MUSIC data associated with the SeaSondeRCS object
@@ -1362,9 +1424,13 @@ seasonder_computePowerMatrix <- function(eig, a) {
 #' @importFrom rlang zap
 #'
 #' @examples
-#' # Compute signal power matrix
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Compute signal power matrix for a sample SeaSondeRCS object
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' updated_obj <- SeaSondeR:::seasonder_MUSICComputeSignalPowerMatrix(cs_obj)
+#' print(updated_obj)
 seasonder_MUSICComputeSignalPowerMatrix <- function(seasonder_cs_object) {
 
   # Initialize the DOA_solutions with a placeholder indicating no prior solutions
@@ -1450,9 +1516,13 @@ seasonder_getSeaSondeRCS_MUSIC_interpolated_dataMatrix <- function(seasonder_cs_
 #' \code{\link{seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation}} to retrieve the Doppler interpolation factor.
 #'
 #' @examples
-#' # Get interpolated doppler cells count
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Get interpolated Doppler cells count
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' n_doppler <- SeaSondeR:::seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(cs_obj)
+#' print(n_doppler)
 seasonder_getSeaSondeRCS_MUSIC_nDopplerCells <- function(seasonder_cs_object) {
 
   # Retrieve the number of Doppler cells from the SeaSondeRCS object
@@ -1496,8 +1566,12 @@ seasonder_getSeaSondeRCS_MUSIC_nDopplerCells <- function(seasonder_cs_object) {
 #'
 #' @examples
 #' # Get adjusted Doppler spectrum resolution
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' res <- SeaSondeR:::seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution(cs_obj)
+#' print(res)
 seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution <- function(seasonder_cs_object) {
 
   # Retrieve the Doppler spectrum resolution from the SeaSondeRCS object
@@ -1551,8 +1625,12 @@ seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution <- function(seasonder_c
 #'
 #' @examples
 #' # Get Doppler bins frequency
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' freqs <- SeaSondeR:::seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(cs_obj, normalized = TRUE)
+#' print(head(freqs))
 seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency <- function(seasonder_cs_object, normalized = FALSE) {
 
   # Retrieve the central Doppler bin, which corresponds to the frequency 0
@@ -1601,8 +1679,12 @@ seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency <- function(seasonder_cs_obj
 #'
 #' @examples
 #' # Get center doppler bin
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' center <- SeaSondeR:::seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin(cs_obj)
+#' print(center)
 seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin <- function(seasonder_cs_object) {
 
   # Retrieve the total number of Doppler cells, including adjustments from MUSIC interpolation
@@ -1639,9 +1721,13 @@ seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin <- function(seasonder_cs_object)
 #' \code{\link{seasonder_computeBinsRadialVelocity}}
 #'
 #' @examples
-#' # Get radial velocities
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Retrieve radial velocities for MUSIC Doppler bins
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' vels <- SeaSondeR:::seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(cs_obj)
+#' print(vels)
 seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity <- function(seasonder_cs_object) {
   # Retrieve Doppler bin frequencies for the given cross-spectral object.
   freq <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_object)
@@ -1684,8 +1770,12 @@ seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity <- function(seasonder_cs_objec
 #'
 #' @examples
 #' # Map frequencies to bins
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
-#' bins <- SeaSondeR:::seasonder_MUSIC_DopplerFreq2Bins(cs_obj, c(0.1,0.2))
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' bins <- SeaSondeR:::seasonder_MUSIC_DopplerFreq2Bins(cs_obj, c(0.1, 0.2))
+#' print(bins)
 seasonder_MUSIC_DopplerFreq2Bins <- function(seasonder_cs_object, doppler_values) {
   # Retrieve the Doppler bin frequencies for the given cross-spectral object without normalization.
   doppler_freqs <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_object, normalized = FALSE)
@@ -1792,9 +1882,14 @@ seasonder_MUSICCheckTwoSolutions <- function(seasonder_cs_object){
 #' @importFrom purrr map list_c
 #'
 #' @examples
-#' # Eigenvalue ratio check
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Eigenvalue ratio check (toy data)
+#' # Create a minimal MUSIC data structure
+#' cs_obj <- new_SeaSondeRCS(list(nDopplerCells=1), list())
+#' # Attach dummy MUSIC_data with eigenvalues list
+#' attr(cs_obj, "MUSIC_data") <- list(eigen = list(list(values=c(2,1))), retained_solution = c("dual"))
+#' # Run eigenvalue ratio check
 #' updated_obj <- SeaSondeR:::seasonder_MUSICCheckEigenValueRatio(cs_obj)
+#' print(attr(updated_obj, "MUSIC_data")$eigen_values_ratio)
 seasonder_MUSICCheckEigenValueRatio <- function(seasonder_cs_object){
   # Extract MUSIC data from the object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
@@ -1939,9 +2034,17 @@ seasonder_MUSICCheckSignalPowers <- function(seasonder_cs_object){
 #' and \code{\link{seasonder_getSeaSondeRCS_MUSIC_parameters}} to retrieve MUSIC parameters.
 #'
 #' @examples
-#' # Signal matrix power ratio check
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Signal matrix power ratio check (toy data)
+#' # Create a minimal CS object with MUSIC_data and dummy DOA solutions
+#' cs_obj <- new_SeaSondeRCS(list(), list())
+#' # Attach MUSIC_data with one dual solution matrix P
+#' attr(cs_obj, "MUSIC_data") <- list(
+#'   DOA_solutions = list(list(dual = list(bearing = c(1,2), P = matrix(c(1,2,3,4), nrow=2)))),
+#'   retained_solution = c("dual")
+#' )
+#' # Run signal matrix power test
 #' updated_obj <- SeaSondeR:::seasonder_MUSICCheckSignalMatrix(cs_obj)
+#' print(attr(updated_obj, "MUSIC_data")$P3_check)
 seasonder_MUSICCheckSignalMatrix <- function(seasonder_cs_object){
   # Initialize globals for seasonder_MUSICCheckSignalMatrix
 DOA_solutions <- diag_off_diag_power_ratio <- rlang::zap()
@@ -2036,9 +2139,13 @@ seasonder_MUSICCheckBearingDistance <- function(seasonder_cs_object){
 #' \code{\link{seasonder_MUSICCheckSignalMatrix}}, \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}}
 #'
 #' @examples
-#' # Test dual solutions
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Test dual solutions using MUSIC algorithm
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' updated_obj <- SeaSondeR:::seasonder_MUSICTestDualSolutions(cs_obj)
+#' print(updated_obj)
 seasonder_MUSICTestDualSolutions <- function(seasonder_cs_object) {
 
 
@@ -2247,9 +2354,13 @@ seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_object){
 #' Paolo, T. de, Cook, T. & Terrill, E. Properties of HF RADAR Compact Antenna Arrays and Their Effect on the MUSIC Algorithm. OCEANS 2007 1–10 (2007) doi:10.1109/oceans.2007.4449265.
 #'
 #' @examples
-#' # Compute covariance
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Compute covariance for a sample SeaSondeRCS object
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' out <- SeaSondeR:::seasonder_MUSICComputeCov(cs_obj)
+#' print(out)
 seasonder_MUSICComputeCov <- function(seasonder_cs_object) {
 
   # Initialize globals for seasonder_MUSICComputeCov
@@ -2449,9 +2560,13 @@ seasonder_eigen_decomp_C <- function(C){
 #' \code{\link{seasonder_MUSICComputeCov}} for computing the covariance matrix.
 #'
 #' @examples
-#' # Covariance decomposition
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Covariance decomposition for a sample SeaSondeRCS object
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' out <- SeaSondeR:::seasonder_MUSICCovDecomposition(cs_obj)
+#' print(out)
 seasonder_MUSICCovDecomposition <- function(seasonder_cs_object){
 
   # Initialize globals for seasonder_MUSICCovDecomposition
@@ -2571,9 +2686,16 @@ seasonder_compute_antenna_pattern_proyections <- function(En, a, Conj_t_a){
 #' @importFrom magrittr %<>%
 #'
 #' @examples
-#' # Compute DOA projections
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
-#' out <- SeaSondeR:::seasonder_MUSICComputeDOAProjections(cs_obj)
+#' # Example: compute a single DOA projection for toy data
+#' # Create a noise subspace eigenvector matrix (3 sensors, noise subspace dimension=2)
+#' En <- matrix(1+1i, nrow = 3, ncol = 2)
+#' # Create an antenna pattern response vector
+#' a <- c(1+0i, 0+0i, 0+0i)
+#' # Compute its conjugate transpose
+#' Conj_t_a <- Conj(t(a))
+#' # Compute a single projection using the MUSIC formula
+#' proj <- seasonder_compute_antenna_pattern_proyections(En, a, Conj_t_a)
+#' print(proj)
 seasonder_MUSICComputeDOAProjections <- function(seasonder_cs_object){
   # Sets a processing step message indicating the start of distance computation.
   seasonder_cs_object %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_compute_DOA_functions_start_step_text())
@@ -2871,9 +2993,13 @@ seasonder_MUSICExtractPeaksCheckRetainedSolution <- function(ret_sol, DOA_sol){
 #' @seealso \code{\link{seasonder_MUSICExtractDOASolutions}}, \code{\link{seasonder_MUSICExtractPeaksCheckRetainedSolution}}
 #'
 #' @examples
-#' # Extract peaks
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Extract peaks using MUSIC algorithm
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' out <- SeaSondeR:::seasonder_MUSICExtractPeaks(cs_obj)
+#' print(out)
 seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
 
   projections <- retained_solution <- DOA_solutions  <- rlang::zap()
@@ -2957,9 +3083,15 @@ seasonder_MUSIC_remove_no_solutions <- function(seasonder_cs_object){
 #' @importFrom magrittr %<>%
 #'
 #' @examples
-#' # Select DOA
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
+#' # Select DOA after MUSIC analysis
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' # Assume MUSIC analysis has been run
+#' cs_obj <- seasonder_runMUSIC(cs_obj)
 #' out <- SeaSondeR:::seasonder_MUSICSelectDOA(cs_obj)
+#' print(out)
 seasonder_MUSICSelectDOA <- function(seasonder_cs_object) {
 
   # Placeholder variables to initialize empty values for DOA solutions and retained solutions
@@ -3102,7 +3234,7 @@ seasonder_checkPWMAX <- function(seasonder_cs_object) {
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' cs_obj <- seasonder_initMUSICData(cs_obj, range_cells = 3:4, doppler_bins = list(c(100:200), c(125:150)) , NULL_MUSIC = FALSE)
+#' cs_obj <- SeaSondeR:::seasonder_initMUSICData(cs_obj)
 #' # Run the MUSIC algorithm with FOR context
 #' cs_obj <- seasonder_runMUSIC(cs_obj)
 #' # Check the updated processing steps

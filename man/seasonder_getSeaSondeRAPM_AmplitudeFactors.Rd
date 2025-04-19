@@ -16,5 +16,9 @@ The AmplitudeFactors attribute from the object.
 Getter for AmplitudeFactors
 }
 \examples{
-amplitude_factors <- seasonder_getSeaSondeRAPM_AmplitudeFactors(obj)
+# Minimal example for seasonder_getSeaSondeRAPM_AmplitudeFactors
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+amplitude_factors <- seasonder_getSeaSondeRAPM_AmplitudeFactors(apm_obj)
+print(amplitude_factors)
 }

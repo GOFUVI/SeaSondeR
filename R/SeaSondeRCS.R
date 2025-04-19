@@ -672,7 +672,13 @@ seasonder_setSeaSondeRCS_header <- function(seasonder_cs_object, header) {
 #' @return A SeaSondeRCS object with updated data.
 #' 
 #' @examples
-#' cs_obj <- seasonder_setSeaSondeRCS_data(cs_obj, new_data)
+#' # Minimal example for seasonder_setSeaSondeRCS_data
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' new_data <- seasonder_getSeaSondeRCS_data(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_data(cs_obj, new_data)
 #' print(seasonder_getSeaSondeRCS_data(cs_obj))
 #' @export
 seasonder_setSeaSondeRCS_data <- function(seasonder_cs_object, data) {
@@ -697,6 +703,13 @@ seasonder_setSeaSondeRCS_data <- function(seasonder_cs_object, data) {
 #' @param append append the new step or replace previous steps? Default: TRUE
 #'
 #' @examples
+#' # Create a valid SeaSondeRCS object for examples
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' # Define and append new processing steps
+#' new_steps <- "Example processing step"
 #' cs_obj <- seasonder_setSeaSondeRCS_ProcessingSteps(cs_obj, new_steps)
 #' print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_obj))
 #' @return A SeaSondeRCS object with updated ProcessingSteps.
@@ -734,8 +747,11 @@ seasonder_setSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_object, proces
 #' APM object. Further validation of the APM object should be performed (TODO).
 #'
 #' @examples
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/file.cs")
-#' apm_obj <- list(param1 = "value1", param2 = "value2")
+#' # Minimal example for seasonder_setSeaSondeRCS_APM
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- seasonder_setSeaSondeRCS_APM(cs_obj, apm_obj)
 #' print(attr(cs_obj, "APM"))
 #' @export
@@ -814,6 +830,14 @@ new_limits <- seasonder_estimateReferenceNoiseNormalizedLimits(out, low_limit = 
 #' 
 #' 
 #' @examples
+#' # Create a minimal SeaSondeRCS object with a header attribute
+#' cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
+#' attr(cs_obj, "header") <- list(
+#'   nSiteCodeName = "Station1",
+#'   nDateTime = Sys.time(),
+#'   nDopplerCells = 2,
+#'   nRangeCells = 3
+#' )
 #' header_data <- seasonder_getSeaSondeRCS_header(cs_obj)
 #' print(header_data)
 #' @export
@@ -920,6 +944,8 @@ seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_object, path = NULL) {
 #' The function uses \code{attr(..., exact = TRUE)} to ensure that the correct attribute is retrieved.
 #'
 #' @examples
+#' # Create a minimal SeaSondeRCS object
+#' cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
 #' apm_value <- seasonder_getSeaSondeRCS_APM(cs_obj)
 #' print(apm_value)
 #' @export
@@ -946,6 +972,8 @@ seasonder_getSeaSondeRCS_APM <- function(seasonder_cs_object){
 #' This interval is typically used during the noise level estimation process for the SeaSondeRCS object.
 #'
 #' @examples
+#' # Create a minimal SeaSondeRCS object
+#' cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
 #' interval <- seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval(cs_obj)
 #' print(interval)
 #' @export
@@ -971,7 +999,9 @@ seasonder_getSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <
 #' @return A list containing the data matrices for the SeaSondeRCS object. If the data is not set, it initializes
 #' the data structure with the number of range and Doppler cells.
 #' @examples
-#' data_list <- seasonder_getSeaSondeRCS_data(cs_object)
+#' # Create a minimal SeaSondeRCS object
+#' cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
+#' data_list <- seasonder_getSeaSondeRCS_data(cs_obj)
 #' print(data_list)
 #' @export
 seasonder_getSeaSondeRCS_data <- function(seasonder_cs_object) {
@@ -1025,7 +1055,12 @@ seasonder_getSeaSondeRCS_data <- function(seasonder_cs_object) {
 #' @importFrom rlang %||%
 #'
 #' @examples
-#' ssa1_matrix <- seasonder_getSeaSondeRCS_dataMatrix(cs_object, "SSA1")
+#' # Minimal example for seasonder_getSeaSondeRCS_dataMatrix
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' ssa1_matrix <- SeaSondeR:::seasonder_getSeaSondeRCS_dataMatrix(cs_obj, "SSA1")
 #' print(ssa1_matrix)
 seasonder_getSeaSondeRCS_dataMatrix <- function(seasonder_cs_object, matrix_name) {
 
@@ -1070,7 +1105,12 @@ seasonder_getSeaSondeRCS_dataMatrix <- function(seasonder_cs_object, matrix_name
 #' @importFrom rlang %||%
 #'
 #' @examples
-#' ssa1_data <- seasonder_getSeaSondeRCS_antenna_SSdata(cs_object, 1)
+#' # Minimal example for seasonder_getSeaSondeRCS_antenna_SSdata
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' ssa1_data <- SeaSondeR:::seasonder_getSeaSondeRCS_antenna_SSdata(cs_obj, 1)
 #' print(ssa1_data)
 seasonder_getSeaSondeRCS_antenna_SSdata <- function(seasonder_cs_object, antenna) {
 
@@ -1168,8 +1208,14 @@ seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, dop
 #' }
 #'
 #' @examples
-#' spectra_list <- seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae, dist_ranges, doppler_ranges)
-#' print(spectra_list)
+#' # Retrieve self-spectra for antenna 1 (range and Doppler defaults)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' # Extract self-spectra for antenna 1
+#' spectra_list <- SeaSondeR:::seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae = 1)
+#' print(names(spectra_list))
 #'
 seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_object, antennae, dist_ranges = NULL, doppler_ranges = NULL, dist_in_km = FALSE, collapse = FALSE, smoothed = F) {
 
@@ -1281,7 +1327,13 @@ SSMatrices <- antennae %>% purrr::map(\(antenna) seasonder_getSeaSondeRCS_antenn
 #'
 #' @return A list containing the processing steps of the SeaSondeRCS object.
 #' @examples
-#' processing_steps <- seasonder_getSeaSondeRCS_ProcessingSteps(cs_object)
+#' # Create a SeaSondeRCS object for examples
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' # Retrieve processing steps
+#' processing_steps <- seasonder_getSeaSondeRCS_ProcessingSteps(cs_obj)
 #' print(processing_steps)
 #' @export
 seasonder_getSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_object) {
@@ -1293,7 +1345,12 @@ seasonder_getSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_object) {
 #' @param seasonder_obj A SeaSondeRCS object.
 #' @return The version value.
 #' @examples
-#' value <- seasonder_getVersion(cs_object)
+#' # Get version from a SeaSondeRCS object
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' value <- seasonder_getVersion.SeaSondeRCS(cs_obj)
 #' print(value)
 #' @export
 seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj) {
@@ -1330,7 +1387,12 @@ seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj) {
 #' }
 #'
 #' @examples
-#' field_value <- seasonder_getCSHeaderByPath(cs_object, c("nRangeCells"))
+#' # Minimal example for seasonder_getCSHeaderByPath
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' field_value <- seasonder_getCSHeaderByPath(cs_obj, c("nRangeCells"))
 #' print(field_value)
 #' @export
 seasonder_getCSHeaderByPath <- function(seasonder_obj, path, warn_missing = TRUE) {
@@ -1371,7 +1433,10 @@ seasonder_getCSHeaderByPath <- function(seasonder_obj, path, warn_missing = TRUE
 #' @importFrom purrr pluck list_flatten
 #'
 #' @examples
-#' field_value <- seasonder_getSeaSondeRCS_headerField(cs_object, "nDopplerCells")
+#' # Create a minimal SeaSondeRCS object with a header attribute
+#' cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
+#' attr(cs_obj, "header") <- list(nDopplerCells = 5)
+#' field_value <- SeaSondeR:::seasonder_getSeaSondeRCS_headerField(cs_obj, "nDopplerCells")
 #' print(field_value)
 seasonder_getSeaSondeRCS_headerField <- function(seasonder_cs_object, field) {
 
@@ -1395,6 +1460,11 @@ if(field %in% names(header)){
 #' @param seasonder_obj A SeaSondeRCS object.
 #' @return The nRangeCells value.
 #' @examples
+#' # Minimal example for seasonder_getnRangeCells
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' n_range_cells <- seasonder_getnRangeCells(cs_obj)
 #' print(n_range_cells)
 #' @export
@@ -1405,9 +1475,14 @@ seasonder_getnRangeCells <- function(seasonder_obj) {
 #' Get the nDopplerCells value from a SeaSondeRCS object
 #'
 #' @param seasonder_obj A SeaSondeRCS object.
-#' @examples
-#' n_doppler_cells <- seasonder_getnDopplerCells(cs_obj)
-#' print(n_doppler_cells)
+    #' @examples
+    #' # Minimal example for seasonder_getnDopplerCells
+    #' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+    #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+    #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+    #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+    #' n_doppler_cells <- seasonder_getnDopplerCells(cs_obj)
+    #' print(n_doppler_cells)
 #' @return The nDopplerCells value.
 #' @export
 seasonder_getnDopplerCells <- function(seasonder_obj) {
@@ -1433,7 +1508,12 @@ seasonder_getCellsDistKm <- function(seasonder_cs_object) {
 #' @return A numeric value representing the center frequency in MHz.
 #'
 #' @examples
-#' center_freq <- seasonder_getCenterFreqMHz(cs_obj)
+#' # Minimal example for seasonder_getCenterFreqMHz
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' center_freq <- SeaSondeR:::seasonder_getCenterFreqMHz(cs_obj)
 #' print(center_freq)
 seasonder_getCenterFreqMHz <- function(seasonder_cs_object) {
   return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "CenterFreq"))
@@ -1493,7 +1573,12 @@ seasonder_getfLatitude <- function(seasonder_cs_object){
 #' the `SeaSondeRCS` header.
 #'
 #' @examples
-#' receiver_gain <- seasonder_getReceiverGain_dB(cs_object)
+#' # Minimal example for seasonder_getReceiverGain_dB
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' receiver_gain <- SeaSondeR:::seasonder_getReceiverGain_dB(cs_obj)
 #' print(receiver_gain)
 seasonder_getReceiverGain_dB <- function(seasonder_cs_object) {
 
@@ -1624,7 +1709,12 @@ seasonder_getCenterDopplerBin <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getCenterFreqMHz}} to retrieve the radar's center frequency.
 #'
 #' @examples
-#' wavelength <- seasonder_getRadarWaveLength(cs_obj)
+#' # Minimal example for seasonder_getRadarWaveLength
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' wavelength <- SeaSondeR:::seasonder_getRadarWaveLength(cs_obj)
 #' print(wavelength)
 seasonder_getRadarWaveLength <- function(seasonder_cs_object) {
 
@@ -1671,7 +1761,12 @@ seasonder_getRadarWaveLength <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getRadarWaveLength}} to compute the radar wavelength.
 #'
 #' @examples
-#' wave_number <- seasonder_getRadarWaveNumber(cs_obj)
+#' # Minimal example for seasonder_getRadarWaveNumber
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' wave_number <- SeaSondeR:::seasonder_getRadarWaveNumber(cs_obj)
 #' print(wave_number)
 seasonder_getRadarWaveNumber <- function(seasonder_cs_object) {
 
@@ -1714,7 +1809,12 @@ seasonder_getRadarWaveNumber <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getRadarWaveLength}} to compute the radar wavelength.
 #'
 #' @examples
-#' bragg_wavelength <- seasonder_getBraggWaveLength(cs_obj)
+#' # Minimal example for seasonder_getBraggWaveLength
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' bragg_wavelength <- SeaSondeR:::seasonder_getBraggWaveLength(cs_obj)
 #' print(bragg_wavelength)
 seasonder_getBraggWaveLength <- function(seasonder_cs_object) {
 
@@ -1754,7 +1854,12 @@ seasonder_getBraggWaveLength <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getRadarWaveNumber}} to compute the radar wave number.
 #'
 #' @examples
-#' bragg_angular_freq <- seasonder_getBraggDopplerAngularFrequency(cs_obj)
+#' # Minimal example for seasonder_getBraggDopplerAngularFrequency
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' bragg_angular_freq <- SeaSondeR:::seasonder_getBraggDopplerAngularFrequency(cs_obj)
 #' print(bragg_angular_freq)
 seasonder_getBraggDopplerAngularFrequency <- function(seasonder_cs_object) {
   # Debugging: Check if a debug point for this function is enabled
@@ -1801,7 +1906,12 @@ seasonder_getBraggDopplerAngularFrequency <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getSeaSondeRCS_headerField}} to access specific header fields.
 #'
 #' @examples
-#' spectral_res <- seasonder_getDopplerSpectrumResolution(cs_obj)
+#' # Minimal example for seasonder_getDopplerSpectrumResolution
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' spectral_res <- SeaSondeR:::seasonder_getDopplerSpectrumResolution(cs_obj)
 #' print(spectral_res)
 seasonder_getDopplerSpectrumResolution <- function(seasonder_cs_object) {
   # Verifica si el punto de depuración para esta función está habilitado y, si es así, inicia una sesión de depuración
@@ -1853,7 +1963,12 @@ seasonder_getDopplerSpectrumResolution <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_NormalizedDopplerFreq2Bins}} for the frequency-to-bin mapping logic.
 #'
 #' @examples
-#' bins <- seasonder_getBraggLineBins(cs_obj)
+#' # Minimal example for seasonder_getBraggLineBins
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' bins <- SeaSondeR:::seasonder_getBraggLineBins(cs_obj)
 #' print(bins)
 seasonder_getBraggLineBins <- function(seasonder_cs_object) {
   # Convert the normalized Doppler frequencies for the first-order Bragg peaks (-1 and 1)
@@ -1952,7 +2067,12 @@ seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_object, nDoppler,
 #'
 #' @importFrom dplyr last
 #' @examples
-#' freqs <- seasonder_getDopplerBinsFrequency(cs_obj)
+#' # Minimal example for seasonder_getDopplerBinsFrequency
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' freqs <- SeaSondeR:::seasonder_getDopplerBinsFrequency(cs_obj)
 #' print(freqs)
 seasonder_getDopplerBinsFrequency <- function(seasonder_cs_object, normalized = FALSE) {
   if(seasonder_is_debug_point_enabled("seasonder_getDopplerBinsFrequency")){
@@ -2064,7 +2184,7 @@ seasonder_computeBinsRadialVelocity <- function(seasonder_cs_object, freq) {
 #'   SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
 #' )
 #' # Compute radial velocities for bins
-#' velocities <- seasonder_getBinsRadialVelocity(cs_obj)
+#' velocities <- SeaSondeR:::seasonder_getBinsRadialVelocity(cs_obj)
 #' print(velocities)
 seasonder_getBinsRadialVelocity <- function(seasonder_cs_object) {
 
@@ -2104,7 +2224,12 @@ seasonder_getBinsRadialVelocity <- function(seasonder_cs_object) {
 #' @seealso \code{\link{seasonder_getDopplerSpectrumResolution}},
 #'          \code{\link{seasonder_getRadarWaveNumber}}
 #' @examples
-#' res <- seasonder_getRadialVelocityResolution(cs_obj)
+#' # Minimal example for seasonder_getRadialVelocityResolution
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' res <- SeaSondeR:::seasonder_getRadialVelocityResolution(cs_obj)
 #' print(res)
 seasonder_getRadialVelocityResolution <- function(seasonder_cs_object) {
 
@@ -2982,10 +3107,13 @@ seasonder_validateCSFileData <- function(filepath, header) {
 #'
 #'
 #' @return A list with header = NULL and data = NULL.
-#' @examples
-#' tryCatch({
-#'   seasonder_skip_cs_file(simpleError("test error"))
-#' }, seasonder_cs_file_skipped = function(e) NULL)
+ #' @examples
+ #' # Example: Skip file reading using a withRestarts handler to return NULL header and data
+ #' result <- withRestarts(
+ #'   seasonder_skip_cs_file(simpleError("test error")),
+ #'   seasonder_skip_cs_file = function(cond) list(header = NULL, data = NULL)
+ #' )
+ #' print(result)
 #' @export
 seasonder_skip_cs_file <- function(cond) {
   invokeRestart("seasonder_skip_cs_file",cond)
@@ -3200,8 +3328,12 @@ seasonder_raw_to_int <- function(r,signed = F) {
 #'
 #'
 #' @examples
-#' result <- seasonder_skip_cs_field(simpleError("test error"), "default")
-#' print(result)
+#' # Example: Skip reading a CSField using a withRestarts handler to return a default value
+#' r <- withRestarts(
+#'   seasonder_skip_cs_field(simpleError("test error"), "default"),
+#'   seasonder_skip_cs_field = function(cond, value) value
+#' )
+#' print(r)
 #' @export
 seasonder_skip_cs_field <- function(cond,value) {
   invokeRestart("seasonder_skip_cs_field",cond,value)

@@ -16,5 +16,9 @@ The StationCode attribute from the object.
 Getter for StationCode
 }
 \examples{
-station_code <- seasonder_getSeaSondeRAPM_StationCode(obj)
+# Minimal example for seasonder_getSeaSondeRAPM_StationCode
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+station_code <- seasonder_getSeaSondeRAPM_StationCode(apm_obj)
+print(station_code)
 }

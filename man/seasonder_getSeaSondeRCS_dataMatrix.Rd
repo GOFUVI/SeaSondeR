@@ -34,7 +34,12 @@ Once validated, the function extracts the requested matrix from the \code{data} 
 SeaSondeRCS object.
 }
 \examples{
-ssa1_matrix <- seasonder_getSeaSondeRCS_dataMatrix(cs_object, "SSA1")
+# Minimal example for seasonder_getSeaSondeRCS_dataMatrix
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+ssa1_matrix <- SeaSondeR:::seasonder_getSeaSondeRCS_dataMatrix(cs_obj, "SSA1")
 print(ssa1_matrix)
 }
 \seealso{

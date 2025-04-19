@@ -20,7 +20,11 @@ The interpolated doppler cells index is part of the MUSIC_data and is used to id
 which Doppler bins were introduced during the interpolation process.
 }
 \examples{
-# Assuming cs_object is a valid SeaSondeRCS object.
-doppler_index <- seasonder_getMUSICInterpolatedDopplerCellsIndex(cs_object)
+# Minimal example for seasonder_getMUSICInterpolatedDopplerCellsIndex
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+doppler_index <- seasonder_getMUSICInterpolatedDopplerCellsIndex(cs_obj)
 print(doppler_index)
 }

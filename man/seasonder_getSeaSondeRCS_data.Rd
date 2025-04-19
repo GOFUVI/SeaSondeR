@@ -17,7 +17,9 @@ the data structure with the number of range and Doppler cells.
 Getter for data
 }
 \examples{
-data_list <- seasonder_getSeaSondeRCS_data(cs_object)
+# Create a minimal SeaSondeRCS object
+cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
+data_list <- seasonder_getSeaSondeRCS_data(cs_obj)
 print(data_list)
 }
 \seealso{

@@ -27,8 +27,11 @@ placeholders for components such as \code{SSA1}, \code{SSA2}, \code{SSA3}, \code
 \code{CS23}, and \code{QC}.
 }
 \examples{
-# Initialize interpolated data
-cs_obj <- seasonder_createSeaSondeRCS(...)
+# Minimal example for interpolated data initialization
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 interpolated_data <- SeaSondeR:::seasonder_MUSICInitInterpolatedData(cs_obj)
 print(interpolated_data)
 }

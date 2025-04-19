@@ -37,9 +37,13 @@ Off-diagonal elements (\eqn{i \neq j}) are derived from cross-spectra fields, su
 If the row index is greater than the column index, the conjugate of the value is used.
 }
 \examples{
-# Compute covariance
-cs_obj <- seasonder_createSeaSondeRCS(...)
+# Compute covariance for a sample SeaSondeRCS object
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 out <- SeaSondeR:::seasonder_MUSICComputeCov(cs_obj)
+print(out)
 }
 \references{
 Cross Spectra File Format Version 6, CODAR. (2016).

@@ -29,7 +29,10 @@ The effect of invoking this restart is twofold:
 }
 }
 \examples{
-tryCatch({
-  seasonder_skip_cs_file(simpleError("test error"))
-}, seasonder_cs_file_skipped = function(e) NULL)
+# Example: Skip file reading using a withRestarts handler to return NULL header and data
+result <- withRestarts(
+  seasonder_skip_cs_file(simpleError("test error")),
+  seasonder_skip_cs_file = function(cond) list(header = NULL, data = NULL)
+)
+print(result)
 }

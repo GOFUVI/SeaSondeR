@@ -40,7 +40,7 @@ cs_obj <- seasonder_readSeaSondeCSFile(
   SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
 )
 # Compute radial velocities for bins
-velocities <- seasonder_getBinsRadialVelocity(cs_obj)
+velocities <- SeaSondeR:::seasonder_getBinsRadialVelocity(cs_obj)
 print(velocities)
 }
 \seealso{

@@ -24,8 +24,11 @@ The function simply sets the "APM" attribute of the provided SeaSondeRCS object 
 APM object. Further validation of the APM object should be performed (TODO).
 }
 \examples{
-cs_obj <- seasonder_createSeaSondeRCS("path/to/file.cs")
-apm_obj <- list(param1 = "value1", param2 = "value2")
+# Minimal example for seasonder_setSeaSondeRCS_APM
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 cs_obj <- seasonder_setSeaSondeRCS_APM(cs_obj, apm_obj)
 print(attr(cs_obj, "APM"))
 }

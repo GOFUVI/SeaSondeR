@@ -22,6 +22,11 @@ The function retrieves the list of FOR parameters using \code{seasonder_getFOR_p
 the value associated with \code{FOR_parameter}. If the parameter is not found, an error is logged.
 }
 \examples{
+# Minimal example for seasonder_getFORParameter
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 nsm_value <- seasonder_getFORParameter(cs_obj, "nsm")
 print(nsm_value)
 }

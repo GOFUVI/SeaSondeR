@@ -31,9 +31,14 @@ This ratio is compared to a threshold defined in the MUSIC parameters to determi
 is considered valid. Solutions failing this test are marked as "single."
 }
 \examples{
-# Eigenvalue ratio check
-cs_obj <- seasonder_createSeaSondeRCS(...)
+# Eigenvalue ratio check (toy data)
+# Create a minimal MUSIC data structure
+cs_obj <- new_SeaSondeRCS(list(nDopplerCells=1), list())
+# Attach dummy MUSIC_data with eigenvalues list
+attr(cs_obj, "MUSIC_data") <- list(eigen = list(list(values=c(2,1))), retained_solution = c("dual"))
+# Run eigenvalue ratio check
 updated_obj <- SeaSondeR:::seasonder_MUSICCheckEigenValueRatio(cs_obj)
+print(attr(updated_obj, "MUSIC_data")$eigen_values_ratio)
 }
 \seealso{
 \code{seasonder_getSeaSondeRCS_MUSIC}, \code{seasonder_setSeaSondeRCS_MUSIC}

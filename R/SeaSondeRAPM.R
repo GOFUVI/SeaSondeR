@@ -856,9 +856,11 @@ seasonder_setSeaSondeRAPM_quality_matrix <- function(seasonde_apm_obj, new_value
 #'
 #' @export
 #' @examples
-#' # Create a default SeaSondeRAPM object
-#' obj <- seasonder_createSeaSondeRAPM()
-#' bear <- seasonder_getSeaSondeRAPM_BEAR(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_BEAR
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' bear <- seasonder_getSeaSondeRAPM_BEAR(apm_obj)
+#' print(bear)
 seasonder_getSeaSondeRAPM_BEAR <- function(seasonde_apm_obj) {
   # Return the BEAR attribute (bearing values) from the object
   return(attributes(seasonde_apm_obj)$BEAR)
@@ -873,12 +875,12 @@ seasonder_getSeaSondeRAPM_BEAR <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' # Create a default SeaSondeRAPM object
-#' obj <- seasonder_createSeaSondeRAPM()
-#' # Define a new BEAR vector (e.g., from the object)
-#' new_bear <- attributes(obj)$BEAR
-#' # Update BEAR in the object
-#' obj <- seasonder_setSeaSondeRAPM_BEAR(obj, new_bear)
+#' # Minimal example for seasonder_setSeaSondeRAPM_BEAR
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_bear <- attributes(apm_obj)$BEAR
+#' apm_obj <- seasonder_setSeaSondeRAPM_BEAR(apm_obj, new_bear)
+#' print(attributes(apm_obj)$BEAR)
 seasonder_setSeaSondeRAPM_BEAR <- function(seasonde_apm_obj, new_value) {
   # Validate the new BEAR value
   validate_SeaSondeRAPM_BEAR(new_value, seasonde_apm_obj)
@@ -913,12 +915,12 @@ seasonder_getSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' # Create a default SeaSondeRAPM object
-#' obj <- seasonder_createSeaSondeRAPM()
-#' # Define new_phase_corrections (e.g., from the object)
-#' new_phase_corrections <- attributes(obj)$PhaseCorrections
-#' # Update PhaseCorrections in the object
-#' obj <- seasonder_setSeaSondeRAPM_PhaseCorrections(obj, new_phase_corrections)
+#' # Minimal example for seasonder_setSeaSondeRAPM_PhaseCorrections
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_phase_corrections <- attributes(apm_obj)$PhaseCorrections
+#' apm_obj <- seasonder_setSeaSondeRAPM_PhaseCorrections(apm_obj, new_phase_corrections)
+#' print(attributes(apm_obj)$PhaseCorrections)
 seasonder_setSeaSondeRAPM_PhaseCorrections <- function(seasonde_apm_obj, new_value) {
   # Validate the new PhaseCorrections value
   validate_SeaSondeRAPM_PhaseCorrections(new_value)
@@ -953,12 +955,12 @@ seasonder_getSeaSondeRAPM_Type <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' # Create a default SeaSondeRAPM object
-#' obj <- seasonder_createSeaSondeRAPM()
-#' # Define a new Type value (e.g., from the object)
-#' new_type <- attributes(obj)$Type
-#' # Update Type in the object
-#' obj <- seasonder_setSeaSondeRAPM_Type(obj, new_type)
+#' # Minimal example for seasonder_setSeaSondeRAPM_Type
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_type <- attributes(apm_obj)$Type
+#' apm_obj <- seasonder_setSeaSondeRAPM_Type(apm_obj, new_type)
+#' print(attributes(apm_obj)$Type)
 seasonder_setSeaSondeRAPM_Type <- function(seasonde_apm_obj, new_value) {
   # Validate the new Type value
   validate_SeaSondeRAPM_Type(new_value)
@@ -993,12 +995,12 @@ seasonder_getSeaSondeRAPM_Creator <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' # Create a default SeaSondeRAPM object
-#' obj <- seasonder_createSeaSondeRAPM()
-#' # Define new_creator (e.g., from the object)
-#' new_creator <- attributes(obj)$Creator
-#' # Update Creator in the object
-#' obj <- seasonder_setSeaSondeRAPM_Creator(obj, new_creator)
+#' # Minimal example for seasonder_setSeaSondeRAPM_Creator
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_creator <- attributes(apm_obj)$Creator
+#' apm_obj <- seasonder_setSeaSondeRAPM_Creator(apm_obj, new_creator)
+#' print(attributes(apm_obj)$Creator)
 seasonder_setSeaSondeRAPM_Creator <- function(seasonde_apm_obj, new_value) {
   # Validate the new Creator value
   validate_SeaSondeRAPM_Creator(new_value)
@@ -1016,9 +1018,11 @@ seasonder_setSeaSondeRAPM_Creator <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' # Create a default SeaSondeRAPM object
-#' obj <- seasonder_createSeaSondeRAPM()
-#' site_name <- seasonder_getSeaSondeRAPM_SiteName(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_SiteName
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' site_name <- seasonder_getSeaSondeRAPM_SiteName(apm_obj)
+#' print(site_name)
 seasonder_getSeaSondeRAPM_SiteName <- function(seasonde_apm_obj) {
   # Return the SiteName attribute from the object
   return(attributes(seasonde_apm_obj)$SiteName)
@@ -1033,12 +1037,12 @@ seasonder_getSeaSondeRAPM_SiteName <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' # Create a default SeaSondeRAPM object
-#' obj <- seasonder_createSeaSondeRAPM()
-#' # Define new_site_name (e.g., from the object)
-#' new_site_name <- attributes(obj)$SiteName
-#' # Update SiteName in the object
-#' obj <- seasonder_setSeaSondeRAPM_SiteName(obj, new_site_name)
+#' # Minimal example for seasonder_setSeaSondeRAPM_SiteName
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_site_name <- attributes(apm_obj)$SiteName
+#' apm_obj <- seasonder_setSeaSondeRAPM_SiteName(apm_obj, new_site_name)
+#' print(attributes(apm_obj)$SiteName)
 seasonder_setSeaSondeRAPM_SiteName <- function(seasonde_apm_obj, new_value) {
   # Validate the new SiteName value
   validate_SeaSondeRAPM_SiteName(new_value)
@@ -1056,7 +1060,11 @@ seasonder_setSeaSondeRAPM_SiteName <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' site_origin <- seasonder_getSeaSondeRAPM_SiteOrigin(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_SiteOrigin
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' site_origin <- seasonder_getSeaSondeRAPM_SiteOrigin(apm_obj)
+#' print(site_origin)
 seasonder_getSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj) {
   # Return the SiteOrigin attribute from the object
   return(attributes(seasonde_apm_obj)$SiteOrigin)
@@ -1091,7 +1099,11 @@ seasonder_setSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' file_name <- seasonder_getSeaSondeRAPM_FileName(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_FileName
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' file_name <- seasonder_getSeaSondeRAPM_FileName(apm_obj)
+#' print(file_name)
 seasonder_getSeaSondeRAPM_FileName <- function(seasonde_apm_obj) {
   # Return the FileName attribute from the object
   return(attributes(seasonde_apm_obj)$FileName)
@@ -1106,7 +1118,12 @@ seasonder_getSeaSondeRAPM_FileName <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' obj <- seasonder_setSeaSondeRAPM_FileName(obj, new_file_name)
+#' # Minimal example for seasonder_setSeaSondeRAPM_FileName
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_file_name <- "new.txt"
+#' apm_obj <- seasonder_setSeaSondeRAPM_FileName(apm_obj, new_file_name)
+#' print(attributes(apm_obj)$FileName)
 seasonder_setSeaSondeRAPM_FileName <- function(seasonde_apm_obj, new_value) {
   # Validate the new FileName value
   validate_SeaSondeRAPM_FileName(new_value)
@@ -1124,7 +1141,11 @@ seasonder_setSeaSondeRAPM_FileName <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' create_time_stamp <- seasonder_getSeaSondeRAPM_CreateTimeStamp(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_CreateTimeStamp
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' create_time_stamp <- seasonder_getSeaSondeRAPM_CreateTimeStamp(apm_obj)
+#' print(create_time_stamp)
 seasonder_getSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj) {
   # Return the CreateTimeStamp attribute from the object
   return(attributes(seasonde_apm_obj)$CreateTimeStamp)
@@ -1157,7 +1178,11 @@ seasonder_setSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj, new_valu
 #'
 #' @export
 #' @examples
-#' processing_steps <- seasonder_getSeaSondeRAPM_ProcessingSteps(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_ProcessingSteps
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' processing_steps <- seasonder_getSeaSondeRAPM_ProcessingSteps(apm_obj)
+#' print(processing_steps)
 seasonder_getSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj) {
   # Return the ProcessingSteps attribute from the object
   return(attributes(seasonde_apm_obj)$ProcessingSteps)
@@ -1173,7 +1198,12 @@ seasonder_getSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' obj <- seasonder_setSeaSondeRAPM_ProcessingSteps(obj, new_processing_steps)
+#' # Minimal example for seasonder_setSeaSondeRAPM_ProcessingSteps
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_processing_steps <- "step1"
+#' apm_obj <- seasonder_setSeaSondeRAPM_ProcessingSteps(apm_obj, new_processing_steps)
+#' print(attributes(apm_obj)$ProcessingSteps)
 seasonder_setSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj, new_value, append = TRUE) {
   # If appending, combine the existing processing steps with the new step
   if (append) {
@@ -1197,7 +1227,11 @@ seasonder_setSeaSondeRAPM_ProcessingSteps <- function(seasonde_apm_obj, new_valu
 #'
 #' @export
 #' @examples
-#' amplitude_factors <- seasonder_getSeaSondeRAPM_AmplitudeFactors(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_AmplitudeFactors
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' amplitude_factors <- seasonder_getSeaSondeRAPM_AmplitudeFactors(apm_obj)
+#' print(amplitude_factors)
 seasonder_getSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj) {
   # Return the AmplitudeFactors attribute from the object
   return(attributes(seasonde_apm_obj)$AmplitudeFactors)
@@ -1212,7 +1246,12 @@ seasonder_getSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' obj <- seasonder_setSeaSondeRAPM_AmplitudeFactors(obj, new_amplitude_factors)
+#' # Minimal example for seasonder_setSeaSondeRAPM_AmplitudeFactors
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_factors <- list(1, 2, 3)
+#' apm_obj <- seasonder_setSeaSondeRAPM_AmplitudeFactors(apm_obj, new_factors)
+#' print(attributes(apm_obj)$AmplitudeFactors)
 seasonder_setSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj, new_value) {
   # Validate the new AmplitudeFactors value
   validate_SeaSondeRAPM_AmplitudeFactors(new_value)
@@ -1230,7 +1269,11 @@ seasonder_setSeaSondeRAPM_AmplitudeFactors <- function(seasonde_apm_obj, new_val
 #'
 #' @export
 #' @examples
-#' antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_AntennaBearing
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' antenna_bearing <- seasonder_getSeaSondeRAPM_AntennaBearing(apm_obj)
+#' print(antenna_bearing)
 seasonder_getSeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj) {
   # Return the AntennaBearing attribute from the object
   return(attributes(seasonde_apm_obj)$AntennaBearing)
@@ -1263,7 +1306,11 @@ seasonder_setSeaSondeRAPM_AntennaBearing <- function(seasonde_apm_obj, new_value
 #'
 #' @export
 #' @examples
-#' station_code <- seasonder_getSeaSondeRAPM_StationCode(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_StationCode
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' station_code <- seasonder_getSeaSondeRAPM_StationCode(apm_obj)
+#' print(station_code)
 seasonder_getSeaSondeRAPM_StationCode <- function(seasonde_apm_obj) {
   # Return the StationCode attribute from the object
   return(attributes(seasonde_apm_obj)$StationCode)
@@ -1277,8 +1324,13 @@ seasonder_getSeaSondeRAPM_StationCode <- function(seasonde_apm_obj) {
 #' @return The modified SeaSondeRAPM object with updated StationCode.
 #'
 #' @export
-#' @examples
-#' obj <- seasonder_setSeaSondeRAPM_StationCode(obj, new_station_code)
+ #' @examples
+ #' # Minimal example for seasonder_setSeaSondeRAPM_StationCode
+ #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+ #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+ #' new_station_code <- attr(apm_obj, "StationCode")
+ #' apm_obj <- seasonder_setSeaSondeRAPM_StationCode(apm_obj, new_station_code)
+ #' print(attributes(apm_obj)$StationCode)
 seasonder_setSeaSondeRAPM_StationCode <- function(seasonde_apm_obj, new_value) {
   # Validate the new StationCode value
   validate_SeaSondeRAPM_StationCode(new_value)
@@ -1296,7 +1348,11 @@ seasonder_setSeaSondeRAPM_StationCode <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' bearing_resolution <- seasonder_getSeaSondeRAPM_BearingResolution(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_BearingResolution
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' bearing_resolution <- seasonder_getSeaSondeRAPM_BearingResolution(apm_obj)
+#' print(bearing_resolution)
 seasonder_getSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj) {
   # Return the BearingResolution attribute from the object
   return(attributes(seasonde_apm_obj)$BearingResolution)
@@ -1311,7 +1367,12 @@ seasonder_getSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' obj <- seasonder_setSeaSondeRAPM_BearingResolution(obj, new_bearing_resolution)
+#' # Minimal example for seasonder_setSeaSondeRAPM_BearingResolution
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_bearing_resolution <- 1.0
+#' apm_obj <- seasonder_setSeaSondeRAPM_BearingResolution(apm_obj, new_bearing_resolution)
+#' print(attributes(apm_obj)$BearingResolution)
 seasonder_setSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj, new_value) {
   # Validate the new BearingResolution value
   validate_SeaSondeRAPM_BearingResolution(new_value)
@@ -1329,7 +1390,11 @@ seasonder_setSeaSondeRAPM_BearingResolution <- function(seasonde_apm_obj, new_va
 #'
 #' @export
 #' @examples
-#' smoothing <- seasonder_getSeaSondeRAPM_Smoothing(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_Smoothing
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' smoothing <- seasonder_getSeaSondeRAPM_Smoothing(apm_obj)
+#' print(smoothing)
 seasonder_getSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj) {
   # Return the Smoothing attribute from the object
   return(attributes(seasonde_apm_obj)$Smoothing)
@@ -1344,7 +1409,12 @@ seasonder_getSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' obj <- seasonder_setSeaSondeRAPM_Smoothing(obj, new_smoothing)
+#' # Minimal example for seasonder_setSeaSondeRAPM_Smoothing
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_smoothing <- 3
+#' apm_obj <- seasonder_setSeaSondeRAPM_Smoothing(apm_obj, new_smoothing)
+#' print(attributes(apm_obj)$Smoothing)
 seasonder_setSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj, new_value) {
   # Validate the new Smoothing value
   validate_SeaSondeRAPM_Smoothing(new_value)
@@ -1362,7 +1432,11 @@ seasonder_setSeaSondeRAPM_Smoothing <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' comment_line <- seasonder_getSeaSondeRAPM_CommentLine(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_CommentLine
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' comment_line <- seasonder_getSeaSondeRAPM_CommentLine(apm_obj)
+#' print(comment_line)
 seasonder_getSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj) {
   # Return the CommentLine attribute from the object
   return(attributes(seasonde_apm_obj)$CommentLine)
@@ -1414,7 +1488,11 @@ seasonder_setSeaSondeRAPM_FileID <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' file_id <- seasonder_getSeaSondeRAPM_FileID(obj)
+#' # Minimal example for seasonder_getSeaSondeRAPM_FileID
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' file_id <- seasonder_getSeaSondeRAPM_FileID(apm_obj)
+#' print(file_id)
 seasonder_getSeaSondeRAPM_FileID <- function(seasonde_apm_obj) {
   # Return the FileID attribute from the object
   return(attributes(seasonde_apm_obj)$FileID)

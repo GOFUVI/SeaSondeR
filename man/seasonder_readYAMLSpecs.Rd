@@ -21,25 +21,24 @@ provided path.
 This function reads a YAML file containing specifications, handles potential
 reading errors, and extracts specific information based on a provided path.
 }
-\section{Error Handling}{
-
-The function has built-in error handling which aborts the function's execution and logs
+\details{
+This function provides built-in error handling which aborts execution and logs
 detailed error messages in case of:
 \itemize{
 \item File not found.
 \item Error in reading the YAML content.
-\item If the read YAML content is not of list type.
-\item If no data is found for the provided path in the YAML content.
-Errors generated are of class \code{"seasonder_read_yaml_file_error"}.
-Detailed error information including the file path and path within the file
-is provided. For logging and aborting, this function utilizes the
-\code{\link[=seasonder_logAndAbort]{seasonder_logAndAbort}} function.
+\item The read YAML content is not a list.
+\item No data found for the provided path in the YAML content.
 }
 
+Errors generated are of class \code{"seasonder_read_yaml_file_error"}. For logging and aborting,
+this function uses \code{\link[=seasonder_logAndAbort]{seasonder_logAndAbort}}.
+}
 \examples{
-# Assuming a YAML file named "example.yaml" exists with appropriate content
-result <- seasonder_readYAMLSpecs("example.yaml", c("header", "versions", "V2"))
-print(result)
+# Example: Read the CS header specifications (version V1) from the default specs file
+specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+result <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header", "V1"))
+str(result)
 
 }
 \seealso{

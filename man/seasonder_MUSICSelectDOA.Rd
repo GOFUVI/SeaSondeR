@@ -37,9 +37,15 @@ The function appends the following processing steps to the \code{ProcessingSteps
 }
 
 \examples{
-# Select DOA
-cs_obj <- seasonder_createSeaSondeRCS(...)
+# Select DOA after MUSIC analysis
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+# Assume MUSIC analysis has been run
+cs_obj <- seasonder_runMUSIC(cs_obj)
 out <- SeaSondeR:::seasonder_MUSICSelectDOA(cs_obj)
+print(out)
 }
 \seealso{
 \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}} to manage processing steps.

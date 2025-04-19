@@ -16,5 +16,9 @@ The ProcessingSteps attribute from the object.
 Getter for ProcessingSteps
 }
 \examples{
-processing_steps <- seasonder_getSeaSondeRAPM_ProcessingSteps(obj)
+# Minimal example for seasonder_getSeaSondeRAPM_ProcessingSteps
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+processing_steps <- seasonder_getSeaSondeRAPM_ProcessingSteps(apm_obj)
+print(processing_steps)
 }

@@ -36,6 +36,11 @@ This function utilizes the \code{rlang} package to manage errors and conditions,
 }
 
 \examples{
-field_value <- seasonder_getCSHeaderByPath(cs_object, c("nRangeCells"))
+# Minimal example for seasonder_getCSHeaderByPath
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+field_value <- seasonder_getCSHeaderByPath(cs_obj, c("nRangeCells"))
 print(field_value)
 }

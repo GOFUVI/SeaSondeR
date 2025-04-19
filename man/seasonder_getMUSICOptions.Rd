@@ -20,7 +20,11 @@ The function retrieves the MUSIC options from the object's MUSIC_data attribute.
 In the absence of user-defined options, it returns the default options provided by \code{seasonder_defaultMUSIC_options()}.
 }
 \examples{
-# Assuming cs_object is a valid SeaSondeRCS object.
-opts <- seasonder_getMUSICOptions(cs_object)
+# Minimal example for seasonder_getMUSICOptions
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+opts <- SeaSondeR:::seasonder_getMUSICOptions(cs_obj)
 print(opts)
 }

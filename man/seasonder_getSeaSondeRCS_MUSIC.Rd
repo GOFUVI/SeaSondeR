@@ -19,7 +19,11 @@ This function extracts the MUSIC data structure from a SeaSondeRCS object.
 If the MUSIC data does not exist in the object, the function initializes it via \code{seasonder_initSeaSondeRCS_MUSIC()}.
 }
 \examples{
-# Assuming cs_object is a valid SeaSondeRCS object.
-music_data <- seasonder_getMUSIC(cs_object)
+# Minimal example for seasonder_getMUSIC
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+music_data <- SeaSondeR:::seasonder_getMUSIC(cs_obj)
 print(music_data)
 }

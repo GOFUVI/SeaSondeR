@@ -47,9 +47,17 @@ off-diagonal element.
 }
 }
 \examples{
-# Signal matrix power ratio check
-cs_obj <- seasonder_createSeaSondeRCS(...)
+# Signal matrix power ratio check (toy data)
+# Create a minimal CS object with MUSIC_data and dummy DOA solutions
+cs_obj <- new_SeaSondeRCS(list(), list())
+# Attach MUSIC_data with one dual solution matrix P
+attr(cs_obj, "MUSIC_data") <- list(
+  DOA_solutions = list(list(dual = list(bearing = c(1,2), P = matrix(c(1,2,3,4), nrow=2)))),
+  retained_solution = c("dual")
+)
+# Run signal matrix power test
 updated_obj <- SeaSondeR:::seasonder_MUSICCheckSignalMatrix(cs_obj)
+print(attr(updated_obj, "MUSIC_data")$P3_check)
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC}} to retrieve MUSIC data,

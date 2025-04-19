@@ -26,7 +26,7 @@ reading the CS header block. The final file type is determined by the key return
 }
 \examples{
   # Determine the spectra file type for a file included in the package
-  data_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-  file_type <- seasonder_find_spectra_file_type(data_file)
+  spec_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+  file_type <- SeaSondeR:::seasonder_find_spectra_file_type(spec_file)
   print(file_type)
 }

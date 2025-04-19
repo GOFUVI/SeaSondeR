@@ -16,5 +16,9 @@ The CommentLine attribute from the object.
 Getter for CommentLine
 }
 \examples{
-comment_line <- seasonder_getSeaSondeRAPM_CommentLine(obj)
+# Minimal example for seasonder_getSeaSondeRAPM_CommentLine
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+comment_line <- seasonder_getSeaSondeRAPM_CommentLine(apm_obj)
+print(comment_line)
 }

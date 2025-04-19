@@ -34,6 +34,7 @@ apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 # Create a SeaSondeRCS object from a spectral file
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 new_noise_level <- 0.05
-cs_obj <- seasonder_setSeaSondeRCS_NoiseLevel(cs_obj, new_noise_level, antenna = 3)
+# Update noise level for antenna 3 (internal function)
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_NoiseLevel(cs_obj, new_noise_level, antenna = 3)
 print(attr(cs_obj, "NoiseLevel")[[3]])
 }

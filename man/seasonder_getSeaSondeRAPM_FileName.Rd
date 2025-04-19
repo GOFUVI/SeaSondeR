@@ -16,5 +16,9 @@ The FileName attribute from the object.
 Getter for FileName
 }
 \examples{
-file_name <- seasonder_getSeaSondeRAPM_FileName(obj)
+# Minimal example for seasonder_getSeaSondeRAPM_FileName
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+file_name <- seasonder_getSeaSondeRAPM_FileName(apm_obj)
+print(file_name)
 }

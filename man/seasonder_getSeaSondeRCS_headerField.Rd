@@ -23,7 +23,10 @@ and then attempts to extract the requested field using \code{\link[purrr]{pluck}
 flattened before extraction to accommodate nested structures.
 }
 \examples{
-field_value <- seasonder_getSeaSondeRCS_headerField(cs_object, "nDopplerCells")
+# Create a minimal SeaSondeRCS object with a header attribute
+cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
+attr(cs_obj, "header") <- list(nDopplerCells = 5)
+field_value <- SeaSondeR:::seasonder_getSeaSondeRCS_headerField(cs_obj, "nDopplerCells")
 print(field_value)
 }
 \seealso{

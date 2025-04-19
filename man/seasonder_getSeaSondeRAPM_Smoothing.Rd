@@ -16,5 +16,9 @@ The Smoothing attribute from the object.
 Getter for Smoothing
 }
 \examples{
-smoothing <- seasonder_getSeaSondeRAPM_Smoothing(obj)
+# Minimal example for seasonder_getSeaSondeRAPM_Smoothing
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+smoothing <- seasonder_getSeaSondeRAPM_Smoothing(apm_obj)
+print(smoothing)
 }
