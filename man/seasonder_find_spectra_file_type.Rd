@@ -25,7 +25,8 @@ and ensures the connection is closed upon exit. If reading the key size block fa
 reading the CS header block. The final file type is determined by the key returned from the file block.
 }
 \examples{
-  # Determine the spectra file type for a given file path
-  file_type <- seasonder_find_spectra_file_type("path/to/spectra_file.bin")
+  # Determine the spectra file type for a file included in the package
+  data_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+  file_type <- seasonder_find_spectra_file_type(data_file)
   print(file_type)
 }
