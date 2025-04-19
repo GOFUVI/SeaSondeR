@@ -774,7 +774,15 @@ seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_obje
 #'
 #' @examples
 #' new_interval <- list(low_limit = 0.9, high_limit = 1.0)
-#' cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file.cs")
+#' # Prepare a SeaSondeRCS object with valid data
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- SeaSondeR:::seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' cs_obj <- seasonder_createSeaSondeRCS(
+#'   cs_file,
+#'   specs_path = SeaSondeR:::seasonder_defaultSpecsFilePath("CS"),
+#'   seasonder_apm_object = apm_obj
+#' )
 #' cs_obj <- seasonder_setNoiseLevelEstimationInterval(cs_obj, new_interval)
 #' print(attr(cs_obj, "reference_noise_normalized_limits_estimation_interval"))
 #' noise_limits <- seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
