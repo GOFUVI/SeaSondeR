@@ -585,9 +585,15 @@ seasonder_validateCSHeaderStructure <- function(header) {
 #' @export
 #'
 #' @examples
+#' # Example with all required fields
 #' data <- list(
 #'   SSA1 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
-#'   SSA2 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE)
+#'   SSA2 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
+#'   SSA3 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
+#'   CS12 = matrix(complex(real = NA, imaginary = NA), nrow = 10, ncol = 20),
+#'   CS13 = matrix(complex(real = NA, imaginary = NA), nrow = 10, ncol = 20),
+#'   CS23 = matrix(complex(real = NA, imaginary = NA), nrow = 10, ncol = 20),
+#'   QC   = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE)
 #' )
 #' seasonder_validateCSDataStructure(data, 10, 20)
 #'
@@ -1350,7 +1356,7 @@ seasonder_getSeaSondeRCS_ProcessingSteps <- function(seasonder_cs_object) {
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' value <- seasonder_getVersion.SeaSondeRCS(cs_obj)
+#' value <- seasonder_getVersion(cs_obj)
 #' print(value)
 #' @export
 seasonder_getVersion.SeaSondeRCS <- function(seasonder_obj) {
@@ -2817,8 +2823,11 @@ seasonder_NormalizedDopplerFreq2DopplerFreq <- function(seasonder_cs_object, dop
 #' @importFrom glue glue
 #'
 #' @examples
-#' normalized_freqs <- seasonder_SwapDopplerUnits(cs_obj, values, in_units = "bins", out_units = "doppler frequency")
-#' print(normalized_freqs)
+#' # When input and output units are the same, values are returned unchanged
+#' vals <- c(1, 2, 3)
+#' result <- SeaSondeR:::seasonder_SwapDopplerUnits(list(), vals,
+#'   in_units = "bins", out_units = "bins")
+#' print(result)
 seasonder_SwapDopplerUnits <- function(seasonder_cs_object, values, in_units, out_units) {
 
   # Define allowed Doppler unit options
@@ -3002,7 +3011,8 @@ seasonder_SeaSondeRCS_plotSelfSpectrum <- function(seasonder_cs_object, antenna,
 #' A character string with the formatted message indicating the time of creation and the file path.
 #'
 #' @examples
-#' message <- SeaSondeRCS_creation_step_text("path/to/file.cs")
+#' # Generate creation message using internal function
+#' message <- SeaSondeR:::SeaSondeRCS_creation_step_text("path/to/file.cs")
 #' print(message)
 SeaSondeRCS_creation_step_text <- function(file_path) {
   # Use glue to format the message with the current system time and the provided file path
@@ -3048,7 +3058,24 @@ SeaSondeRCS_creation_step_text <- function(file_path) {
 #'
 #' @references Cross Spectra File Format Version 6. CODAR. 2016
 #' @examples
-#' seasonder_validateCSFileData("example.cs", header)
+#' # Example: Validate a dummy file and header
+#' tmp <- tempfile(fileext = ".cs")
+#' # Create a dummy file of sufficient size
+#' writeBin(as.raw(rep(0, 200)), tmp)
+#' header <- list(
+#'   nCsFileVersion = 6,
+#'   nCsKind        = 1,
+#'   nRangeCells    = 1,
+#'   nDopplerCells  = 1,
+#'   nV1Extent      = 100,
+#'   nV2Extent      = 100,
+#'   nV3Extent      = 100,
+#'   nV4Extent      = 100,
+#'   nV5Extent      = 100,
+#'   nCS6ByteSize   = 50
+#' )
+#' # Call internal function
+#' SeaSondeR:::seasonder_validateCSFileData(tmp, header)
 seasonder_validateCSFileData <- function(filepath, header) {
 
   conditions_params <- list(calling_function = "seasonder_validateCSFileData",class = "seasonder_validate_cs_file_error",seasonder_cs_filepath = filepath, seasonder_cs_header = header)
@@ -3261,8 +3288,12 @@ seasonder_readSeaSondeCSFile <- function(filepath, specs_path, endian = "big") {
 #'
 #'
 #' @examples
-#' raw_val <- seasonder_int_to_raw(int_val)
-#' cat(rawToChar(raw_val))
+#' # Define an integer value
+#' int_val <- 12345
+#' # Convert to raw bytes using unexported function
+#' raw_val <- SeaSondeR:::seasonder_int_to_raw(int_val)
+#' # Show raw byte values
+#' print(raw_val)
 #'
 #' @importFrom bit64 as.integer64
 seasonder_int_to_raw <- function(x) {
@@ -4116,9 +4147,12 @@ readV6BlockData <- function(specs, connection, endian = "big", prev_data = NULL,
 #'
 #' @return This function triggers a restart and does not return a usual value.
 #' @examples
-#' tryCatch({
-#'   seasonder_v6_skip_transformation(simpleError("test error"), "default")
-#' }, seasonder_v6_block_transformacion_skipped = function(e) NULL)
+#' # Example: Skip transformation using a restart handler
+#' res <- withRestarts(
+#'   seasonder_v6_skip_transformation(simpleError("test error"), "default"),
+#'   seasonder_v6_skip_transformation = function(cond, value) value
+#' )
+#' print(res)
 #' @export
 seasonder_v6_skip_transformation <- function(cond, value) {
   invokeRestart("seasonder_v6_skip_transformation", cond, value)

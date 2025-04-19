@@ -29,9 +29,12 @@ The formula for each bearing is: \eqn{geo_bearing = ((-1 * music_bearing \\\%\\\
 }
 \examples{
 # Bearing to geographic
-music_bearings <- list(c(45,90))
-apm <- seasonder_readSeaSondeRAPMFile("path")
+music_bearings <- list(c(45, 90))
+# Read APM object for antenna bearing
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm      <- seasonder_readSeaSondeRAPMFile(apm_file)
 geo <- SeaSondeR:::seasonder_MUSICBearing2GeographicalBearing(music_bearings, apm)
+print(geo)
 }
 \seealso{
 \itemize{

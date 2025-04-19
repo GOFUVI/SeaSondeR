@@ -479,8 +479,11 @@ seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = N
 #' str(music_obj)
 #'
 #' # Example: specific range cells and Doppler bins
-#' music_obj2 <- SeaSondeR:::seasonder_initMUSICData(cs_obj,
-#'   range_cells = c(1, 2), doppler_bins = list(c(1,2), c(5,10)))
+#' music_obj2 <- SeaSondeR:::seasonder_initMUSICData(
+#'   cs_obj,
+#'   range_cells = c(1, 2),
+#'   doppler_bins = c(1, 2, 5, 10)
+#' )
 #' str(music_obj2)
 seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL, NULL_MUSIC = FALSE) {
 
@@ -1816,8 +1819,13 @@ seasonder_MUSIC_DopplerFreq2Bins <- function(seasonder_cs_object, doppler_values
 #'
 #' @examples
 #' # Map bins to frequencies
-#' cs_obj <- seasonder_createSeaSondeRCS(...)
-#' freqs <- SeaSondeR:::seasonder_MUSIC_Bins2DopplerFreq(cs_obj, c(1,5))
+#' # Create a SeaSondeRCS object for MUSIC examples
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' freqs <- SeaSondeR:::seasonder_MUSIC_Bins2DopplerFreq(cs_obj, c(1, 5))
+#' print(freqs)
 seasonder_MUSIC_Bins2DopplerFreq <- function(seasonder_cs_object, bins) {
   # Retrieve the Doppler bin frequencies for the given cross-spectral object without normalization.
   doppler_freqs <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_object, normalized = FALSE)
@@ -1884,7 +1892,18 @@ seasonder_MUSICCheckTwoSolutions <- function(seasonder_cs_object){
 #' @examples
 #' # Eigenvalue ratio check (toy data)
 #' # Create a minimal MUSIC data structure
-#' cs_obj <- new_SeaSondeRCS(list(nDopplerCells=1), list())
+#' # Define a minimal SeaSondeRCS object for eigenvalue ratio example
+#' header <- list(nRangeCells = 1, nDopplerCells = 1)
+#' data <- list(
+#'   SSA1 = matrix(NA_real_, 1, 1),
+#'   SSA2 = matrix(NA_real_, 1, 1),
+#'   SSA3 = matrix(NA_real_, 1, 1),
+#'   CS12 = matrix(complex(real = NA, imaginary = NA), 1, 1),
+#'   CS13 = matrix(complex(real = NA, imaginary = NA), 1, 1),
+#'   CS23 = matrix(complex(real = NA, imaginary = NA), 1, 1),
+#'   QC  = matrix(NA_real_, 1, 1)
+#' )
+#' cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data)
 #' # Attach dummy MUSIC_data with eigenvalues list
 #' attr(cs_obj, "MUSIC_data") <- list(eigen = list(list(values=c(2,1))), retained_solution = c("dual"))
 #' # Run eigenvalue ratio check
@@ -3476,9 +3495,12 @@ doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_options(out)$doppler_int
 #'
 #' @examples
 #' # Bearing to geographic
-#' music_bearings <- list(c(45,90))
-#' apm <- seasonder_readSeaSondeRAPMFile("path")
+#' music_bearings <- list(c(45, 90))
+#' # Read APM object for antenna bearing
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm      <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' geo <- SeaSondeR:::seasonder_MUSICBearing2GeographicalBearing(music_bearings, apm)
+#' print(geo)
 seasonder_MUSICBearing2GeographicalBearing <- function(bearings, seasonder_apm_object) {
 
   # Retrieve the antenna's bearing from the SeaSondeRAPM object
@@ -3568,11 +3590,16 @@ seasonder_computeLonLatFromOriginDistBearing <- function(origin_lon, origin_lat,
 
 #' @importFrom purrr map map2
 #'
-#' @export
-#'
-#' @examples
-#' # Assuming `seasonder_cs_object` is a valid `SeaSondeRCS` object
-#' updated_obj <- seasonder_MUSIC_LonLat(seasonder_cs_object)
+ #'
+ #' @export
+ #' @examples
+ #' # Create a SeaSondeRCS object for MUSIC example
+ #' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+ #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+ #' apm_obj  <- seasonder_readSeaSondeRAPMFile(apm_file)
+ #' cs_obj   <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+ #' updated_obj <- seasonder_MUSIC_LonLat(cs_obj)
+ #' print(updated_obj)
 seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
 
   # Retrieve MUSIC data from the SeaSondeRCS object

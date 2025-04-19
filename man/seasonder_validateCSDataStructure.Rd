@@ -45,9 +45,15 @@ This function utilizes the \code{rlang} package to manage errors and provide det
 }
 
 \examples{
+# Example with all required fields
 data <- list(
   SSA1 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
-  SSA2 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE)
+  SSA2 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
+  SSA3 = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE),
+  CS12 = matrix(complex(real = NA, imaginary = NA), nrow = 10, ncol = 20),
+  CS13 = matrix(complex(real = NA, imaginary = NA), nrow = 10, ncol = 20),
+  CS23 = matrix(complex(real = NA, imaginary = NA), nrow = 10, ncol = 20),
+  QC   = matrix(rep(NA_real_, 10 * 20), ncol = 20, byrow = TRUE)
 )
 seasonder_validateCSDataStructure(data, 10, 20)
 

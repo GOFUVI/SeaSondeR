@@ -233,7 +233,8 @@ seasonder_logAndMessage <- function(msg, log_level="info", calling_function=NULL
 #' my_function <- function() {
 #'   seasonder_logAndAbort("This is a message")
 #' }
-#' my_function()
+#' # Demonstrate abort without stopping execution
+#' try(my_function(), silent = TRUE)
 #'
 seasonder_logAndAbort <- function(msg, calling_function=NULL, ...) {
 
@@ -280,7 +281,15 @@ seasonder_logAndAbort <- function(msg, calling_function=NULL, ...) {
 #' @importFrom lubridate ymd_hms
 #' @export
 #' @examples
-#'   seasonder_splitLog()
+#' # Enable logging
+#' seasonder_enableLogs()
+#' # Log some messages
+#' seasonder_log("First log entry", "info")
+#' Sys.sleep(0.1)
+#' seasonder_log("Second log entry", "info")
+#' # Split logs into blocks (using a 1-second threshold)
+#' blocks <- seasonder_splitLog(threshold = as.difftime(1, units = "secs"))
+#' print(blocks)
 seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_quantile=0.9, min_threshold_secs=10) {
 
   time_block <- NULL
@@ -305,7 +314,10 @@ seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_qua
 
   blocks <- df %>%
     dplyr::arrange(timestamps) %>%
-    dplyr::mutate(time_gaps = time_gaps, time_block = cumsum(time_gaps > threshold)) %>%
+    dplyr::mutate(
+      time_gaps = time_gaps,
+      time_block = cumsum(as.numeric(time_gaps) > as.numeric(threshold))
+    ) %>%
     dplyr::group_by(time_block) %>%
     dplyr::group_split() %>%
     purrr::map(\(block) dplyr::pull(block,"log"))
@@ -325,7 +337,12 @@ seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_qua
 #' @return A character vector representing the last log entry.
 #' @export
 #' @examples
-#'   seasonder_lastLog()
+#' # Enable logging
+#' seasonder_enableLogs()
+#' # Log a test message
+#' seasonder_log("Test log entry", "info")
+#' # Retrieve the last log entry
+#' seasonder_lastLog()
 seasonder_lastLog <- function(...) {
   seasonder_splitLog(...) %>% dplyr::last()
 }

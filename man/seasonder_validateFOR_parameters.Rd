@@ -46,7 +46,17 @@ computed using \code{\link{seasonder_estimateReferenceNoiseNormalizedLimits}}.
 }
 }
 \examples{
-validated_params <- SeaSondeR:::seasonder_validateFOR_parameters(cs_obj, list(fdown = 12))
+# Minimal example for validating FOR parameters
+# Prepare a dummy SeaSondeRCS object with default FOR parameters
+fo <- SeaSondeR:::seasonder_defaultFOR_parameters()
+cs_obj <- list()
+attr(cs_obj, "FOR_data") <- list(FOR_parameters = fo)
+# Validate parameters with a custom override
+# Override fdown and provide reference noise limits to skip estimation
+validated_params <- SeaSondeR:::seasonder_validateFOR_parameters(
+  cs_obj,
+  list(fdown = 12, reference_noise_normalized_limits = c(0, 0))
+)
 print(validated_params)
 }
 \seealso{

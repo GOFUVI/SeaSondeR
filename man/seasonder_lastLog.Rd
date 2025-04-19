@@ -16,5 +16,10 @@ A character vector representing the last log entry.
 This function fetches and splits the log entries, then returns the last entry.
 }
 \examples{
-  seasonder_lastLog()
+# Enable logging
+seasonder_enableLogs()
+# Log a test message
+seasonder_log("Test log entry", "info")
+# Retrieve the last log entry
+seasonder_lastLog()
 }

@@ -33,7 +33,18 @@ is considered valid. Solutions failing this test are marked as "single."
 \examples{
 # Eigenvalue ratio check (toy data)
 # Create a minimal MUSIC data structure
-cs_obj <- new_SeaSondeRCS(list(nDopplerCells=1), list())
+# Define a minimal SeaSondeRCS object for eigenvalue ratio example
+header <- list(nRangeCells = 1, nDopplerCells = 1)
+data <- list(
+  SSA1 = matrix(NA_real_, 1, 1),
+  SSA2 = matrix(NA_real_, 1, 1),
+  SSA3 = matrix(NA_real_, 1, 1),
+  CS12 = matrix(complex(real = NA, imaginary = NA), 1, 1),
+  CS13 = matrix(complex(real = NA, imaginary = NA), 1, 1),
+  CS23 = matrix(complex(real = NA, imaginary = NA), 1, 1),
+  QC  = matrix(NA_real_, 1, 1)
+)
+cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data)
 # Attach dummy MUSIC_data with eigenvalues list
 attr(cs_obj, "MUSIC_data") <- list(eigen = list(list(values=c(2,1))), retained_solution = c("dual"))
 # Run eigenvalue ratio check

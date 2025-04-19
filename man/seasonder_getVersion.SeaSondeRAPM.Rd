@@ -18,5 +18,7 @@ Get the version value from a SeaSondeRAPM object
 \examples{
 # Create a default SeaSondeRAPM object
 obj <- seasonder_createSeaSondeRAPM()
-version <- seasonder_getVersion.SeaSondeRAPM(obj)
+# Retrieve version via the generic function
+version <- seasonder_getVersion(obj)
+print(version)
 }

@@ -50,8 +50,11 @@ music_obj <- SeaSondeR:::seasonder_initMUSICData(cs_obj)
 str(music_obj)
 
 # Example: specific range cells and Doppler bins
-music_obj2 <- SeaSondeR:::seasonder_initMUSICData(cs_obj,
-  range_cells = c(1, 2), doppler_bins = list(c(1,2), c(5,10)))
+music_obj2 <- SeaSondeR:::seasonder_initMUSICData(
+  cs_obj,
+  range_cells = c(1, 2),
+  doppler_bins = c(1, 2, 5, 10)
+)
 str(music_obj2)
 }
 \seealso{

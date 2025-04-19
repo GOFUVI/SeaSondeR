@@ -27,7 +27,8 @@ an error is raised using \code{\link{seasonder_logAndAbort}}.
 }
 \examples{
 SeaSondeR:::seasonder_validateFORMethod("SeaSonde")
-SeaSondeR:::seasonder_validateFORMethod("InvalidMethod")
+# Demonstrate error handling for an invalid method
+try(SeaSondeR:::seasonder_validateFORMethod("InvalidMethod"), silent = TRUE)
 }
 \seealso{
 \itemize{

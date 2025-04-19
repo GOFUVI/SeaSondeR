@@ -797,7 +797,9 @@ validate_SeaSondeRAPM_PhaseCorrections <- function(corrections) {
 #' @examples
 #' # Create a default SeaSondeRAPM object
 #' obj <- seasonder_createSeaSondeRAPM()
-#' version <- seasonder_getVersion.SeaSondeRAPM(obj)
+#' # Retrieve version via the generic function
+#' version <- seasonder_getVersion(obj)
+#' print(version)
 seasonder_getVersion.SeaSondeRAPM <- function(seasonder_obj) {
   # Retrieve the "version" attribute from the object
   attr(seasonder_obj, "version", exact = TRUE)

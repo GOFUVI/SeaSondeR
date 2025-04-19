@@ -24,6 +24,7 @@ It prefixes the abort message with the name of the calling function.
 my_function <- function() {
   seasonder_logAndAbort("This is a message")
 }
-my_function()
+# Demonstrate abort without stopping execution
+try(my_function(), silent = TRUE)
 
 }
