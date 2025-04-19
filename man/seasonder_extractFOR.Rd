@@ -48,7 +48,17 @@ This function is primarily used for filtering and validating the first-order Bra
 SeaSonde radar processing.
 }
 \examples{
-FOR_data <- SeaSondeR:::seasonder_extractFOR(cs_obj, spectrum_matrix, detected_FOR_bins)
+# Prepare a SeaSondeRCS object with FOR data
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+# Extract self-spectrum for antenna 1, range cell 1
+spec_mat <- SeaSondeR:::seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae = 3, dist_ranges = c(3, 3), collapse = TRUE)[[1]]
+# Retrieve FOR bins for the third range cell
+for_bins <- seasonder_getSeaSondeRCS_FOR(cs_obj)[[3]]
+# Extract FOR spectral data
+FOR_data <- SeaSondeR:::seasonder_extractFOR(cs_obj, spec_mat, for_bins)
 print(FOR_data)
 }
 \seealso{

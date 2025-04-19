@@ -3534,17 +3534,19 @@ seasonder_MUSICLonLat <- seasonder_MUSIC_LonLat
 #' @export
 #'
 #' @examples
+#' \donttest{
 #'   # Load sample CSS and APM files
 #'   cs_file  <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #'   apm_file <- system.file("css_data/MeasPattern.txt",       package = "SeaSondeR")
 #'   apm_obj  <- seasonder_readSeaSondeRAPMFile(apm_file)
 #'   # Create SeaSondeRCS object with APM
 #'   cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#'   # Run MUSIC algorithm if MUSIC data is available:
-#'   cs_obj <- seasonder_runMUSIC(cs_obj)
+#'   # Run MUSIC algorithm (in FOR context) if MUSIC data is available:
+#'   cs_obj <- seasonder_runMUSICInFOR(cs_obj)
 #'   # Export MUSIC table
 #'   music_table <- seasonder_exportMUSICTable(cs_obj)
 #'   print(music_table)
+#' }
 seasonder_exportMUSICTable <- function(seasonder_cs_object) {
   # Initialize globals for seasonder_exportMUSICTable
   range_cell <- doppler_bin <- freq <- radial_v <- DOA <- lonlat <- 
@@ -3746,9 +3748,17 @@ out <- out + as.integer(!music$P0_check) * 16
 #' }
 #'
 #' @examples
-#' # Assuming cs_object is a valid SeaSondeRCS object with MUSIC data loaded:
-#' range_info <- seasonder_exportRangeInfo(cs_object)
+#' \donttest{
+#' # Prepare a SeaSondeRCS object with MUSIC data
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' # Run MUSIC algorithm to populate MUSIC data
+#' cs_obj <- seasonder_runMUSICInFOR(cs_obj)
+#' range_info <- seasonder_exportRangeInfo(cs_obj)
 #' print(range_info)
+#' }
 #' @export
 seasonder_exportRangeInfo <- function(seasonder_cs_object){
   # Initialize globals for seasonder_exportRangeInfo
@@ -3821,9 +3831,17 @@ return(out)
 #' }
 #'
 #' @examples
-#' # Assuming 'cs_object' is a valid SeaSondeRCS object with MUSIC data:
-#' radial_metrics <- seasonder_exportRadialMetrics(cs_object, AngSeg = list(c(5, 30, 60)))
+#' \donttest{
+#' # Prepare a SeaSondeRCS object with MUSIC data
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' # Run MUSIC algorithm to populate MUSIC data
+#' cs_obj <- seasonder_runMUSICInFOR(cs_obj)
+#' radial_metrics <- seasonder_exportRadialMetrics(cs_obj, AngSeg = list(c(5, 30, 60)))
 #' print(radial_metrics)
+#' }
 #' @export
 seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) {
   # Initialize globals for seasonder_exportRadialMetrics

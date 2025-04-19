@@ -47,7 +47,15 @@ to the vector flag (\code{VFLG}) are applied.
 }
 }
 \examples{
-# Assuming 'cs_object' is a valid SeaSondeRCS object with MUSIC data:
-radial_metrics <- seasonder_exportRadialMetrics(cs_object, AngSeg = list(c(5, 30, 60)))
+\donttest{
+# Prepare a SeaSondeRCS object with MUSIC data
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+# Run MUSIC algorithm to populate MUSIC data
+cs_obj <- seasonder_runMUSICInFOR(cs_obj)
+radial_metrics <- seasonder_exportRadialMetrics(cs_obj, AngSeg = list(c(5, 30, 60)))
 print(radial_metrics)
+}
 }

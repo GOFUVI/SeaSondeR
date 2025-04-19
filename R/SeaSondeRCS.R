@@ -1114,7 +1114,7 @@ seasonder_extractSeaSondeRCS_distRanges_from_SSdata <- function(SSmatrix, dist_r
 #' @examples
 #' sample_matrix <- matrix(1:50, nrow = 5, ncol = 10)
 #' selected_bins <- 3:7
-#' sliced_matrix <- seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(sample_matrix, selected_bins)
+#' sliced_matrix <- SeaSondeR:::seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(sample_matrix, selected_bins)
 #' print(sliced_matrix)
 seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, doppler_cells) {
 
