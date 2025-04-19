@@ -51,6 +51,12 @@ The function performs the following steps:
 }
 }
 \examples{
+# Prepare a SeaSondeRCS object for plotting self-spectrum
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+# Plot self-spectrum for antenna 1, range cell 5
 p <- seasonder_SeaSondeRCS_plotSelfSpectrum(cs_obj, antenna = 1, range_cell = 5)
 print(p)
 

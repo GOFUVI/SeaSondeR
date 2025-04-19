@@ -42,7 +42,15 @@ the indices based on the interpolation factor.
 }
 }
 \examples{
-# Assuming cs_object is a valid SeaSondeRCS object with FOR data initialized:
-result <- seasonder_runMUSIC_in_FOR(cs_object, doppler_interpolation = 3L)
-print(result)
+\donttest{
+# Prepare a SeaSondeRCS object with MUSIC data (including FOR segments)
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+# Run MUSIC algorithm in FOR context
+result <- seasonder_runMUSICInFOR(cs_obj)
+# View processing steps
+print(seasonder_getSeaSondeRCS_ProcessingSteps(result))
+}
 }

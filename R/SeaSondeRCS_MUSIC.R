@@ -3096,14 +3096,18 @@ seasonder_checkPWMAX <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_MUSIC_LonLat}}: Convert DOA estimations to geographical coordinates.
 #'
 #' @examples
-#' # Create a SeaSondeRCS object (example)
-#' cs_object <- seasonder_createSeaSondeRCS(x = list(header = list(), data = list()))
-#'
-#' # Run the MUSIC algorithm
-#' cs_object <- seasonder_runMUSIC(cs_object)
-#'
+#' \donttest{
+#' # Prepare a SeaSondeRCS object with MUSIC data
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' cs_obj <- seasonder_initMUSICData(cs_obj, range_cells = 3:4, doppler_bins = list(c(100:200), c(125:150)) , NULL_MUSIC = FALSE)
+#' # Run the MUSIC algorithm with FOR context
+#' cs_obj <- seasonder_runMUSIC(cs_obj)
 #' # Check the updated processing steps
-#' print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_object))
+#' print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_obj))
+#' }
 #' @export
 seasonder_runMUSIC <- function(seasonder_cs_object){
 
@@ -3236,9 +3240,17 @@ if(discard_no_solution){
 #' @importFrom dplyr bind_rows
 #'
 #' @examples
-#' # Assuming cs_object is a valid SeaSondeRCS object with FOR data initialized:
-#' result <- seasonder_runMUSIC_in_FOR(cs_object, doppler_interpolation = 3L)
-#' print(result)
+#' \donttest{
+#' # Prepare a SeaSondeRCS object with MUSIC data (including FOR segments)
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' # Run MUSIC algorithm in FOR context
+#' result <- seasonder_runMUSICInFOR(cs_obj)
+#' # View processing steps
+#' print(seasonder_getSeaSondeRCS_ProcessingSteps(result))
+#' }
 #' @export
 seasonder_runMUSICInFOR <- seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object){
 
@@ -4018,7 +4030,7 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
 #' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' # Optionally, run MUSIC in FOR context to populate MUSIC data
-#' # cs_obj <- seasonder_runMUSICInFOR(cs_obj)
+#' cs_obj <- seasonder_runMUSICInFOR(cs_obj)
 #' radial_metrics <- seasonder_exportLLUVRadialMetrics(cs_obj, tempfile(fileext = ".ruv"))
 #' print(radial_metrics)
 #' @export
