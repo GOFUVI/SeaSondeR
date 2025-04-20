@@ -22,10 +22,16 @@ A named list as returned by seasonder_readSeaSondeCSFileBlock consistent with th
 Processes a block of keys from the binary connection according to provided specifications.
 }
 \examples{
-# Example usage:
-con <- rawConnection(as.raw(1:10))
-specs <- list(field = list(type = "integer"))
-result <- seasonder_readCSSWFields(con, specs, "big")
+# Example usage: read a single UInt8 field
+con <- rawConnection(as.raw(c(5)))
+specs <- list(
+  field1 = list(
+    type = "UInt8",
+    qc_fun = "qc_check_unsigned",
+    qc_params = list()
+  )
+)
+result <- SeaSondeR:::seasonder_readCSSWFields(con, specs, endian = "big")
 print(result)
 close(con)
 }

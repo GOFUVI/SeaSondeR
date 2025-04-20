@@ -635,10 +635,10 @@ seasonder_readCSSYLims <- function(connection, n_values, endian = "big") {
 #' @import glue
 #'
 #' @examples
-#'   con <- file("path/to/file.cssy", "rb")
-#'   specs <- seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CSSY"), "header")
-#'   header <- seasonder_readCSSYHeader(con, specs, endian = "big")
-#'   close(con)
+#' # Example: load CSSY header specifications
+#' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSY")
+#' header_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSY", "HEAD"))
+#' print(names(header_specs))
 seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", parent_key = NULL, keys_so_far = c("CSSY", "HEAD"), specs_key_size = NULL){
   # Initialize an empty output list for accumulating header values
   out <- list()

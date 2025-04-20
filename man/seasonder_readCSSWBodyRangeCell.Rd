@@ -47,10 +47,20 @@ The function continues reading keys until it detects the 'END ' marker or a repe
 the end of the block.
 }
 \examples{
-  # Example usage:
-  con <- rawConnection(as.raw(1:100))
-  specs <- list(sampleKey = list(type = "double"))
-  result <- seasonder_readCSSWBodyRangeCell(con, specs, dbRef = -20, endian = "big")
-  print(result)
-  close(con)
+# Example: use real specifications with a minimal raw cell
+spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSW")
+specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
+body_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSW", "BODY"))
+# Build a minimal raw cell: 'END ' marker and zero payload size
+raw_data <- c(charToRaw("END "), as.raw(c(0, 0, 0, 0)))
+con <- rawConnection(raw_data)
+result <- SeaSondeR:::seasonder_readCSSWBodyRangeCell(
+  con,
+  body_specs,
+  dbRef = -20,
+  endian = "big",
+  specs_key_size = specs_key_size
+)
+print(result)
+close(con)
 }

@@ -3392,7 +3392,7 @@ seasonder_skip_cs_field <- function(cond,value) {
 #' @importFrom rlang !!!
 #' @examples
 #' con <- rawConnection(as.raw(c(0x12)))
-#' seasonder_readCSField(con, "UInt8")
+#' SeaSondeR:::seasonder_readCSField(con, "UInt8")
 #' @seealso
 #' \code{\link{seasonder_skip_cs_field}},
 #' \code{\link{seasonder_raw_to_int}}
@@ -3500,7 +3500,8 @@ seasonder_readCSField <- function(con, type, endian = "big") {
       # Extract the number of characters to read.
       char_length <- as.integer(sub("^Char", "", type))
       chars <- read_values(1, "raw", char_length)
-      out <- rawToChar(chars)
+      # Convert raw bytes to characters, handling embedded nul bytes
+      out <- paste0(rawToChar(chars, multiple = TRUE), collapse = "")
       return(out)
     }
 
