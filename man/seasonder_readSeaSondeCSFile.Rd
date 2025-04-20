@@ -66,7 +66,7 @@ This function provides a structured mechanism to recover from errors during its 
 spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
 cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 cs <- seasonder_readSeaSondeCSFile(cs_file, spec_file, endian = "big")
-print(cs)
+str(cs)
 }
 \references{
 Cross Spectra File Format Version 6. CODAR. 2016
