@@ -1,0 +1,2090 @@
+Loading required package: usethis
+ℹ Loading SeaSondeR
+ℹ Updating SeaSondeR documentation
+ℹ Loading SeaSondeR
+✖ SeaSondeRCSSY.R:921: @examples requires a value.
+Writing 'seasonder_rerun_qc_with_fun.Rd'
+── Running 112 example files ────────────────────────────────────── SeaSondeR ──
+ℹ Loading SeaSondeR
+
+> specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+
+> specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, 
++     c("header", "V1"))
+
+> con <- file(system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR"), "rb")
+
+> header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(specs, 
++     con, endian = "big")
+
+> print(header_v1)
+$nCsFileVersion
+[1] 6
+
+$nDateTime
+[1] "2024-04-04 07:00:00 UTC"
+
+$nV1Extent
+[1] 1319
+
+
+> close(con)
+
+> specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+
+> specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, 
++     "header")
+
+> con <- file(system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR"), "rb")
+
+> header <- SeaSondeR:::seasonder_readSeaSondeCSFileHeader(specs, 
++     con, endian = "big")
+
+> print(header$nCsKind)
+[1] 2
+
+> print(header$nV2Extent)
+[1] 1313
+
+> close(con)
+
+> specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+
+> specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, 
++     "header")
+
+> con <- file(system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR"), "rb")
+
+> header <- SeaSondeR:::seasonder_readSeaSondeCSFileHeader(specs, 
++     con, endian = "big")
+
+> print(header$nSiteCodeName)
+[1] "TORA"
+
+> print(header$nV3Extent)
+[1] 1305
+
+> close(con)
+
+> specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+
+> specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, 
++     "header")
+
+> con <- file(system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR"), "rb")
+
+> header <- SeaSondeR:::seasonder_readSeaSondeCSFileHeader(specs, 
++     con, endian = "big")
+
+> print(header$nCoverMinutes)
+[1] 15
+
+> print(header$CenterFreq)
+[1] 46.5
+
+> close(con)
+
+> specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+
+> specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, 
++     "header")
+
+> con <- file(system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR"), "rb")
+
+> header <- SeaSondeR:::seasonder_readSeaSondeCSFileHeader(specs, 
++     con, endian = "big")
+
+> print(header$nActiveChannels)
+[1] 3
+
+> print(header$ActiveChannels)
+[1] 1 2 3
+
+> close(con)
+
+> specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+
+> specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, 
++     "header")
+
+> con <- file(system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR"), "rb")
+
+> header <- SeaSondeR:::seasonder_readSeaSondeCSFileHeader(specs, 
++     con, endian = "big")
+
+> print(header$nCS6ByteSize)
+[1] 1225
+
+> close(con)
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- try(SeaSondeR:::seasonder_readSeaSondeRCSSWFile("path/to/file.rcssy"), 
++     silent = TRUE)
+
+> print(cs_obj)
+[1] "Error in SeaSondeR:::seasonder_readSeaSondeRCSSWFile(\"path/to/file.rcssy\") : \n  seasonder_readSeaSondeRCSSWFile: Could no open connection to file path/to/file.rcssy. Reason: cannot open the connection.\nCaused by error in `file()`:\n! cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<error/seasonder_read_cs_file_error>
+Error in `SeaSondeR:::seasonder_readSeaSondeRCSSWFile()`:
+! seasonder_readSeaSondeRCSSWFile: Could no open connection to file path/to/file.rcssy. Reason: cannot open the connection.
+Caused by error in `file()`:
+! cannot open the connection
+---
+Backtrace:
+     ▆
+  1. └─devtools::run_examples(run_donttest = TRUE, start = "seasonder_readSeaSondeCSFileHeaderV1")
+  2.   └─base::lapply(...)
+  3.     └─pkgload (local) FUN(X[[i]], ...)
+  4.       └─base::source(tmp, echo = !quiet, local = env, max.deparse.length = Inf) at pkgload/R/dev-example.R:76:5
+  5.         ├─base::withVisible(eval(ei, envir))
+  6.         └─base::eval(ei, envir)
+  7.           └─base::eval(ei, envir)
+  8.             ├─base::try(...)
+  9.             │ └─base::tryCatch(...)
+ 10.             │   └─base (local) tryCatchList(expr, classes, parentenv, handlers)
+ 11.             │     └─base (local) tryCatchOne(expr, names, parentenv, handlers[[1L]])
+ 12.             │       └─base (local) doTryCatch(return(expr), name, parentenv, handler)
+ 13.             └─SeaSondeR:::seasonder_readSeaSondeRCSSWFile("path/to/file.rcssy")
+ 14.               ├─rlang::try_fetch(...) at SeaSondeR/R/SeaSondeRCSSW.R:723:3
+ 15.               │ ├─base::tryCatch(...) at rlang/R/cnd-handlers.R:206:3
+ 16.               │ │ └─base (local) tryCatchList(expr, classes, parentenv, handlers)
+ 17.               │ │   └─base (local) tryCatchOne(expr, names, parentenv, handlers[[1L]])
+ 18.               │ │     └─base (local) doTryCatch(return(expr), name, parentenv, handler)
+ 19.               │ └─base::withCallingHandlers(...)
+ 20.               ├─base::suppressWarnings(file(filepath, "rb"))
+ 21.               │ └─base::withCallingHandlers(...)
+ 22.               └─base::file(filepath, "rb")
+
+> cs_obj <- try(SeaSondeR:::seasonder_readSeaSondeRCSSYFile("path/to/file.rcssy"), 
++     silent = TRUE)
+
+> print(cs_obj)
+[1] "Error in SeaSondeR:::seasonder_readSeaSondeRCSSYFile(\"path/to/file.rcssy\") : \n  seasonder_readSeaSondeRCSSYFile: Could no open connection to file path/to/file.rcssy. Reason: cannot open the connection.\nCaused by error in `file()`:\n! cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<error/seasonder_read_cs_file_error>
+Error in `SeaSondeR:::seasonder_readSeaSondeRCSSYFile()`:
+! seasonder_readSeaSondeRCSSYFile: Could no open connection to file path/to/file.rcssy. Reason: cannot open the connection.
+Caused by error in `file()`:
+! cannot open the connection
+---
+Backtrace:
+     ▆
+  1. └─devtools::run_examples(run_donttest = TRUE, start = "seasonder_readSeaSondeCSFileHeaderV1")
+  2.   └─base::lapply(...)
+  3.     └─pkgload (local) FUN(X[[i]], ...)
+  4.       └─base::source(tmp, echo = !quiet, local = env, max.deparse.length = Inf) at pkgload/R/dev-example.R:76:5
+  5.         ├─base::withVisible(eval(ei, envir))
+  6.         └─base::eval(ei, envir)
+  7.           └─base::eval(ei, envir)
+  8.             ├─base::try(...)
+  9.             │ └─base::tryCatch(...)
+ 10.             │   └─base (local) tryCatchList(expr, classes, parentenv, handlers)
+ 11.             │     └─base (local) tryCatchOne(expr, names, parentenv, handlers[[1L]])
+ 12.             │       └─base (local) doTryCatch(return(expr), name, parentenv, handler)
+ 13.             └─SeaSondeR:::seasonder_readSeaSondeRCSSYFile("path/to/file.rcssy")
+ 14.               ├─rlang::try_fetch(...) at SeaSondeR/R/SeaSondeRCSSY.R:940:3
+ 15.               │ ├─base::tryCatch(...) at rlang/R/cnd-handlers.R:206:3
+ 16.               │ │ └─base (local) tryCatchList(expr, classes, parentenv, handlers)
+ 17.               │ │   └─base (local) tryCatchOne(expr, names, parentenv, handlers[[1L]])
+ 18.               │ │     └─base (local) doTryCatch(return(expr), name, parentenv, handler)
+ 19.               │ └─base::withCallingHandlers(...)
+ 20.               ├─base::suppressWarnings(file(filepath, "rb"))
+ 21.               │ └─base::withCallingHandlers(...)
+ 22.               └─base::file(filepath, "rb")
+
+> specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+
+> result <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, 
++     c("header", "V1"))
+
+> str(result)
+List of 3
+ $ nCsFileVersion:List of 3
+  ..$ type     : chr "SInt16"
+  ..$ qc_fun   : chr "qc_check_range"
+  ..$ qc_params:List of 3
+  .. ..$ min          : int 1
+  .. ..$ max          : int 32
+  .. ..$ expected_type: chr "integer"
+ $ nDateTime     :List of 3
+  ..$ type     : chr "UInt32"
+  ..$ qc_fun   : chr "qc_check_unsigned"
+  ..$ qc_params:List of 1
+  .. ..$ expected_type: chr "numeric"
+ $ nV1Extent     :List of 3
+  ..$ type     : chr "SInt32"
+  ..$ qc_fun   : chr "qc_check_type"
+  ..$ qc_params:List of 1
+  .. ..$ expected_type: chr "integer"
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> cs_obj <- SeaSondeR:::seasonder_rejectDistantBragg(cs_obj)
+
+> print(seasonder_getSeaSondeRCS_FOR(cs_obj))
+$range_001
+$range_001$negative_FOR
+integer(0)
+
+$range_001$positive_FOR
+integer(0)
+
+
+$range_002
+$range_002$negative_FOR
+integer(0)
+
+$range_002$positive_FOR
+integer(0)
+
+
+$range_003
+$range_003$negative_FOR
+[1] 336 337 338 339 340 341
+
+$range_003$positive_FOR
+integer(0)
+
+
+$range_004
+$range_004$negative_FOR
+ [1] 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340
+[20] 341 342 343 344 345
+
+$range_004$positive_FOR
+ [1] 674 675 676 677 678 679 680 681 682 683 684 685
+
+
+$range_005
+$range_005$negative_FOR
+ [1] 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336
+[20] 337 338 339 340 341 342 343 344 345 346 347 348 349 350
+
+$range_005$positive_FOR
+ [1] 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686 687
+[20] 688 689 690 691 692 693 694 695 696 697 698 699
+
+
+$range_006
+$range_006$negative_FOR
+ [1] 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343
+[20] 344 345 346 347 348 349 350 351 352
+
+$range_006$positive_FOR
+ [1] 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686 687 688
+[20] 689 690 691 692 693 694 695 696 697 698 699 700 701 702 703 704 705 706 707
+
+
+$range_007
+$range_007$negative_FOR
+ [1] 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342
+[20] 343 344 345 346 347 348 349 350
+
+$range_007$positive_FOR
+ [1] 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683
+[20] 684 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701 702
+[39] 703 704 705
+
+
+$range_008
+$range_008$negative_FOR
+ [1] 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342
+[20] 343 344 345 346 347 348 349 350
+
+$range_008$positive_FOR
+ [1] 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683
+[20] 684 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701 702
+[39] 703 704 705 706 707 708
+
+
+$range_009
+$range_009$negative_FOR
+ [1] 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335
+[20] 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351 352 353
+
+$range_009$positive_FOR
+ [1] 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+
+
+$range_010
+$range_010$negative_FOR
+ [1] 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332
+[20] 333 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351
+[39] 352 353 354
+
+$range_010$positive_FOR
+ [1] 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682
+
+
+$range_011
+$range_011$negative_FOR
+ [1] 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333
+[20] 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351 352
+
+$range_011$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683
+
+
+$range_012
+$range_012$negative_FOR
+ [1] 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331
+[20] 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350
+[39] 351 352 353 354
+
+$range_012$positive_FOR
+ [1] 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+
+
+$range_013
+$range_013$negative_FOR
+ [1] 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343 344
+[20] 345 346 347 348 349 350
+
+$range_013$positive_FOR
+ [1] 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+
+
+$range_014
+$range_014$negative_FOR
+ [1] 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331
+[20] 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349
+
+$range_014$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684
+[20] 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701 702 703
+[39] 704 705 706 707 708 709 710
+
+
+$range_015
+$range_015$negative_FOR
+ [1] 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331
+[20] 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348
+
+$range_015$positive_FOR
+ [1] 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+[20] 686 687 688 689 690 691 692 693
+
+
+$range_016
+$range_016$negative_FOR
+ [1] 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333
+[20] 334 335 336 337 338 339 340 341 342 343 344 345 346 347
+
+$range_016$positive_FOR
+ [1] 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686
+[20] 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701 702 703 704 705
+[39] 706
+
+
+$range_017
+$range_017$negative_FOR
+ [1] 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334
+[20] 335 336 337 338 339 340 341 342 343 344 345 346 347
+
+$range_017$positive_FOR
+ [1] 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686
+[20] 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701 702 703 704 705
+[39] 706 707 708
+
+
+$range_018
+$range_018$negative_FOR
+ [1] 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335
+[20] 336 337 338 339 340 341 342 343 344 345 346
+
+$range_018$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684
+[20] 685 686 687 688 689 690 691
+
+
+$range_019
+$range_019$negative_FOR
+ [1] 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336
+[20] 337 338 339 340 341 342 343
+
+$range_019$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684
+[20] 685 686 687 688 689 690 691
+
+
+$range_020
+$range_020$negative_FOR
+ [1] 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335
+
+$range_020$positive_FOR
+ [1] 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683
+[20] 684 685 686 687 688
+
+
+$range_021
+$range_021$negative_FOR
+ [1] 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335
+[20] 336 337 338 339 340 341 342 343 344 345 346 347 348 349
+
+$range_021$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684
+[20] 685 686 687 688
+
+
+$range_022
+$range_022$negative_FOR
+ [1] 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331
+[20] 332 333 334 335 336 337 338
+
+$range_022$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684
+[20] 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700
+
+
+$range_023
+$range_023$negative_FOR
+ [1] 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330
+[20] 331 332 333 334 335 336 337 338
+
+$range_023$positive_FOR
+ [1] 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682
+[20] 683 684 685 686 687 688 689 690 691 692 693 694
+
+
+$range_024
+$range_024$negative_FOR
+ [1] 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330
+[20] 331 332 333 334 335 336 337 338 339 340 341 342
+
+$range_024$positive_FOR
+ [1] 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+[20] 686 687 688 689 690 691
+
+
+$range_025
+$range_025$negative_FOR
+ [1] 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332
+[20] 333 334 335 336 337 338 339 340 341
+
+$range_025$positive_FOR
+ [1] 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686
+[20] 687 688 689 690 691 692 693 694 695 696
+
+
+$range_026
+$range_026$negative_FOR
+ [1] 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331
+[20] 332 333 334 335 336 337 338 339 340 341
+
+$range_026$positive_FOR
+ [1] 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686 687
+[20] 688 689 690 691 692 693 694 695 696 697
+
+
+$range_027
+$range_027$negative_FOR
+ [1] 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327
+[20] 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346
+[39] 347 348 349 350
+
+$range_027$positive_FOR
+ [1] 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686
+[20] 687 688 689 690 691 692 693
+
+
+$range_028
+$range_028$negative_FOR
+ [1] 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324
+[20] 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343
+[39] 344
+
+$range_028$positive_FOR
+ [1] 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682
+[20] 683 684 685 686 687 688 689 690 691 692 693 694
+
+
+$range_029
+$range_029$negative_FOR
+ [1] 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327
+[20] 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346
+[39] 347 348
+
+$range_029$positive_FOR
+ [1] 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681
+[20] 682 683 684 685 686 687 688 689 690 691 692 693 694 695
+
+
+$range_030
+$range_030$negative_FOR
+ [1] 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324
+[20] 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343
+[39] 344 345 346 347 348
+
+$range_030$positive_FOR
+ [1] 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681
+[20] 682 683 684 685 686 687 688 689 690 691 692 693 694 695
+
+
+$range_031
+$range_031$negative_FOR
+ [1] 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324
+[20] 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343
+[39] 344 345 346 347 348 349
+
+$range_031$positive_FOR
+ [1] 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681
+[20] 682 683 684 685 686 687 688 689 690 691 692 693
+
+
+$range_032
+$range_032$negative_FOR
+ [1] 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323
+[20] 324 325 326 327 328 329 330 331 332 333 334 335 336 337
+
+$range_032$positive_FOR
+ [1] 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682
+[20] 683 684 685 686 687 688 689 690 691 692
+
+
+$range_033
+$range_033$negative_FOR
+ [1] 311 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329
+[20] 330 331 332 333 334 335 336 337 338
+
+$range_033$positive_FOR
+ [1] 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683
+[20] 684 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701 702
+[39] 703 704
+
+
+$range_034
+$range_034$negative_FOR
+ [1] 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324
+[20] 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343
+[39] 344 345 346 347 348 349 350 351 352 353 354 355 356 357
+
+$range_034$positive_FOR
+ [1] 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681
+[20] 682 683 684 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700
+[39] 701 702 703 704 705 706
+
+
+$range_035
+$range_035$negative_FOR
+ [1] 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320
+[20] 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339
+[39] 340 341 342 343 344 345 346 347 348 349 350 351 352 353 354
+
+$range_035$positive_FOR
+ [1] 661 662 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679
+[20] 680 681 682 683 684 685 686 687 688 689 690 691 692
+
+
+$range_036
+$range_036$negative_FOR
+ [1] 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318
+[20] 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336
+
+$range_036$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684
+[20] 685 686 687 688 689 690 691 692 693 694
+
+
+$range_037
+$range_037$negative_FOR
+ [1] 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319
+[20] 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338
+[39] 339 340 341 342 343 344 345 346 347 348 349 350 351 352 353 354 355 356 357
+[58] 358 359 360 361 362 363
+
+$range_037$positive_FOR
+ [1] 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682
+[20] 683 684 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701
+[39] 702 703
+
+
+$range_038
+$range_038$negative_FOR
+ [1] 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323
+[20] 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342
+[39] 343 344 345 346 347 348 349 350 351 352 353 354 355 356 357
+
+$range_038$positive_FOR
+ [1] 659 660 661 662 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677
+[20] 678 679 680 681 682 683 684 685 686 687 688 689 690 691 692 693 694 695 696
+
+
+$range_039
+$range_039$negative_FOR
+ [1] 297 298 299 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315
+[20] 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334
+[39] 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351 352 353
+[58] 354 355 356 357 358 359 360
+
+$range_039$positive_FOR
+ [1] 610 611 612 613 614 615 616 617 618 619 620 621 622 623 624 625 626 627 628
+[20] 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643 644 645 646 647
+[39] 648 649 650 651 652 653 654 655 656 657 658 659 660 661 662 663 664 665 666
+[58] 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+[77] 686 687 688 689 690 691 692 693 694 695 696 697
+
+
+$range_040
+$range_040$negative_FOR
+ [1] 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318
+[20] 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337
+[39] 338 339 340 341 342
+
+$range_040$positive_FOR
+ [1] 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686 687
+[20] 688 689 690 691 692 693 694 695 696
+
+
+$range_041
+$range_041$negative_FOR
+ [1] 298 299 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316
+[20] 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335
+[39] 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351 352 353
+
+$range_041$positive_FOR
+ [1] 610 611 612 613 614 615 616 617 618 619 620 621 622 623 624 625 626 627 628
+[20] 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643 644 645 646 647
+[39] 648 649 650 651 652 653 654 655 656 657 658 659 660 661 662 663 664 665
+
+
+$range_042
+$range_042$negative_FOR
+ [1] 298 299 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316
+[20] 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335
+[39] 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351
+
+$range_042$positive_FOR
+ [1] 610 611 612 613 614 615 616 617 618 619 620 621 622 623 624 625 626 627 628
+[20] 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643 644 645 646 647
+[39] 648 649 650 651 652 653 654 655 656 657 658 659 660 661 662 663 664 665 666
+[58] 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+[77] 686 687 688 689 690 691 692 693 694 695 696 697 698
+
+
+$range_043
+$range_043$negative_FOR
+ [1] 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319
+[20] 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338
+[39] 339 340 341 342 343 344 345 346 347 348
+
+$range_043$positive_FOR
+ [1] 610 611 612 613 614 615 616 617 618 619 620 621 622 623 624 625 626 627 628
+[20] 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643 644 645 646 647
+[39] 648 649 650 651 652 653 654 655
+
+
+$range_044
+$range_044$negative_FOR
+ [1] 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320
+[20] 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339
+[39] 340 341 342 343 344
+
+$range_044$positive_FOR
+ [1] 610 611 612 613 614 615 616 617 618 619 620 621 622 623 624 625 626 627 628
+[20] 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643 644 645 646 647
+[39] 648 649 650 651 652 653 654
+
+
+$range_045
+$range_045$negative_FOR
+ [1] 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321
+[20] 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340
+[39] 341 342 343 344
+
+$range_045$positive_FOR
+ [1] 610 611 612 613 614 615 616 617 618 619 620 621 622 623 624 625 626 627 628
+[20] 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643 644 645 646 647
+[39] 648 649 650 651 652 653 654 655 656 657 658 659 660 661 662 663 664 665 666
+[58] 667 668 669 670 671 672 673
+
+
+$range_046
+$range_046$negative_FOR
+ [1] 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321
+[20] 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340
+[39] 341 342 343
+
+$range_046$positive_FOR
+ [1] 625 626 627 628 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643
+[20] 644 645 646 647 648 649 650 651 652 653 654 655 656 657 658 659 660 661 662
+[39] 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681
+[58] 682 683 684 685 686 687 688 689 690 691 692 693
+
+
+$range_047
+$range_047$negative_FOR
+ [1] 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319
+[20] 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338
+[39] 339 340 341 342 343 344 345 346 347 348 349 350 351
+
+$range_047$positive_FOR
+ [1] 658 659 660 661 662 663 664 665 666 667 668 669 670 671 672 673 674 675 676
+[20] 677 678 679 680
+
+
+$range_048
+$range_048$negative_FOR
+ [1] 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319
+[20] 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338
+[39] 339 340 341 342 343 344 345 346 347 348 349 350 351 352
+
+$range_048$positive_FOR
+ [1] 661 662 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679
+[20] 680 681
+
+
+$range_049
+$range_049$negative_FOR
+integer(0)
+
+$range_049$positive_FOR
+integer(0)
+
+
+$range_050
+$range_050$negative_FOR
+integer(0)
+
+$range_050$positive_FOR
+integer(0)
+
+
+$range_051
+$range_051$negative_FOR
+integer(0)
+
+$range_051$positive_FOR
+integer(0)
+
+
+$range_052
+$range_052$negative_FOR
+integer(0)
+
+$range_052$positive_FOR
+integer(0)
+
+
+$range_053
+$range_053$negative_FOR
+integer(0)
+
+$range_053$positive_FOR
+integer(0)
+
+
+$range_054
+$range_054$negative_FOR
+integer(0)
+
+$range_054$positive_FOR
+integer(0)
+
+
+$range_055
+$range_055$negative_FOR
+integer(0)
+
+$range_055$positive_FOR
+integer(0)
+
+
+$range_056
+$range_056$negative_FOR
+integer(0)
+
+$range_056$positive_FOR
+integer(0)
+
+
+$range_057
+$range_057$negative_FOR
+integer(0)
+
+$range_057$positive_FOR
+integer(0)
+
+
+$range_058
+$range_058$negative_FOR
+integer(0)
+
+$range_058$positive_FOR
+integer(0)
+
+
+$range_059
+$range_059$negative_FOR
+integer(0)
+
+$range_059$positive_FOR
+integer(0)
+
+
+$range_060
+$range_060$negative_FOR
+integer(0)
+
+$range_060$positive_FOR
+integer(0)
+
+
+$range_061
+$range_061$negative_FOR
+integer(0)
+
+$range_061$positive_FOR
+integer(0)
+
+
+$range_062
+$range_062$negative_FOR
+integer(0)
+
+$range_062$positive_FOR
+integer(0)
+
+
+$range_063
+$range_063$negative_FOR
+integer(0)
+
+$range_063$positive_FOR
+integer(0)
+
+
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> peak <- c(100, 101, 102)
+
+> new_peak <- SeaSondeR:::seasonder_rejectDistantBraggPeakTest(cs_obj, 
++     peak, range = 5, peak_name = "positive_FOR")
+seasonder_rejectDistantBraggPeakTest: First Order Rejected at range 5, peak positive_FOR. Distance Bragg test failed.
+
+> print(new_peak)
+integer(0)
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> cs_obj2 <- SeaSondeR:::seasonder_rejectNoiseIonospheric(cs_obj)
+
+> print(seasonder_getSeaSondeRCS_FOR(cs_obj2))
+$range_001
+$range_001$negative_FOR
+integer(0)
+
+$range_001$positive_FOR
+integer(0)
+
+
+$range_002
+$range_002$negative_FOR
+integer(0)
+
+$range_002$positive_FOR
+integer(0)
+
+
+$range_003
+$range_003$negative_FOR
+[1] 336 337 338 339 340 341
+
+$range_003$positive_FOR
+integer(0)
+
+
+$range_004
+$range_004$negative_FOR
+ [1] 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340
+[20] 341 342 343 344 345
+
+$range_004$positive_FOR
+ [1] 674 675 676 677 678 679 680 681 682 683 684 685
+
+
+$range_005
+$range_005$negative_FOR
+ [1] 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336
+[20] 337 338 339 340 341 342 343 344 345 346 347 348 349 350
+
+$range_005$positive_FOR
+ [1] 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686 687
+[20] 688 689 690 691 692 693 694 695 696 697 698 699
+
+
+$range_006
+$range_006$negative_FOR
+ [1] 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343
+[20] 344 345 346 347 348 349 350 351 352
+
+$range_006$positive_FOR
+ [1] 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686 687 688
+[20] 689 690 691 692 693 694 695 696 697 698 699 700 701 702 703 704 705 706 707
+
+
+$range_007
+$range_007$negative_FOR
+ [1] 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342
+[20] 343 344 345 346 347 348 349 350
+
+$range_007$positive_FOR
+ [1] 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683
+[20] 684 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701 702
+[39] 703 704 705
+
+
+$range_008
+$range_008$negative_FOR
+ [1] 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342
+[20] 343 344 345 346 347 348 349 350
+
+$range_008$positive_FOR
+ [1] 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683
+[20] 684 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701 702
+[39] 703 704 705 706 707 708
+
+
+$range_009
+$range_009$negative_FOR
+ [1] 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335
+[20] 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351 352 353
+
+$range_009$positive_FOR
+ [1] 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+
+
+$range_010
+$range_010$negative_FOR
+ [1] 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332
+[20] 333 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351
+[39] 352 353 354
+
+$range_010$positive_FOR
+ [1] 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682
+
+
+$range_011
+$range_011$negative_FOR
+ [1] 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333
+[20] 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351 352
+
+$range_011$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683
+
+
+$range_012
+$range_012$negative_FOR
+ [1] 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331
+[20] 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350
+[39] 351 352 353 354
+
+$range_012$positive_FOR
+ [1] 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+
+
+$range_013
+$range_013$negative_FOR
+ [1] 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343 344
+[20] 345 346 347 348 349 350
+
+$range_013$positive_FOR
+ [1] 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+
+
+$range_014
+$range_014$negative_FOR
+ [1] 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331
+[20] 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349
+
+$range_014$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684
+[20] 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701 702 703
+[39] 704 705 706 707 708 709 710
+
+
+$range_015
+$range_015$negative_FOR
+ [1] 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331
+[20] 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348
+
+$range_015$positive_FOR
+ [1] 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+[20] 686 687 688 689 690 691 692 693
+
+
+$range_016
+$range_016$negative_FOR
+ [1] 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333
+[20] 334 335 336 337 338 339 340 341 342 343 344 345 346 347
+
+$range_016$positive_FOR
+ [1] 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686
+[20] 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701 702 703 704 705
+[39] 706
+
+
+$range_017
+$range_017$negative_FOR
+ [1] 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334
+[20] 335 336 337 338 339 340 341 342 343 344 345 346 347
+
+$range_017$positive_FOR
+ [1] 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686
+[20] 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701 702 703 704 705
+[39] 706 707 708
+
+
+$range_018
+$range_018$negative_FOR
+ [1] 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335
+[20] 336 337 338 339 340 341 342 343 344 345 346
+
+$range_018$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684
+[20] 685 686 687 688 689 690 691
+
+
+$range_019
+$range_019$negative_FOR
+ [1] 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336
+[20] 337 338 339 340 341 342 343
+
+$range_019$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684
+[20] 685 686 687 688 689 690 691
+
+
+$range_020
+$range_020$negative_FOR
+ [1] 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335
+
+$range_020$positive_FOR
+ [1] 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683
+[20] 684 685 686 687 688
+
+
+$range_021
+$range_021$negative_FOR
+ [1] 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335
+[20] 336 337 338 339 340 341 342 343 344 345 346 347 348 349
+
+$range_021$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684
+[20] 685 686 687 688
+
+
+$range_022
+$range_022$negative_FOR
+ [1] 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331
+[20] 332 333 334 335 336 337 338
+
+$range_022$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684
+[20] 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700
+
+
+$range_023
+$range_023$negative_FOR
+ [1] 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330
+[20] 331 332 333 334 335 336 337 338
+
+$range_023$positive_FOR
+ [1] 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682
+[20] 683 684 685 686 687 688 689 690 691 692 693 694
+
+
+$range_024
+$range_024$negative_FOR
+ [1] 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330
+[20] 331 332 333 334 335 336 337 338 339 340 341 342
+
+$range_024$positive_FOR
+ [1] 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+[20] 686 687 688 689 690 691
+
+
+$range_025
+$range_025$negative_FOR
+ [1] 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332
+[20] 333 334 335 336 337 338 339 340 341
+
+$range_025$positive_FOR
+ [1] 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686
+[20] 687 688 689 690 691 692 693 694 695 696
+
+
+$range_026
+$range_026$negative_FOR
+ [1] 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331
+[20] 332 333 334 335 336 337 338 339 340 341
+
+$range_026$positive_FOR
+ [1] 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686 687
+[20] 688 689 690 691 692 693 694 695 696 697
+
+
+$range_027
+$range_027$negative_FOR
+ [1] 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327
+[20] 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346
+[39] 347 348 349 350
+
+$range_027$positive_FOR
+ [1] 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686
+[20] 687 688 689 690 691 692 693
+
+
+$range_028
+$range_028$negative_FOR
+ [1] 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324
+[20] 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343
+[39] 344
+
+$range_028$positive_FOR
+ [1] 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682
+[20] 683 684 685 686 687 688 689 690 691 692 693 694
+
+
+$range_029
+$range_029$negative_FOR
+ [1] 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327
+[20] 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346
+[39] 347 348
+
+$range_029$positive_FOR
+ [1] 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681
+[20] 682 683 684 685 686 687 688 689 690 691 692 693 694 695
+
+
+$range_030
+$range_030$negative_FOR
+ [1] 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324
+[20] 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343
+[39] 344 345 346 347 348
+
+$range_030$positive_FOR
+ [1] 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681
+[20] 682 683 684 685 686 687 688 689 690 691 692 693 694 695
+
+
+$range_031
+$range_031$negative_FOR
+ [1] 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324
+[20] 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343
+[39] 344 345 346 347 348 349
+
+$range_031$positive_FOR
+ [1] 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681
+[20] 682 683 684 685 686 687 688 689 690 691 692 693
+
+
+$range_032
+$range_032$negative_FOR
+ [1] 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323
+[20] 324 325 326 327 328 329 330 331 332 333 334 335 336 337
+
+$range_032$positive_FOR
+ [1] 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682
+[20] 683 684 685 686 687 688 689 690 691 692
+
+
+$range_033
+$range_033$negative_FOR
+ [1] 311 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329
+[20] 330 331 332 333 334 335 336 337 338
+
+$range_033$positive_FOR
+ [1] 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683
+[20] 684 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701 702
+[39] 703 704
+
+
+$range_034
+$range_034$negative_FOR
+ [1] 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324
+[20] 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343
+[39] 344 345 346 347 348 349 350 351 352 353 354 355 356 357
+
+$range_034$positive_FOR
+ [1] 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681
+[20] 682 683 684 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700
+[39] 701 702 703 704 705 706
+
+
+$range_035
+$range_035$negative_FOR
+ [1] 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320
+[20] 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339
+[39] 340 341 342 343 344 345 346 347 348 349 350 351 352 353 354
+
+$range_035$positive_FOR
+ [1] 661 662 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679
+[20] 680 681 682 683 684 685 686 687 688 689 690 691 692
+
+
+$range_036
+$range_036$negative_FOR
+ [1] 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318
+[20] 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336
+
+$range_036$positive_FOR
+ [1] 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684
+[20] 685 686 687 688 689 690 691 692 693 694
+
+
+$range_037
+$range_037$negative_FOR
+ [1] 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319
+[20] 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338
+[39] 339 340 341 342 343 344 345 346 347 348 349 350 351 352 353 354 355 356 357
+[58] 358 359 360 361 362 363
+
+$range_037$positive_FOR
+ [1] 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682
+[20] 683 684 685 686 687 688 689 690 691 692 693 694 695 696 697 698 699 700 701
+[39] 702 703
+
+
+$range_038
+$range_038$negative_FOR
+ [1] 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323
+[20] 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342
+[39] 343 344 345 346 347 348 349 350 351 352 353 354 355 356 357
+
+$range_038$positive_FOR
+ [1] 659 660 661 662 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677
+[20] 678 679 680 681 682 683 684 685 686 687 688 689 690 691 692 693 694 695 696
+
+
+$range_039
+$range_039$negative_FOR
+ [1] 297 298 299 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315
+[20] 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334
+[39] 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351 352 353
+[58] 354 355 356 357 358 359 360
+
+$range_039$positive_FOR
+ [1] 610 611 612 613 614 615 616 617 618 619 620 621 622 623 624 625 626 627 628
+[20] 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643 644 645 646 647
+[39] 648 649 650 651 652 653 654 655 656 657 658 659 660 661 662 663 664 665 666
+[58] 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+[77] 686 687 688 689 690 691 692 693 694 695 696 697
+
+
+$range_040
+$range_040$negative_FOR
+ [1] 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318
+[20] 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337
+[39] 338 339 340 341 342
+
+$range_040$positive_FOR
+ [1] 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686 687
+[20] 688 689 690 691 692 693 694 695 696
+
+
+$range_041
+$range_041$negative_FOR
+ [1] 298 299 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316
+[20] 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335
+[39] 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351 352 353
+
+$range_041$positive_FOR
+ [1] 610 611 612 613 614 615 616 617 618 619 620 621 622 623 624 625 626 627 628
+[20] 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643 644 645 646 647
+[39] 648 649 650 651 652 653 654 655 656 657 658 659 660 661 662 663 664 665
+
+
+$range_042
+$range_042$negative_FOR
+ [1] 298 299 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316
+[20] 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335
+[39] 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351
+
+$range_042$positive_FOR
+ [1] 610 611 612 613 614 615 616 617 618 619 620 621 622 623 624 625 626 627 628
+[20] 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643 644 645 646 647
+[39] 648 649 650 651 652 653 654 655 656 657 658 659 660 661 662 663 664 665 666
+[58] 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685
+[77] 686 687 688 689 690 691 692 693 694 695 696 697 698
+
+
+$range_043
+$range_043$negative_FOR
+ [1] 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319
+[20] 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338
+[39] 339 340 341 342 343 344 345 346 347 348
+
+$range_043$positive_FOR
+ [1] 610 611 612 613 614 615 616 617 618 619 620 621 622 623 624 625 626 627 628
+[20] 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643 644 645 646 647
+[39] 648 649 650 651 652 653 654 655
+
+
+$range_044
+$range_044$negative_FOR
+ [1] 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320
+[20] 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339
+[39] 340 341 342 343 344
+
+$range_044$positive_FOR
+ [1] 610 611 612 613 614 615 616 617 618 619 620 621 622 623 624 625 626 627 628
+[20] 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643 644 645 646 647
+[39] 648 649 650 651 652 653 654
+
+
+$range_045
+$range_045$negative_FOR
+ [1] 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321
+[20] 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340
+[39] 341 342 343 344
+
+$range_045$positive_FOR
+ [1] 610 611 612 613 614 615 616 617 618 619 620 621 622 623 624 625 626 627 628
+[20] 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643 644 645 646 647
+[39] 648 649 650 651 652 653 654 655 656 657 658 659 660 661 662 663 664 665 666
+[58] 667 668 669 670 671 672 673
+
+
+$range_046
+$range_046$negative_FOR
+ [1] 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321
+[20] 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340
+[39] 341 342 343
+
+$range_046$positive_FOR
+ [1] 625 626 627 628 629 630 631 632 633 634 635 636 637 638 639 640 641 642 643
+[20] 644 645 646 647 648 649 650 651 652 653 654 655 656 657 658 659 660 661 662
+[39] 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679 680 681
+[58] 682 683 684 685 686 687 688 689 690 691 692 693
+
+
+$range_047
+$range_047$negative_FOR
+ [1] 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319
+[20] 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338
+[39] 339 340 341 342 343 344 345 346 347 348 349 350 351
+
+$range_047$positive_FOR
+ [1] 658 659 660 661 662 663 664 665 666 667 668 669 670 671 672 673 674 675 676
+[20] 677 678 679 680
+
+
+$range_048
+$range_048$negative_FOR
+ [1] 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319
+[20] 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338
+[39] 339 340 341 342 343 344 345 346 347 348 349 350 351 352
+
+$range_048$positive_FOR
+ [1] 661 662 663 664 665 666 667 668 669 670 671 672 673 674 675 676 677 678 679
+[20] 680 681
+
+
+$range_049
+$range_049$negative_FOR
+integer(0)
+
+$range_049$positive_FOR
+integer(0)
+
+
+$range_050
+$range_050$negative_FOR
+integer(0)
+
+$range_050$positive_FOR
+integer(0)
+
+
+$range_051
+$range_051$negative_FOR
+integer(0)
+
+$range_051$positive_FOR
+integer(0)
+
+
+$range_052
+$range_052$negative_FOR
+integer(0)
+
+$range_052$positive_FOR
+integer(0)
+
+
+$range_053
+$range_053$negative_FOR
+integer(0)
+
+$range_053$positive_FOR
+integer(0)
+
+
+$range_054
+$range_054$negative_FOR
+integer(0)
+
+$range_054$positive_FOR
+integer(0)
+
+
+$range_055
+$range_055$negative_FOR
+integer(0)
+
+$range_055$positive_FOR
+integer(0)
+
+
+$range_056
+$range_056$negative_FOR
+integer(0)
+
+$range_056$positive_FOR
+integer(0)
+
+
+$range_057
+$range_057$negative_FOR
+integer(0)
+
+$range_057$positive_FOR
+integer(0)
+
+
+$range_058
+$range_058$negative_FOR
+integer(0)
+
+$range_058$positive_FOR
+integer(0)
+
+
+$range_059
+$range_059$negative_FOR
+integer(0)
+
+$range_059$positive_FOR
+integer(0)
+
+
+$range_060
+$range_060$negative_FOR
+integer(0)
+
+$range_060$positive_FOR
+integer(0)
+
+
+$range_061
+$range_061$negative_FOR
+integer(0)
+
+$range_061$positive_FOR
+integer(0)
+
+
+$range_062
+$range_062$negative_FOR
+integer(0)
+
+$range_062$positive_FOR
+integer(0)
+
+
+$range_063
+$range_063$negative_FOR
+integer(0)
+
+$range_063$positive_FOR
+integer(0)
+
+
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> peak <- c(100, 101, 102)
+
+> new_peak <- SeaSondeR:::seasonder_rejectNoiseIonosphericTest(cs_obj, 
++     peak, range = 5, peak_name = "positive_FOR")
+
+> print(new_peak)
+[1] 100 101 102
+
+> val <- try(SeaSondeR:::seasonder_rerun_qc_with_fun(list(seasonder_value = 42), 
++     function(x) x * 2), silent = TRUE)
+
+> print(val)
+[1] "Error in invokeRestart(\"seasonder_rerun_qc_with_fun\", cond, qc_fun) : \n  no 'restart' 'seasonder_rerun_qc_with_fun' found\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in invokeRestart("seasonder_rerun_qc_with_fun", cond, qc_fun): no 'restart' 'seasonder_rerun_qc_with_fun' found>
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> cs_obj <- SeaSondeR:::seasonder_initMUSICData(cs_obj)
+
+> cs_obj <- SeaSondeR:::seasonder_initMUSICData(cs_obj, 
++     range_cells = c(rep(5, 11), rep(4, 11)), doppler_bins = c(c(669:679), 
++         c(674:684)))
+
+> cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+
+> cs_obj <- seasonder_runMUSIC(cs_obj)
+seasonder_runMUSIC:  MUSIC algorithm started.
+seasonder_runMUSIC:  MUSIC algorithm finished.
+
+> print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_obj))
+ [1] "2025-04-20 19:47:11.671378: FOR parameters set."                                                          
+ [2] "2025-04-20 19:47:11.817266: NoiseLevel for antenna 1 computed."                                           
+ [3] "2025-04-20 19:47:11.830411: NoiseLevel for antenna 2 computed."                                           
+ [4] "2025-04-20 19:47:11.84719: NoiseLevel for antenna 3 computed."                                            
+ [5] "2025-04-20 19:47:11.864836: Created from /home/rstudio/SeaSondeR/inst/css_data/CSS_TORA_24_04_04_0700.cs."
+ [6] "2025-04-20 19:47:11.951253: MUSIC algorithm started."                                                     
+ [7] "2025-04-20 19:47:11.979033: MUSIC covariance matrix computation started"                                  
+ [8] "2025-04-20 19:47:11.997331: MUSIC covariance matrix computation ended"                                    
+ [9] "2025-04-20 19:47:12.00197: NoiseLevel for antenna 1 computed."                                            
+[10] "2025-04-20 19:47:12.006053: NoiseLevel for antenna 2 computed."                                           
+[11] "2025-04-20 19:47:12.010072: NoiseLevel for antenna 3 computed."                                           
+[12] "2025-04-20 19:47:12.021926: MUSIC covariance matrix decomposition started"                                
+[13] "2025-04-20 19:47:12.033292: MUSIC covariance matrix decomposition ended"                                  
+[14] "2025-04-20 19:47:12.033656: MUSIC DOA functions computation started"                                      
+[15] "2025-04-20 19:47:12.075333: MUSIC DOA functions computation ended"                                        
+[16] "2025-04-20 19:47:12.075849: MUSIC peak extraction started"                                                
+[17] "2025-04-20 19:47:12.150041: MUSIC peak extraction ended"                                                  
+[18] "2025-04-20 19:47:12.185494: MUSIC dual solutions testing started"                                         
+[19] "2025-04-20 19:47:12.205605: MUSIC dual solutions testing ended"                                           
+[20] "2025-04-20 19:47:12.20599: MUSIC DOA selection started"                                                   
+[21] "2025-04-20 19:47:12.208406: MUSIC DOA selection ended"                                                    
+[22] "2025-04-20 19:47:12.214039: MUSIC algorithm ended with 42.9% of dual solutions."                          
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> FOR <- seasonder_getSeaSondeRCS_FOR(cs_obj)
+
+> cs_obj <- seasonder_setSeaSondeRCS_FOR(cs_obj, FOR[4:5])
+
+> result <- seasonder_runMUSICInFOR(cs_obj)
+seasonder_runMUSIC:  MUSIC algorithm started.
+seasonder_runMUSIC:  MUSIC algorithm finished.
+
+> print(seasonder_getSeaSondeRCS_ProcessingSteps(result))
+ [1] "2025-04-20 19:47:12.418509: FOR parameters set."                                                          
+ [2] "2025-04-20 19:47:12.431848: NoiseLevel for antenna 1 computed."                                           
+ [3] "2025-04-20 19:47:12.449715: NoiseLevel for antenna 2 computed."                                           
+ [4] "2025-04-20 19:47:12.46857: NoiseLevel for antenna 3 computed."                                            
+ [5] "2025-04-20 19:47:12.478163: Created from /home/rstudio/SeaSondeR/inst/css_data/CSS_TORA_24_04_04_0700.cs."
+ [6] "2025-04-20 19:47:12.535141: MUSIC algorithm started."                                                     
+ [7] "2025-04-20 19:47:12.553762: MUSIC covariance matrix computation started"                                  
+ [8] "2025-04-20 19:47:12.565588: MUSIC covariance matrix computation ended"                                    
+ [9] "2025-04-20 19:47:12.568573: NoiseLevel for antenna 1 computed."                                           
+[10] "2025-04-20 19:47:12.57127: NoiseLevel for antenna 2 computed."                                            
+[11] "2025-04-20 19:47:12.574024: NoiseLevel for antenna 3 computed."                                           
+[12] "2025-04-20 19:47:12.617346: MUSIC covariance matrix decomposition started"                                
+[13] "2025-04-20 19:47:12.619019: MUSIC covariance matrix decomposition ended"                                  
+[14] "2025-04-20 19:47:12.635373: MUSIC DOA functions computation started"                                      
+[15] "2025-04-20 19:47:12.681525: MUSIC DOA functions computation ended"                                        
+[16] "2025-04-20 19:47:12.691228: MUSIC peak extraction started"                                                
+[17] "2025-04-20 19:47:12.703781: MUSIC peak extraction ended"                                                  
+[18] "2025-04-20 19:47:12.719876: MUSIC dual solutions testing started"                                         
+[19] "2025-04-20 19:47:12.794429: MUSIC dual solutions testing ended"                                           
+[20] "2025-04-20 19:47:12.794791: MUSIC DOA selection started"                                                  
+[21] "2025-04-20 19:47:12.796174: MUSIC DOA selection ended"                                                    
+[22] "2025-04-20 19:47:12.81895: MUSIC algorithm ended with 40.0% of dual solutions."                           
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> p <- seasonder_SeaSondeRCS_plotSelfSpectrum(cs_obj, 
++     antenna = 1, range_cell = 5)
+
+> print(p)
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> boundaries <- seasonder_SeaSondeRCSExportFORBoundaries(cs_obj)
+
+> print(boundaries)
+   range_cell first_neg_doppler_cell last_neg_doppler_cell
+1           1                     NA                    NA
+2           2                     NA                    NA
+3           3                    336                   341
+4           4                    322                   345
+5           5                    318                   350
+6           6                    325                   352
+7           7                    324                   350
+8           8                    324                   350
+9           9                    317                   353
+10         10                    314                   354
+11         11                    315                   352
+12         12                    313                   354
+13         13                    326                   350
+14         14                    313                   349
+15         15                    313                   348
+16         16                    315                   347
+17         17                    316                   347
+18         18                    317                   346
+19         19                    318                   343
+20         20                    318                   335
+21         21                    317                   349
+22         22                    313                   338
+23         23                    312                   338
+24         24                    312                   342
+25         25                    314                   341
+26         26                    313                   341
+27         27                    309                   350
+28         28                    306                   344
+29         29                    309                   348
+30         30                    306                   348
+31         31                    306                   349
+32         32                    305                   337
+33         33                    311                   338
+34         34                    306                   357
+35         35                    302                   354
+36         36                    300                   336
+37         37                    301                   363
+38         38                    305                   357
+39         39                    297                   360
+40         40                    300                   342
+41         41                    298                   353
+42         42                    298                   351
+43         43                    301                   348
+44         44                    302                   344
+45         45                    303                   344
+46         46                    303                   343
+47         47                    301                   351
+48         48                    301                   352
+49         49                     NA                    NA
+50         50                     NA                    NA
+51         51                     NA                    NA
+52         52                     NA                    NA
+53         53                     NA                    NA
+54         54                     NA                    NA
+55         55                     NA                    NA
+56         56                     NA                    NA
+57         57                     NA                    NA
+58         58                     NA                    NA
+59         59                     NA                    NA
+60         60                     NA                    NA
+61         61                     NA                    NA
+62         62                     NA                    NA
+63         63                     NA                    NA
+   first_pos_doppler_cell last_pos_doppler_cell
+1                      NA                    NA
+2                      NA                    NA
+3                      NA                    NA
+4                     674                   685
+5                     669                   699
+6                     670                   707
+7                     665                   705
+8                     665                   708
+9                     667                   685
+10                    667                   682
+11                    666                   683
+12                    668                   685
+13                    668                   685
+14                    666                   710
+15                    667                   693
+16                    668                   706
+17                    668                   708
+18                    666                   691
+19                    666                   691
+20                    665                   688
+21                    666                   688
+22                    666                   700
+23                    664                   694
+24                    667                   691
+25                    668                   696
+26                    669                   697
+27                    668                   693
+28                    664                   694
+29                    663                   695
+30                    663                   695
+31                    663                   693
+32                    664                   692
+33                    665                   704
+34                    663                   706
+35                    661                   692
+36                    666                   694
+37                    664                   703
+38                    659                   696
+39                    610                   697
+40                    669                   696
+41                    610                   665
+42                    610                   698
+43                    610                   655
+44                    610                   654
+45                    610                   673
+46                    625                   693
+47                    658                   680
+48                    661                   681
+49                     NA                    NA
+50                     NA                    NA
+51                     NA                    NA
+52                     NA                    NA
+53                     NA                    NA
+54                     NA                    NA
+55                     NA                    NA
+56                     NA                    NA
+57                     NA                    NA
+58                     NA                    NA
+59                     NA                    NA
+60                     NA                    NA
+61                     NA                    NA
+62                     NA                    NA
+63                     NA                    NA
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> out <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+
+> values <- list(c(1000, 4294967295, 2000))
+
+> scaled <- SeaSondeR:::seasonder_SeaSondeRCSSWApplyScaling(values, 
++     fmax = 5, fmin = 0, fscale = 1000, dbRef = -20)
+
+> print(scaled)
+[[1]]
+[1] 0.03162278        NaN 0.10000000
+
+
+> values <- list(c(1000, 4294967295, 2000))
+
+> scaled <- SeaSondeR:::seasonder_SeaSondeRCSSYApplyScaling(values, 
++     fmax = 5, fmin = 0, fscale = 1000, dbRef = -20)
+
+> print(scaled)
+[[1]]
+[1] 0.03162278        NaN 0.10000000
+
+
+> cs_obj <- SeaSondeR:::new_SeaSondeRCS(list(nRangeCells = 1, 
++     nDopplerCells = 1), list(SSA1 = matrix(1, 1, 1), SSA2 = matrix(1, 
++     1, 1), SSA3 = matrix(1, 1, 1), CS12 = matrix(1 + (0+1i), 
++     1, 1), CS13 = matrix(1 + (0+1i), 1, 1), CS23 = matrix(1 + 
++     (0+1i), 1, 1), QC = matrix(1, 1, 1)))
+:::: new_SeaSondeRCS: SeaSondeRCS object created successfully.
+
+> spectrum_vals <- c(0.1, 1, 10)
+
+> dB_vals <- SeaSondeR:::seasonder_SelfSpectra2dB(cs_obj, 
++     spectrum_vals)
+
+> print(dB_vals)
+[1] -44.2 -34.2 -24.2
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> cs_obj <- seasonder_setFOR_currmax(cs_obj, 2.5)
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> cs_obj <- seasonder_setFOR_fdown(cs_obj, 12)
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> cs_obj <- seasonder_setFOR_flim(cs_obj, 100)
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> cs_obj <- seasonder_setFOR_noisefact(cs_obj, 4)
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> cs_obj <- seasonder_setFOR_nsm(cs_obj, 3)
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> new_params <- list(nsm = 3, noisefact = 4, fdown = 12, 
++     flim = 80, currmax = 2.5)
+
+> cs_obj <- seasonder_setFOR_parameters(cs_obj, new_params)
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> cs_obj <- seasonder_setFORParameter(cs_obj, "nsm", 
++     4)
+
+> header <- list(nRangeCells = 1, nDopplerCells = 1)
+
+> data <- list(SSA1 = matrix(0, 1, 1), SSA2 = matrix(0, 
++     1, 1), SSA3 = matrix(0, 1, 1), CS12 = matrix(complex(real = 0, 
++     imaginary = 0), 1, 1), CS13 = matrix(complex(real = 0, imaginary = 0), 
++     1, 1), CS23 = matrix(complex(real = 0, imaginary = 0), 1, 
++     1), QC = matrix(0, 1, 1))
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data, 
++     apm_obj)
+:::: new_SeaSondeRCS: SeaSondeRCS object created successfully.
+
+> cs_obj <- seasonder_setMUSICOption(cs_obj, "smoothNoiseLevel", 
++     TRUE)
+
+> opts <- seasonder_getMUSICOptions(cs_obj)
+
+> print(opts$smoothNoiseLevel)
+[1] TRUE
+
+> header <- list(nRangeCells = 1, nDopplerCells = 1)
+
+> data <- list(SSA1 = matrix(0, 1, 1), SSA2 = matrix(0, 
++     1, 1), SSA3 = matrix(0, 1, 1), CS12 = matrix(complex(real = 0, 
++     imaginary = 0), 1, 1), CS13 = matrix(complex(real = 0, imaginary = 0), 
++     1, 1), CS23 = matrix(complex(real = 0, imaginary = 0), 1, 
++     1), QC = matrix(0, 1, 1))
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data, 
++     apm_obj)
+:::: new_SeaSondeRCS: SeaSondeRCS object created successfully.
+
+> cs_obj <- seasonder_setMUSICOptions(cs_obj, list(doppler_interpolation = 3))
+
+> opts <- seasonder_getMUSICOptions(cs_obj)
+
+> print(opts)
+$PPMIN
+NULL
+
+$PWMAX
+NULL
+
+$smoothNoiseLevel
+[1] FALSE
+
+$doppler_interpolation
+[1] 3
+
+$MUSIC_parameters
+[1] 40 20  2 20
+
+$discard_low_SNR
+[1] TRUE
+
+$discard_no_solution
+[1] TRUE
+
+
+> new_interval <- list(low_limit = 0.9, high_limit = 1)
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- SeaSondeR:::seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
++     package = "SeaSondeR")
+
+> cs_obj <- seasonder_createSeaSondeRCS(cs_file, specs_path = SeaSondeR:::seasonder_defaultSpecsFilePath("CS"), 
++     seasonder_apm_object = apm_obj)
+new_SeaSondeRCS:  SeaSondeRCS object created successfully.
+
+> cs_obj <- seasonder_setNoiseLevelEstimationInterval(cs_obj, 
++     new_interval)
+
+> print(attr(cs_obj, "reference_noise_normalized_limits_estimation_interval"))
+$low_limit
+[1] 0.9
+
+$high_limit
+[1] 1
+
+
+> noise_limits <- seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
+Error in seasonder_getFOR_parameters(cs_obj) : 
+  could not find function "seasonder_getFOR_parameters"
+Calls: run_examples ... lapply -> FUN -> source -> withVisible -> eval -> eval
+In addition: Warning messages:
+1: In max(freq) : no non-missing arguments to max; returning -Inf
+2: In max(freq) : no non-missing arguments to max; returning -Inf
+3: In max(freq) : no non-missing arguments to max; returning -Inf
+ℹ Loading SeaSondeR
+Execution halted

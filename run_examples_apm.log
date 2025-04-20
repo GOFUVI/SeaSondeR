@@ -1,0 +1,28 @@
+Loading required package: usethis
+ℹ Loading SeaSondeR
+ℹ Updating SeaSondeR documentation
+ℹ Loading SeaSondeR
+Writing 'seasonder_setSeaSondeRAPM_AmplitudeFactors.Rd'
+── Running 79 example files ─────────────────────────────────────── SeaSondeR ──
+ℹ Loading SeaSondeR
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> new_factors <- c(1, 2)
+
+> apm_obj <- seasonder_setSeaSondeRAPM_AmplitudeFactors(apm_obj, 
++     new_factors)
+
+> print(attributes(apm_obj)$AmplitudeFactors)
+[1] 1 2
+
+> obj <- seasonder_setSeaSondeRAPM_AntennaBearing(obj, 
++     new_antenna_bearing)
+Error in eval(ei, envir) : object 'new_antenna_bearing' not found
+Calls: run_examples ... seasonder_setSeaSondeRAPM_AntennaBearing -> validate_SeaSondeRAPM_AntennaBearing
+ℹ Loading SeaSondeR
+Execution halted

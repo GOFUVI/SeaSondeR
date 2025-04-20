@@ -1,0 +1,36 @@
+Loading required package: usethis
+ℹ Updating SeaSondeR documentation
+ℹ Loading SeaSondeR
+Writing 'seasonder_setSeaSondeRAPM_AmplitudeFactors.Rd'
+Writing 'seasonder_rejectDistantBragg.Rd'
+Writing 'seasonder_rejectNoiseIonospheric.Rd'
+Writing 'seasonder_SeaSondeRCSExportFORBoundaries.Rd'
+── Running 79 example files ─────────────────────────────────────── SeaSondeR ──
+ℹ Loading SeaSondeR
+
+> apm_file <- system.file("css_data/MeasPattern.txt", 
++     package = "SeaSondeR")
+
+> apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+seasonder_createSeaSondeRAPM:  APM object created successfully.
+
+> new_factors <- list(1, 2)
+
+> apm_obj <- seasonder_setSeaSondeRAPM_AmplitudeFactors(apm_obj, 
++     new_factors)
+Error in `validate_SeaSondeRAPM_AmplitudeFactors()` at SeaSondeR/R/SeaSondeRAPM.R:1259:3:
+! validate_SeaSondeRAPM_AmplitudeFactors: AmplitudeFactors must be a numeric vector of length 2. Current length is 2
+Backtrace:
+     ▆
+  1. └─devtools::run_examples(run_donttest = TRUE, start = "seasonder_setSeaSondeRAPM_AmplitudeFactors")
+  2.   └─base::lapply(...)
+  3.     └─pkgload (local) FUN(X[[i]], ...)
+  4.       └─base::source(tmp, echo = !quiet, local = env, max.deparse.length = Inf) at pkgload/R/dev-example.R:76:5
+  5.         ├─base::withVisible(eval(ei, envir))
+  6.         └─base::eval(ei, envir)
+  7.           └─base::eval(ei, envir)
+  8.             └─SeaSondeR::seasonder_setSeaSondeRAPM_AmplitudeFactors(...)
+  9.               └─SeaSondeR:::validate_SeaSondeRAPM_AmplitudeFactors(new_value) at SeaSondeR/R/SeaSondeRAPM.R:1259:3
+ 10.                 └─rlang::abort(msg) at SeaSondeR/R/SeaSondeRAPM.R:641:5
+ℹ Loading SeaSondeR
+Execution halted
