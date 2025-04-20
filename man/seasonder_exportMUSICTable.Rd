@@ -51,6 +51,9 @@ This function performs the following operations:
   apm_obj  <- seasonder_readSeaSondeRAPMFile(apm_file)
   # Create SeaSondeRCS object with APM
   cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+FOR <- seasonder_getSeaSondeRCS_FOR(cs_obj)
+cs_obj <- seasonder_setSeaSondeRCS_FOR(cs_obj,FOR[4:5])
+
   # Run MUSIC algorithm (in FOR context) if MUSIC data is available:
   cs_obj <- seasonder_runMUSICInFOR(cs_obj)
   # Export MUSIC table

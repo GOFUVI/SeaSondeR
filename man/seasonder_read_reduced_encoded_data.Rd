@@ -43,7 +43,7 @@ computed value is greater than or equal to 8388608 to account for the two's comp
   raw_vec <- as.raw(c(0x9C, 0x00, 0x00, 0x03, 0xE8))
   con <- rawConnection(raw_vec, open = "rb")
   key <- list(size = length(raw_vec))
-  result <- seasonder_read_reduced_encoded_data(con, key, endian = "big")
+  result <- SeaSondeR:::seasonder_read_reduced_encoded_data(con, key, endian = "big")
   close(con)
   print(result)  # Expected output: 1000
 }

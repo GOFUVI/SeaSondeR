@@ -35,6 +35,12 @@ This function performs the following steps:
     specs_path = specs_path,
     seasonder_apm_object = apm_obj
   )
+cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+ cs_obj,
+ range_cells = c(rep(5,11), rep(4,11)),
+ doppler_bins = c(c(669:679),c(674:684))
+)
+cs_obj <- seasonder_runMUSIC(cs_obj)
   # Export MUSIC table to a temporary CSV file
   tmpfile <- tempfile(fileext = ".csv")
   seasonder_exportCSVMUSICTable(cs_obj, tmpfile)

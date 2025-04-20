@@ -34,7 +34,7 @@
 #'   raw_vec <- as.raw(c(0x9C, 0x00, 0x00, 0x03, 0xE8))
 #'   con <- rawConnection(raw_vec, open = "rb")
 #'   key <- list(size = length(raw_vec))
-#'   result <- seasonder_read_reduced_encoded_data(con, key, endian = "big")
+#'   result <- SeaSondeR:::seasonder_read_reduced_encoded_data(con, key, endian = "big")
 #'   close(con)
 #'   print(result)  # Expected output: 1000
 seasonder_read_reduced_encoded_data <- function(connection, key, endian = "big") {

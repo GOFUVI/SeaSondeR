@@ -37,5 +37,5 @@ sample_FOR <- list(
   negative_FOR = c(1, 2, 3),
   positive_FOR = c(10, 11, 12)
 )
-cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR(cs_obj, sample_FOR)
+cs_obj <- seasonder_setSeaSondeRCS_FOR(cs_obj, sample_FOR)
 }
