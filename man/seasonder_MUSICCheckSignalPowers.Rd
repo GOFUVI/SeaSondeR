@@ -36,7 +36,11 @@ Solutions failing this test are marked as "single."
 }
 \examples{
 # Signal power ratio check
-cs_obj <- seasonder_createSeaSondeRCS(...)
+# Create a SeaSondeRCS object for P2 example
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 updated_obj <- SeaSondeR:::seasonder_MUSICCheckSignalPowers(cs_obj)
 }
 \seealso{

@@ -58,7 +58,7 @@ a <- c(1+0i, 0+0i, 0+0i)
 # Compute its conjugate transpose
 Conj_t_a <- Conj(t(a))
 # Compute a single projection using the MUSIC formula
-proj <- seasonder_compute_antenna_pattern_proyections(En, a, Conj_t_a)
+proj <- SeaSondeR:::seasonder_compute_antenna_pattern_proyections(En, a, Conj_t_a)
 print(proj)
 }
 \seealso{

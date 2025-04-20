@@ -40,6 +40,9 @@ cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSonde
 apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+# Perform DOA projections to generate DOA_solutions
+cs_obj <- SeaSondeR:::seasonder_MUSICComputeDOAProjections(cs_obj)
+# Compute signal power matrix
 updated_obj <- SeaSondeR:::seasonder_MUSICComputeSignalPowerMatrix(cs_obj)
 print(updated_obj)
 }
