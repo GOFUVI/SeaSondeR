@@ -675,9 +675,19 @@ SeaSondeRCS_doa_selection_end_step_text  <- function() {
 #' This ensures that the resulting options list contains all required fields.
 #'
 #' @examples
-#' # Create a SeaSondeRCS object (assume cs_object is already created)
-#' cs_object <- seasonder_setMUSICOptions(cs_object, list(doppler_interpolation = 3))
-#' opts <- seasonder_getSeaSondeRCS_MUSIC_options(cs_object)
+#' # Example: update MUSIC options on a minimal CS object
+#' header <- list(nRangeCells = 1, nDopplerCells = 1)
+#' data <- list(
+#'   SSA1 = matrix(0,1,1), SSA2 = matrix(0,1,1), SSA3 = matrix(0,1,1),
+#'   CS12 = matrix(complex(real=0,imaginary=0),1,1),
+#'   CS13 = matrix(complex(real=0,imaginary=0),1,1),
+#'   CS23 = matrix(complex(real=0,imaginary=0),1,1), QC = matrix(0,1,1)
+#' )
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data, apm_obj)
+#' cs_obj <- seasonder_setMUSICOptions(cs_obj, list(doppler_interpolation = 3))
+#' opts <- seasonder_getMUSICOptions(cs_obj)
 #' print(opts)
 #' @export
 seasonder_setMUSICOptions <- seasonder_setSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object, MUSIC_options = seasonder_defaultMUSIC_options()) {
@@ -711,9 +721,19 @@ seasonder_setMUSICOptions <- seasonder_setSeaSondeRCS_MUSIC_options <- function(
 #' Then, the current MUSIC options are retrieved, updated with the new value, and stored back into the object.
 #'
 #' @examples
-#' # Update a specific MUSIC option, for example, setting 'smoothNoiseLevel' to TRUE
-#' cs_object <- seasonder_setMUSICOption(cs_object, "smoothNoiseLevel", TRUE)
-#' opts <- seasonder_getSeaSondeRCS_MUSIC_options(cs_object)
+#' # Example: set a specific MUSIC option on a minimal CS object
+#' header <- list(nRangeCells = 1, nDopplerCells = 1)
+#' data <- list(
+#'   SSA1 = matrix(0,1,1), SSA2 = matrix(0,1,1), SSA3 = matrix(0,1,1),
+#'   CS12 = matrix(complex(real=0,imaginary=0),1,1),
+#'   CS13 = matrix(complex(real=0,imaginary=0),1,1),
+#'   CS23 = matrix(complex(real=0,imaginary=0),1,1), QC = matrix(0,1,1)
+#' )
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data, apm_obj)
+#' cs_obj <- seasonder_setMUSICOption(cs_obj, "smoothNoiseLevel", TRUE)
+#' opts <- seasonder_getMUSICOptions(cs_obj)
 #' print(opts$smoothNoiseLevel)
 #' @export
 seasonder_setMUSICOption <- seasonder_setSeaSondeRCS_MUSIC_option <- function(seasonder_cs_object, option_name, option_value) {
@@ -3285,6 +3305,11 @@ seasonder_checkPWMAX <- function(seasonder_cs_object) {
 #' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_initMUSICData(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+#'   cs_obj,
+#'   range_cells = c(1, 2),
+#'   doppler_bins = c(1, 2, 5, 10)
+#' )
 #' # Run the MUSIC algorithm with FOR context
 #' cs_obj <- seasonder_runMUSIC(cs_obj)
 #' # Check the updated processing steps

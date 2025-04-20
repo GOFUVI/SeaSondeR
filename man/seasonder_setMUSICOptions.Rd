@@ -27,8 +27,18 @@ The function uses \code{modifyList} to merge the default MUSIC options with any 
 This ensures that the resulting options list contains all required fields.
 }
 \examples{
-# Create a SeaSondeRCS object (assume cs_object is already created)
-cs_object <- seasonder_setMUSICOptions(cs_object, list(doppler_interpolation = 3))
-opts <- seasonder_getSeaSondeRCS_MUSIC_options(cs_object)
+# Example: update MUSIC options on a minimal CS object
+header <- list(nRangeCells = 1, nDopplerCells = 1)
+data <- list(
+  SSA1 = matrix(0,1,1), SSA2 = matrix(0,1,1), SSA3 = matrix(0,1,1),
+  CS12 = matrix(complex(real=0,imaginary=0),1,1),
+  CS13 = matrix(complex(real=0,imaginary=0),1,1),
+  CS23 = matrix(complex(real=0,imaginary=0),1,1), QC = matrix(0,1,1)
+)
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data, apm_obj)
+cs_obj <- seasonder_setMUSICOptions(cs_obj, list(doppler_interpolation = 3))
+opts <- seasonder_getMUSICOptions(cs_obj)
 print(opts)
 }

@@ -27,8 +27,18 @@ The function first checks if \code{option_name} is one of the valid options as p
 Then, the current MUSIC options are retrieved, updated with the new value, and stored back into the object.
 }
 \examples{
-# Update a specific MUSIC option, for example, setting 'smoothNoiseLevel' to TRUE
-cs_object <- seasonder_setMUSICOption(cs_object, "smoothNoiseLevel", TRUE)
-opts <- seasonder_getSeaSondeRCS_MUSIC_options(cs_object)
+# Example: set a specific MUSIC option on a minimal CS object
+header <- list(nRangeCells = 1, nDopplerCells = 1)
+data <- list(
+  SSA1 = matrix(0,1,1), SSA2 = matrix(0,1,1), SSA3 = matrix(0,1,1),
+  CS12 = matrix(complex(real=0,imaginary=0),1,1),
+  CS13 = matrix(complex(real=0,imaginary=0),1,1),
+  CS23 = matrix(complex(real=0,imaginary=0),1,1), QC = matrix(0,1,1)
+)
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data, apm_obj)
+cs_obj <- seasonder_setMUSICOption(cs_obj, "smoothNoiseLevel", TRUE)
+opts <- seasonder_getMUSICOptions(cs_obj)
 print(opts$smoothNoiseLevel)
 }

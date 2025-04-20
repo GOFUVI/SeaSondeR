@@ -416,7 +416,8 @@ seasonder_readCSSYFields <- function(connection, specs, endian, parent_key= NULL
 #' @examples
 #' # Example usage:
 #' values <- list(c(1000, 0xFFFFFFFF, 2000))
-#' scaled <- seasonder_SeaSondeRCSSYApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, 
+#' # Use triple colon to call internal function
+#' scaled <- SeaSondeR:::seasonder_SeaSondeRCSSYApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000,
 #' dbRef = -20)
 #' print(scaled)
 #' @details

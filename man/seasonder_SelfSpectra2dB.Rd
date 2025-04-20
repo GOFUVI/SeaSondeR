@@ -30,7 +30,17 @@ where:
 This function ensures consistency by obtaining the receiver gain directly from the \code{SeaSondeR} object.
 }
 \examples{
-dB_vals <- seasonder_SelfSpectra2dB(cs_obj, spectrum_vals)
+# Convert self-spectra power to dB using a SeaSondeR object (toy data)
+cs_obj <- SeaSondeR:::new_SeaSondeRCS(
+  list(nRangeCells = 1, nDopplerCells = 1),
+  list(
+    SSA1 = matrix(1,1,1), SSA2 = matrix(1,1,1), SSA3 = matrix(1,1,1),
+    CS12 = matrix(1+1i,1,1), CS13 = matrix(1+1i,1,1),
+    CS23 = matrix(1+1i,1,1), QC = matrix(1,1,1)
+  )
+)
+spectrum_vals <- c(0.1, 1, 10)
+dB_vals <- SeaSondeR:::seasonder_SelfSpectra2dB(cs_obj, spectrum_vals)
 print(dB_vals)
 }
 \seealso{
