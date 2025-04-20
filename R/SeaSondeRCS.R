@@ -807,7 +807,7 @@ seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_obje
 #' )
 #' cs_obj <- seasonder_setNoiseLevelEstimationInterval(cs_obj, new_interval)
 #' print(attr(cs_obj, "reference_noise_normalized_limits_estimation_interval"))
-#' noise_limits <- seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
+#' noise_limits <- SeaSondeR:::seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
 #' print(noise_limits)
 #' @export
 seasonder_setNoiseLevelEstimationInterval <- seasonder_setSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <- function(seasonder_cs_object, interval_value) {
@@ -919,6 +919,7 @@ seasonder_asJSONSeaSondeRCSHeader <- function(seasonder_cs_object, path = NULL) 
 #' cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
 #' json_output <- seasonder_asJSONSeaSondeRCSData(cs_obj)
 #' print(json_output)
+#' 
 #' @note
 #' If a path is provided and there is an issue writing to the file, the function logs an error message using `seasonder_logAndMessage` and returns the JSON data as a string.
 seasonder_asJSONSeaSondeRCSData <- function(seasonder_cs_object, path = NULL) {
@@ -3576,7 +3577,8 @@ seasonder_readCSField <- function(con, type, endian = "big") {
 #'
 #' @return The value returned by the alternate quality control function.
 #' @examples
-#' val <- seasonder_rerun_qc_with_fun(list(seasonder_value = 42), function(x) x * 2)
+#' # Example (expected to error due to missing restart):
+#' val <- try(SeaSondeR:::seasonder_rerun_qc_with_fun(list(seasonder_value = 42), function(x) x * 2), silent = TRUE)
 #' print(val)
 #' @export
 seasonder_rerun_qc_with_fun <- function(cond,qc_fun) {
@@ -3852,8 +3854,20 @@ seasonder_check_specs <- function(specs, fields) {
 #'
 #' @return A list with the read and transformed results.
 #' @examples
-#' header <- seasonder_readSeaSondeCSFileHeaderV1(specs, con, endian = "big")
-#' print(header)
+#' # Read version 1 header from a CS file
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header", "V1"))
+#' con <- file(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   "rb"
+#' )
+#' header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' str(header_v1)
+#' close(con)
 seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
   # Step 1: Specification Validation
@@ -3893,8 +3907,26 @@ seasonder_readSeaSondeCSFileHeaderV1 <- function(specs, connection, endian = "bi
 #'
 #' @return A list with the read results.
 #' @examples
-#' header <- seasonder_readSeaSondeCSFileHeaderV2(specs, con, endian = "big")
-#' print(header)
+#' # Read CS file header and extract version 2 fields
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' con <- file(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   "rb"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V1"))
+#' header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V2"))
+#' header_v2 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV2(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' str(header_v2)
+#' close(con)
 seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
   # Step 1: Specification Validation
@@ -3927,8 +3959,32 @@ seasonder_readSeaSondeCSFileHeaderV2 <- function(specs, connection, endian = "bi
 #'
 #' @return A list with the read results.
 #' @examples
-#' header <- seasonder_readSeaSondeCSFileHeaderV3(specs, con, endian = "big")
-#' print(header)
+#' # Read CS file header and extract version 3 fields
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' con <- file(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   "rb"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V1"))
+#' header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V2"))
+#' header_v2 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV2(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V3"))
+#' header_v3 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV3(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' str(header_v3)
+#' close(con)
 #' @export
 seasonder_readSeaSondeCSFileHeaderV3 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
@@ -3968,8 +4024,38 @@ seasonder_readSeaSondeCSFileHeaderV3 <- function(specs, connection, endian = "bi
 #'
 #' @return A list with the read and transformed results.
 #' @examples
-#' header <- seasonder_readSeaSondeCSFileHeaderV4(specs, con, endian = "big")
-#' print(header)
+#' # Read CS file header and extract version 4 fields
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' con <- file(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   "rb"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V1"))
+#' header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V2"))
+#' header_v2 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV2(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V3"))
+#' header_v3 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV3(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V4"))
+#' header_v4 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV4(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' str(header_v4)
+#' close(con)
 #' @export
 seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
@@ -4013,8 +4099,44 @@ seasonder_readSeaSondeCSFileHeaderV4 <- function(specs, connection, endian = "bi
 #'
 #' @return A list with the read and transformed results.
 #' @examples
-#' header <- seasonder_readSeaSondeCSFileHeaderV5(specs, con, endian = "big")
-#' print(header)
+#' # Read CS file header and extract version 5 fields
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' con <- file(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   "rb"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V1"))
+#' header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V2"))
+#' header_v2 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV2(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V3"))
+#' header_v3 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV3(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V4"))
+#' header_v4 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV4(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V5"))
+#' header_v5 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV5(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' str(header_v5)
+#' close(con)
 #' @export
 seasonder_readSeaSondeCSFileHeaderV5 <- function(specs, connection, endian = "big", prev_data = NULL) {
 
@@ -4235,8 +4357,60 @@ seasonder_v6_skip_transformation <- function(cond, value) {
 #'
 #'
 #' @examples
-#' header <- seasonder_readSeaSondeCSFileHeaderV6(specs, con, endian = "big")
-#' print(header)
+#' # Read CS file header (Version 6 blocks) via wrapper
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' con <- file(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+#'   "rb"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V1"))
+#' header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V2"))
+#' header_v2 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV2(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V3"))
+#' header_v3 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV3(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V4"))
+#' header_v4 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV4(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V5"))
+#' header_v5 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV5(
+#'   specs,
+#'   con,
+#'   endian = "big"
+#' )
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V6"))
+#' prev_data <- purrr::reduce(list(header_v2,header_v3,header_v4,header_v5), \(pool, current_header){
+#' 
+#'   overlapping_keys <- intersect(names(pool), names(current_header))
+#'   pool[overlapping_keys] <- current_header[overlapping_keys]
+#' 
+#'   
+#'   new_keys <- setdiff(names(current_header), names(pool))
+#'   pool <- c(pool, current_header[new_keys])
+#' pool
+#' }, .init = header_v1)
+#' header_v6 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV6(
+#'   specs,
+#'   con,
+#'   endian = "big",
+#' prev_data = prev_data
+#' )
+#' str(header_v6)
 #' close(con)
 #' @export
 seasonder_readSeaSondeCSFileHeaderV6 <- function(specs, connection, endian = "big", prev_data = NULL) {
@@ -4392,10 +4566,10 @@ process_version_header <- function(pool, version, specs, connection, endian = "b
 ##' @return A combined list of all processed headers up to the file version.
 #' @examples
 #' # Example: read header from a sample CS file
-#' specs_path <- seasonder_defaultSpecsFilePath("CS")
-#' specs <- seasonder_readYAMLSpecs(specs_path)
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, "header")
 #' con <- file(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"), "rb")
-#' header <- seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
+#' header <- SeaSondeR:::seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
 #' print(header)
 #' close(con)
  seasonder_readSeaSondeCSFileHeader <- function(specs, connection, endian = "big") {
@@ -4481,7 +4655,7 @@ process_version_header <- function(pool, version, specs, connection, endian = "b
 #'
 #' @examples
 #' con <- rawConnection(as.raw(rep(0, 300)))
-#' header <- list(nRangeCells = 100, nDopplerCells = 256, nCsKind = 2)
+#' header <- list(nRangeCells = 1, nDopplerCells = 5, nCsKind = 2)
 #' data <- seasonder_readSeaSondeCSFileData(con, header, endian = "big")
 #' print(data)
 #' close(con)

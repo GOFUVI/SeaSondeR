@@ -2194,7 +2194,7 @@ seasonder_rejectDistantBraggPeakTest <- function(seasonder_cs_object, peak, rang
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_rejectDistantBragg(cs_obj)
-#' print(seasonder_getSeaSondeRCS_FOR(cs_obj))
+#' head(seasonder_getSeaSondeRCS_FOR(cs_obj))
 seasonder_rejectDistantBragg <- function(seasonder_cs_object) {
 
   # Retrieve the detected FOR data
@@ -2386,7 +2386,7 @@ seasonder_rejectNoiseIonosphericTest <- function(seasonder_cs_object, peak, rang
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj2 <- SeaSondeR:::seasonder_rejectNoiseIonospheric(cs_obj)
-#' print(seasonder_getSeaSondeRCS_FOR(cs_obj2))
+#' head(seasonder_getSeaSondeRCS_FOR(cs_obj2))
 seasonder_rejectNoiseIonospheric <- function(seasonder_cs_object) {
 
   # Retrieve the detected FOR data
@@ -2618,7 +2618,7 @@ seasonder_computeFORs <- function(seasonder_cs_object, method = NULL, FOR_contro
 #' # Create a SeaSondeRCS object from a spectral file
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' boundaries <- seasonder_SeaSondeRCSExportFORBoundaries(cs_obj)
-#' print(boundaries)
+#' head(boundaries)
 #' @export
 seasonder_SeaSondeRCSExportFORBoundaries <- function(seasonder_cs_object){
 

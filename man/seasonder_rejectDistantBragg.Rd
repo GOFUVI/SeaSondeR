@@ -51,7 +51,7 @@ apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 cs_obj <- SeaSondeR:::seasonder_rejectDistantBragg(cs_obj)
-print(seasonder_getSeaSondeRCS_FOR(cs_obj))
+head(seasonder_getSeaSondeRCS_FOR(cs_obj))
 }
 \references{
 COS. SpectraPlotterMap 12 User Guide. CODAR Ocean Sensors (COS), Mountain View, CA, USA, 2016.

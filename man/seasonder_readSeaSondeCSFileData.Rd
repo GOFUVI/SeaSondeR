@@ -53,7 +53,7 @@ This function utilizes the \code{rlang} package to manage errors and conditions,
 
 \examples{
 con <- rawConnection(as.raw(rep(0, 300)))
-header <- list(nRangeCells = 100, nDopplerCells = 256, nCsKind = 2)
+header <- list(nRangeCells = 1, nDopplerCells = 5, nCsKind = 2)
 data <- seasonder_readSeaSondeCSFileData(con, header, endian = "big")
 print(data)
 close(con)

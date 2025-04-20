@@ -919,13 +919,12 @@ seasonder_applyCSSYSigns <- function(cs_data) {
 #' }
 #'
 #' @examples
-#'   # Assuming "path/to/file.rcssy" is a valid SeaSonde RCSSY file and the specifications file exists:
-#'   cs_obj <- seasonder_readSeaSondeRCSSYFile("path/to/file.rcssy")
-#'
-#'   # Inspect the resulting SeaSondeRCS object:
-#'   print(attr(cs_obj, "header"))
-#'   print(attr(cs_obj, "data"))
-#'
+#' \dontrun{
+#' # Example file not included in package to avoid large file size
+#' # Example (expected to error on missing file):
+#' cs_obj <- SeaSondeR:::seasonder_readSeaSondeRCSSYFile("path/to/file.rcssy")
+#' str(cs_obj)
+#' }
 seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSY"), endian = "big"){
 
   # Set up error handling parameters with function name, error class, and file path

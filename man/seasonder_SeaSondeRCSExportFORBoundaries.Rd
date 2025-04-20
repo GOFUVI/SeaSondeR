@@ -50,7 +50,7 @@ apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 # Create a SeaSondeRCS object from a spectral file
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 boundaries <- seasonder_SeaSondeRCSExportFORBoundaries(cs_obj)
-print(boundaries)
+head(boundaries)
 }
 \seealso{
 \itemize{

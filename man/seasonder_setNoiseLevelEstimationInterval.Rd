@@ -42,6 +42,6 @@ cs_obj <- seasonder_createSeaSondeRCS(
 )
 cs_obj <- seasonder_setNoiseLevelEstimationInterval(cs_obj, new_interval)
 print(attr(cs_obj, "reference_noise_normalized_limits_estimation_interval"))
-noise_limits <- seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
+noise_limits <- SeaSondeR:::seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
 print(noise_limits)
 }

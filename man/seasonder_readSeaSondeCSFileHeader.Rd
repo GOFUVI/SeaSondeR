@@ -23,10 +23,10 @@ based on the file version.
 }
 \examples{
 # Example: read header from a sample CS file
-specs_path <- seasonder_defaultSpecsFilePath("CS")
-specs <- seasonder_readYAMLSpecs(specs_path)
+specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, "header")
 con <- file(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"), "rb")
-header <- seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
+header <- SeaSondeR:::seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
 print(header)
 close(con)
 }

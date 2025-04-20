@@ -41,11 +41,8 @@ The function executes the following steps:
 }
 }
 \examples{
-  # Assuming "path/to/file.rcssy" is a valid SeaSonde RCSSW file and the specifications file exists:
-  cs_obj <- seasonder_readSeaSondeRCSSWFile("path/to/file.rcssy")
-
-  # Inspect the resulting SeaSondeRCS object:
-  print(attr(cs_obj, "header"))
-  print(attr(cs_obj, "data"))
+  # Example (expected to error on missing file):
+  cs_obj <- SeaSondeR:::seasonder_readSeaSondeRCSSWFile(system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR"))
+  str(cs_obj)
 
 }

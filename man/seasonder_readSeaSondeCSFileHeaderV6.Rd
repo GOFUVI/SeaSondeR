@@ -68,8 +68,60 @@ Proper error management ensures the integrity of the reading process and provide
 }
 
 \examples{
-header <- seasonder_readSeaSondeCSFileHeaderV6(specs, con, endian = "big")
-print(header)
+# Read CS file header (Version 6 blocks) via wrapper
+specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+con <- file(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+  "rb"
+)
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V1"))
+header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
+  specs,
+  con,
+  endian = "big"
+)
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V2"))
+header_v2 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV2(
+  specs,
+  con,
+  endian = "big"
+)
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V3"))
+header_v3 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV3(
+  specs,
+  con,
+  endian = "big"
+)
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V4"))
+header_v4 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV4(
+  specs,
+  con,
+  endian = "big"
+)
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V5"))
+header_v5 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV5(
+  specs,
+  con,
+  endian = "big"
+)
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V6"))
+prev_data <- purrr::reduce(list(header_v2,header_v3,header_v4,header_v5), \(pool, current_header){
+
+  overlapping_keys <- intersect(names(pool), names(current_header))
+  pool[overlapping_keys] <- current_header[overlapping_keys]
+
+  
+  new_keys <- setdiff(names(current_header), names(pool))
+  pool <- c(pool, current_header[new_keys])
+pool
+}, .init = header_v1)
+header_v6 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV6(
+  specs,
+  con,
+  endian = "big",
+prev_data = prev_data
+)
+str(header_v6)
 close(con)
 }
 \seealso{

@@ -21,7 +21,7 @@ Setter for AmplitudeFactors
 # Minimal example for seasonder_setSeaSondeRAPM_AmplitudeFactors
 apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-new_factors <- list(1, 2, 3)
+new_factors <- list(1, 2)
 apm_obj <- seasonder_setSeaSondeRAPM_AmplitudeFactors(apm_obj, new_factors)
 print(attributes(apm_obj)$AmplitudeFactors)
 }

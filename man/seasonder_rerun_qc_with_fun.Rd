@@ -27,6 +27,7 @@ This function is meant to be used within custom condition handlers for the
 \code{read_and_qc_field} function.
 }
 \examples{
-val <- seasonder_rerun_qc_with_fun(list(seasonder_value = 42), function(x) x * 2)
+# Example (expected to error due to missing restart):
+val <- try(SeaSondeR:::seasonder_rerun_qc_with_fun(list(seasonder_value = 42), function(x) x * 2), silent = TRUE)
 print(val)
 }

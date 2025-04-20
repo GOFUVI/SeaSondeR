@@ -25,6 +25,7 @@ If a path is provided and there is an issue writing to the file, the function lo
 cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
 json_output <- seasonder_asJSONSeaSondeRCSData(cs_obj)
 print(json_output)
+
 }
 \seealso{
 \code{\link{seasonder_createSeaSondeRCS}}, \code{\link{seasonder_getSeaSondeRCS_data}}
