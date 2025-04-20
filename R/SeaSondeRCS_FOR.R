@@ -951,7 +951,7 @@ seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits <- function(seaso
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' FOR_data <- seasonder_getSeaSondeRCS_FOR(cs_obj)
-#' print(FOR_data)
+#' head(FOR_data)
 #' @export
 seasonder_getSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 
@@ -2459,6 +2459,7 @@ seasonder_rejectNoiseIonospheric <- function(seasonder_cs_object) {
 #' - \code{\link{seasonder_rejectNoiseIonospheric}} for rejecting noise/ionospheric contamination.
 #'
 #' @examples
+#' seasonder_disableMessages()
 #' # Set sample file paths
 #' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
@@ -2536,6 +2537,7 @@ seasonder_computeFORsSeaSondeMethod <- function(seasonder_cs_object) {
 #'
 #' @examples
 #' # Set sample file paths
+#' seasonder_disableMessages()
 #' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' # Read the antenna pattern file to create a SeaSondeRAPM object

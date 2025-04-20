@@ -77,7 +77,7 @@ seasonder_logStr <- function(message,level) {
 #' @return A character vector of the `n` most recent log entries from the global log.
 #' @export
 #' @examples
-#'   seasonder_getLog()
+#'   head(seasonder_getLog())
 seasonder_getLog <- function(n=100) {
 
   utils::tail(seasonder_the$log,n = n)

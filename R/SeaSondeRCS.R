@@ -1067,7 +1067,7 @@ seasonder_getSeaSondeRCS_data <- function(seasonder_cs_object) {
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' ssa1_matrix <- SeaSondeR:::seasonder_getSeaSondeRCS_dataMatrix(cs_obj, "SSA1")
-#' print(ssa1_matrix)
+#' print(ssa1_matrix[1:10, 1:10])
 seasonder_getSeaSondeRCS_dataMatrix <- function(seasonder_cs_object, matrix_name) {
 
   # Validate that the matrix_name is one of the expected values
@@ -1117,7 +1117,7 @@ seasonder_getSeaSondeRCS_dataMatrix <- function(seasonder_cs_object, matrix_name
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' ssa1_data <- SeaSondeR:::seasonder_getSeaSondeRCS_antenna_SSdata(cs_obj, 1)
-#' print(ssa1_data)
+#' print(ssa1_data[1:10,1:10])
 seasonder_getSeaSondeRCS_antenna_SSdata <- function(seasonder_cs_object, antenna) {
 
   # Construct the matrix name dynamically using the antenna number
@@ -2034,7 +2034,7 @@ seasonder_getBraggLineBins <- function(seasonder_cs_object) {
 #' freqs <- SeaSondeR:::seasonder_computeDopplerBinsFrequency(
 #'   cs_obj, nDoppler, center_bin, spectra_res
 #' )
-#' print(freqs)
+#' head(freqs)
 #'
 seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_object, nDoppler, center_bin, spectra_res, normalized = FALSE) {
   # Check if debugging is enabled for this function
@@ -2079,7 +2079,7 @@ seasonder_computeDopplerBinsFrequency <- function(seasonder_cs_object, nDoppler,
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' freqs <- SeaSondeR:::seasonder_getDopplerBinsFrequency(cs_obj)
-#' print(freqs)
+#' head(freqs)
 seasonder_getDopplerBinsFrequency <- function(seasonder_cs_object, normalized = FALSE) {
   if(seasonder_is_debug_point_enabled("seasonder_getDopplerBinsFrequency")){
     browser() # Debug point, do not remove
@@ -2439,7 +2439,7 @@ seasonder_SelfSpectra2dB <- function(seasonder_cs_object, spectrum_values) {
 #' bins <- seq_len(as.integer(seasonder_getnDopplerCells(cs_obj)))
 #' # Retrieve normalized Doppler frequencies for the specified bins (internal function)
 #' normalized_freqs <- SeaSondeR:::seasonder_Bins2NormalizedDopplerFreq(cs_obj, bins)
-#' print(normalized_freqs)
+#' head(normalized_freqs)
 seasonder_Bins2NormalizedDopplerFreq <- function(seasonder_cs_object, bins) {
 
   # Retrieve normalized Doppler frequencies from the SeaSondeR object
@@ -2658,7 +2658,7 @@ seasonder_DopplerFreq2Bins <- function(seasonder_cs_object, doppler_values) {
 #' bins <- seq_len(as.integer(seasonder_getnDopplerCells(cs_obj)))
 #' # Retrieve Doppler frequencies for the specified bins (internal function)
 #' freqs <- SeaSondeR:::seasonder_Bins2DopplerFreq(cs_obj, bins)
-#' print(freqs)
+#' head(freqs)
 seasonder_Bins2DopplerFreq <- function(seasonder_cs_object, bins) {
 
   # Retrieve the Doppler bin frequencies in non-normalized form (Hz)

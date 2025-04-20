@@ -254,7 +254,7 @@ seasonder_MUSICInitEigenDecomp <- function() {
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' interpolated_data <- SeaSondeR:::seasonder_MUSICInitInterpolatedData(cs_obj)
-#' print(interpolated_data)
+#' head(interpolated_data)
 seasonder_MUSICInitInterpolatedData <- function(seasonder_cs_object) {
 
   # Get the number of Doppler cells for MUSIC interpolation
@@ -476,7 +476,6 @@ seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = N
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' music_obj <- SeaSondeR:::seasonder_initMUSICData(cs_obj)
-#' str(music_obj)
 #'
 #' # Example: specific range cells and Doppler bins
 #' music_obj2 <- SeaSondeR:::seasonder_initMUSICData(
@@ -484,7 +483,6 @@ seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = N
 #'   range_cells = c(1, 2),
 #'   doppler_bins = c(1, 2, 5, 10)
 #' )
-#' str(music_obj2)
 seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL, NULL_MUSIC = FALSE) {
 
   # Copy the input SeaSondeR object
@@ -1758,7 +1756,7 @@ seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin <- function(seasonder_cs_object)
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' vels <- SeaSondeR:::seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(cs_obj)
-#' print(vels)
+#' head(vels)
 seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity <- function(seasonder_cs_object) {
   # Retrieve Doppler bin frequencies for the given cross-spectral object.
   freq <- seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(seasonder_cs_object)
@@ -4055,7 +4053,7 @@ return(out)
 #' # Run MUSIC algorithm to populate MUSIC data
 #' cs_obj <- seasonder_runMUSICInFOR(cs_obj)
 #' radial_metrics <- seasonder_exportRadialMetrics(cs_obj, AngSeg = list(c(5, 30, 60)))
-#' print(radial_metrics)
+#' head(radial_metrics)
 #' }
 #' @export
 seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) {
@@ -4265,7 +4263,7 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
 #' # Optionally, run MUSIC in FOR context to populate MUSIC data
 #' cs_obj <- seasonder_runMUSICInFOR(cs_obj)
 #' radial_metrics <- seasonder_exportLLUVRadialMetrics(cs_obj, tempfile(fileext = ".ruv"))
-#' print(radial_metrics)
+#' head(radial_metrics)
 #' @export
 seasonder_exportLLUVRadialMetrics <- function(seasonder_cs_object, LLUV_path,...) {
   
