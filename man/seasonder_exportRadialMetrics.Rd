@@ -56,6 +56,6 @@ cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 # Run MUSIC algorithm to populate MUSIC data
 cs_obj <- seasonder_runMUSICInFOR(cs_obj)
 radial_metrics <- seasonder_exportRadialMetrics(cs_obj, AngSeg = list(c(5, 30, 60)))
-print(radial_metrics)
+head(radial_metrics)
 }
 }

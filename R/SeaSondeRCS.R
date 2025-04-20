@@ -2136,7 +2136,7 @@ seasonder_getDopplerBinsFrequency <- function(seasonder_cs_object, normalized = 
 #' freqs <- SeaSondeR:::seasonder_getDopplerBinsFrequency(cs_obj)
 #' # Compute radial velocities for bins
 #' rv <- SeaSondeR:::seasonder_computeBinsRadialVelocity(cs_obj, freqs)
-#' print(rv)
+#' head(rv)
 seasonder_computeBinsRadialVelocity <- function(seasonder_cs_object, freq) {
 
   # Retrieve the Bragg Doppler angular frequencies from the SeaSondeRCS object
@@ -2191,7 +2191,7 @@ seasonder_computeBinsRadialVelocity <- function(seasonder_cs_object, freq) {
 #' )
 #' # Compute radial velocities for bins
 #' velocities <- SeaSondeR:::seasonder_getBinsRadialVelocity(cs_obj)
-#' print(velocities)
+#' head(velocities)
 seasonder_getBinsRadialVelocity <- function(seasonder_cs_object) {
 
   freq <- seasonder_getDopplerBinsFrequency(seasonder_cs_object)
@@ -3501,7 +3501,7 @@ seasonder_readCSField <- function(con, type, endian = "big") {
       char_length <- as.integer(sub("^Char", "", type))
       chars <- read_values(1, "raw", char_length)
       # Convert raw bytes to characters, handling embedded nul bytes
-      out <- paste0(rawToChar(chars, multiple = TRUE), collapse = "")
+      out <- rawToChar(chars)
       return(out)
     }
 

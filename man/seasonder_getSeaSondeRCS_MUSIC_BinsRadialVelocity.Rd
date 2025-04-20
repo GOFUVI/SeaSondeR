@@ -34,7 +34,7 @@ apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 vels <- SeaSondeR:::seasonder_getSeaSondeRCS_MUSIC_BinsRadialVelocity(cs_obj)
-print(vels)
+head(vels)
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency}},

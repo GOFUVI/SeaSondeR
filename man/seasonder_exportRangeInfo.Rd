@@ -53,6 +53,6 @@ cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 # Run MUSIC algorithm to populate MUSIC data
 cs_obj <- seasonder_runMUSICInFOR(cs_obj)
 range_info <- seasonder_exportRangeInfo(cs_obj)
-print(range_info)
+head(range_info)
 }
 }

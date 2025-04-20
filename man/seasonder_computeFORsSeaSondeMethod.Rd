@@ -56,6 +56,7 @@ This function is designed for processing SeaSonde radar data to accurately ident
 First Order Regions, ensuring reliable current and wave measurements.
 }
 \examples{
+seasonder_disableMessages()
 # Set sample file paths
 cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")

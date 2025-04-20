@@ -41,7 +41,7 @@ cs_obj <- seasonder_readSeaSondeCSFile(
 )
 # Compute radial velocities for bins
 velocities <- SeaSondeR:::seasonder_getBinsRadialVelocity(cs_obj)
-print(velocities)
+head(velocities)
 }
 \seealso{
 \code{\link{seasonder_getDopplerBinsFrequency}},

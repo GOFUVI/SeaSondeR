@@ -3970,7 +3970,7 @@ out <- out + as.integer(!music$P0_check) * 16
 #' # Run MUSIC algorithm to populate MUSIC data
 #' cs_obj <- seasonder_runMUSICInFOR(cs_obj)
 #' range_info <- seasonder_exportRangeInfo(cs_obj)
-#' print(range_info)
+#' head(range_info)
 #' }
 #' @export
 seasonder_exportRangeInfo <- function(seasonder_cs_object){

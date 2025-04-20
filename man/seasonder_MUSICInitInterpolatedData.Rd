@@ -33,7 +33,7 @@ apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 interpolated_data <- SeaSondeR:::seasonder_MUSICInitInterpolatedData(cs_obj)
-print(interpolated_data)
+head(interpolated_data)
 }
 \seealso{
 \code{\link{seasonder_initCSDataStructure}} for details on the cross-spectral data structure.

@@ -40,7 +40,7 @@ apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 ssa1_matrix <- SeaSondeR:::seasonder_getSeaSondeRCS_dataMatrix(cs_obj, "SSA1")
-print(ssa1_matrix)
+print(ssa1_matrix[1:10, 1:10])
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_data}} for retrieving the complete data structure.

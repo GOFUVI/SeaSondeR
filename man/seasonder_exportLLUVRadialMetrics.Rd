@@ -44,5 +44,5 @@ cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 # Optionally, run MUSIC in FOR context to populate MUSIC data
 cs_obj <- seasonder_runMUSICInFOR(cs_obj)
 radial_metrics <- seasonder_exportLLUVRadialMetrics(cs_obj, tempfile(fileext = ".ruv"))
-print(radial_metrics)
+head(radial_metrics)
 }

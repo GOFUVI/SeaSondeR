@@ -51,6 +51,7 @@ methods and configure parameters without modifying the internal object structure
 }
 \examples{
 # Set sample file paths
+seasonder_disableMessages()
 cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 # Read the antenna pattern file to create a SeaSondeRAPM object

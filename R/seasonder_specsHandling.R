@@ -200,7 +200,6 @@ seasonder_find_spectra_file_type <- function(filepath, endian = "big") {
       if (is_CS) return(list(key = "CS")) else e
     }
   )
-
   # Use a switch to determine the output based on the key read from the file block
   out <- switch(
     file_id$key,

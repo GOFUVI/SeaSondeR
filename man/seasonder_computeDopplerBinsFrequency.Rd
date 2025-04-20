@@ -61,7 +61,7 @@ spectra_res <- SeaSondeR:::seasonder_getDopplerSpectrumResolution(cs_obj)
 freqs <- SeaSondeR:::seasonder_computeDopplerBinsFrequency(
   cs_obj, nDoppler, center_bin, spectra_res
 )
-print(freqs)
+head(freqs)
 
 }
 \seealso{

@@ -342,7 +342,7 @@ seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_qua
 #' # Log a test message
 #' seasonder_log("Test log entry", "info")
 #' # Retrieve the last log entry
-#' seasonder_lastLog()
+#' head(seasonder_lastLog())
 seasonder_lastLog <- function(...) {
   seasonder_splitLog(...) %>% dplyr::last()
 }

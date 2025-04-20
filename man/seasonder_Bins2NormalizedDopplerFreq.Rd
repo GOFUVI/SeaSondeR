@@ -41,7 +41,7 @@ cs_obj <- seasonder_readSeaSondeCSFile(
 bins <- seq_len(as.integer(seasonder_getnDopplerCells(cs_obj)))
 # Retrieve normalized Doppler frequencies for the specified bins (internal function)
 normalized_freqs <- SeaSondeR:::seasonder_Bins2NormalizedDopplerFreq(cs_obj, bins)
-print(normalized_freqs)
+head(normalized_freqs)
 }
 \seealso{
 \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving Doppler bin frequencies.

@@ -21,5 +21,5 @@ seasonder_enableLogs()
 # Log a test message
 seasonder_log("Test log entry", "info")
 # Retrieve the last log entry
-seasonder_lastLog()
+head(seasonder_lastLog())
 }

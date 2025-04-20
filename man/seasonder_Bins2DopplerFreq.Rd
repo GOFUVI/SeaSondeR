@@ -32,7 +32,7 @@ cs_obj <- seasonder_readSeaSondeCSFile(
 bins <- seq_len(as.integer(seasonder_getnDopplerCells(cs_obj)))
 # Retrieve Doppler frequencies for the specified bins (internal function)
 freqs <- SeaSondeR:::seasonder_Bins2DopplerFreq(cs_obj, bins)
-print(freqs)
+head(freqs)
 }
 \seealso{
 \code{\link{seasonder_DopplerFreq2Bins}} for the reverse operation.

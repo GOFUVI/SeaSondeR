@@ -45,7 +45,7 @@ cs_obj <- seasonder_readSeaSondeCSFile(
 freqs <- SeaSondeR:::seasonder_getDopplerBinsFrequency(cs_obj)
 # Compute radial velocities for bins
 rv <- SeaSondeR:::seasonder_computeBinsRadialVelocity(cs_obj, freqs)
-print(rv)
+head(rv)
 }
 \seealso{
 \code{\link{seasonder_getBraggDopplerAngularFrequency}} to retrieve the Bragg angular frequencies.
