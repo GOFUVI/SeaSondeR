@@ -3340,7 +3340,7 @@ seasonder_int_to_raw <- function(x) {
 #' @return A 64-bit integer representation of the raw vector.
 #' @examples
 #' r <- as.raw(c(0x12,0x34,0x56,0x78,0x90,0xAB,0xCD,0xEF))
-#' seasonder_raw_to_int(r, signed = TRUE)
+#' SeaSondeR:::seasonder_raw_to_int(r, signed = TRUE)
 seasonder_raw_to_int <- function(r,signed = F) {
   # Convert raw values to bits and collapse into a single bit string.
   bit_str <- sapply(r,FUN = function(x) rev(rawToBits(x))) %>% as.integer() %>% paste0(collapse = "")
