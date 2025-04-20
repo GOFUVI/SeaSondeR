@@ -45,8 +45,13 @@ data <- list(
   QC  = matrix(NA_real_, 1, 1)
 )
 cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data)
-# Attach dummy MUSIC_data with eigenvalues list
-attr(cs_obj, "MUSIC_data") <- list(eigen = list(list(values=c(2,1))), retained_solution = c("dual"))
+# Attach dummy MUSIC data via internal setter
+MUSIC_df <- data.frame(
+  eigen = I(list(list(values = c(2,1)))),
+  retained_solution = "dual",
+  stringsAsFactors = FALSE
+)
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_MUSIC(cs_obj, MUSIC_df)
 # Run eigenvalue ratio check
 updated_obj <- SeaSondeR:::seasonder_MUSICCheckEigenValueRatio(cs_obj)
 print(attr(updated_obj, "MUSIC_data")$eigen_values_ratio)
