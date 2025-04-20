@@ -22,7 +22,7 @@ Reads a specified number of 32-bit unsigned integers from a binary connection an
 \examples{
 # Example usage:
 con <- rawConnection(as.raw(rep(0x01, 16)))
-lims <- seasonder_readCSSWLims(con, 4, endian = "big")
+lims <- SeaSondeR:::seasonder_readCSSWLims(con, 4, endian = "big")
 print(lims)
 close(con)
 }

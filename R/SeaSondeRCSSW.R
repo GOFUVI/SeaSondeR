@@ -366,7 +366,7 @@ seasonder_readCSSWBody <- function(connection, specs, size, dbRef, endian = "big
 #' @examples
 #' # Example usage:
 #' con <- rawConnection(as.raw(rep(0x01, 16)))
-#' lims <- seasonder_readCSSWLims(con, 4, endian = "big")
+#' lims <- SeaSondeR:::seasonder_readCSSWLims(con, 4, endian = "big")
 #' print(lims)
 #' close(con)
 seasonder_readCSSWLims <- function(connection, n_values, endian = "big") {

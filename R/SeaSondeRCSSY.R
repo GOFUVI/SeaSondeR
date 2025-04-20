@@ -509,10 +509,22 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 #' @return A list representing a cell in the CSSY body.
 #'
 #' @examples
-#'   con <- rawConnection(as.raw(c(0x00)))
-#'   specs <- list(indx = list(type = "int"))
-#'   result <- seasonder_readCSSYBodyRangeCell(con, specs, dbRef = 0, endian = "big")
-#'   close(con)
+#' # Example: use real specifications with a minimal raw cell
+#' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSY")
+#' specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
+#' body_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSY", "BODY"))
+#' # Build a minimal raw cell: 'END ' marker and zero payload size
+#' raw_data <- c(charToRaw("END "), as.raw(c(0, 0, 0, 0)))
+#' con <- rawConnection(raw_data)
+#' result <- SeaSondeR:::seasonder_readCSSYBodyRangeCell(
+#'   con,
+#'   body_specs,
+#'   dbRef = 0,
+#'   endian = "big",
+#'   specs_key_size = specs_key_size
+#' )
+#' print(result)
+#' close(con)
 seasonder_readCSSYBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
   indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
   scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block

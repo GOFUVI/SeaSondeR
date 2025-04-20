@@ -3220,8 +3220,10 @@ seasonder_skip_cs_file <- function(cond) {
 #'
 #' @references Cross Spectra File Format Version 6. CODAR. 2016
 #' @examples
-#' cs <- seasonder_readSeaSondeCSFile("path/to/csfile", "path/to/specs.yml", endian = "big")
-#' print(cs)
+#' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' cs <- seasonder_readSeaSondeCSFile(cs_file, spec_file, endian = "big")
+#' str(cs)
 #' @export
 #'
 seasonder_readSeaSondeCSFile <- function(filepath, specs_path, endian = "big") {
