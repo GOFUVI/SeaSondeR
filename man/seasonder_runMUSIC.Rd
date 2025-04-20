@@ -54,7 +54,7 @@ cs_obj <- SeaSondeR:::seasonder_initMUSICData(
   range_cells = c(1, 2),
   doppler_bins = c(1, 2, 5, 10)
 )
-# Run the MUSIC algorithm with FOR context
+# Run the MUSIC algorithm
 cs_obj <- seasonder_runMUSIC(cs_obj)
 # Check the updated processing steps
 print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_obj))
