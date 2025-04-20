@@ -254,7 +254,7 @@ seasonder_MUSICInitEigenDecomp <- function() {
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' interpolated_data <- SeaSondeR:::seasonder_MUSICInitInterpolatedData(cs_obj)
-#' head(interpolated_data)
+#' str(interpolated_data)
 seasonder_MUSICInitInterpolatedData <- function(seasonder_cs_object) {
 
   # Get the number of Doppler cells for MUSIC interpolation
@@ -1450,8 +1450,16 @@ seasonder_computePowerMatrix <- function(eig, a) {
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' # Perform DOA projections to generate DOA_solutions
+#' cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+#'  cs_obj,
+#'  range_cells = c(rep(5,11), rep(4,11)),
+#'  doppler_bins = c(c(669:679),c(674:684))
+#' )
+#' cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICComputeCov(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICCovDecomposition(cs_obj)
 #' cs_obj <- SeaSondeR:::seasonder_MUSICComputeDOAProjections(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICExtractPeaks(cs_obj)
 #' # Compute signal power matrix
 #' updated_obj <- SeaSondeR:::seasonder_MUSICComputeSignalPowerMatrix(cs_obj)
 #' print(updated_obj)
@@ -2207,8 +2215,19 @@ seasonder_MUSICCheckBearingDistance <- function(seasonder_cs_object){
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' updated_obj <- SeaSondeR:::seasonder_MUSICTestDualSolutions(cs_obj)
-#' print(updated_obj)
+#' cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+#'  cs_obj,
+#'  range_cells = c(rep(5,11), rep(4,11)),
+#'  doppler_bins = c(c(669:679),c(674:684))
+#' )
+#' cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICComputeCov(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICCovDecomposition(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICComputeDOAProjections(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICExtractPeaks(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICComputeSignalPowerMatrix(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICTestDualSolutions(cs_obj)
+#' print(cs_obj)
 seasonder_MUSICTestDualSolutions <- function(seasonder_cs_object) {
 
 
@@ -2427,6 +2446,12 @@ seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_object){
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+#'  cs_obj,
+#'  range_cells = c(rep(5,11), rep(4,11)),
+#'  doppler_bins = c(c(669:679),c(674:684))
+#' )
+#' cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
 #' out <- SeaSondeR:::seasonder_MUSICComputeCov(cs_obj)
 #' print(out)
 seasonder_MUSICComputeCov <- function(seasonder_cs_object) {
@@ -2628,10 +2653,19 @@ seasonder_eigen_decomp_C <- function(C){
 #' \code{\link{seasonder_MUSICComputeCov}} for computing the covariance matrix.
 #'
 #' @examples
-#' # Eigen decomposition of a covariance matrix using a toy covariance matrix
-#' C <- diag(3)
-#' eigen_res <- SeaSondeR:::seasonder_eigen_decomp_C(C)
-#' print(eigen_res)
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+#'  cs_obj,
+#'  range_cells = c(rep(5,11), rep(4,11)),
+#'  doppler_bins = c(c(669:679),c(674:684))
+#' )
+#' cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICComputeCov(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICCovDecomposition(cs_obj)
+#' print(cs_obj)
 seasonder_MUSICCovDecomposition <- function(seasonder_cs_object){
 
   # Initialize globals for seasonder_MUSICCovDecomposition
@@ -3066,6 +3100,15 @@ seasonder_MUSICExtractPeaksCheckRetainedSolution <- function(ret_sol, DOA_sol){
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+#'  cs_obj,
+#'  range_cells = c(rep(5,11), rep(4,11)),
+#'  doppler_bins = c(c(669:679),c(674:684))
+#' )
+#' cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICComputeCov(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICCovDecomposition(cs_obj)
+#' cs_obj <- SeaSondeR:::seasonder_MUSICComputeDOAProjections(cs_obj)
 #' out <- SeaSondeR:::seasonder_MUSICExtractPeaks(cs_obj)
 #' print(out)
 seasonder_MUSICExtractPeaks <- function(seasonder_cs_object){
@@ -3156,6 +3199,12 @@ seasonder_MUSIC_remove_no_solutions <- function(seasonder_cs_object){
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+#'  cs_obj,
+#'  range_cells = c(rep(5,11), rep(4,11)),
+#'  doppler_bins = c(c(669:679),c(674:684))
+#' )
+#' cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
 #' # Assume MUSIC analysis has been run
 #' cs_obj <- seasonder_runMUSIC(cs_obj)
 #' out <- SeaSondeR:::seasonder_MUSICSelectDOA(cs_obj)
@@ -3304,10 +3353,11 @@ seasonder_checkPWMAX <- function(seasonder_cs_object) {
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' cs_obj <- SeaSondeR:::seasonder_initMUSICData(cs_obj)
 #' cs_obj <- SeaSondeR:::seasonder_initMUSICData(
-#'   cs_obj,
-#'   range_cells = c(1, 2),
-#'   doppler_bins = c(1, 2, 5, 10)
+#'  cs_obj,
+#'  range_cells = c(rep(5,11), rep(4,11)),
+#'  doppler_bins = c(c(669:679),c(674:684))
 #' )
+#' cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
 #' # Run the MUSIC algorithm
 #' cs_obj <- seasonder_runMUSIC(cs_obj)
 #' # Check the updated processing steps
