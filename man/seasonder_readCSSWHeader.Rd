@@ -57,10 +57,21 @@ calls itself recursively to process nested keys.
 }
 }
 \examples{
-\dontrun{
-  con <- file("path/to/file.cssy", "rb")
-  specs <- seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CSSW"), "header")
-  header <- seasonder_readCSSWHeader(con, specs, endian = "big")
-  close(con)
-}
+# Example: read the CSSW file header using real specifications
+spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSW")
+specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
+header_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSW", "HEAD"))
+con <- file(
+  system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR"),
+  "rb",
+  raw = TRUE
+)
+header <- SeaSondeR:::seasonder_readCSSWHeader(
+  con,
+  header_specs,
+  endian = "big",
+  specs_key_size = specs_key_size
+)
+print(header)
+close(con)
 }

@@ -29,10 +29,13 @@ using \code{seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion}.
 }
 }
 \examples{
-\dontrun{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object with MUSIC data
-updated_object <- seasonder_MUSICComputePropDualSols(cs_object)
-}
+# Compute proportion of dual solutions for MUSIC data
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+updated_obj <- SeaSondeR:::seasonder_MUSICComputePropDualSols(cs_obj)
+print(updated_obj)
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC}} to retrieve the MUSIC data.

@@ -20,7 +20,7 @@ mechanism to gracefully handle file reading errors by logging an error message a
 \details{
 This function is meant to be used within a custom condition handler. When a problematic condition
 arises during the processing of a SeaSonde CS file, you can call \code{seasonder_skip_cs_file(cond)} to
-trigger this restart, which allows for a graceful degradation by logging an error message and skipping the file.
+trigger this restart, which allows for a graceful degradation by logging an error message and returning a specified value.
 
 The effect of invoking this restart is twofold:
 \enumerate{
@@ -29,9 +29,10 @@ The effect of invoking this restart is twofold:
 }
 }
 \examples{
-\dontrun{
-  tryCatch({
-    seasonder_skip_cs_file(simpleError("test error"))
-  }, seasonder_cs_file_skipped = function(e) NULL)
-}
+# Example: Skip file reading using a withRestarts handler to return NULL header and data
+result <- withRestarts(
+  seasonder_skip_cs_file(simpleError("test error")),
+  seasonder_skip_cs_file = function(cond) list(header = NULL, data = NULL)
+)
+print(result)
 }

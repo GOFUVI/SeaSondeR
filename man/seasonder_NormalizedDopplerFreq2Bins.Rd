@@ -31,13 +31,15 @@ The function then applies \code{\link{findInterval}} to determine the correspond
 After \code{findInterval} determines the bin indices, values that are out of range (\code{bins < 1} or \code{bins > nDoppler}) are set to \code{NA}.
 }
 \examples{
-\dontrun{
-# Convert normalized Doppler frequencies to bin indices
-cs_obj <- seasonder_createSeaSondeRCS(...)
-doppler_values <- c(-0.5, 0, 0.8)
-bins <- seasonder_NormalizedDopplerFreq2Bins(cs_obj, doppler_values)
-print(bins)
-}
+## Create a SeaSondeRCS object using a sample data file
+cs_obj <- seasonder_createSeaSondeRCS(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+)
+## Define a set of normalized Doppler frequencies to convert
+doppler_values <- c(-1, 1)
+## Convert normalized Doppler frequencies to bin indices
+bins <- SeaSondeR:::seasonder_NormalizedDopplerFreq2Bins(cs_obj, doppler_values)
+head(bins)
 }
 \seealso{
 \code{\link{seasonder_Bins2NormalizedDopplerFreq}} for the inverse operation.

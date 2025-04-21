@@ -16,7 +16,7 @@ The quality_matrix attribute from the object.
 Getter for quality_matrix
 }
 \examples{
-\dontrun{
-  quality_matrix <- seasonder_getSeaSondeRAPM_quality_matrix(obj)
-}
+# Create a default SeaSondeRAPM object
+obj <- seasonder_createSeaSondeRAPM()
+quality_matrix <- seasonder_getSeaSondeRAPM_quality_matrix(obj)
 }

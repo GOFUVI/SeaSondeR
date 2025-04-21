@@ -45,10 +45,13 @@ in the processing pipeline.
 This function is part of the FOR processing workflow and should be applied after the initial detection of Bragg peaks.
 }
 \examples{
-\dontrun{
-# Apply distant Bragg peak rejection to a SeaSondeRCS object
-cs_obj <- seasonder_rejectDistantBragg(cs_obj)
-}
+# Apply distant Bragg peak rejection
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+cs_obj <- SeaSondeR:::seasonder_rejectDistantBragg(cs_obj)
+head(seasonder_getSeaSondeRCS_FOR(cs_obj))
 }
 \references{
 COS. SpectraPlotterMap 12 User Guide. CODAR Ocean Sensors (COS), Mountain View, CA, USA, 2016.

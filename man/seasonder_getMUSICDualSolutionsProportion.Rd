@@ -20,9 +20,11 @@ The function checks the MUSIC_data attribute for a dual_solutions_proportion val
 If not available, it defaults to NA_real_.
 }
 \examples{
-\dontrun{
-  # Assuming cs_object is a valid SeaSondeRCS object.
-  dual_prop <- seasonder_getMUSICDualSolutionsProportion(cs_object)
-  print(dual_prop)
-}
+# Minimal example for seasonder_getMUSICDualSolutionsProportion
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+dual_prop <- SeaSondeR:::seasonder_getMUSICDualSolutionsProportion(cs_obj)
+print(dual_prop)
 }

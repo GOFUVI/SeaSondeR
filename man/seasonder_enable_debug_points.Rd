@@ -16,7 +16,5 @@ Updated character vector of enabled debug points.
 This function adds one or more debug points to the list of enabled debug points.
 }
 \examples{
-\dontrun{
   seasonder_enable_debug_points("example_debug")
-}
 }

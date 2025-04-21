@@ -24,11 +24,13 @@ A SeaSondeRCS object with updated ProcessingSteps.
 Setter for ProcessingSteps
 }
 \examples{
-\dontrun{
- # Assuming cs_obj is a valid SeaSondeRCS object and new_steps 
- # is a character vector of processing steps
-  cs_obj <- seasonder_setSeaSondeRCS_ProcessingSteps(cs_obj, new_steps)
-  # Check the updated processing steps
- print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_obj))
-}
+# Create a valid SeaSondeRCS object for examples
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+# Define and append new processing steps
+new_steps <- "Example processing step"
+cs_obj <- seasonder_setSeaSondeRCS_ProcessingSteps(cs_obj, new_steps)
+print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_obj))
 }

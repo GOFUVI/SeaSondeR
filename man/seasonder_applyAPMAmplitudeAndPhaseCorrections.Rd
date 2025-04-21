@@ -17,7 +17,8 @@ This function applies amplitude and phase corrections to each antenna channel
 of a SeaSonde RAPM object based on the correction factors stored within the object.
 }
 \examples{
-\dontrun{
-  corrected_obj <- seasonder_applyAPMAmplitudeAndPhaseCorrections(obj)
-}
+# Apply amplitude & phase corrections to a test SeaSondeRAPM object
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+corrected_obj <- seasonder_applyAPMAmplitudeAndPhaseCorrections(obj)
 }

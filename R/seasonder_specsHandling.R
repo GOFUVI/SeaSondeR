@@ -15,13 +15,13 @@ seasonder_the$valid_yaml_seasondecssy_versions <- c("1.0.0")  # Valid version fo
 #' @importFrom rlang arg_match
 #'
 #' @examples
-#' \dontrun{
+#' 
 #'   # Retrieve the default CS specifications file path
-#'   cs_specs_path <- seasonder_defaultSpecsFilePath("CS")
+#'   cs_specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
 #'
 #'   # Retrieve the default CSSY specifications file path
-#'   cssy_specs_path <- seasonder_defaultSpecsFilePath("CSSY")
-#' }
+#'   cssy_specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSY")
+#' 
 seasonder_defaultSpecsFilePath <- function(type = "CS") {
   # Retrieve the list of default specifications file paths from the shared environment
   default_paths <- list(
@@ -57,28 +57,23 @@ seasonder_defaultSpecsFilePath <- function(type = "CS") {
 #' @seealso \code{\link[yaml]{read_yaml}} for the underlying YAML reading.
 #' @seealso \code{\link[purrr]{pluck}} for the data extraction mechanism used.
 #'
-#' @section Error Handling:
-#' The function has built-in error handling which aborts the function's execution and logs
+#' @details
+#' This function provides built-in error handling which aborts execution and logs
 #' detailed error messages in case of:
-#' \itemize{
-#'  \item File not found.
-#'  \item Error in reading the YAML content.
-#'  \item If the read YAML content is not of list type.
-#'  \item If no data is found for the provided path in the YAML content.
-#' }
-#' Errors generated are of class \code{"seasonder_read_yaml_file_error"}.
-#' Detailed error information including the file path and path within the file
-#' is provided. For logging and aborting, this function utilizes the
-#' \code{\link[=seasonder_logAndAbort]{seasonder_logAndAbort}} function.
+#' - File not found.
+#' - Error in reading the YAML content.
+#' - The read YAML content is not a list.
+#' - No data found for the provided path in the YAML content.
 #'
+#' Errors generated are of class \code{"seasonder_read_yaml_file_error"}. For logging and aborting,
+#' this function uses \code{\link[=seasonder_logAndAbort]{seasonder_logAndAbort}}.
 #' @importFrom yaml read_yaml
 #'
 #' @examples
-#' \dontrun{
-#' # Assuming a YAML file named "example.yaml" exists with appropriate content
-#' result <- seasonder_readYAMLSpecs("example.yaml", c("header", "versions", "V2"))
-#' print(result)
-#' }
+#' # Example: Read the CS header specifications (version V1) from the default specs file
+#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#' result <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header", "V1"))
+#' str(result)
 #'
 seasonder_readYAMLSpecs <- function(file_path, path = rlang::zap()) {
 
@@ -136,11 +131,10 @@ seasonder_readYAMLSpecs <- function(file_path, path = rlang::zap()) {
 #' @importFrom glue glue
 #'
 #' @examples
-#' \dontrun{
-#'   # Determine the spectra file type for a given file path
-#'   file_type <- seasonder_find_spectra_file_type("path/to/spectra_file.bin")
+#'   # Determine the spectra file type for a file included in the package
+#'   spec_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#'   file_type <- SeaSondeR:::seasonder_find_spectra_file_type(spec_file)
 #'   print(file_type)
-#' }
 seasonder_find_spectra_file_type <- function(filepath, endian = "big") {
   # Set up error handling parameters with function name, error class, and file path
   conditions_params <- list(
@@ -206,7 +200,6 @@ seasonder_find_spectra_file_type <- function(filepath, endian = "big") {
       if (is_CS) return(list(key = "CS")) else e
     }
   )
-
   # Use a switch to determine the output based on the key read from the file block
   out <- switch(
     file_id$key,
@@ -244,11 +237,13 @@ seasonder_find_spectra_file_type <- function(filepath, endian = "big") {
 #' @seealso \code{\link{seasonder_find_spectra_file_type}}, \code{\link{seasonder_defaultSpecsFilePath}}
 #'
 #' @examples
-#' \dontrun{
+#' 
 #'   # Get the default specifications path for a given spectra file
-#'   specs_path <- seasonder_defaultSpecsPathForFile("path/to/spectra_file.bin")
+#'   specs_path <- SeaSondeR:::seasonder_defaultSpecsPathForFile(
+#'     system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#'   )
 #'   print(specs_path)
-#' }
+#' 
 seasonder_defaultSpecsPathForFile <- function(filepath, endian = "big") {
   # Determine the file type ("CS" or "CSSY") by analyzing the spectra file
   file_type <- seasonder_find_spectra_file_type(filepath, endian = endian)

@@ -26,11 +26,11 @@ to the self-spectra of antenna 3. This smoothing aids in detecting the nulls tha
 second-order regions.
 }
 \examples{
-\dontrun{
-# Retrieve smoothed FOR self-spectra
-smoothed_SS <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(cs_obj)
-print(smoothed_SS)
-}
+# Create a minimal SeaSondeRCS object with smoothed self-spectra in FOR_data
+cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
+attr(cs_obj, "FOR_data") <- list(FOR_SS_Smoothed = matrix(1:4, nrow = 2, ncol = 2))
+smoothed_SS <- SeaSondeR:::seasonder_getSeaSondeRCS_FOR_SS_Smoothed(cs_obj)
+head(smoothed_SS)
 }
 \seealso{
 \itemize{

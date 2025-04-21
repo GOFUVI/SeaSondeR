@@ -18,7 +18,10 @@ The modified SeaSondeRAPM object with updated quality_matrix.
 Setter for quality_matrix
 }
 \examples{
-\dontrun{
-  obj <- seasonder_setSeaSondeRAPM_quality_matrix(obj, new_quality_matrix)
-}
+# Create a default SeaSondeRAPM object
+obj <- seasonder_createSeaSondeRAPM()
+# Retrieve the existing quality_matrix
+new_quality_matrix <- attributes(obj)$quality_matrix
+# Update quality_matrix in the object
+obj <- seasonder_setSeaSondeRAPM_quality_matrix(obj, new_quality_matrix)
 }

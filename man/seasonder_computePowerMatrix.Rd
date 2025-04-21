@@ -57,17 +57,8 @@ and \eqn{G_{\text{inv}}} is the inverse of \eqn{G}.
 }
 
 \examples{
-\dontrun{
-# Example with two steering vectors
-eig <- list(
-  values = c(10, 5),
-  vectors = matrix(c(1+1i, 1-1i, 2+2i, 2-2i), ncol = 2)
-)
-a <- matrix(c(1+1i, 2+2i, 3+3i, 4+4i), ncol = 2)
-power_matrix <- seasonder_computePowerMatrix(eig, a)
-
-# Example with one steering vector
-a <- matrix(c(1+1i, 2+2i), ncol = 1)
-power_matrix <- seasonder_computePowerMatrix(eig, a)
-}
+# Compute power matrix
+eig <- list(values = c(10,5), vectors = matrix(1:4, ncol=2))
+a <- matrix(c(1+1i,2+2i), ncol=1)
+power_matrix <- SeaSondeR:::seasonder_computePowerMatrix(eig, a)
 }

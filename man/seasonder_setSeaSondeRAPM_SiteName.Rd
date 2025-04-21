@@ -18,7 +18,10 @@ The modified SeaSondeRAPM object with updated SiteName.
 Setter for SiteName
 }
 \examples{
-\dontrun{
-  obj <- seasonder_setSeaSondeRAPM_SiteName(obj, new_site_name)
-}
+# Minimal example for seasonder_setSeaSondeRAPM_SiteName
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+new_site_name <- attributes(apm_obj)$SiteName
+apm_obj <- seasonder_setSeaSondeRAPM_SiteName(apm_obj, new_site_name)
+print(attributes(apm_obj)$SiteName)
 }

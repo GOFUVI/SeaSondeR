@@ -60,11 +60,10 @@ The function includes input validation to ensure that \code{values} is a list, a
 are numeric. It also checks that no element in \code{values} is non-numeric and that \code{fscale} is non-zero to prevent division errors.
 }
 \examples{
-\dontrun{
 # Example usage:
 values <- list(c(1000, 0xFFFFFFFF, 2000))
-scaled <- seasonder_SeaSondeRCSSWApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, 
+# Use triple colon to call internal function
+scaled <- SeaSondeR:::seasonder_SeaSondeRCSSWApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000,
 dbRef = -20)
 print(scaled)
-}
 }

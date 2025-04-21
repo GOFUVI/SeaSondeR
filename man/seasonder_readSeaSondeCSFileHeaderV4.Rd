@@ -28,26 +28,38 @@ Reads the header of a SeaSonde file (Version 4) based on the provided specificat
 Transforms the CenterFreq field and returns the results.
 }
 \examples{
-\dontrun{
-  con <- rawConnection(as.raw(rep(0, 200)))
-  specs <- list(
-    nCoverMinutes = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
-    bDeletedSource = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
-    bOverrideSrcInfo = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
-    fStartFreqMHz = list(type = "Float", qc_fun = "qc_check_unsigned", qc_params = list()),
-    fRepFreqHz = list(type = "Float", qc_fun = "qc_check_unsigned", qc_params = list()),
-    fBandwidthKHz = list(type = "Float", qc_fun = "qc_check_unsigned", qc_params = list()),
-    bSweepUp = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nDopplerCells = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nRangeCells = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nFirstRangeCell = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list()),
-    fRangeCellDistKm = list(type = "Float", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nV4Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
-  )
-  header <- seasonder_readSeaSondeCSFileHeaderV4(specs, con, endian = "big")
-  print(header)
-  close(con)
-}
+# Read CS file header and extract version 4 fields
+specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+con <- file(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+  "rb"
+)
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V1"))
+header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
+  specs,
+  con,
+  endian = "big"
+)
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V2"))
+header_v2 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV2(
+  specs,
+  con,
+  endian = "big"
+)
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V3"))
+header_v3 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV3(
+  specs,
+  con,
+  endian = "big"
+)
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V4"))
+header_v4 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV4(
+  specs,
+  con,
+  endian = "big"
+)
+str(header_v4)
+close(con)
 }
 \seealso{
 \code{\link{seasonder_check_specs}}

@@ -37,10 +37,9 @@ This function utilizes the \code{rlang} package to manage conditions, and provid
 }
 
 \examples{
-\dontrun{
-  specs <- list(field1 = "spec1", field2 = "spec2")
-  fields <- c("field1", "field2", "field3")
-  seasonder_check_specs(specs, fields) # Throws an error since spec for 'field3' is missing
-}
+# Example: validate presence of all fields in specs
+specs <- list(field1 = "spec1", field2 = "spec2", field3 = "spec3")
+fields <- c("field1", "field2", "field3")
+SeaSondeR:::seasonder_check_specs(specs, fields)
 
 }

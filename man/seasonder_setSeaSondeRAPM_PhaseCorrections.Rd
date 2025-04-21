@@ -18,7 +18,10 @@ The modified SeaSondeRAPM object with updated PhaseCorrections.
 Setter for PhaseCorrections
 }
 \examples{
-\dontrun{
-  obj <- seasonder_setSeaSondeRAPM_PhaseCorrections(obj, new_phase_corrections)
-}
+# Minimal example for seasonder_setSeaSondeRAPM_PhaseCorrections
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+new_phase_corrections <- attributes(apm_obj)$PhaseCorrections
+apm_obj <- seasonder_setSeaSondeRAPM_PhaseCorrections(apm_obj, new_phase_corrections)
+print(attributes(apm_obj)$PhaseCorrections)
 }

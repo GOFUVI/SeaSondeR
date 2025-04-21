@@ -31,7 +31,7 @@ seasonder_validateShortTimeRadials_parameters <- function(seasonder_cs_obj, shor
 
 compute_radial_median <- function(v){
 
-  v <- sort(v,decreasing = T)
+  v <- sort(v,decreasing = TRUE)
 
   if(length(v) %% 2 == 0){
     out <- v[length(v)/2 +1]

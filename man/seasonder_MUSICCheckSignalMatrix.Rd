@@ -47,14 +47,30 @@ off-diagonal element.
 }
 }
 \examples{
-\dontrun{
-  # Assume cs_obj is a valid SeaSondeRCS object with MUSIC data already computed.
-  updated_obj <- seasonder_MUSICCheckSignalMatrix(cs_obj)
-  # The updated object now has an added diag_off_diag_power_ratio column and 
-updated retained_solution fields.
-  print(updated_obj)
-}
-
+# Signal matrix power ratio check (toy data)
+# Create a minimal CS object with MUSIC_data and dummy DOA solutions
+# Define minimal valid header and data for CS object
+header <- list(nRangeCells = 1, nDopplerCells = 1)
+data <- list(
+  SSA1 = matrix(0, 1, 1),
+  SSA2 = matrix(0, 1, 1),
+  SSA3 = matrix(0, 1, 1),
+  CS12 = matrix(complex(real = 0, imaginary = 0), 1, 1),
+  CS13 = matrix(complex(real = 0, imaginary = 0), 1, 1),
+  CS23 = matrix(complex(real = 0, imaginary = 0), 1, 1),
+  QC   = matrix(0, 1, 1)
+)
+cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data)
+# Attach MUSIC_data with one dual solution matrix P
+attr(cs_obj, "MUSIC_data") <- list(
+  DOA_solutions = list(list(dual = list(bearing = c(1,2), P = matrix(c(1,2,3,4), nrow=2)))),
+  retained_solution = c("dual")
+)
+# Run signal power ratio test (P2) to perform initial check
+cs_obj <- SeaSondeR:::seasonder_MUSICCheckSignalPowers(cs_obj)
+# Run signal matrix power test (P3)
+updated_obj <- SeaSondeR:::seasonder_MUSICCheckSignalMatrix(cs_obj)
+print(attr(updated_obj, "MUSIC_data")$P3_check)
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC}} to retrieve MUSIC data,

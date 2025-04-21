@@ -18,7 +18,10 @@ The modified SeaSondeRAPM object with updated Creator.
 Setter for Creator
 }
 \examples{
-\dontrun{
-  obj <- seasonder_setSeaSondeRAPM_Creator(obj, new_creator)
-}
+# Minimal example for seasonder_setSeaSondeRAPM_Creator
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+new_creator <- attributes(apm_obj)$Creator
+apm_obj <- seasonder_setSeaSondeRAPM_Creator(apm_obj, new_creator)
+print(attributes(apm_obj)$Creator)
 }

@@ -16,7 +16,5 @@ Returns TRUE if the validation passes.
 This function validates if the provided CommentLine is a character string.
 }
 \examples{
-\dontrun{
-  valid <- validate_SeaSondeRAPM_CommentLine("This is a comment.")
-}
+valid <- SeaSondeR:::validate_SeaSondeRAPM_CommentLine("This is a comment.")
 }

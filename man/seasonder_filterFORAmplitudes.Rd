@@ -58,10 +58,15 @@ This filtering ensures that only strong, reliable first-order Bragg signals are 
 the impact of noise and second-order contamination.
 }
 \examples{
-\dontrun{
-# Apply amplitude filtering to the FOR detection
-cs_obj <- seasonder_filterFORAmplitudes(cs_obj)
-}
+# Set sample file paths
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+# Read the antenna pattern file to create a SeaSondeRAPM object
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+# Create a SeaSondeRCS object from a spectral file
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+cs_obj <- SeaSondeR:::seasonder_SmoothFORSS(cs_obj)
+cs_obj <- SeaSondeR:::seasonder_filterFORAmplitudes(cs_obj)
 }
 \seealso{
 \itemize{

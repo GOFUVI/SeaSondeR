@@ -22,7 +22,8 @@ as an array of text lines. It is used to facilitate reading data from
 SeaSonde APM files.
 }
 \examples{
-\dontrun{
-  row <- read_matrix_row(lines, 1, 3)
-}
+# Example: read a 3-line matrix row from text lines
+lines <- c("1 2 3", "4 5 6", "7 8 9")
+row <- SeaSondeR:::read_matrix_row(lines, 1, 3)
+print(row)
 }

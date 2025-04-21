@@ -22,13 +22,17 @@ This function retrieves the full set of Doppler bin frequencies using \code{\lin
 It then selects the Doppler frequencies corresponding to the specified bin indices.
 }
 \examples{
-\dontrun{
-# Convert specific Doppler bins to Doppler frequencies
-cs_obj <- seasonder_createSeaSondeRCS(...)
-bins <- c(10, 20, 30)  # Example bin indices
-freqs <- seasonder_Bins2DopplerFreq(cs_obj, bins)
-print(freqs)
-}
+# Read a sample Cross-Spectral (CS) file to create a SeaSondeRCS object
+specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+cs_obj <- seasonder_readSeaSondeCSFile(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+  specs_path
+)
+# Define Doppler bin indices (from 1 to number of bins)
+bins <- seq_len(as.integer(seasonder_getnDopplerCells(cs_obj)))
+# Retrieve Doppler frequencies for the specified bins (internal function)
+freqs <- SeaSondeR:::seasonder_Bins2DopplerFreq(cs_obj, bins)
+head(freqs)
 }
 \seealso{
 \code{\link{seasonder_DopplerFreq2Bins}} for the reverse operation.

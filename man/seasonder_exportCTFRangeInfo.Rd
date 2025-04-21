@@ -25,9 +25,15 @@ It then writes this output string to the specified file. Additionally, it return
 invisibly, allowing further processing if necessary.
 }
 \examples{
-\dontrun{
-  cs_obj <- seasonder_createSeaSondeRCS("path/to/cs_file")
-  range_info <- seasonder_exportCTFRangeInfo(cs_obj, "range_info.txt")
-}
+  # Prepare a SeaSondeRCS object with valid data
+  apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+  apm_obj <- SeaSondeR:::seasonder_readSeaSondeRAPMFile(apm_file)
+  cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+  cs_obj <- seasonder_createSeaSondeRCS(
+    cs_file,
+    seasonder_apm_object = apm_obj
+  )
+  # Export CTF range information to a temporary text file
+  range_info <- seasonder_exportCTFRangeInfo(cs_obj, tempfile(fileext = ".txt"))
 
 }

@@ -13,7 +13,5 @@ Logical value indicating whether messages are enabled.
 This function checks whether message logging is currently enabled.
 }
 \examples{
-\dontrun{
   seasonder_areMessagesEnabled()
-}
 }

@@ -15,7 +15,5 @@ Once enabled, various SeaSondeR functions will output informational
 messages.
 }
 \examples{
-\dontrun{
   seasonder_enableMessages()
-}
 }

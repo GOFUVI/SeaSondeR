@@ -26,12 +26,10 @@ The function uses the \code{whisker} package to render a template string with th
 header information.
 }
 \examples{
-\dontrun{
-  obj <- list(header = list(nSiteCodeName = "Station1",
+obj <- list(header = list(nSiteCodeName = "Station1",
                             nDateTime = Sys.time(),
                             nDopplerCells = 256,
                             nRangeCells = 100))
-  class(obj) <- "SeaSondeRCS"
-  print(obj)
-}
+class(obj) <- "SeaSondeRCS"
+print(obj)
 }

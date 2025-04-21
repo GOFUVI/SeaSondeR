@@ -16,7 +16,7 @@ The PhaseCorrections attribute from the object.
 Getter for PhaseCorrections
 }
 \examples{
-\dontrun{
-  phase_corrections <- seasonder_getSeaSondeRAPM_PhaseCorrections(obj)
-}
+# Create a default SeaSondeRAPM object
+obj <- seasonder_createSeaSondeRAPM()
+phase_corrections <- seasonder_getSeaSondeRAPM_PhaseCorrections(obj)
 }

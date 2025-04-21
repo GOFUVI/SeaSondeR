@@ -14,7 +14,5 @@ This function enables log recording in the SeaSondeR package.
 Once enabled, various SeaSondeR functions will output logs.
 }
 \examples{
-\dontrun{
   seasonder_enableLogs()
-}
 }

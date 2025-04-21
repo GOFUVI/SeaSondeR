@@ -19,8 +19,12 @@ This function sets the maximum radial velocity (\code{currmax}) allowed in the f
 for the SeaSondeRCS object.
 }
 \examples{
-\dontrun{
-  cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
-  cs_obj <- seasonder_setFOR_currmax(cs_obj, 2.5)
-}
+# Set sample file paths
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+# Read the antenna pattern file to create a SeaSondeRAPM object
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+# Create a SeaSondeRCS object from a spectral file
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+cs_obj <- seasonder_setFOR_currmax(cs_obj, 2.5)
 }

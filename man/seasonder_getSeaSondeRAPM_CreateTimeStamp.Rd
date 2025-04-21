@@ -16,7 +16,9 @@ The CreateTimeStamp attribute from the object.
 Getter for CreateTimeStamp
 }
 \examples{
-\dontrun{
-  create_time_stamp <- seasonder_getSeaSondeRAPM_CreateTimeStamp(obj)
-}
+# Minimal example for seasonder_getSeaSondeRAPM_CreateTimeStamp
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+create_time_stamp <- seasonder_getSeaSondeRAPM_CreateTimeStamp(apm_obj)
+print(create_time_stamp)
 }

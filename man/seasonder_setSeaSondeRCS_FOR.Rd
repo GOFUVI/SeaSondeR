@@ -26,17 +26,16 @@ to the "FOR" field within the object's "FOR_data" attribute. It is intended to b
 as part of the FOR processing workflow.
 }
 \examples{
-\dontrun{
-# Assuming a function seasonder_createSeaSondeRCS() exists to create the SeaSondeRCS object:
-cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
-
-# Define a sample FOR data structure
+# Set sample file paths
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+# Read the antenna pattern file to create a SeaSondeRAPM object
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+# Create a SeaSondeRCS object from a spectral file
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 sample_FOR <- list(
   negative_FOR = c(1, 2, 3),
   positive_FOR = c(10, 11, 12)
 )
-
-# Set the FOR data in the SeaSondeRCS object
 cs_obj <- seasonder_setSeaSondeRCS_FOR(cs_obj, sample_FOR)
-}
 }

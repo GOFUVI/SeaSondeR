@@ -26,17 +26,15 @@ It retrieves the current "NoiseLevel" attribute (or initializes it with the defa
 updates the noise level for the given antenna, and stores it back in the object.
 }
 \examples{
-\dontrun{
-  # Assume a SeaSondeRCS object is created using seasonder_createSeaSondeRCS()
-  cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
-
-  # Define a new noise level value
-  new_noise_level <- 0.05
-
-  # Update the noise level for antenna 3
-  cs_obj <- seasonder_setSeaSondeRCS_NoiseLevel(cs_obj, new_noise_level, antenna = 3)
-
-  # Verify the updated noise level in the object
-  print(attr(cs_obj, "NoiseLevel")[[3]])
-}
+# Set sample file paths
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+# Read the antenna pattern file to create a SeaSondeRAPM object
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+# Create a SeaSondeRCS object from a spectral file
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+new_noise_level <- 0.05
+# Update noise level for antenna 3 (internal function)
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_NoiseLevel(cs_obj, new_noise_level, antenna = 3)
+print(attr(cs_obj, "NoiseLevel")[[3]])
 }

@@ -4,7 +4,7 @@
 \alias{seasonder_getCSHeaderByPath}
 \title{Retrieve a value from the SeaSondeRCS header by a specific path}
 \usage{
-seasonder_getCSHeaderByPath(seasonder_obj, path, warn_missing = T)
+seasonder_getCSHeaderByPath(seasonder_obj, path, warn_missing = TRUE)
 }
 \arguments{
 \item{seasonder_obj}{A SeaSondeRCS object.}
@@ -36,16 +36,11 @@ This function utilizes the \code{rlang} package to manage errors and conditions,
 }
 
 \examples{
-\dontrun{
-# Assuming `cs_object` is a valid SeaSondeRCS object
-# Retrieve a specific field from the header
-field_value <- seasonder_getCSHeaderByPath(cs_object, c("nRangeCells"))
-# Retrieve a nested field from the header
-nested_field_value <- seasonder_getCSHeaderByPath(cs_object, c("header", "nRangeCells"))
-# Print the retrieved values
+# Minimal example for seasonder_getCSHeaderByPath
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+field_value <- seasonder_getCSHeaderByPath(cs_obj, c("nRangeCells"))
 print(field_value)
-print(nested_field_value)
-# Retrieve a field that does not exist (will issue a warning)
-non_existent_field_value <- seasonder_getCSHeaderByPath(cs_object, c("nonExistentField"))
-} 
 }

@@ -34,10 +34,9 @@ The function performs the following operations:
 For more details on the attributes, see \code{\link{seasonder_initializeAttributesSeaSondeRAPM}}.
 }
 \examples{
-\dontrun{
-  # Create a default SeaSondeRAPM object
-  obj <- seasonder_createSeaSondeRAPM()
-}
+  # Create a test SeaSondeRAPM object by reading sample file
+  apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+  obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 }
 \seealso{
 \code{\link{seasonder_validateCalibrationMatrixSeaSondeRAPM}},

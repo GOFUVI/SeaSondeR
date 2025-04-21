@@ -28,7 +28,13 @@ The function splits the log entries into blocks based on time gaps between times
 for splitting can be provided or calculated based on the gaps in the log timestamps.
 }
 \examples{
-\dontrun{
-  seasonder_splitLog()
-}
+# Enable logging
+seasonder_enableLogs()
+# Log some messages
+seasonder_log("First log entry", "info")
+Sys.sleep(0.1)
+seasonder_log("Second log entry", "info")
+# Split logs into blocks (using a 1-second threshold)
+blocks <- seasonder_splitLog(threshold = as.difftime(300, units = "secs"))
+str(blocks)
 }

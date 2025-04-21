@@ -53,18 +53,28 @@ functions are available in the global environment.
 }
 
 \examples{
-\dontrun{
-  con <- rawConnection(as.raw(rep(0, 300)))
-  specs <- list(
-    V1 = list(...),
-    V2 = list(...),
-    V3 = list(...)
-  )
-  pool <- list()
-  header <- process_version_header(pool, 3, specs, con, endian = "big")
-  print(header)
-  close(con)
-}
+# Example: process version-specific header using real specs and file
+specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, "header")
+con <- file(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+  "rb"
+)
+header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
+  specs$V1,
+  con,
+  endian = "big"
+)
+header_v2 <- SeaSondeR:::process_version_header(
+  pool = header_v1,
+  version = 2,
+  specs = specs,
+  connection = con,
+  endian = "big",
+  prev_data = header_v1
+)
+print(header_v2)
+close(con)
 }
 \seealso{
 \code{\link{seasonder_readSeaSondeCSFileHeaderV2}}

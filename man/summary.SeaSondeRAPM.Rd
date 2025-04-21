@@ -30,25 +30,8 @@ they represent the processing steps. This method is primarily used for diagnosti
 that the object has undergone the intended series of operations.
 }
 \examples{
-\dontrun{
-  # Create a dummy calibration matrix with 3 rows and 5 columns
-  dummy_matrix <- matrix(complex(real = 1:15, imaginary = rep(0, 15)), nrow = 3)
-
-  # Define a dummy BEAR attribute with 5 bearings
-  dummy_bear <- seq(0, 360, length.out = ncol(dummy_matrix) + 1)[- (ncol(dummy_matrix) + 1)]
-
-  # Create a dummy quality matrix (for example, just copying the dummy_matrix)
-  dummy_quality <- dummy_matrix
-
-  # Create a dummy SeaSondeRAPM object using the dummy matrices and attributes
-  dummy_obj <- seasonder_createSeaSondeRAPM(
-    calibration_matrix = dummy_matrix,
-    quality_matrix = dummy_quality,
-    BEAR = dummy_bear,
-    StationCode = "1234"
-  )
-
-  # Print the summary of the dummy SeaSondeRAPM object
-  summary(dummy_obj)
-}
+# Summarize a test SeaSondeRAPM object
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+summary(obj)
 }

@@ -49,9 +49,11 @@ cs_obj <- seasonder_computeFORs(cs_obj, FOR_control = list(nsm = 2, fdown = 10^(
 # Define a land mask (AngSeg) to remove onshore data
 AngSeg <- purrr::list_c(lapply(45:61, function(i) list(c(i, 313, 360), c(i, 0, 31))))
 
+temp_file <- tempfile(fileext = ".ruv")
+
 # Export the radial metrics in LLUV format
 radial_metrics <- seasonder_exportLLUVRadialMetrics(cs_obj,
-                                                    LLUV_path = "CSS_TORA_24_04_04_0700.ruv",
+                                                    LLUV_path = temp_file,
                                                     AngSeg = AngSeg)
 
 # Display the first few rows of the exported radial metrics

@@ -33,8 +33,8 @@ positive Bragg frequency. Otherwise, they are in Hz.
 }
 \description{
 This function computes the Doppler frequencies associated with each Doppler bin
-in a SeaSonde Cross Spectra (CS) object. The output can be normalized by the positive
-Bragg frequency if specified.
+in a SeaSondeRCS object. The output can be normalized by the positive Bragg
+frequency if specified.
 }
 \details{
 Doppler frequencies are calculated using the formula:
@@ -48,18 +48,20 @@ Normalization is based on the positive Bragg frequency calculated by
 \code{seasonder_getBraggDopplerAngularFrequency()}.
 }
 \examples{
-\dontrun{
-# Example of computing Doppler frequencies
-nDoppler <- 512
-center_bin <- seasonder_getCenterDopplerBin(cs_obj)
-spectra_res <- seasonder_getDopplerSpectrumResolution(cs_obj)
-freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, 
-center_bin, spectra_res)
-
-# Compute normalized frequencies
-norm_freqs <- seasonder_computeDopplerBinsFrequency(cs_obj, nDoppler, 
-center_bin, spectra_res, normalized = TRUE)
-}
+# Read a SeaSonde CS file
+cs_obj <- seasonder_readSeaSondeCSFile(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+  SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+)
+# Prepare parameters
+nDoppler <- seasonder_getnDopplerCells(cs_obj)
+center_bin <- SeaSondeR:::seasonder_computeCenterDopplerBin(cs_obj, nDoppler)
+spectra_res <- SeaSondeR:::seasonder_getDopplerSpectrumResolution(cs_obj)
+# Compute Doppler bin frequencies
+freqs <- SeaSondeR:::seasonder_computeDopplerBinsFrequency(
+  cs_obj, nDoppler, center_bin, spectra_res
+)
+head(freqs)
 
 }
 \seealso{

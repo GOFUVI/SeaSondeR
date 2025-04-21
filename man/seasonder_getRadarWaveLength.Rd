@@ -31,11 +31,13 @@ The center frequency is initially stored in MHz and is converted to Hz by multip
 it by \eqn{10^6}.
 }
 \examples{
-\dontrun{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object
-wavelength <- seasonder_getRadarWaveLength(cs_object)
+# Minimal example for seasonder_getRadarWaveLength
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+wavelength <- SeaSondeR:::seasonder_getRadarWaveLength(cs_obj)
 print(wavelength)
-}
 }
 \seealso{
 \code{\link{seasonder_getCenterFreqMHz}} to retrieve the radar's center frequency.

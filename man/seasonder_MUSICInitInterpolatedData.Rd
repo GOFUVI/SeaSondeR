@@ -27,14 +27,13 @@ placeholders for components such as \code{SSA1}, \code{SSA2}, \code{SSA3}, \code
 \code{CS23}, and \code{QC}.
 }
 \examples{
-\dontrun{
-# Create a SeaSondeR cross-spectral object
-seasonder_cs_object <- seasonder_createSeaSondeRCS(...)
-
-# Initialize interpolated data
-interpolated_data <- seasonder_MUSICInitInterpolatedData(seasonder_cs_object)
-print(interpolated_data)
-}
+# Minimal example for interpolated data initialization
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+interpolated_data <- SeaSondeR:::seasonder_MUSICInitInterpolatedData(cs_obj)
+str(interpolated_data)
 }
 \seealso{
 \code{\link{seasonder_initCSDataStructure}} for details on the cross-spectral data structure.

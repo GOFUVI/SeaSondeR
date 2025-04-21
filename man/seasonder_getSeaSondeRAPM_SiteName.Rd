@@ -16,7 +16,9 @@ The SiteName attribute from the object.
 Getter for SiteName
 }
 \examples{
-\dontrun{
-  site_name <- seasonder_getSeaSondeRAPM_SiteName(obj)
-}
+# Minimal example for seasonder_getSeaSondeRAPM_SiteName
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+site_name <- seasonder_getSeaSondeRAPM_SiteName(apm_obj)
+print(site_name)
 }

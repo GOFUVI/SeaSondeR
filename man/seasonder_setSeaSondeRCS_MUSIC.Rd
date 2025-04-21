@@ -26,17 +26,18 @@ MUSIC results to the \code{MUSIC} field within the \code{MUSIC_data} attribute. 
 during the MUSIC processing workflow.
 }
 \examples{
-\dontrun{
-  # Assuming cs_obj is a valid SeaSondeRCS object and music_results contains MUSIC analysis results:
-  cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+# Create a valid SeaSondeRCS object for examples
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 
-  # Example MUSIC data (placeholder)
-  music_results <- list(result1 = 1, result2 = 2)  # Replace with actual MUSIC results structure
+# Example MUSIC data (placeholder)
+music_results <- list(result1 = 1, result2 = 2)  # Replace with actual MUSIC results structure
 
-  # Set the MUSIC data in the SeaSondeRCS object
-  cs_obj <- seasonder_setSeaSondeRCS_MUSIC(cs_obj, music_results)
+# Set the MUSIC data in the SeaSondeRCS object
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_MUSIC(cs_obj, music_results)
 
-  # Retrieve and inspect the MUSIC data
-  print(attr(cs_obj, "MUSIC_data")$MUSIC)
-}
+# Retrieve and inspect the MUSIC data
+print(attr(cs_obj, "MUSIC_data")$MUSIC)
 }

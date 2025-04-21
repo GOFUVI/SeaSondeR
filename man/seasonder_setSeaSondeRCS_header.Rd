@@ -18,12 +18,15 @@ A SeaSondeRCS object with updated header.
 Setter for header
 }
 \examples{
-\dontrun{
-  # Assuming cs_obj is a valid SeaSondeRCS object and new_header is a valid header list
-  cs_obj <- seasonder_setSeaSondeRCS_header(cs_obj, new_header)
- # Check the updated header
-  print(seasonder_getSeaSondeRCS_header(cs_obj))
-}
+# Set sample file paths and create SeaSondeRCS object
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+# Retrieve and set header
+new_header <- seasonder_getSeaSondeRCS_header(cs_obj)
+cs_obj <- seasonder_setSeaSondeRCS_header(cs_obj, new_header)
+print(seasonder_getSeaSondeRCS_header(cs_obj))
 }
 \seealso{
 \code{\link{seasonder_validateCSHeaderStructure}}

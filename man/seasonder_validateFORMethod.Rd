@@ -26,13 +26,9 @@ an error is raised using \code{\link{seasonder_logAndAbort}}.
 }
 }
 \examples{
-\dontrun{
-# Validate a correct method
-seasonder_validateFORMethod("SeaSonde")
-
-# Attempting to use an invalid method will trigger an error
-seasonder_validateFORMethod("InvalidMethod") # This will abort execution
-}
+SeaSondeR:::seasonder_validateFORMethod("SeaSonde")
+# Demonstrate error handling for an invalid method
+try(SeaSondeR:::seasonder_validateFORMethod("InvalidMethod"), silent = TRUE)
 }
 \seealso{
 \itemize{

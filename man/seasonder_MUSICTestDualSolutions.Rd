@@ -38,9 +38,24 @@ Each test updates the MUSIC solutions in the input object, marking solutions tha
 The function also logs the start and end of the testing process as part of the object's processing steps.
 }
 \examples{
-\dontrun{
-updated_obj <- seasonder_MUSICTestDualSolutions(seasonder_cs_object)
-}
+# Test dual solutions using MUSIC algorithm
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+ cs_obj,
+ range_cells = c(rep(5,11), rep(4,11)),
+ doppler_bins = c(c(669:679),c(674:684))
+)
+cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+cs_obj <- SeaSondeR:::seasonder_MUSICComputeCov(cs_obj)
+cs_obj <- SeaSondeR:::seasonder_MUSICCovDecomposition(cs_obj)
+cs_obj <- SeaSondeR:::seasonder_MUSICComputeDOAProjections(cs_obj)
+cs_obj <- SeaSondeR:::seasonder_MUSICExtractPeaks(cs_obj)
+cs_obj <- SeaSondeR:::seasonder_MUSICComputeSignalPowerMatrix(cs_obj)
+cs_obj <- SeaSondeR:::seasonder_MUSICTestDualSolutions(cs_obj)
+print(cs_obj)
 }
 \seealso{
 \code{\link{seasonder_MUSICCheckEigenValueRatio}}, \code{\link{seasonder_MUSICCheckSignalPowers}},

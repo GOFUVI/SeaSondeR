@@ -16,7 +16,9 @@ The SiteOrigin attribute from the object.
 Getter for SiteOrigin
 }
 \examples{
-\dontrun{
-  site_origin <- seasonder_getSeaSondeRAPM_SiteOrigin(obj)
-}
+# Minimal example for seasonder_getSeaSondeRAPM_SiteOrigin
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+site_origin <- seasonder_getSeaSondeRAPM_SiteOrigin(apm_obj)
+print(site_origin)
 }

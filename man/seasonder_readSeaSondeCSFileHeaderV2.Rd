@@ -27,16 +27,26 @@ A list with the read results.
 Reads the header of a SeaSonde file (Version 2) based on the provided specifications.
 }
 \examples{
-\dontrun{
-  con <- rawConnection(as.raw(rep(0, 100)))
-  specs <- list(
-    nCsKind = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nV2Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
-  )
-  header <- seasonder_readSeaSondeCSFileHeaderV2(specs, con, endian = "big")
-  print(header)
-  close(con)
-}
+# Read CS file header and extract version 2 fields
+specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+con <- file(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+  "rb"
+)
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V1"))
+header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
+  specs,
+  con,
+  endian = "big"
+)
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header","V2"))
+header_v2 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV2(
+  specs,
+  con,
+  endian = "big"
+)
+str(header_v2)
+close(con)
 }
 \seealso{
 \code{\link{seasonder_check_specs}}

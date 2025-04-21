@@ -62,7 +62,7 @@ test <- MUSIC$DOA_solutions[[1]]
 
 distances <- MUSIC$distances[[1]]
 
-target_bearing <- attr(distances, "bearings",exact = T)[which.max(1/Mod(distances["single",]))]
+target_bearing <- attr(distances, "bearings",exact = TRUE)[which.max(1/Mod(distances["single",]))]
 
 expect_equal(target_bearing,test$single$bearing)
 
@@ -76,7 +76,7 @@ expect_equal(target_a,test$single$a)
 
 peaks <- pracma::findpeaks(1/Mod(distances["dual",]),npeaks = 2, sortstr = TRUE)
 
-target_bearing <- attr(distances, "bearings",exact = T)[peaks[,2]]
+target_bearing <- attr(distances, "bearings",exact = TRUE)[peaks[,2]]
 
 plot(1/Mod(distances["dual",]))
 

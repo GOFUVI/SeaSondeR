@@ -60,11 +60,19 @@ This test is particularly important in scenarios where strong non-Bragg signals,
 ships or other high-intensity noise sources, might otherwise be misclassified as first-order Bragg.
 }
 \examples{
-\dontrun{
-# Evaluate a single peak for rejection
+# Example: reject distant Bragg peak if too far from expected indices
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 peak <- c(100, 101, 102)
-cs_obj <- seasonder_rejectDistantBraggPeakTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")
-}
+new_peak <- SeaSondeR:::seasonder_rejectDistantBraggPeakTest(
+  cs_obj,
+  peak,
+  range = 5,
+  peak_name = "positive_FOR"
+)
+print(new_peak)
 }
 \references{
 COS. SpectraPlotterMap 12 User Guide. CODAR Ocean Sensors (COS), Mountain View, CA, USA, 2016.

@@ -32,13 +32,8 @@ are then combined with the original matrix, and the column names and the "BEAR" 
 are updated to reflect the complete set of bearings.
 }
 \examples{
-\dontrun{
-  # Create a dummy APM object
-  dummy_mat <- matrix(1:15, nrow = 3)
-  attr(dummy_mat, "BEAR") <- c(10, 20, 30)
-  attr(dummy_mat, "BearingResolution") <- 10
-
-  # Extrapolate 1 column on each side
-  result <- seasonder_extrapolateAPM(dummy_mat, n = 1)
-}
+# Extrapolate loops for a test SeaSondeRAPM object
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+result <- seasonder_extrapolateAPM(obj, n = 1)
 }

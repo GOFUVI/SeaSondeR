@@ -44,12 +44,24 @@ This function utilizes the \code{rlang} package to manage conditions and provide
 }
 
 \examples{
-\dontrun{
-  header <- list(nV1Extent = 62, nCsFileVersion = 4, nV2Extent = 56,
-                 nV3Extent = 48, nV4Extent = 0, nRangeCells = 100,
-                 nDopplerCells = 512, nCsKind = 1)
-  seasonder_validateCSFileData("example.cs", header)
-}
+# Example: Validate a dummy file and header
+tmp <- tempfile(fileext = ".cs")
+# Create a dummy file of sufficient size
+writeBin(as.raw(rep(0, 200)), tmp)
+header <- list(
+  nCsFileVersion = 6,
+  nCsKind        = 1,
+  nRangeCells    = 1,
+  nDopplerCells  = 1,
+  nV1Extent      = 100,
+  nV2Extent      = 100,
+  nV3Extent      = 100,
+  nV4Extent      = 100,
+  nV5Extent      = 100,
+  nCS6ByteSize   = 50
+)
+# Call internal function
+SeaSondeR:::seasonder_validateCSFileData(tmp, header)
 }
 \references{
 Cross Spectra File Format Version 6. CODAR. 2016

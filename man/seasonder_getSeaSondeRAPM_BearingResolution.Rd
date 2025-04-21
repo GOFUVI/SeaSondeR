@@ -16,7 +16,9 @@ The BearingResolution attribute from the object.
 Getter for BearingResolution
 }
 \examples{
-\dontrun{
-  bearing_resolution <- seasonder_getSeaSondeRAPM_BearingResolution(obj)
-}
+# Minimal example for seasonder_getSeaSondeRAPM_BearingResolution
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+bearing_resolution <- seasonder_getSeaSondeRAPM_BearingResolution(apm_obj)
+print(bearing_resolution)
 }

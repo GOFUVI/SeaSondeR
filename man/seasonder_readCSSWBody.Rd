@@ -33,12 +33,21 @@ A list of processed body cells with applied sign corrections.
 Reads the body section of a CSSW file, processing each cell block until the designated endpoint.
 }
 \examples{
-\dontrun{
-# Example usage:
-con <- rawConnection(as.raw(1:100))
-specs <- list(sampleKey = list(type = "double"))
-result <- seasonder_readCSSWBody(con, specs, 100, dbRef = -20, endian = "big")
+# Example: read one minimal cell using real CSSW specifications
+spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSW")
+specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
+body_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSW", "BODY"))
+# Build a minimal raw cell: 'END ' marker and zero payload size
+raw_data <- c(charToRaw("END "), as.raw(c(0, 0, 0, 0)))
+con <- rawConnection(raw_data)
+result <- SeaSondeR:::seasonder_readCSSWBody(
+  con,
+  body_specs,
+  size = length(raw_data),
+  dbRef = -20,
+  endian = "big",
+  specs_key_size = specs_key_size
+)
 print(result)
 close(con)
-}
 }

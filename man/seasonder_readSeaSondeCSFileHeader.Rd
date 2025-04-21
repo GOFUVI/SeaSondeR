@@ -22,17 +22,13 @@ the general header (Version 1) to determine the file version. Subsequent headers
 based on the file version.
 }
 \examples{
-\dontrun{
-  con <- rawConnection(as.raw(rep(0, 300)))
-  specs <- list(
-    V1 = list(...),
-    V2 = list(...),
-    V3 = list(...)
-  )
-  header <- seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
-  print(header)
-  close(con)
-}
+# Example: read header from a sample CS file
+specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, "header")
+con <- file(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"), "rb")
+header <- SeaSondeR:::seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
+print(header)
+close(con)
 }
 \seealso{
 \code{\link{seasonder_readSeaSondeCSFileHeaderV1}}

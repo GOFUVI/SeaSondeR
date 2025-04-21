@@ -33,13 +33,13 @@ This mapping is essential for translating frequency-domain values into bin indic
 in further data processing or visualization.
 }
 \examples{
-\dontrun{
-# Assuming `seasonder_cs_object` is a valid SeaSondeRCS object
-doppler_freqs <- c(0.1, 0.2, 0.3)
-doppler_bins <- seasonder_MUSIC_DopplerFreq2Bins(seasonder_cs_object, doppler_freqs)
-print(doppler_bins)
-}
-
+# Map frequencies to bins
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+bins <- SeaSondeR:::seasonder_MUSIC_DopplerFreq2Bins(cs_obj, c(0.1, 0.2))
+print(bins)
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency}},

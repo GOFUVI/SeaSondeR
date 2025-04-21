@@ -18,7 +18,10 @@ The modified SeaSondeRAPM object with updated StationCode.
 Setter for StationCode
 }
 \examples{
-\dontrun{
-  obj <- seasonder_setSeaSondeRAPM_StationCode(obj, new_station_code)
-}
+# Minimal example for seasonder_setSeaSondeRAPM_StationCode
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+new_station_code <- attr(apm_obj, "StationCode")
+apm_obj <- seasonder_setSeaSondeRAPM_StationCode(apm_obj, new_station_code)
+print(attributes(apm_obj)$StationCode)
 }

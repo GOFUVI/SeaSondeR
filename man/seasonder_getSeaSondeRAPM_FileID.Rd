@@ -16,7 +16,9 @@ The FileID attribute from the object.
 Getter for FileID
 }
 \examples{
-\dontrun{
-  file_id <- seasonder_getSeaSondeRAPM_FileID(obj)
-}
+# Minimal example for seasonder_getSeaSondeRAPM_FileID
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+file_id <- seasonder_getSeaSondeRAPM_FileID(apm_obj)
+print(file_id)
 }

@@ -32,12 +32,16 @@ one-based indexing, users might observe an offset when comparing the output
 of this function to CODAR's Radia Suite programs.
 }
 \examples{
-\dontrun{
-# Assuming `cs_object` is a valid `SeaSondeRCS` object
-nDoppler <- seasonder_getnDopplerCells(cs_object)
-center_bin <- seasonder_computeCenterDopplerBin(cs_object, nDoppler)
+# Read a SeaSonde CS file
+cs_obj <- seasonder_readSeaSondeCSFile(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+  SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+)
+# Get number of Doppler cells
+nDoppler <- seasonder_getnDopplerCells(cs_obj)
+# Compute center Doppler bin
+center_bin <- SeaSondeR:::seasonder_computeCenterDopplerBin(cs_obj, nDoppler)
 print(center_bin)
-}
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}} to retrieve the number

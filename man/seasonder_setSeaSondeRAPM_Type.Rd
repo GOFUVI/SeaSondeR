@@ -18,7 +18,10 @@ The modified SeaSondeRAPM object with updated Type.
 Setter for Type
 }
 \examples{
-\dontrun{
-  obj <- seasonder_setSeaSondeRAPM_Type(obj, new_type)
-}
+# Minimal example for seasonder_setSeaSondeRAPM_Type
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+new_type <- attributes(apm_obj)$Type
+apm_obj <- seasonder_setSeaSondeRAPM_Type(apm_obj, new_type)
+print(attributes(apm_obj)$Type)
 }

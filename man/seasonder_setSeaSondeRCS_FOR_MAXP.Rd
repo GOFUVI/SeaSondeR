@@ -29,10 +29,17 @@ This value is extracted from the self-spectra and used for setting first-order b
 }
 }
 \examples{
-\dontrun{
-# Assign maximum power values to a SeaSondeRCS object
-cs_obj <- seasonder_setSeaSondeRCS_FOR_MAXP(cs_obj, MAXP_values)
-}
+# Set sample file paths
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+# Read the antenna pattern file to create a SeaSondeRAPM object
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+# Create a SeaSondeRCS object from a spectral file
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+# Define sample MAXP values (empty list as placeholder)
+MAXP_values <- list()
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR_MAXP(cs_obj, MAXP_values)
+print(attr(cs_obj, "FOR_data")$FOR_MAXP)
 }
 \seealso{
 \itemize{

@@ -37,10 +37,21 @@ The function appends the following processing steps to the \code{ProcessingSteps
 }
 
 \examples{
-\dontrun{
-# Assuming `seasonder_cs_object` is a valid SeaSondeRCS object with MUSIC results
-updated_obj <- seasonder_MUSICSelectDOA(seasonder_cs_object)
-}
+# Select DOA after MUSIC analysis
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+ cs_obj,
+ range_cells = c(rep(5,11), rep(4,11)),
+ doppler_bins = c(c(669:679),c(674:684))
+)
+cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+# Assume MUSIC analysis has been run
+cs_obj <- seasonder_runMUSIC(cs_obj)
+out <- SeaSondeR:::seasonder_MUSICSelectDOA(cs_obj)
+print(out)
 }
 \seealso{
 \code{\link{seasonder_setSeaSondeRCS_ProcessingSteps}} to manage processing steps.

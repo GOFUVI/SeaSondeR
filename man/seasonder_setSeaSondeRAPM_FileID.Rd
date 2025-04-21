@@ -18,7 +18,9 @@ The modified SeaSondeRAPM object with updated FileID.
 Setter for FileID
 }
 \examples{
-\dontrun{
-  obj <- seasonder_setSeaSondeRAPM_FileID(obj, new_file_id)
-}
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+new_file_id <- attributes(apm_obj)$FileID
+apm_obj <- seasonder_setSeaSondeRAPM_FileID(apm_obj, new_file_id)
+print(attributes(apm_obj)$FileID)
 }

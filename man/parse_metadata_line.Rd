@@ -17,7 +17,5 @@ This function takes a single line from a SeaSonde APM file and parses it into
 a named attribute and its corresponding value.
 }
 \examples{
-\dontrun{
-  metadata <- parse_metadata_line("value ! attribute")
-}
+metadata <- SeaSondeR:::parse_metadata_line("value ! attribute")
 }

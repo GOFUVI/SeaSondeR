@@ -34,13 +34,14 @@ This validation ensures the output solutions are consistent with the detected pe
 in the initial assumptions about the solution type.
 }
 \examples{
-\dontrun{
-ret_sol <- "dual"
-DOA_sol <- list(single = list(bearing = 45), dual = list(bearing = c(30, 60)))
-result <- seasonder_MUSICExtractPeaksCheckRetainedSolution(ret_sol, DOA_sol)
-print(result)
-}
-
+# Check retained solution
+out <- SeaSondeR:::seasonder_MUSICExtractPeaksCheckRetainedSolution(
+  "dual",
+  list(
+    single = list(bearing = 45),
+    dual = list(bearing = c(30, 60))
+  )
+)
 }
 \seealso{
 \code{\link{seasonder_MUSICExtractPeaks}}, \code{\link{seasonder_MUSICExtractDOASolutions}}

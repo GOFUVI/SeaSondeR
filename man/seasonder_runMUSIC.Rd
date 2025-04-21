@@ -42,17 +42,24 @@ The MUSIC algorithm is executed in a series of sequential steps:
 }
 }
 \examples{
-\dontrun{
-# Create a SeaSondeRCS object (example)
-cs_object <- seasonder_createSeaSondeRCS(x = list(header = list(), data = list()))
-
+\donttest{
+# Prepare a SeaSondeRCS object with MUSIC data
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+cs_obj <- SeaSondeR:::seasonder_initMUSICData(cs_obj)
+cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+ cs_obj,
+ range_cells = c(rep(5,11), rep(4,11)),
+ doppler_bins = c(c(669:679),c(674:684))
+)
+cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
 # Run the MUSIC algorithm
-cs_object <- seasonder_runMUSIC(cs_object)
-
+cs_obj <- seasonder_runMUSIC(cs_obj)
 # Check the updated processing steps
-print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_object))
+print(seasonder_getSeaSondeRCS_ProcessingSteps(cs_obj))
 }
-
 }
 \seealso{
 \code{\link{seasonder_MUSICComputeCov}}: Compute the covariance matrix.

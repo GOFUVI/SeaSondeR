@@ -22,7 +22,8 @@ original file name, site origin (latitude and longitude), and antenna bearing.
 It is primarily used for displaying the object's metadata in a human-readable format.
 }
 \examples{
-\dontrun{
-  print(obj)
-}
+# Print metadata of a test SeaSondeRAPM object
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+print(obj)
 }

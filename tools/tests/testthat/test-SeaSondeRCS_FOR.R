@@ -107,7 +107,7 @@ test_that("test 1 is correct",{
                 noisefact = 10^(6/10),
                 currmax = 1,
                 reject_distant_bragg = TRUE, #  Default is to apply this test
-                reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+                reject_noise_ionospheric =FALSE, #  Default is to apply this test (except for 42 MHz)
 
                 reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
   )
@@ -122,7 +122,7 @@ test_that("test 1 is correct",{
 
   test <- seasonder_getSeaSondeRCS_NoiseLevel(test_cs_obj)
   seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits(test_cs_obj)
-  target <- read.table("tests/testthat/data/TORA/test1/NoiseFloor.ideal.txt", skip=2, header = F,col.names = c("range_cell", "Amp_1","Amp_2","Amp_3","dB_1","dB_2","dB_3"))
+  target <- read.table("tests/testthat/data/TORA/test1/NoiseFloor.ideal.txt", skip=2, header =FALSE,col.names = c("range_cell", "Amp_1","Amp_2","Amp_3","dB_1","dB_2","dB_3"))
 
   comparison <- data.frame(test=test[2:48],target = target$dB_3)
   sqrt(sum((comparison$test-comparison$target)^2))
@@ -135,7 +135,7 @@ test_that("test 1 is correct",{
                     noisefact = 10^(6/10),
                     currmax = 1,
                     reject_distant_bragg = TRUE, #  Default is to apply this test
-                    reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+                    reject_noise_ionospheric =FALSE, #  Default is to apply this test (except for 42 MHz)
 
                     reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
       )
@@ -150,7 +150,7 @@ test_that("test 1 is correct",{
 
       test <- seasonder_getSeaSondeRCS_NoiseLevel(test_cs_obj)
       seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits(test_cs_obj)
-      target <- read.table("tests/testthat/data/TORA/test2/NoiseFloor.ideal.txt", skip=2, header = F,col.names = c("range_cell", "Amp_1","Amp_2","Amp_3","dB_1","dB_2","dB_3"))
+      target <- read.table("tests/testthat/data/TORA/test2/NoiseFloor.ideal.txt", skip=2, header =FALSE,col.names = c("range_cell", "Amp_1","Amp_2","Amp_3","dB_1","dB_2","dB_3"))
 
       comparison <- data.frame(test=test[2:48],target = target$dB_3)
       sqrt(sum((comparison$test-comparison$target)^2))
@@ -171,7 +171,7 @@ describe("FOL tests",{
                     noisefact = 10^(6/10),
                     currmax = 1,
                     reject_distant_bragg = TRUE, #  Default is to apply this test
-                    reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+                    reject_noise_ionospheric =FALSE, #  Default is to apply this test (except for 42 MHz)
 
                     reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
       )
@@ -186,7 +186,7 @@ describe("FOL tests",{
 
     test <- seasonder_getSeaSondeRCS_FOR(test_cs_obj) %>% magrittr::extract(2:48) %>% purrr::map(\(x) data.frame(min_p = min(x$positive_FOR), max_p = max(x$positive_FOR), min_n = min(x$negative_FOR), max_n = max(x$negative_FOR))) %>% dplyr::bind_rows()
       seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits(test_cs_obj)
-      target <- read.table("tests/testthat/data/TORA/test1/FirstOrderLimits.ideal.txt", skip=5, header = F,col.names = c("range_cell", "tgt_min_p","tgt_max_p","tgt_min_n","tgt_max_n"))
+      target <- read.table("tests/testthat/data/TORA/test1/FirstOrderLimits.ideal.txt", skip=5, header =FALSE,col.names = c("range_cell", "tgt_min_p","tgt_max_p","tgt_min_n","tgt_max_n"))
 
 comparison <- dplyr::bind_cols(test,target) %>% dplyr::select(range_cell, min_p, tgt_min_p, max_p,tgt_max_p, min_n, tgt_min_n, max_n, tgt_max_n)
 
@@ -199,7 +199,7 @@ comparison <- dplyr::bind_cols(test,target) %>% dplyr::select(range_cell, min_p,
                     noisefact = 10^(6/10),
                     currmax = 1,
                     reject_distant_bragg = TRUE, #  Default is to apply this test
-                    reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+                    reject_noise_ionospheric =FALSE, #  Default is to apply this test (except for 42 MHz)
 
                     reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
       )
@@ -214,7 +214,7 @@ comparison <- dplyr::bind_cols(test,target) %>% dplyr::select(range_cell, min_p,
 
       test <- seasonder_getSeaSondeRCS_NoiseLevel(test_cs_obj)
       seasonder_getSeaSondeRCS_FOR_reference_noise_normalized_limits(test_cs_obj)
-      target <- read.table("tests/testthat/data/TORA/test2/NoiseFloor.ideal.txt", skip=2, header = F,col.names = c("range_cell", "Amp_1","Amp_2","Amp_3","dB_1","dB_2","dB_3"))
+      target <- read.table("tests/testthat/data/TORA/test2/NoiseFloor.ideal.txt", skip=2, header =FALSE,col.names = c("range_cell", "Amp_1","Amp_2","Amp_3","dB_1","dB_2","dB_3"))
 
       comparison <- data.frame(test=test[2:48],target = target$dB_3)
       sqrt(sum((comparison$test-comparison$target)^2))
@@ -235,7 +235,7 @@ describe("plots",{
                   noisefact = 10^(6/10),
                   currmax = 1,
                   reject_distant_bragg = TRUE, #  Default is to apply this test
-                  reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+                  reject_noise_ionospheric =FALSE, #  Default is to apply this test (except for 42 MHz)
 
                   reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
     )
@@ -268,7 +268,7 @@ describe("seasonder_SeaSondeRCSExportFORBoundaries",{
                   noisefact = 10^(6/10),
                   currmax = 1,
                   reject_distant_bragg = TRUE, #  Default is to apply this test
-                  reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+                  reject_noise_ionospheric =FALSE, #  Default is to apply this test (except for 42 MHz)
 
                   reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
     )
@@ -318,7 +318,7 @@ test_that("The CS object records the steps of the FOR algorithm",{
                 noisefact = 10^(6/10),
                 currmax = 1,
                 reject_distant_bragg = TRUE, #  Default is to apply this test
-                reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+                reject_noise_ionospheric =FALSE, #  Default is to apply this test (except for 42 MHz)
 
                 reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
   )

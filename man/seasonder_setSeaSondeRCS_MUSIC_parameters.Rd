@@ -29,20 +29,19 @@ in the object's \code{MUSIC_data} attribute. These parameters are used in variou
 steps of the MUSIC processing workflow.
 }
 \examples{
-\dontrun{
-  # Create a SeaSondeRCS object (assume cs_obj is already created)
-  cs_obj <- seasonder_createSeaSondeRCS("path/to/data")
+# Create a valid SeaSondeRCS object for examples
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 
-  # Retrieve default MUSIC parameters
-  default_params <- seasonder_defaultMUSIC_parameters()
+# Retrieve default MUSIC parameters and modify
+default_params <- seasonder_defaultMUSIC_parameters()
+new_params <- default_params * 1.5
 
-  # Optionally modify the default parameters
-  new_params <- default_params * 1.5
+# Update the SeaSondeRCS object with the new MUSIC parameters (internal function)
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_MUSIC_parameters(cs_obj, new_params)
 
-  # Update the SeaSondeRCS object with the new MUSIC parameters
-  cs_obj <- seasonder_setSeaSondeRCS_MUSIC_parameters(cs_obj, new_params)
-
-  # Verify the update
-  print(attr(cs_obj, "MUSIC_data")$MUSIC_options$MUSIC_parameters)
-}
+# Verify the update
+print(attr(cs_obj, "MUSIC_data")$MUSIC_options$MUSIC_parameters)
 }

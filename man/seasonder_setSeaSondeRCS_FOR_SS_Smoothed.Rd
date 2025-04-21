@@ -32,11 +32,15 @@ ensuring its dimensions match the original self-spectra structure.
 }
 }
 \examples{
-\dontrun{
-# Smooth and assign self-spectra for FOR processing
-smoothed_SS <- seasonder_SmoothSS(cs_obj, antenna = 3)
-cs_obj <- seasonder_setSeaSondeRCS_FOR_SS_Smoothed(cs_obj, smoothed_SS)
-}
+# Set sample file paths and create SeaSondeRCS object
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+# Generate and set smoothed self-spectra for antenna 3
+smoothed_SS <- SeaSondeR:::seasonder_SmoothSS(cs_obj, antenna = 3)
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR_SS_Smoothed(cs_obj, smoothed_SS)
+str(attr(cs_obj, "FOR_data")$FOR_SS_Smoothed)
 }
 \seealso{
 \itemize{

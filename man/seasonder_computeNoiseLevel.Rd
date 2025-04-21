@@ -4,7 +4,7 @@
 \alias{seasonder_computeNoiseLevel}
 \title{Compute Noise Level for First Order Region (FOR) Processing}
 \usage{
-seasonder_computeNoiseLevel(seasonder_cs_object, antenna = 3, smoothed = F)
+seasonder_computeNoiseLevel(seasonder_cs_object, antenna = 3, smoothed = FALSE)
 }
 \arguments{
 \item{seasonder_cs_object}{A \code{SeaSondeRCS} object containing spectral data and FOR parameters.}
@@ -54,13 +54,15 @@ the row-wise mean is calculated to estimate the average noise level.
 The resulting noise level is essential for setting accurate thresholds during FOR detection.
 }
 \examples{
-\dontrun{
-  # Compute the noise level for a SeaSondeRCS object using antenna 3 and unsmoothed spectra
-  cs_obj <- seasonder_computeNoiseLevel(cs_obj)
-
-  # Alternatively, compute using smoothed self-spectra
-  cs_obj <- seasonder_computeNoiseLevel(cs_obj, antenna = 3, smoothed = TRUE)
-}
+# Set sample file paths
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+# Read the antenna pattern file to create a SeaSondeRAPM object
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+# Create a SeaSondeRCS object from a spectral file
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+cs_obj <- SeaSondeR:::seasonder_computeNoiseLevel(cs_obj)
+cs_obj <- SeaSondeR:::seasonder_computeNoiseLevel(cs_obj, antenna = 3, smoothed = TRUE)
 
 }
 \seealso{

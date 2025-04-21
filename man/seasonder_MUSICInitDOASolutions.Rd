@@ -31,11 +31,9 @@ The function returns a list containing two sub-lists, one for \code{"single"} so
 }
 }
 \examples{
-\dontrun{
 # Initialize DOA solutions
-doa_solutions <- seasonder_MUSICInitDOASolutions()
+doa_solutions <- SeaSondeR:::seasonder_MUSICInitDOASolutions()
 print(doa_solutions)
-}
 }
 \seealso{
 \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.

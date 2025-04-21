@@ -24,14 +24,12 @@
 #'   }
 #'
 #' @examples
-#' \dontrun{
 #' # Example usage:
 #' con <- rawConnection(as.raw(c(0xFF, 0x00, 0xAA, 0x55, 0xCC, 0x33, 0x77, 0x88, 0x99)))
 #' key <- list(size = 9, key = "asign")
-#' result <- seasonder_CSSW_read_asign(con, key)
+#' result <- SeaSondeR:::seasonder_CSSW_read_asign(con, key)
 #' print(result)
 #' close(con)
-#' }
 seasonder_CSSW_read_asign <- function(connection, key) {
   # Determine the total number of bytes to read from the connection based on key$size.
   total_bytes <- key$size
@@ -90,14 +88,18 @@ seasonder_CSSW_read_asign <- function(connection, key) {
 #' @return A named list as returned by seasonder_readSeaSondeCSFileBlock consistent with the provided specifications.
 #'
 #' @examples
-#' \dontrun{
-#' # Example usage:
-#' con <- rawConnection(as.raw(1:10))
-#' specs <- list(field = list(type = "integer"))
-#' result <- seasonder_readCSSWFields(con, specs, "big")
+#' # Example usage: read a single UInt8 field
+#' con <- rawConnection(as.raw(c(5)))
+#' specs <- list(
+#'   field1 = list(
+#'     type = "UInt8",
+#'     qc_fun = "qc_check_unsigned",
+#'     qc_params = list()
+#'   )
+#' )
+#' result <- SeaSondeR:::seasonder_readCSSWFields(con, specs, endian = "big")
 #' print(result)
 #' close(con)
-#' }
 seasonder_readCSSWFields <- function(connection, specs, endian, parent_key= NULL){
   variable_char_types <- purrr::map_lgl(specs, \(x) x$type == "CharX")
   if(any(variable_char_types)){
@@ -141,13 +143,12 @@ seasonder_readCSSWFields <- function(connection, specs, endian, parent_key= NULL
 #' voltage values. Special integer values equal to 0xFFFFFFFF are converted to NaN.
 #'
 #' @examples
-#' \dontrun{
 #' # Example usage:
 #' values <- list(c(1000, 0xFFFFFFFF, 2000))
-#' scaled <- seasonder_SeaSondeRCSSWApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000, 
+#' # Use triple colon to call internal function
+#' scaled <- SeaSondeR:::seasonder_SeaSondeRCSSWApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000,
 #' dbRef = -20)
 #' print(scaled)
-#'}
 #' @details
 #' The scaling process performs the following steps for each input value:
 #'   1. Checks whether the value equals 0xFFFFFFFF. If so, it returns NaN immediately because this value indicates a
@@ -241,14 +242,22 @@ if(computeVoltage){
 #'         the raw decoded data or the scaled voltage values if a 'scal' block had been applied.
 #'
 #' @examples
-#' \dontrun{
-#'   # Example usage:
-#'   con <- rawConnection(as.raw(1:100))
-#'   specs <- list(sampleKey = list(type = "double"))
-#'   result <- seasonder_readCSSWBodyRangeCell(con, specs, dbRef = -20, endian = "big")
-#'   print(result)
-#'   close(con)
-#' }
+#' # Example: use real specifications with a minimal raw cell
+#' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSW")
+#' specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
+#' body_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSW", "BODY"))
+#' # Build a minimal raw cell: 'END ' marker and zero payload size
+#' raw_data <- c(charToRaw("END "), as.raw(c(0, 0, 0, 0)))
+#' con <- rawConnection(raw_data)
+#' result <- SeaSondeR:::seasonder_readCSSWBodyRangeCell(
+#'   con,
+#'   body_specs,
+#'   dbRef = -20,
+#'   endian = "big",
+#'   specs_key_size = specs_key_size
+#' )
+#' print(result)
+#' close(con)
 seasonder_readCSSWBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
   indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
   scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
@@ -314,14 +323,23 @@ seasonder_readCSSWBodyRangeCell <- function(connection, specs, dbRef, endian = "
 #' @return A list of processed body cells with applied sign corrections.
 #'
 #' @examples
-#' \dontrun{
-#' # Example usage:
-#' con <- rawConnection(as.raw(1:100))
-#' specs <- list(sampleKey = list(type = "double"))
-#' result <- seasonder_readCSSWBody(con, specs, 100, dbRef = -20, endian = "big")
+#' # Example: read one minimal cell using real CSSW specifications
+#' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSW")
+#' specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
+#' body_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSW", "BODY"))
+#' # Build a minimal raw cell: 'END ' marker and zero payload size
+#' raw_data <- c(charToRaw("END "), as.raw(c(0, 0, 0, 0)))
+#' con <- rawConnection(raw_data)
+#' result <- SeaSondeR:::seasonder_readCSSWBody(
+#'   con,
+#'   body_specs,
+#'   size = length(raw_data),
+#'   dbRef = -20,
+#'   endian = "big",
+#'   specs_key_size = specs_key_size
+#' )
 #' print(result)
 #' close(con)
-#' }
 seasonder_readCSSWBody <- function(connection, specs, size, dbRef, endian = "big", specs_key_size = NULL){
 
   end_point <- seek(connection) + size
@@ -346,13 +364,11 @@ seasonder_readCSSWBody <- function(connection, specs, size, dbRef, endian = "big
 #' @return A numeric matrix with four columns: LeftBraggLeftLimit, LeftBraggRightLimit, RightBraggLeftLimit, and RightBraggRightLimit.
 #'
 #' @examples
-#' \dontrun{
 #' # Example usage:
 #' con <- rawConnection(as.raw(rep(0x01, 16)))
-#' lims <- seasonder_readCSSWLims(con, 4, endian = "big")
+#' lims <- SeaSondeR:::seasonder_readCSSWLims(con, 4, endian = "big")
 #' print(lims)
 #' close(con)
-#' }
 seasonder_readCSSWLims <- function(connection, n_values, endian = "big") {
 
   # Read n_values of 32-bit unsigned integers
@@ -404,12 +420,23 @@ seasonder_readCSSWLims <- function(connection, n_values, endian = "big") {
 #' @import glue
 #'
 #' @examples
-#' \dontrun{
-#'   con <- file("path/to/file.cssy", "rb")
-#'   specs <- seasonder_readYAMLSpecs(seasonder_defaultSpecsFilePath("CSSW"), "header")
-#'   header <- seasonder_readCSSWHeader(con, specs, endian = "big")
-#'   close(con)
-#' }
+#' # Example: read the CSSW file header using real specifications
+#' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSW")
+#' specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
+#' header_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSW", "HEAD"))
+#' con <- file(
+#'   system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR"),
+#'   "rb",
+#'   raw = TRUE
+#' )
+#' header <- SeaSondeR:::seasonder_readCSSWHeader(
+#'   con,
+#'   header_specs,
+#'   endian = "big",
+#'   specs_key_size = specs_key_size
+#' )
+#' print(header)
+#' close(con)
 seasonder_readCSSWHeader <- function(connection, current_specs, endian = "big", parent_key = NULL, keys_so_far = c("CSSW", "HEAD"), specs_key_size = NULL){
   # Initialize an empty output list for accumulating header values
   out <- list()
@@ -472,12 +499,10 @@ seasonder_readCSSWHeader <- function(connection, current_specs, endian = "big", 
 #' @return A transformed list representing a valid SeaSonde CS header with embedded CSSW header information.
 #'
 #' @examples
-#' \dontrun{
 #' # Example usage:
 #' header <- list(cs4h = list(field = 1), someField = 42)
-#' cs_header <- seasonder_CSSW2CSHeader(header)
+#' cs_header <- SeaSondeR:::seasonder_CSSW2CSHeader(header)
 #' print(cs_header)
-#' }
 seasonder_CSSW2CSHeader <- function(header) {
   if (is.null(header$cs4h)) {
     seasonder_logAndAbort("CSSW header does not contain a cs4h component")
@@ -527,7 +552,6 @@ seasonder_CSSW2CSHeader <- function(header) {
 #' of the matrices as indicated by the cell's \code{indx$index} value.
 #'
 #' @examples
-#' \dontrun{
 #'   # Example with a single cell
 #'   cell <- list(
 #'     indx  = list(index = 1),
@@ -545,7 +569,6 @@ seasonder_CSSW2CSHeader <- function(header) {
 #'   body <- list(cell)
 #'   transformed <- seasonder_CSSW2CSData(body)
 #'   print(transformed)
-#' }
 #'
 #' @export
 
@@ -628,16 +651,14 @@ seasonder_CSSW2CSData <- function(body) {
 #' @return The modified list of CSSW data cells with sign corrections applied.
 #'
 #' @examples
-#' \dontrun{
 #' # Example usage:
 #' cs_data <- list(
 #'   list(csgn = list(c12m = 1, c12a = 0, c13m = 1, c13a = 0, c23m = 1, c23a = 0),
 #'        c12m = c(1,2), c12a = c(0,0),
 #'        cs1a = c(3,4))
 #' )
-#' corrected <- seasonder_applyCSSWSigns(cs_data)
+#' corrected <- SeaSondeR:::seasonder_applyCSSWSigns(cs_data)
 #' print(corrected)
-#' }
 seasonder_applyCSSWSigns <- function(cs_data) {
   for (i in seq_along(cs_data)) {
     cell <- cs_data[[i]]
@@ -686,15 +707,13 @@ seasonder_applyCSSWSigns <- function(cs_data) {
 #' }
 #'
 #' @examples
-#' \dontrun{
-#'   # Assuming "path/to/file.rcssy" is a valid SeaSonde RCSSW file and the specifications file exists:
-#'   cs_obj <- seasonder_readSeaSondeRCSSWFile("path/to/file.rcssy")
-#'
-#'   # Inspect the resulting SeaSondeRCS object:
-#'   print(attr(cs_obj, "header"))
-#'   print(attr(cs_obj, "data"))
+#' \donttest{
+#'   # Example:
+#'   cs_obj <- SeaSondeR:::seasonder_readSeaSondeRCSSWFile(
+#'     system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR")
+#'   )
+#'   str(cs_obj)
 #' }
-#'
 seasonder_readSeaSondeRCSSWFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSW"), endian = "big"){
 
   # Set up error handling parameters with function name, error class, and file path

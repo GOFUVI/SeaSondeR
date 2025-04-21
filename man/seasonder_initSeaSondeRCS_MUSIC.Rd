@@ -48,15 +48,18 @@ Columns in the resulting tibble include:
 }
 }
 \examples{
-\dontrun{
-# Initialize MUSIC data structure for all range cells and Doppler bins
-music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object)
+# Minimal example for initializing MUSIC data structure
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+music_data <- SeaSondeR:::seasonder_initSeaSondeRCS_MUSIC(cs_obj)
+print(music_data)
 
 # Initialize for specific range cells and Doppler bins
-music_data <- seasonder_initSeaSondeRCS_MUSIC(seasonder_cs_object, 
-range_cells = c(1, 2), doppler_bins = c(5, 10))
-print(music_data)
-}
+music_data2 <- SeaSondeR:::seasonder_initSeaSondeRCS_MUSIC(cs_obj,
+  range_cells = c(1, 2), doppler_bins = c(5, 10))
+print(music_data2)
 }
 \seealso{
 \code{\link{seasonder_NULLSeaSondeRCS_MUSIC}} for a NULL initialized structure.

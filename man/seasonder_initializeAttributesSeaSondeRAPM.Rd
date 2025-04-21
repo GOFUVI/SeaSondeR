@@ -40,10 +40,8 @@ The function initializes the following attributes:
 }
 }
 \examples{
-\dontrun{
   # Initialize attributes for a dummy calibration matrix
   attrs <- seasonder_initializeAttributesSeaSondeRAPM(matrix(1:6, nrow = 3))
-}
 }
 \seealso{
 \code{\link{seasonder_createSeaSondeRAPM}},

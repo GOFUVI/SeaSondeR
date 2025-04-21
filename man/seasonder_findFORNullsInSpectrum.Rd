@@ -65,15 +65,15 @@ The function executes the following steps:
 }
 }
 \examples{
-\dontrun{
-# Sample spectrum
-spectrum <- c(0.1, 0.3, 0.5, 1.0, 2.5, 3.8, 2.1, 1.0, 0.5, 0.2)
-doppler_bins <- seq(-5, 5, length.out = length(spectrum))
-
-# Find nulls in the spectrum
-result <- seasonder_findFORNullsInSpectrum(cs_obj, spectrum, doppler_bins)
+# Minimal example for seasonder_findFORNullsInSpectrum
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+spectrum <- c(10, 9, 8, 0, 8, 9, 10)
+doppler_bins <- seq(-3, 3, length.out = length(spectrum))
+result <- SeaSondeR:::seasonder_findFORNullsInSpectrum(cs_obj, spectrum, doppler_bins)
 print(result)
-}
 }
 \seealso{
 \itemize{

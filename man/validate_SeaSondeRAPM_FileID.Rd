@@ -16,7 +16,5 @@ Returns TRUE if the validation passes.
 This function validates if the provided FileID is a unique character string.
 }
 \examples{
-\dontrun{
-  valid <- validate_SeaSondeRAPM_FileID("123e4567-e89b-12d3-a456-426614174000")
-}
+valid <- SeaSondeR:::validate_SeaSondeRAPM_FileID("123e4567-e89b-12d3-a456-426614174000")
 }

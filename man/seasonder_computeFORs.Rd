@@ -50,14 +50,18 @@ This function provides a flexible interface for computing FORs, allowing users t
 methods and configure parameters without modifying the internal object structure.
 }
 \examples{
-\dontrun{
-# Compute FORs using the SeaSonde method
+# Set sample file paths
+seasonder_disableMessages()
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+# Read the antenna pattern file to create a SeaSondeRAPM object
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+# Create a SeaSondeRCS object from a spectral file
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 cs_obj <- seasonder_computeFORs(cs_obj, method = "SeaSonde")
-
-# Compute FORs with custom parameters
-FOR_control <- list(currmax = 2, noisefact = 4)
+# Retrieve existing FOR control parameters from the object
+FOR_control <- seasonder_getSeaSondeRCS_FORConfig(cs_obj)
 cs_obj <- seasonder_computeFORs(cs_obj, FOR_control = FOR_control)
-}
 }
 \seealso{
 \itemize{

@@ -28,17 +28,20 @@ Reads the header of a SeaSonde file (Version 1) based on the provided specificat
 Transforms the date-time fields and returns the results.
 }
 \examples{
-\dontrun{
-  con <- rawConnection(as.raw(rep(0, 100)))
-  specs <- list(
-    nCsFileVersion = list(type = "UInt8", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nDateTime = list(type = "UInt32", qc_fun = "qc_check_unsigned", qc_params = list()),
-    nV1Extent = list(type = "UInt16", qc_fun = "qc_check_unsigned", qc_params = list())
-  )
-  header <- seasonder_readSeaSondeCSFileHeaderV1(specs, con, endian = "big")
-  print(header)
-  close(con)
-}
+# Read version 1 header from a CS file
+specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header", "V1"))
+con <- file(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
+  "rb"
+)
+header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
+  specs,
+  con,
+  endian = "big"
+)
+str(header_v1)
+close(con)
 }
 \seealso{
 \code{\link{seasonder_check_specs}}

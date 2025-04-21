@@ -26,13 +26,14 @@ corresponding to the provided bin indices. This is useful for translating bin-do
 into physical Doppler frequency values for analysis or visualization.
 }
 \examples{
-\dontrun{
-# Assuming `seasonder_cs_object` is a valid SeaSondeRCS object
-bins <- c(1, 5, 10)
-doppler_freqs <- seasonder_MUSIC_Bins2DopplerFreq(seasonder_cs_object, bins)
-print(doppler_freqs)
-}
-
+# Map bins to frequencies
+# Create a SeaSondeRCS object for MUSIC examples
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+freqs <- SeaSondeR:::seasonder_MUSIC_Bins2DopplerFreq(cs_obj, c(1, 5))
+print(freqs)
 }
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency}}

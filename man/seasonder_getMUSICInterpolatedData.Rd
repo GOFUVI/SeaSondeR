@@ -20,9 +20,11 @@ The function first checks if the interpolated data is set in the MUSIC_data attr
 If absent, it initializes the data with \code{seasonder_MUSICInitInterpolatedData()}.
 }
 \examples{
-\dontrun{
-  # Assuming cs_object is a valid SeaSondeRCS object.
-  interp_data <- seasonder_getMUSICInterpolatedData(cs_object)
-  str(interp_data)
-}
+# Minimal example for seasonder_getMUSICInterpolatedData
+cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+interp_data <- seasonder_getMUSICInterpolatedData(cs_obj)
+str(interp_data)
 }
