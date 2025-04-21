@@ -11,7 +11,7 @@ seasonder_getSeaSondeRCS_SelfSpectra(
   doppler_ranges = NULL,
   dist_in_km = FALSE,
   collapse = FALSE,
-  smoothed =FALSE
+  smoothed = FALSE
 )
 }
 \arguments{

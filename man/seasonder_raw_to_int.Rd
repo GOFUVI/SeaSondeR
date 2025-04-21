@@ -4,7 +4,7 @@
 \alias{seasonder_raw_to_int}
 \title{Convert a Raw Vector to a 64-bit Integer}
 \usage{
-seasonder_raw_to_int(r, signed =FALSE)
+seasonder_raw_to_int(r, signed = FALSE)
 }
 \arguments{
 \item{r}{A raw vector to be converted.}

@@ -1445,7 +1445,7 @@ seasonder_SmoothSS <- function(seasonder_cs_object, antenna, smoothing = NULL) {
   }
 
   # Apply the sliding mean filter row-wise to the self-spectra matrix
-  out <- purrr::map(1:nrow(SS), \(i) {
+  out <- purrr::map(seq_len(nrow(SS)), \(i) {
     # Compute the smoothed values for the current row
     smoothed_row <- slider::slide_mean(abs(SS[i, , drop = TRUE]),
                                        after = after_bins,
@@ -1962,7 +1962,7 @@ seasonder_filterFORAmplitudes <- function(seasonder_cs_object) {
   SS3 <- seasonder_getSeaSondeRCS_FOR_SS_Smoothed(seasonder_cs_object) %>% abs()
 
   # Extract the FOR spectral power for each range cell
-  FORs_sp <- 1:length(FORs) %>% purrr::map(\(i) {
+  FORs_sp <- seq_len(length(FORs)) %>% purrr::map(\(i) {
     seasonder_extractFOR(seasonder_cs_object, SS3[i, , drop = FALSE], FORs[[i]])
   }) %>% magrittr::set_names(names(FORs))
 
@@ -2229,7 +2229,7 @@ seasonder_rejectDistantBragg <- function(seasonder_cs_object) {
 
   # Apply the rejection test to each range cell and each Bragg region
   FORs %<>% purrr::map2(
-    1:length(FORs), # Iterate over the range cells
+    seq_len(length(FORs)), # Iterate over the range cells
     \(FOR, FOR_range) {
       FOR %>% purrr::map2(
         names(FOR), # Iterate over positive and negative Bragg regions
@@ -2426,7 +2426,7 @@ seasonder_rejectNoiseIonospheric <- function(seasonder_cs_object) {
 
   # Apply the noise/ionospheric test to each range cell and each Bragg region
   FORs %<>% purrr::map2(
-    1:length(FORs), # Iterate over the range cells
+    seq_len(length(FORs)), # Iterate over the range cells
     \(FOR, FOR_range) { # FOR contains the peaks for a single range cell
       FOR %>% purrr::map2(
         names(FOR), # Iterate over positive and negative Bragg regions
@@ -2658,7 +2658,7 @@ seasonder_SeaSondeRCSExportFORBoundaries <- function(seasonder_cs_object){
   FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_object)
 
   # Iterate through each range cell and extract boundary information
-  FOR <- 1:length(FOR) %>% purrr::map(\(range_cell) {
+  FOR <- seq_len(length(FOR)) %>% purrr::map(\(range_cell) {
 
     # Initialize output for the current range cell
     o <- NULL
