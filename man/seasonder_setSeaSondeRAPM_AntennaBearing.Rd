@@ -18,5 +18,10 @@ The modified SeaSondeRAPM object with updated AntennaBearing.
 Setter for AntennaBearing
 }
 \examples{
-obj <- seasonder_setSeaSondeRAPM_AntennaBearing(obj, new_antenna_bearing)
+# Minimal example for seasonder_setSeaSondeRAPM_AntennaBearing
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+new_bearing <- 45
+apm_obj <- seasonder_setSeaSondeRAPM_AntennaBearing(apm_obj, new_bearing)
+print(attributes(apm_obj)$AntennaBearing)
 }

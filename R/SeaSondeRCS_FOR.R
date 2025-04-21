@@ -551,8 +551,15 @@ seasonder_setSeaSondeRCS_FOR <- function(seasonder_cs_object, FOR) {
 #' - \code{\link{seasonder_SmoothFORSS}} for applying smoothing and setting the result.
 #'
 #' @examples
+#' # Set sample file paths and create SeaSondeRCS object
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' # Generate and set smoothed self-spectra for antenna 3
 #' smoothed_SS <- SeaSondeR:::seasonder_SmoothSS(cs_obj, antenna = 3)
 #' cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR_SS_Smoothed(cs_obj, smoothed_SS)
+#' str(attr(cs_obj, "FOR_data")$FOR_SS_Smoothed)
 seasonder_setSeaSondeRCS_FOR_SS_Smoothed <- function(seasonder_cs_object, FOR_SS_Smoothed) {
 
   # TODO: Implement validation to check that FOR_SS_Smoothed is a valid matrix
@@ -636,7 +643,10 @@ seasonder_setSeaSondeRCS_FOR_method <- function(seasonder_cs_object, FOR_method)
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' # Create a SeaSondeRCS object from a spectral file
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' # Define sample MAXP values (empty list as placeholder)
+#' MAXP_values <- list()
 #' cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR_MAXP(cs_obj, MAXP_values)
+#' print(attr(cs_obj, "FOR_data")$FOR_MAXP)
 seasonder_setSeaSondeRCS_FOR_MAXP <- function(seasonder_cs_object, FOR_MAXP) {
 
   # TODO: Implement validation to check that FOR_MAXP is a valid list of numeric values
@@ -678,7 +688,10 @@ seasonder_setSeaSondeRCS_FOR_MAXP <- function(seasonder_cs_object, FOR_MAXP) {
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' # Create a SeaSondeRCS object from a spectral file
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' # Define sample MAXP.bin values (empty list as placeholder)
+#' MAXP_bin_values <- list()
 #' cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR_MAXP.bin(cs_obj, MAXP_bin_values)
+#' print(attr(cs_obj, "FOR_data")$FOR_MAXP.bin)
 seasonder_setSeaSondeRCS_FOR_MAXP.bin <- function(seasonder_cs_object, FOR_MAXP.bin) {
 
   # TODO: Implement validation to check that FOR_MAXP.bin is a valid list of integer values

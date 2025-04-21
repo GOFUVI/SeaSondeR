@@ -36,7 +36,10 @@ apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 # Create a SeaSondeRCS object from a spectral file
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+# Define sample MAXP.bin values (empty list as placeholder)
+MAXP_bin_values <- list()
 cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_FOR_MAXP.bin(cs_obj, MAXP_bin_values)
+print(attr(cs_obj, "FOR_data")$FOR_MAXP.bin)
 }
 \seealso{
 \itemize{

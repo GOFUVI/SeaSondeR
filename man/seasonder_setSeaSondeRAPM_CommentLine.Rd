@@ -18,5 +18,9 @@ The modified SeaSondeRAPM object with updated CommentLine.
 Setter for CommentLine
 }
 \examples{
-obj <- seasonder_setSeaSondeRAPM_CommentLine(obj, new_comment_line)
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+new_comment_line <- "Test comment"
+apm_obj <- seasonder_setSeaSondeRAPM_CommentLine(apm_obj, new_comment_line)
+print(attributes(apm_obj)$CommentLine)
 }

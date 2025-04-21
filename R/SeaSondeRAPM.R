@@ -1081,7 +1081,11 @@ seasonder_getSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' obj <- seasonder_setSeaSondeRAPM_SiteOrigin(obj, new_site_origin)
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_site_origin <- attributes(apm_obj)$SiteOrigin
+#' apm_obj <- seasonder_setSeaSondeRAPM_SiteOrigin(apm_obj, new_site_origin)
+#' print(attributes(apm_obj)$SiteOrigin)
 seasonder_setSeaSondeRAPM_SiteOrigin <- function(seasonde_apm_obj, new_value) {
   # Validate the new SiteOrigin value
   validate_SeaSondeRAPM_SiteOrigin(new_value)
@@ -1161,8 +1165,13 @@ seasonder_getSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj) {
 #' @return The modified SeaSondeRAPM object with updated CreateTimeStamp.
 #'
 #' @export
+## Example to set a new CreateTimeStamp value
 #' @examples
-#' obj <- seasonder_setSeaSondeRAPM_CreateTimeStamp(obj, new_create_time_stamp)
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_create_time_stamp <- as.POSIXct("2000-01-01 00:00:00", tz = "UTC")
+#' apm_obj <- seasonder_setSeaSondeRAPM_CreateTimeStamp(apm_obj, new_create_time_stamp)
+#' print(attributes(apm_obj)$CreateTimeStamp)
 seasonder_setSeaSondeRAPM_CreateTimeStamp <- function(seasonde_apm_obj, new_value) {
   # Validate the new CreateTimeStamp value
   validate_SeaSondeRAPM_CreateTimeStamp(new_value)
@@ -1458,7 +1467,11 @@ seasonder_getSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj) {
 #'
 #' @export
 #' @examples
-#' obj <- seasonder_setSeaSondeRAPM_CommentLine(obj, new_comment_line)
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_comment_line <- "Test comment"
+#' apm_obj <- seasonder_setSeaSondeRAPM_CommentLine(apm_obj, new_comment_line)
+#' print(attributes(apm_obj)$CommentLine)
 seasonder_setSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj, new_value) {
   # Validate the new CommentLine value
   validate_SeaSondeRAPM_CommentLine(new_value)
@@ -1477,7 +1490,11 @@ seasonder_setSeaSondeRAPM_CommentLine <- function(seasonde_apm_obj, new_value) {
 #'
 #' @export
 #' @examples
-#' obj <- seasonder_setSeaSondeRAPM_FileID(obj, new_file_id)
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' new_file_id <- attributes(apm_obj)$FileID
+#' apm_obj <- seasonder_setSeaSondeRAPM_FileID(apm_obj, new_file_id)
+#' print(attributes(apm_obj)$FileID)
 seasonder_setSeaSondeRAPM_FileID <- function(seasonde_apm_obj, new_value) {
   # Validate the new FileID value
   validate_SeaSondeRAPM_FileID(new_value)

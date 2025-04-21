@@ -18,5 +18,9 @@ The modified SeaSondeRAPM object with updated SiteOrigin.
 Setter for SiteOrigin
 }
 \examples{
-obj <- seasonder_setSeaSondeRAPM_SiteOrigin(obj, new_site_origin)
+apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+new_site_origin <- attributes(apm_obj)$SiteOrigin
+apm_obj <- seasonder_setSeaSondeRAPM_SiteOrigin(apm_obj, new_site_origin)
+print(attributes(apm_obj)$SiteOrigin)
 }

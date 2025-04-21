@@ -36,7 +36,7 @@ cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 music_results <- list(result1 = 1, result2 = 2)  # Replace with actual MUSIC results structure
 
 # Set the MUSIC data in the SeaSondeRCS object
-cs_obj <- seasonder_setSeaSondeRCS_MUSIC(cs_obj, music_results)
+cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_MUSIC(cs_obj, music_results)
 
 # Retrieve and inspect the MUSIC data
 print(attr(cs_obj, "MUSIC_data")$MUSIC)

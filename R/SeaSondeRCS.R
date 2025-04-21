@@ -653,6 +653,13 @@ seasonder_validateCSDataStructure <- function(data, nRanges, nDoppler) {
 #' @return A SeaSondeRCS object with updated header.
 #' 
 #' @examples
+#' # Set sample file paths and create SeaSondeRCS object
+#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
+#' # Retrieve and set header
+#' new_header <- seasonder_getSeaSondeRCS_header(cs_obj)
 #' cs_obj <- seasonder_setSeaSondeRCS_header(cs_obj, new_header)
 #' print(seasonder_getSeaSondeRCS_header(cs_obj))
 #' @export
@@ -685,7 +692,7 @@ seasonder_setSeaSondeRCS_header <- function(seasonder_cs_object, header) {
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' new_data <- seasonder_getSeaSondeRCS_data(cs_obj)
 #' cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_data(cs_obj, new_data)
-#' print(seasonder_getSeaSondeRCS_data(cs_obj))
+#' head(seasonder_getSeaSondeRCS_data(cs_obj))
 #' @export
 seasonder_setSeaSondeRCS_data <- function(seasonder_cs_object, data) {
   # TODO: test, document, vignette
