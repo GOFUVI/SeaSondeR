@@ -32,7 +32,9 @@ After \code{findInterval} determines the bin indices, values that are out of ran
 }
 \examples{
 ## Create a SeaSondeRCS object using a sample data file
-cs_obj <- seasonder_createSeaSondeRCS(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"))
+cs_obj <- seasonder_createSeaSondeRCS(
+  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+)
 ## Define a set of normalized Doppler frequencies to convert
 doppler_values <- c(-1, 1)
 ## Convert normalized Doppler frequencies to bin indices

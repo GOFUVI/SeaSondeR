@@ -2,6 +2,7 @@
 % Please edit documentation in R/SeaSondeRCS_MUSIC.R
 \name{seasonder_getMUSICDopplerInterpolation}
 \alias{seasonder_getMUSICDopplerInterpolation}
+\alias{seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation}
 \title{Retrieve the Doppler Interpolation Factor from MUSIC Options}
 \usage{
 seasonder_getMUSICDopplerInterpolation(seasonder_cs_object)

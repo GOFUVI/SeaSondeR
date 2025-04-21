@@ -28,6 +28,12 @@ This function is meant to be used within custom condition handlers for the
 }
 \examples{
 # Example (expected to error due to missing restart):
-val <- try(SeaSondeR:::seasonder_rerun_qc_with_fun(list(seasonder_value = 42), function(x) x * 2), silent = TRUE)
+val <- try(
+  SeaSondeR:::seasonder_rerun_qc_with_fun(
+    list(seasonder_value = 42),
+    function(x) x * 2
+  ),
+  silent = TRUE
+)
 print(val)
 }

@@ -1168,7 +1168,10 @@ seasonder_extractSeaSondeRCS_distRanges_from_SSdata <- function(SSmatrix, dist_r
 #' @examples
 #' sample_matrix <- matrix(1:50, nrow = 5, ncol = 10)
 #' selected_bins <- 3:7
-#' sliced_matrix <- SeaSondeR:::seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(sample_matrix, selected_bins)
+#' sliced_matrix <- SeaSondeR:::seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(
+#'   sample_matrix,
+#'   selected_bins
+#' )
 #' print(sliced_matrix)
 seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, doppler_cells) {
 
@@ -2488,7 +2491,9 @@ seasonder_Bins2NormalizedDopplerFreq <- function(seasonder_cs_object, bins) {
 #'
 #' @examples
 #' ## Create a SeaSondeRCS object using a sample data file
-#' cs_obj <- seasonder_createSeaSondeRCS(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"))
+#' cs_obj <- seasonder_createSeaSondeRCS(
+#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+#' )
 #' ## Define a set of normalized Doppler frequencies to convert
 #' doppler_values <- c(-1, 1)
 #' ## Convert normalized Doppler frequencies to bin indices
@@ -2559,7 +2564,8 @@ seasonder_NormalizedDopplerFreq2Bins <- function(seasonder_cs_object, doppler_va
 #' @importFrom magrittr %>%
 #'
 #' @examples
-#' # Compute Doppler bin indices from example cross-spectral file (use internal helpers via SeaSondeR:::)
+#' # Compute Doppler bin indices from example cross-spectral file
+#' # (use internal helpers via SeaSondeR:::)
 #' cs_obj <- seasonder_readSeaSondeCSFile(
 #'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
 #'   SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
@@ -2780,7 +2786,10 @@ seasonder_DopplerFreq2NormalizedDopplerFreq <- function(seasonder_cs_object, dop
 #'   )
 #'   # Example normalized frequencies for bins 1 and 2
 #'   normalized_values <- SeaSondeR:::seasonder_Bins2NormalizedDopplerFreq(cs_obj, c(1, 2))
-#'   doppler_freqs <- SeaSondeR:::seasonder_NormalizedDopplerFreq2DopplerFreq(cs_obj, normalized_values)
+#'   doppler_freqs <- SeaSondeR:::seasonder_NormalizedDopplerFreq2DopplerFreq(
+#'     cs_obj,
+#'     normalized_values
+#'   )
 #'   print(doppler_freqs)
 #'
 seasonder_NormalizedDopplerFreq2DopplerFreq <- function(seasonder_cs_object, doppler_values) {
@@ -3585,7 +3594,13 @@ seasonder_readCSField <- function(con, type, endian = "big") {
 #' @return The value returned by the alternate quality control function.
 #' @examples
 #' # Example (expected to error due to missing restart):
-#' val <- try(SeaSondeR:::seasonder_rerun_qc_with_fun(list(seasonder_value = 42), function(x) x * 2), silent = TRUE)
+#' val <- try(
+#'   SeaSondeR:::seasonder_rerun_qc_with_fun(
+#'     list(seasonder_value = 42),
+#'     function(x) x * 2
+#'   ),
+#'   silent = TRUE
+#' )
 #' print(val)
 #' @export
 seasonder_rerun_qc_with_fun <- function(cond,qc_fun) {
@@ -3649,7 +3664,11 @@ seasonder_rerun_qc_with_fun <- function(cond,qc_fun) {
 #'
 #' It's also important to note that within `read_and_qc_field`, the function `seasonder_readCSField` is used. This function has its own error management and restart options, which are detailed in its documentation.
 #' @examples
-#' field_spec <- list(type = "UInt8", qc_fun = "qc_check_type", qc_params = list(expected_type = "integer"))
+#' field_spec <- list(
+#'   type = "UInt8",
+#'   qc_fun = "qc_check_type",
+#'   qc_params = list(expected_type = "integer")
+#' )
 #' con <- rawConnection(as.raw(c(0x01)))
 #' result <- SeaSondeR:::read_and_qc_field(field_spec, con, endian = "big")
 #' print(result)

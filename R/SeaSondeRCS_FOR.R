@@ -1183,7 +1183,11 @@ SeaSondeRCS_setFORParameters_step_text <- function(seasonder_cs_object) {
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' noise_limits <- SeaSondeR:::seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj)
 #' print(noise_limits)
-#' noise_limits <- SeaSondeR:::seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj, low_limit = 0.565, high_limit = 1.0)
+#' noise_limits <- SeaSondeR:::seasonder_estimateReferenceNoiseNormalizedLimits(
+#'   cs_obj,
+#'   low_limit = 0.565,
+#'   high_limit = 1.0
+#' )
 #' print(noise_limits)
 #'
 seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_object, low_limit = 0.95, high_limit = 1.0) {
@@ -1848,7 +1852,12 @@ seasonder_findFORNulls <- function(seasonder_cs_object) {
 #' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' # Extract self-spectrum for antenna 1, range cell 1
-#' spec_mat <- SeaSondeR:::seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae = 3, dist_ranges = c(3, 3), collapse = TRUE)[[1]]
+#' spec_mat <- SeaSondeR:::seasonder_getSeaSondeRCS_SelfSpectra(
+#'   cs_obj,
+#'   antennae = 3,
+#'   dist_ranges = c(3, 3),
+#'   collapse = TRUE
+#' )[[1]]
 #' # Retrieve FOR bins for the third range cell
 #' for_bins <- seasonder_getSeaSondeRCS_FOR(cs_obj)[[3]]
 #' # Extract FOR spectral data
@@ -2118,7 +2127,12 @@ seasonder_limitFORCurrentRange <- function(seasonder_cs_object) {
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' peak <- c(100, 101, 102)
-#' new_peak <- SeaSondeR:::seasonder_rejectDistantBraggPeakTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")
+#' new_peak <- SeaSondeR:::seasonder_rejectDistantBraggPeakTest(
+#'   cs_obj,
+#'   peak,
+#'   range = 5,
+#'   peak_name = "positive_FOR"
+#' )
 #' print(new_peak)
 seasonder_rejectDistantBraggPeakTest <- function(seasonder_cs_object, peak, range = NA, peak_name = "") {
 
@@ -2292,7 +2306,12 @@ seasonder_rejectDistantBragg <- function(seasonder_cs_object) {
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' peak <- c(100, 101, 102)
-#' new_peak <- SeaSondeR:::seasonder_rejectNoiseIonosphericTest(cs_obj, peak, range = 5, peak_name = "positive_FOR")
+#' new_peak <- SeaSondeR:::seasonder_rejectNoiseIonosphericTest(
+#'   cs_obj,
+#'   peak,
+#'   range = 5,
+#'   peak_name = "positive_FOR"
+#' )
 #' print(new_peak)
 seasonder_rejectNoiseIonosphericTest <- function(seasonder_cs_object, peak, range = NA, peak_name = "") {
 

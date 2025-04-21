@@ -1159,6 +1159,7 @@ seasonder_getMUSICDualSolutionsProportion <- seasonder_getSeaSondeRCS_MUSIC_dual
 #' interp_factor <- seasonder_getMUSICDopplerInterpolation(cs_obj)
 #' print(interp_factor)
 #' @export
+#' @aliases seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation
 seasonder_getMUSICDopplerInterpolation <- seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation <-   function(seasonder_cs_object){
 
 
@@ -3036,7 +3037,13 @@ seasonder_MUSICExtractDOASolutions <- function(projections, valid_bearings, seas
 #'
 #' @examples
 #' # Check retained solution
-#' out <- SeaSondeR:::seasonder_MUSICExtractPeaksCheckRetainedSolution("dual", list(single=list(bearing=45), dual=list(bearing=c(30,60))))
+#' out <- SeaSondeR:::seasonder_MUSICExtractPeaksCheckRetainedSolution(
+#'   "dual",
+#'   list(
+#'     single = list(bearing = 45),
+#'     dual = list(bearing = c(30, 60))
+#'   )
+#' )
 seasonder_MUSICExtractPeaksCheckRetainedSolution <- function(ret_sol, DOA_sol){
 
   out <- ret_sol

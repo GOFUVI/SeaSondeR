@@ -45,7 +45,10 @@ where:
   )
   # Example normalized frequencies for bins 1 and 2
   normalized_values <- SeaSondeR:::seasonder_Bins2NormalizedDopplerFreq(cs_obj, c(1, 2))
-  doppler_freqs <- SeaSondeR:::seasonder_NormalizedDopplerFreq2DopplerFreq(cs_obj, normalized_values)
+  doppler_freqs <- SeaSondeR:::seasonder_NormalizedDopplerFreq2DopplerFreq(
+    cs_obj,
+    normalized_values
+  )
   print(doppler_freqs)
 
 }

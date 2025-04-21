@@ -73,7 +73,7 @@ seasonder_createSeaSondeRAPM <- function(calibration_matrix = matrix(complex(rea
         # Construct the name of the setter function dynamically
         setter_fun <- get(glue::glue("seasonder_setSeaSondeRAPM_{attribute_name}"))
         # Apply the setter function to update the current state of the calibration matrix
-        cal_matrix_so_far %<>% setter_fun(new_value = attribute)
+        cal_matrix_so_far <- setter_fun(cal_matrix_so_far, new_value = attribute)
       },
       .init = calibration_matrix
     )

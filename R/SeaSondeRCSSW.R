@@ -424,7 +424,11 @@ seasonder_readCSSWLims <- function(connection, n_values, endian = "big") {
 #' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSW")
 #' specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
 #' header_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSW", "HEAD"))
-#' con <- file(system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR"), "rb", raw = TRUE)
+#' con <- file(
+#'   system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR"),
+#'   "rb",
+#'   raw = TRUE
+#' )
 #' header <- SeaSondeR:::seasonder_readCSSWHeader(
 #'   con,
 #'   header_specs,
@@ -705,7 +709,9 @@ seasonder_applyCSSWSigns <- function(cs_data) {
 #' @examples
 #' \donttest{
 #'   # Example:
-#'   cs_obj <- SeaSondeR:::seasonder_readSeaSondeRCSSWFile(system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR"))
+#'   cs_obj <- SeaSondeR:::seasonder_readSeaSondeRCSSWFile(
+#'     system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR")
+#'   )
 #'   str(cs_obj)
 #' }
 seasonder_readSeaSondeRCSSWFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSW"), endian = "big"){

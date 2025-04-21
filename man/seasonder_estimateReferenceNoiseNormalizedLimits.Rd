@@ -57,7 +57,11 @@ apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 noise_limits <- SeaSondeR:::seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj)
 print(noise_limits)
-noise_limits <- SeaSondeR:::seasonder_estimateReferenceNoiseNormalizedLimits(cs_obj, low_limit = 0.565, high_limit = 1.0)
+noise_limits <- SeaSondeR:::seasonder_estimateReferenceNoiseNormalizedLimits(
+  cs_obj,
+  low_limit = 0.565,
+  high_limit = 1.0
+)
 print(noise_limits)
 
 }

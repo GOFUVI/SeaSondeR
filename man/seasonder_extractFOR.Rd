@@ -54,7 +54,12 @@ apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 # Extract self-spectrum for antenna 1, range cell 1
-spec_mat <- SeaSondeR:::seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae = 3, dist_ranges = c(3, 3), collapse = TRUE)[[1]]
+spec_mat <- SeaSondeR:::seasonder_getSeaSondeRCS_SelfSpectra(
+  cs_obj,
+  antennae = 3,
+  dist_ranges = c(3, 3),
+  collapse = TRUE
+)[[1]]
 # Retrieve FOR bins for the third range cell
 for_bins <- seasonder_getSeaSondeRCS_FOR(cs_obj)[[3]]
 # Extract FOR spectral data
