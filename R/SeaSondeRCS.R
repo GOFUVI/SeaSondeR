@@ -692,7 +692,7 @@ seasonder_setSeaSondeRCS_header <- function(seasonder_cs_object, header) {
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' new_data <- seasonder_getSeaSondeRCS_data(cs_obj)
 #' cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_data(cs_obj, new_data)
-#' head(seasonder_getSeaSondeRCS_data(cs_obj))
+#' str(seasonder_getSeaSondeRCS_data(cs_obj))
 #' @export
 seasonder_setSeaSondeRCS_data <- function(seasonder_cs_object, data) {
   # TODO: test, document, vignette

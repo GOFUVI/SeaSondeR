@@ -35,6 +35,6 @@ seasonder_log("First log entry", "info")
 Sys.sleep(0.1)
 seasonder_log("Second log entry", "info")
 # Split logs into blocks (using a 1-second threshold)
-blocks <- seasonder_splitLog(threshold = as.difftime(1, units = "secs"))
-print(blocks)
+blocks <- seasonder_splitLog(threshold = as.difftime(300, units = "secs"))
+str(blocks)
 }

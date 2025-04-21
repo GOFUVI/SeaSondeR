@@ -45,7 +45,7 @@ apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 # Smooth self-spectra for antenna 1 (internal function)
 smoothed_SS <- SeaSondeR:::seasonder_SmoothSS(cs_obj, antenna = 1)
-print(smoothed_SS)
+head(smoothed_SS[1:10, 1:10])
 }
 \seealso{
 \itemize{

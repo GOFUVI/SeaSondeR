@@ -1006,7 +1006,7 @@ seasonder_getSeaSondeRCS_FOR <- function(seasonder_cs_object) {
     #' cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
     #' attr(cs_obj, "FOR_data") <- list(FOR_SS_Smoothed = matrix(1:4, nrow = 2, ncol = 2))
     #' smoothed_SS <- SeaSondeR:::seasonder_getSeaSondeRCS_FOR_SS_Smoothed(cs_obj)
-    #' print(smoothed_SS)
+    #' head(smoothed_SS)
 seasonder_getSeaSondeRCS_FOR_SS_Smoothed  <- function(seasonder_cs_object) {
 
   # Extract the smoothed self-spectra matrix from the FOR_data attribute
@@ -1414,7 +1414,7 @@ seasonder_SmoothFORSS <- function(seasonder_cs_object) {
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' # Smooth self-spectra for antenna 1 (internal function)
 #' smoothed_SS <- SeaSondeR:::seasonder_SmoothSS(cs_obj, antenna = 1)
-#' print(smoothed_SS)
+#' head(smoothed_SS[1:10, 1:10])
 seasonder_SmoothSS <- function(seasonder_cs_object, antenna, smoothing = NULL) {
 
   # Retrieve the default smoothing parameter (nsm) if not provided

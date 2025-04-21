@@ -703,10 +703,11 @@ seasonder_applyCSSWSigns <- function(cs_data) {
 #' }
 #'
 #' @examples
-#'   # Example (expected to error on missing file):
+#' \donttest{
+#'   # Example:
 #'   cs_obj <- SeaSondeR:::seasonder_readSeaSondeRCSSWFile(system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR"))
 #'   str(cs_obj)
-#'
+#' }
 seasonder_readSeaSondeRCSSWFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSW"), endian = "big"){
 
   # Set up error handling parameters with function name, error class, and file path

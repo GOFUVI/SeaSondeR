@@ -289,7 +289,7 @@ seasonder_logAndAbort <- function(msg, calling_function=NULL, ...) {
 #' seasonder_log("Second log entry", "info")
 #' # Split logs into blocks (using a 1-second threshold)
 #' blocks <- seasonder_splitLog(threshold = as.difftime(300, units = "secs"))
-#' head(blocks)
+#' str(blocks)
 seasonder_splitLog <- function(threshold=NULL, threshold_factor=4, threshold_quantile=0.9, min_threshold_secs=10) {
 
   time_block <- NULL
