@@ -11,7 +11,7 @@ seasonder_initSeaSondeRCS_FOR()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,10 +74,68 @@ If it does not exist, it calls <code>seasonder_initSeaSondeRCS_FOR()</code> to i
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="va">FOR_data</span> <span class="op">&lt;-</span> <span class="fu">seasonder_getSeaSondeRCS_FOR</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">FOR_data</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Minimal example for seasonder_getSeaSondeRCS_FOR</span></span></span>
+<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">apm_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/MeasPattern.txt"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">apm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="va">apm_file</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
+<span class="r-in"><span><span class="va">FOR_data</span> <span class="op">&lt;-</span> <span class="fu">seasonder_getSeaSondeRCS_FOR</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">FOR_data</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_001$negative_FOR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_001$positive_FOR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_002$negative_FOR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_002$positive_FOR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_003</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_003$negative_FOR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 336 337 338 339 340 341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_003$positive_FOR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_004$negative_FOR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20] 341 342 343 344 345</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_004$positive_FOR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 674 675 676 677 678 679 680 681 682 683 684 685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_005$negative_FOR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20] 337 338 339 340 341 342 343 344 345 346 347 348 349 350</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_005$positive_FOR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 669 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686 687</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20] 688 689 690 691 692 693 694 695 696 697 698 699</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_006</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_006$negative_FOR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20] 344 345 346 347 348 349 350 351 352</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $range_006$positive_FOR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 670 671 672 673 674 675 676 677 678 679 680 681 682 683 684 685 686 687 688</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20] 689 690 691 692 693 694 695 696 697 698 699 700 701 702 703 704 705 706 707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

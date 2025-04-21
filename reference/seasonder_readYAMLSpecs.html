@@ -9,7 +9,7 @@ reading errors, and extracts specific information based on a provided path."></h
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,18 +71,14 @@ of the header, the path would be <code>c("header", "versions", "V2")</code>.</p>
 provided path.</p>
     </div>
     <div class="section level2">
-    <h2 id="error-handling">Error Handling<a class="anchor" aria-label="anchor" href="#error-handling"></a></h2>
-
-
-<p>The function has built-in error handling which aborts the function's execution and logs
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>This function provides built-in error handling which aborts execution and logs
 detailed error messages in case of:</p><ul><li><p>File not found.</p></li>
 <li><p>Error in reading the YAML content.</p></li>
-<li><p>If the read YAML content is not of list type.</p></li>
-<li><p>If no data is found for the provided path in the YAML content.</p></li>
-</ul><p>Errors generated are of class <code>"seasonder_read_yaml_file_error"</code>.
-Detailed error information including the file path and path within the file
-is provided. For logging and aborting, this function utilizes the
-<code><a href="seasonder_logAndAbort.html">seasonder_logAndAbort</a></code> function.</p>
+<li><p>The read YAML content is not a list.</p></li>
+<li><p>No data found for the provided path in the YAML content.</p></li>
+</ul><p>Errors generated are of class <code>"seasonder_read_yaml_file_error"</code>. For logging and aborting,
+this function uses <code><a href="seasonder_logAndAbort.html">seasonder_logAndAbort</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -92,11 +88,28 @@ is provided. For logging and aborting, this function utilizes the
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Assuming a YAML file named "example.yaml" exists with appropriate content</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">seasonder_readYAMLSpecs</span><span class="op">(</span><span class="st">"example.yaml"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"header"</span>, <span class="st">"versions"</span>, <span class="st">"V2"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example: Read the CS header specifications (version V1) from the default specs file</span></span></span>
+<span class="r-in"><span><span class="va">specs_path</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_defaultSpecsFilePath.html">seasonder_defaultSpecsFilePath</a></span><span class="op">(</span><span class="st">"CS"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_readYAMLSpecs</span><span class="op">(</span><span class="va">specs_path</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"header"</span>, <span class="st">"V1"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nCsFileVersion:List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type     : chr "SInt16"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ qc_fun   : chr "qc_check_range"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ qc_params:List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ min          : int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ max          : int 32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ expected_type: chr "integer"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nDateTime     :List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type     : chr "UInt32"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ qc_fun   : chr "qc_check_unsigned"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ qc_params:List of 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ expected_type: chr "numeric"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nV1Extent     :List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type     : chr "SInt32"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ qc_fun   : chr "qc_check_type"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ qc_params:List of 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ expected_type: chr "integer"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

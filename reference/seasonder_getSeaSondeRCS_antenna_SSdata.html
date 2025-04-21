@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,11 +79,37 @@ matrix from the SeaSondeRCS data using <code><a href="seasonder_getSeaSondeRCS_d
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Assuming `cs_object` is a valid SeaSondeRCS object</span></span></span>
-<span class="r-in"><span><span class="va">ssa1_data</span> <span class="op">&lt;-</span> <span class="fu">seasonder_getSeaSondeRCS_antenna_SSdata</span><span class="op">(</span><span class="va">cs_object</span>, <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ssa1_data</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Minimal example for seasonder_getSeaSondeRCS_antenna_SSdata</span></span></span>
+<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">apm_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/MeasPattern.txt"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">apm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="va">apm_file</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
+<span class="r-in"><span><span class="va">ssa1_data</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_getSeaSondeRCS_antenna_SSdata</span><span class="op">(</span><span class="va">cs_obj</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ssa1_data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            doppler_000  doppler_001  doppler_002  doppler_003  doppler_004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_001 4.541568e-11 1.214127e-11 2.063384e-11 2.168547e-11 2.560490e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_002 3.382418e-11 2.097246e-11 4.105122e-11 6.160242e-11 4.909860e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_003 3.054796e-11 3.017336e-11 6.696269e-11 6.387267e-11 2.537224e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_004 3.800162e-11 3.694624e-11 3.100064e-11 1.835205e-11 2.693955e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_005 2.996065e-11 3.837387e-11 1.203153e-11 2.059862e-11 6.046755e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_006 2.914265e-11 3.383456e-11 2.825560e-11 2.815065e-11 5.744104e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_007 1.443862e-11 2.921779e-11 3.431147e-11 5.787987e-11 3.539776e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_008 2.641749e-11 2.580837e-11 5.429045e-11 1.006052e-10 2.397852e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_009 3.735424e-11 3.740949e-11 5.544584e-11 1.216045e-10 3.521407e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_010 4.035840e-11 5.556563e-11 4.125692e-11 8.439863e-11 3.645489e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            doppler_005  doppler_006  doppler_007  doppler_008  doppler_009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_001 2.615872e-11 2.551430e-11 6.810206e-11 4.691152e-11 3.876790e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_002 4.550598e-11 1.793646e-11 3.906693e-11 4.330825e-11 5.043281e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_003 4.315279e-11 2.114262e-11 2.947845e-11 3.118066e-11 3.660110e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_004 3.679206e-11 2.626081e-11 3.583550e-11 2.816891e-11 5.361974e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_005 2.766883e-11 1.324871e-11 3.087643e-11 2.550920e-11 2.557957e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_006 2.956638e-11 2.600519e-11 4.923957e-11 2.833235e-11 2.232916e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_007 1.441098e-11 5.066549e-11 8.556120e-11 2.828281e-11 2.257818e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_008 2.893308e-11 6.363139e-11 5.930293e-11 1.928157e-11 1.635399e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_009 1.882458e-11 2.764413e-11 1.245137e-11 1.053130e-11 3.629980e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_010 5.793731e-11 3.581800e-11 1.811354e-11 2.259970e-11 3.918586e-11</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

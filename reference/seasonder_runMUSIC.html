@@ -11,7 +11,7 @@ and other related metrics from the radar cross-spectrum data."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,17 +98,50 @@ and metadata. This object is modified in place to include the results of the MUS
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Create a SeaSondeRCS object (example)</span></span></span>
-<span class="r-in"><span><span class="va">cs_object</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>header <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Prepare a SeaSondeRCS object with MUSIC data</span></span></span>
+<span class="r-in"><span><span class="va">apm_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/MeasPattern.txt"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">apm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="va">apm_file</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
+<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_initMUSICData.html">seasonder_initMUSICData</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_initMUSICData.html">seasonder_initMUSICData</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span> <span class="va">cs_obj</span>,</span></span>
+<span class="r-in"><span> range_cells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">11</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">11</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span> doppler_bins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">669</span><span class="op">:</span><span class="fl">679</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">674</span><span class="op">:</span><span class="fl">684</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_SeaSondeRCSMUSICInterpolateDoppler.html">seasonder_SeaSondeRCSMUSICInterpolateDoppler</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Run the MUSIC algorithm</span></span></span>
-<span class="r-in"><span><span class="va">cs_object</span> <span class="op">&lt;-</span> <span class="fu">seasonder_runMUSIC</span><span class="op">(</span><span class="va">cs_object</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">seasonder_runMUSIC</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_runMUSIC:  MUSIC algorithm started.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_runMUSIC:  MUSIC algorithm finished.</span>
 <span class="r-in"><span><span class="co"># Check the updated processing steps</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="seasonder_getSeaSondeRCS_ProcessingSteps.html">seasonder_getSeaSondeRCS_ProcessingSteps</a></span><span class="op">(</span><span class="va">cs_object</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="seasonder_getSeaSondeRCS_ProcessingSteps.html">seasonder_getSeaSondeRCS_ProcessingSteps</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "2025-04-21 07:49:10.459271: FOR parameters set."                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "2025-04-21 07:49:10.474566: NoiseLevel for antenna 1 computed."                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "2025-04-21 07:49:10.489449: NoiseLevel for antenna 2 computed."                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "2025-04-21 07:49:10.504134: NoiseLevel for antenna 3 computed."                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "2025-04-21 07:49:10.512445: Created from /home/runner/work/_temp/Library/SeaSondeR/css_data/CSS_TORA_24_04_04_0700.cs."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "2025-04-21 07:49:10.711453: MUSIC algorithm started."                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "2025-04-21 07:49:10.711732: MUSIC covariance matrix computation started"                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "2025-04-21 07:49:10.715053: MUSIC covariance matrix computation ended"                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "2025-04-21 07:49:10.717487: NoiseLevel for antenna 1 computed."                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "2025-04-21 07:49:10.719766: NoiseLevel for antenna 2 computed."                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "2025-04-21 07:49:10.721954: NoiseLevel for antenna 3 computed."                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "2025-04-21 07:49:10.725928: MUSIC covariance matrix decomposition started"                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "2025-04-21 07:49:10.727604: MUSIC covariance matrix decomposition ended"                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [14] "2025-04-21 07:49:10.727835: MUSIC DOA functions computation started"                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "2025-04-21 07:49:10.755632: MUSIC DOA functions computation ended"                                                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "2025-04-21 07:49:10.755858: MUSIC peak extraction started"                                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "2025-04-21 07:49:10.770545: MUSIC peak extraction ended"                                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [18] "2025-04-21 07:49:10.773468: MUSIC dual solutions testing started"                                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "2025-04-21 07:49:10.788581: MUSIC dual solutions testing ended"                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20] "2025-04-21 07:49:10.78885: MUSIC DOA selection started"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "2025-04-21 07:49:10.790056: MUSIC DOA selection ended"                                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [22] "2025-04-21 07:49:10.794181: MUSIC algorithm ended with 42.9% of dual solutions."                                       </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

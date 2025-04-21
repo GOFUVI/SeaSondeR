@@ -145,6 +145,7 @@
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getFOR_parameters.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getLog.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getMUSICConfig.html</loc></url>
+<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getMUSICDopplerInterpolation.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getMUSICDualSolutionsProportion.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getMUSICInterpolatedData.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getMUSICInterpolatedDopplerCellsIndex.html</loc></url>
@@ -179,7 +180,6 @@
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_MUSIC_DopplerSpectrumResolution.html</loc></url>
-<url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_MUSIC_nDopplerCells.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_MUSIC_parameters.html</loc></url>
 <url><loc>https://gofuvi.github.io/SeaSondeR/reference/seasonder_getSeaSondeRCS_ProcessingSteps.html</loc></url>

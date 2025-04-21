@@ -11,7 +11,7 @@ The output table includes range cell identifiers, range values, noise levels (fo
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,12 +115,29 @@ interpolation factor.</p></li>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="co"># Assuming cs_object is a valid SeaSondeRCS object with MUSIC data loaded:</span></span></span>
-<span class="r-in"><span>  <span class="va">range_info</span> <span class="op">&lt;-</span> <span class="fu">seasonder_exportRangeInfo</span><span class="op">(</span><span class="va">cs_object</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">range_info</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Prepare a SeaSondeRCS object with MUSIC data</span></span></span>
+<span class="r-in"><span><span class="va">apm_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/MeasPattern.txt"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">apm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="va">apm_file</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
+<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
+<span class="r-in"><span><span class="va">FOR</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_getSeaSondeRCS_FOR.html">seasonder_getSeaSondeRCS_FOR</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_setSeaSondeRCS_FOR.html">seasonder_setSeaSondeRCS_FOR</a></span><span class="op">(</span><span class="va">cs_obj</span>,<span class="va">FOR</span><span class="op">[</span><span class="fl">4</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Run MUSIC algorithm to populate MUSIC data</span></span></span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_runMUSICInFOR.html">seasonder_runMUSICInFOR</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_runMUSIC:  MUSIC algorithm started.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_runMUSIC:  MUSIC algorithm finished.</span>
+<span class="r-in"><span><span class="va">range_info</span> <span class="op">&lt;-</span> <span class="fu">seasonder_exportRangeInfo</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">range_info</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   SPRC      RNGC      NF01      NF02      NF03 ALM1 ALM2 ALM3 ALM4 NVSC NVDC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1 0.1870365 -138.6283 -140.4046 -135.2373  321  344  673  684    2    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    2 0.3740731 -138.5116 -139.9964 -134.8205  317  349  668  698    1    0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   NVAC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    1</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -11,7 +11,7 @@ the direction of arrival (DOA) by identifying the bearing that minimizes this pr
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,14 +100,11 @@ as it corresponds to the direction where the signal is strongest relative to the
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Assume En is a 3x3 noise subspace eigenvector matrix and a is the antenna manifold vector.</span></span></span>
-<span class="r-in"><span><span class="va">En</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">+</span><span class="fl">0.5i</span>, <span class="op">-</span><span class="fl">0.3i</span>, <span class="fl">0</span>, <span class="fl">0.4</span>, <span class="fl">0.6</span><span class="op">-</span><span class="fl">0.2i</span>, <span class="op">-</span><span class="fl">0.4i</span>, <span class="fl">0</span>, <span class="fl">0.3</span><span class="op">+</span><span class="fl">0.3i</span>, <span class="op">-</span><span class="fl">0.1i</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fl">1i</span>, <span class="op">-</span><span class="fl">0.5</span><span class="op">+</span><span class="fl">0.5i</span>, <span class="fl">0.2</span><span class="op">-</span><span class="fl">0.3i</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Compute antenna pattern projections</span></span></span>
+<span class="r-in"><span><span class="va">En</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fl">1i</span>, nrow<span class="op">=</span><span class="fl">3</span>, ncol<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fl">1i</span>,<span class="fl">0</span><span class="op">+</span><span class="fl">0i</span>,<span class="fl">0</span><span class="op">+</span><span class="fl">0i</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">Conj_t_a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">Conj</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">projection</span> <span class="op">&lt;-</span> <span class="fu">seasonder_compute_antenna_pattern_proyections</span><span class="op">(</span><span class="va">En</span>, <span class="va">a</span>, <span class="va">Conj_t_a</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">proj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_compute_antenna_pattern_proyections</span><span class="op">(</span><span class="va">En</span>, <span class="va">a</span>, <span class="va">Conj_t_a</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

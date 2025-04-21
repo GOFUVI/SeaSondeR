@@ -11,7 +11,7 @@ CSSW specifications provided via a YAML file."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,15 +94,327 @@ Defaults to the output of <code>seasonder_defaultSpecsFilePath("CSSW")</code>.</
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="co"># Assuming "path/to/file.rcssy" is a valid SeaSonde RCSSW file and the specifications file exists:</span></span></span>
-<span class="r-in"><span>  <span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">seasonder_readSeaSondeRCSSWFile</span><span class="op">(</span><span class="st">"path/to/file.rcssy"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Inspect the resulting SeaSondeRCS object:</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">cs_obj</span>, <span class="st">"header"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">cs_obj</span>, <span class="st">"data"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span>  <span class="co"># Example:</span></span></span>
+<span class="r-in"><span>  <span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_readSeaSondeRCSSWFile</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_2024_04_04_070000.csr"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ header:List of 37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nCsFileVersion  : int 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nDateTime       : POSIXct[1:1], format: "2024-04-04 07:00:00"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nV1Extent       : int 1319</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nCsKind         : int 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nV2Extent       : int 1313</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nSiteCodeName   : chr "TORA"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nV3Extent       : int 1305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nRangeCells     : int 63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nDopplerCells   : int 1024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nFirstRangeCell : int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nCoverMinutes   : int 15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ bDeletedSource  : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ bOverrideSrcInfo: int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fStartFreqMHz   : num 46.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fRepFreqHz      : num 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fBandwidthKHz   : num 801</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ bSweepUp        : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fRangeCellDistKm: num 0.187</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nV4Extent       : int 1257</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ CenterFreq      : num 46.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ CellsDistKm     : num [1:63] 0.187 0.374 0.561 0.748 0.935 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nOutputInterval : int 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nCreateTypeCode : chr "SSAQ"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nCreatorVersion : chr "11.9"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nActiveChannels : int 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nSpectraChannels: int 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nActiveChanBits : num 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nV5Extent       : int 1229</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ActiveChannels  : int [1:3] 1 2 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nCS6ByteSize    : num 1225</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ TIME            :List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nTimeMark       : Factor w/ 3 levels "start","center time",..: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nYear           : int 2024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nMonth          : int 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nDay            : int 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nHour           : int 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nMinute         : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fSeconds        : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fCoverageSeconds: num 3.51e-310</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fHoursFromUTC   : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ZONE            :List of 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ szTimeZone: chr "Atlantic/Reykjavik"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ LOCA            :List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fLatitude      : num 42.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fLongitude     : num -8.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fAltitudeMeters: num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ RCVI            :List of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nReceiverModel  : Factor w/ 6 levels "Unknown","Awg3/Rcvr2 Chassis AC",..: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nRxAntennaModel : Factor w/ 6 levels "Unknown","Box Loops",..: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fReferenceGainDB: num 34.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ szFirmware      : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ GLRM            :List of 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nMethod             : int 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nVersion            : int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nPointsRemoved      : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nTimesRemoved       : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nSegmentsRemoved    : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fPointPowerThreshold: num 15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fRangePowerThreshold: num 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fRangeBinThreshold  : num 0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ bRemoveDC           : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nReceiverModel      : Factor w/ 5 levels "Off","Point",..: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ FOLS            :List of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nNegBraggLeftIndex :List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ loop: chr "nRangeCells"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ data: int [1:63] 0 334 335 321 317 324 323 323 316 313 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nNegBraggRightIndex:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ loop: chr "nRangeCells"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ data: int [1:63] 0 333 340 344 349 351 349 349 352 353 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nPosBraggLeftIndex :List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ loop: chr "nRangeCells"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ data: int [1:63] 0 689 689 673 668 669 664 664 666 666 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nPosBraggRightIndex:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ loop: chr "nRangeCells"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ data: int [1:63] 0 688 688 684 698 706 704 707 684 681 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ header_csr      :List of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ sign:List of 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ FileVersion: num 8.25e+08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ nFileType  : num 1.13e+09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ nOwner     : num 1.41e+09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ nUserFlags : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ szFileName : chr "SeaSonde Shortened CrossSpectra"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ szOwnerName: chr "CODAR Ocean Sensors, Ltd"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ szComment  : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ srcn:List of 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ SourceCSFilename: chr "CSS_TORA_24_04_04_0700.cs"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ mcda:List of 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ FirstSweepTimestamp: num 3.8e+09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ dbrf:List of 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ dBmReference: num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ data  :List of 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ SSA1: num [1:63, 1:1024] 4.54e-11 3.38e-11 3.05e-11 3.80e-11 3.00e-11 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ SSA2: num [1:63, 1:1024] 3.47e-11 5.48e-11 8.77e-11 1.05e-10 2.90e-11 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ SSA3: num [1:63, 1:1024] -1.19e-10 -1.91e-10 -3.21e-10 -3.16e-10 -1.56e-10 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ CS12: cplx [1:63, 1:1024] -3.07e-11+6.09e-12i -3.10e-11+1.74e-11i -3.10e-11+6.69e-12i ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ CS13: cplx [1:63, 1:1024] 5.08e-11+3.34e-11i 6.00e-11+2.59e-11i 5.35e-11+4.69e-11i ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ CS23: cplx [1:63, 1:1024] -3.79e-11-4.54e-11i -5.51e-11-8.05e-11i -9.26e-11-1.30e-10i ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ QC  : num [1:63, 1:1024] 1.26 1.26 1.26 1.26 1.26 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "version")= num 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "ProcessingSteps")= chr [1:5] "2025-04-21 07:49:07.965087: FOR parameters set." "2025-04-21 07:49:07.975108: NoiseLevel for antenna 1 computed." "2025-04-21 07:49:07.988954: NoiseLevel for antenna 2 computed." "2025-04-21 07:49:07.999242: NoiseLevel for antenna 3 computed." ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "FOR_data")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ FOR_parameters:List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nsm                               : num 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ reference_noise_normalized_limits : num [1:2] 2.59 2.87</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fdown                             : num 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ flim                              : num 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ noisefact                         : num 3.98</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ currmax                           : num 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ reject_distant_bragg              : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ reject_noise_ionospheric          : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ reject_noise_ionospheric_threshold: num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ FOR           :List of 63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_001:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_002:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_003:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:6] 336 337 338 339 340 341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_004:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:24] 322 323 324 325 326 327 328 329 330 331 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:12] 674 675 676 677 678 679 680 681 682 683 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_005:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:33] 318 319 320 321 322 323 324 325 326 327 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:31] 669 670 671 672 673 674 675 676 677 678 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_006:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:28] 325 326 327 328 329 330 331 332 333 334 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:38] 670 671 672 673 674 675 676 677 678 679 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_007:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:27] 324 325 326 327 328 329 330 331 332 333 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:41] 665 666 667 668 669 670 671 672 673 674 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_008:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:27] 324 325 326 327 328 329 330 331 332 333 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:44] 665 666 667 668 669 670 671 672 673 674 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_009:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:37] 317 318 319 320 321 322 323 324 325 326 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:19] 667 668 669 670 671 672 673 674 675 676 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_010:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:41] 314 315 316 317 318 319 320 321 322 323 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:16] 667 668 669 670 671 672 673 674 675 676 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_011:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:38] 315 316 317 318 319 320 321 322 323 324 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:18] 666 667 668 669 670 671 672 673 674 675 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_012:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:42] 313 314 315 316 317 318 319 320 321 322 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:18] 668 669 670 671 672 673 674 675 676 677 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_013:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:25] 326 327 328 329 330 331 332 333 334 335 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:18] 668 669 670 671 672 673 674 675 676 677 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_014:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:37] 313 314 315 316 317 318 319 320 321 322 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:45] 666 667 668 669 670 671 672 673 674 675 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_015:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:36] 313 314 315 316 317 318 319 320 321 322 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:27] 667 668 669 670 671 672 673 674 675 676 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_016:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:33] 315 316 317 318 319 320 321 322 323 324 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:39] 668 669 670 671 672 673 674 675 676 677 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_017:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:32] 316 317 318 319 320 321 322 323 324 325 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:41] 668 669 670 671 672 673 674 675 676 677 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_018:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:30] 317 318 319 320 321 322 323 324 325 326 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:26] 666 667 668 669 670 671 672 673 674 675 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_019:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:26] 318 319 320 321 322 323 324 325 326 327 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:26] 666 667 668 669 670 671 672 673 674 675 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_020:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:18] 318 319 320 321 322 323 324 325 326 327 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:24] 665 666 667 668 669 670 671 672 673 674 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_021:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:33] 317 318 319 320 321 322 323 324 325 326 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:23] 666 667 668 669 670 671 672 673 674 675 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_022:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:26] 313 314 315 316 317 318 319 320 321 322 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:35] 666 667 668 669 670 671 672 673 674 675 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_023:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:27] 312 313 314 315 316 317 318 319 320 321 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:31] 664 665 666 667 668 669 670 671 672 673 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_024:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:31] 312 313 314 315 316 317 318 319 320 321 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:25] 667 668 669 670 671 672 673 674 675 676 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_025:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:28] 314 315 316 317 318 319 320 321 322 323 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:29] 668 669 670 671 672 673 674 675 676 677 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_026:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:29] 313 314 315 316 317 318 319 320 321 322 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:29] 669 670 671 672 673 674 675 676 677 678 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_027:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:42] 309 310 311 312 313 314 315 316 317 318 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:26] 668 669 670 671 672 673 674 675 676 677 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_028:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:39] 306 307 308 309 310 311 312 313 314 315 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:31] 664 665 666 667 668 669 670 671 672 673 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_029:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:40] 309 310 311 312 313 314 315 316 317 318 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:33] 663 664 665 666 667 668 669 670 671 672 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_030:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:43] 306 307 308 309 310 311 312 313 314 315 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:33] 663 664 665 666 667 668 669 670 671 672 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_031:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:44] 306 307 308 309 310 311 312 313 314 315 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:31] 663 664 665 666 667 668 669 670 671 672 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_032:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:33] 305 306 307 308 309 310 311 312 313 314 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:29] 664 665 666 667 668 669 670 671 672 673 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_033:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:28] 311 312 313 314 315 316 317 318 319 320 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:40] 665 666 667 668 669 670 671 672 673 674 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_034:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:52] 306 307 308 309 310 311 312 313 314 315 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:44] 663 664 665 666 667 668 669 670 671 672 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_035:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:53] 302 303 304 305 306 307 308 309 310 311 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:32] 661 662 663 664 665 666 667 668 669 670 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_036:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:37] 300 301 302 303 304 305 306 307 308 309 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:29] 666 667 668 669 670 671 672 673 674 675 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_037:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:63] 301 302 303 304 305 306 307 308 309 310 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:40] 664 665 666 667 668 669 670 671 672 673 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_038:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:53] 305 306 307 308 309 310 311 312 313 314 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:38] 659 660 661 662 663 664 665 666 667 668 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_039:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:64] 297 298 299 300 301 302 303 304 305 306 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:88] 610 611 612 613 614 615 616 617 618 619 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_040:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:43] 300 301 302 303 304 305 306 307 308 309 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:28] 669 670 671 672 673 674 675 676 677 678 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_041:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:56] 298 299 300 301 302 303 304 305 306 307 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:56] 610 611 612 613 614 615 616 617 618 619 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_042:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:54] 298 299 300 301 302 303 304 305 306 307 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:89] 610 611 612 613 614 615 616 617 618 619 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_043:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:48] 301 302 303 304 305 306 307 308 309 310 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:46] 610 611 612 613 614 615 616 617 618 619 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_044:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:43] 302 303 304 305 306 307 308 309 310 311 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:45] 610 611 612 613 614 615 616 617 618 619 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_045:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:42] 303 304 305 306 307 308 309 310 311 312 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:64] 610 611 612 613 614 615 616 617 618 619 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_046:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:41] 303 304 305 306 307 308 309 310 311 312 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:69] 625 626 627 628 629 630 631 632 633 634 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_047:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:51] 301 302 303 304 305 306 307 308 309 310 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:23] 658 659 660 661 662 663 664 665 666 667 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_048:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int [1:52] 301 302 303 304 305 306 307 308 309 310 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int [1:21] 661 662 663 664 665 666 667 668 669 670 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_049:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_050:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_051:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_052:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_053:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_054:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_055:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_056:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_057:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_058:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_059:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_060:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_061:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_062:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ range_063:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ negative_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ positive_FOR: int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "MUSIC_data")= list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "NoiseLevel")=List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : num [1:63] 3.60e-11 3.71e-11 3.69e-11 3.84e-11 3.51e-11 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : num [1:63] 2.39e-11 2.63e-11 2.67e-11 2.73e-11 2.54e-11 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : num [1:63] 7.86e-11 8.65e-11 8.23e-11 8.25e-11 8.38e-11 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "interpolated_doppler_cells_index")= int(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "reference_noise_normalized_limits_estimation_interval")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ low_limit : num 0.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ high_limit: num 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr [1:2] "SeaSondeRCS" "list"</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

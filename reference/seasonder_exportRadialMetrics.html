@@ -11,7 +11,7 @@ and combines the results into a final data frame formatted according to predefin
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,12 +98,58 @@ to the vector flag (<code>VFLG</code>) are applied.</p></li>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="co"># Assuming 'cs_object' is a valid SeaSondeRCS object with MUSIC data:</span></span></span>
-<span class="r-in"><span>  <span class="va">radial_metrics</span> <span class="op">&lt;-</span> <span class="fu">seasonder_exportRadialMetrics</span><span class="op">(</span><span class="va">cs_object</span>, AngSeg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">30</span>, <span class="fl">60</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">radial_metrics</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Prepare a SeaSondeRCS object with MUSIC data</span></span></span>
+<span class="r-in"><span><span class="va">apm_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/MeasPattern.txt"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">apm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="va">apm_file</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
+<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
+<span class="r-in"><span><span class="va">FOR</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_getSeaSondeRCS_FOR.html">seasonder_getSeaSondeRCS_FOR</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_setSeaSondeRCS_FOR.html">seasonder_setSeaSondeRCS_FOR</a></span><span class="op">(</span><span class="va">cs_obj</span>,<span class="va">FOR</span><span class="op">[</span><span class="fl">4</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Run MUSIC algorithm to populate MUSIC data</span></span></span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_runMUSICInFOR.html">seasonder_runMUSICInFOR</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_runMUSIC:  MUSIC algorithm started.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_runMUSIC:  MUSIC algorithm finished.</span>
+<span class="r-in"><span><span class="va">radial_metrics</span> <span class="op">&lt;-</span> <span class="fu">seasonder_exportRadialMetrics</span><span class="op">(</span><span class="va">cs_obj</span>, AngSeg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">30</span>, <span class="fl">60</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">radial_metrics</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        LOND     LATD        VELU        VELV VFLG      RNGE BEAR       VELO</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -8.803399 42.20252 -0.73150986   0.8124240    0 0.1870365  318 -1.0932243</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -8.803050 42.20271  0.08548836  -0.1422765    0 0.1870365  329  0.1659845</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -8.801221 42.20288 -0.04852919  -0.1587318    0 0.1870365   17  0.1659845</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -8.802199 42.20293  1.42508463 -10.1400040    0 0.1870365  352 10.2396556</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -8.804139 42.20112 10.20069064   0.8924448    0 0.1870365  265 10.2396556</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 -8.801183 42.20287 -3.55334455 -10.9360700    0 0.1870365   18 11.4988645</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   HEAD SPRC SPDC MSEL MSA1 MDA1 MDA2      MEGR     MPKR        MOFR       MP13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  138    1  332    1  318   16 1440 37.517644 0.000000 0.000000000   9.817918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  149    1  333    2  347  329   17 18.529681 1.281161 0.008196858 -10.360013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  197    1  333    3  347  329   17 18.529681 1.281161 0.008196858 -10.360013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  172    1  341    2   18  352  265 10.680977 1.255016 0.480175432  18.178391</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   85    1  341    3   18  352  265 10.680977 1.255016 0.480175432  18.178391</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  198    1  342    1   18  357   11  7.646877 1.087325 0.966261326   5.698105</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        MP23      MSP1      MDP1      MDP2 MSW1 MDW1 MDW2      MSR1        MDR1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -74.77181 -94.73992 -94.11004   0.00000   88    2    0  6.030989 10797.14624</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -52.03949 -93.92921 -96.44397 -97.52001   21    4   91 43.954436  3684.43241</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 -52.03949 -93.92921 -96.44397 -97.52001   21    4   91 43.954436  3684.43241</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -77.73468 -93.13555 -94.14548 -93.15898   52    3  142  7.804122 10080.28745</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -77.73468 -93.13555 -94.14548 -93.15898   52    3  142  7.804122 10080.28745</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 -83.72088 -93.22757 -81.36097 -80.99737   58   30   38  7.408590    98.57057</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        MDR2     MA1S     MA2S     MA3S         MEI1         MEI2         MEI3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.000000 1.360982 9.018854 6.186278 5.473080e-10 1.458802e-11 5.887997e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 33.138962 3.853958 8.727675 7.514739 6.686443e-10 3.608504e-11 6.028202e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 33.138962 3.853958 8.727675 7.514739 6.686443e-10 3.608504e-11 6.028202e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1.349332 5.822285 6.497650 8.659952 7.490601e-10 7.013029e-11 4.088580e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1.349332 5.822285 6.497650 8.659952 7.490601e-10 7.013029e-11 4.088580e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 56.402574 5.526817 7.654325 8.519368 7.301015e-10 9.547708e-11 2.856018e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   MDRJ PPFG PWFG</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   16    9    9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0    9    9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    0    9    9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0    9    9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0    9    9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   12    9    9</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

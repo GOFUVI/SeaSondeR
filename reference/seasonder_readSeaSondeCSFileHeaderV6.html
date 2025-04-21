@@ -9,7 +9,7 @@ It sequentially reads blocks based on the provided specifications and returns th
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -113,7 +113,109 @@ It sequentially reads blocks based on the provided specifications and returns th
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Read CS file header (Version 6 blocks) via wrapper</span></span></span>
+<span class="r-in"><span><span class="va">specs_path</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_defaultSpecsFilePath.html">seasonder_defaultSpecsFilePath</a></span><span class="op">(</span><span class="st">"CS"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">file</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"rb"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readYAMLSpecs.html">seasonder_readYAMLSpecs</a></span><span class="op">(</span><span class="va">specs_path</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"header"</span>,<span class="st">"V1"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">header_v1</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readSeaSondeCSFileHeaderV1.html">seasonder_readSeaSondeCSFileHeaderV1</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">specs</span>,</span></span>
+<span class="r-in"><span>  <span class="va">con</span>,</span></span>
+<span class="r-in"><span>  endian <span class="op">=</span> <span class="st">"big"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readYAMLSpecs.html">seasonder_readYAMLSpecs</a></span><span class="op">(</span><span class="va">specs_path</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"header"</span>,<span class="st">"V2"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">header_v2</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readSeaSondeCSFileHeaderV2.html">seasonder_readSeaSondeCSFileHeaderV2</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">specs</span>,</span></span>
+<span class="r-in"><span>  <span class="va">con</span>,</span></span>
+<span class="r-in"><span>  endian <span class="op">=</span> <span class="st">"big"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readYAMLSpecs.html">seasonder_readYAMLSpecs</a></span><span class="op">(</span><span class="va">specs_path</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"header"</span>,<span class="st">"V3"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">header_v3</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readSeaSondeCSFileHeaderV3.html">seasonder_readSeaSondeCSFileHeaderV3</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">specs</span>,</span></span>
+<span class="r-in"><span>  <span class="va">con</span>,</span></span>
+<span class="r-in"><span>  endian <span class="op">=</span> <span class="st">"big"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readYAMLSpecs.html">seasonder_readYAMLSpecs</a></span><span class="op">(</span><span class="va">specs_path</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"header"</span>,<span class="st">"V4"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">header_v4</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readSeaSondeCSFileHeaderV4.html">seasonder_readSeaSondeCSFileHeaderV4</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">specs</span>,</span></span>
+<span class="r-in"><span>  <span class="va">con</span>,</span></span>
+<span class="r-in"><span>  endian <span class="op">=</span> <span class="st">"big"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readYAMLSpecs.html">seasonder_readYAMLSpecs</a></span><span class="op">(</span><span class="va">specs_path</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"header"</span>,<span class="st">"V5"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">header_v5</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readSeaSondeCSFileHeaderV5.html">seasonder_readSeaSondeCSFileHeaderV5</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">specs</span>,</span></span>
+<span class="r-in"><span>  <span class="va">con</span>,</span></span>
+<span class="r-in"><span>  endian <span class="op">=</span> <span class="st">"big"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readYAMLSpecs.html">seasonder_readYAMLSpecs</a></span><span class="op">(</span><span class="va">specs_path</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"header"</span>,<span class="st">"V6"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">prev_data</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/reduce.html" class="external-link">reduce</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">header_v2</span>,<span class="va">header_v3</span>,<span class="va">header_v4</span>,<span class="va">header_v5</span><span class="op">)</span>, \<span class="op">(</span><span class="va">pool</span>, <span class="va">current_header</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="va">overlapping_keys</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">intersect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">pool</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">current_header</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">pool</span><span class="op">[</span><span class="va">overlapping_keys</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">current_header</span><span class="op">[</span><span class="va">overlapping_keys</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span>  <span class="va">new_keys</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">current_header</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">pool</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">pool</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">pool</span>, <span class="va">current_header</span><span class="op">[</span><span class="va">new_keys</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pool</span></span></span>
+<span class="r-in"><span><span class="op">}</span>, .init <span class="op">=</span> <span class="va">header_v1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">header_v6</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_readSeaSondeCSFileHeaderV6</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">specs</span>,</span></span>
+<span class="r-in"><span>  <span class="va">con</span>,</span></span>
+<span class="r-in"><span>  endian <span class="op">=</span> <span class="st">"big"</span>,</span></span>
+<span class="r-in"><span>prev_data <span class="op">=</span> <span class="va">prev_data</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">header_v6</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nCS6ByteSize: num 1225</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ TIME        :List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nTimeMark       : Factor w/ 3 levels "start","center time",..: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nYear           : int 2024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nMonth          : int 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nDay            : int 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nHour           : int 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nMinute         : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fSeconds        : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fCoverageSeconds: num 3.51e-310</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fHoursFromUTC   : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ZONE        :List of 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ szTimeZone: chr "Atlantic/Reykjavik"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ LOCA        :List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fLatitude      : num 42.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fLongitude     : num -8.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fAltitudeMeters: num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ RCVI        :List of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nReceiverModel  : Factor w/ 6 levels "Unknown","Awg3/Rcvr2 Chassis AC",..: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nRxAntennaModel : Factor w/ 6 levels "Unknown","Box Loops",..: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fReferenceGainDB: num 34.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ szFirmware      : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ GLRM        :List of 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nMethod             : int 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nVersion            : int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nPointsRemoved      : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nTimesRemoved       : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nSegmentsRemoved    : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fPointPowerThreshold: num 15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fRangePowerThreshold: num 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fRangeBinThreshold  : num 0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ bRemoveDC           : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nReceiverModel      : Factor w/ 5 levels "Off","Point",..: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ FOLS        :List of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nNegBraggLeftIndex :List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ loop: chr "nRangeCells"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ data: int [1:63] 0 334 335 321 317 324 323 323 316 313 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nNegBraggRightIndex:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ loop: chr "nRangeCells"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ data: int [1:63] 0 333 340 344 349 351 349 349 352 353 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nPosBraggLeftIndex :List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ loop: chr "nRangeCells"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ data: int [1:63] 0 689 689 673 668 669 664 664 666 666 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nPosBraggRightIndex:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ loop: chr "nRangeCells"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ data: int [1:63] 0 688 688 684 698 706 704 707 684 681 ...</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">close</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></span>
+</code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

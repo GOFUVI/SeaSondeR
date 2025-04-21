@@ -9,7 +9,7 @@ for splitting can be provided or calculated based on the gaps in the log timesta
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,9 +83,17 @@ for splitting can be provided or calculated based on the gaps in the log timesta
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="fu">seasonder_splitLog</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Enable logging</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="seasonder_enableLogs.html">seasonder_enableLogs</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Log some messages</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="seasonder_log.html">seasonder_log</a></span><span class="op">(</span><span class="st">"First log entry"</span>, <span class="st">"info"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="seasonder_log.html">seasonder_log</a></span><span class="op">(</span><span class="st">"Second log entry"</span>, <span class="st">"info"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Split logs into blocks (using a 1-second threshold)</span></span></span>
+<span class="r-in"><span><span class="va">blocks</span> <span class="op">&lt;-</span> <span class="fu">seasonder_splitLog</span><span class="op">(</span>threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">as.difftime</a></span><span class="op">(</span><span class="fl">300</span>, units <span class="op">=</span> <span class="st">"secs"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">blocks</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ : chr [1:462] "[INFO] 2025-04-21 07:47:51.348509: seasonder_createSeaSondeRAPM:  APM object created successfully." "[INFO] 2025-04-21 07:47:51.564844: new_SeaSondeRCS:  SeaSondeRCS object created successfully." "[INFO] 2025-04-21 07:47:52.271503: :::: new_SeaSondeRCS: SeaSondeRCS object created successfully." "[INFO] 2025-04-21 07:47:52.829959: seasonder_createSeaSondeRAPM:  APM object created successfully." ...</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

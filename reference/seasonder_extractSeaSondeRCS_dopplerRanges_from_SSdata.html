@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,18 +72,19 @@ performed to verify that the provided Doppler cell indices fall within the range
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="co"># Create a sample self-spectra matrix with 5 range cells and 10 Doppler bins</span></span></span>
-<span class="r-in"><span>  <span class="va">sample_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span>, nrow <span class="op">=</span> <span class="fl">5</span>, ncol <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Suppose we want to extract Doppler bins 3 to 7</span></span></span>
-<span class="r-in"><span>  <span class="va">selected_bins</span> <span class="op">&lt;-</span> <span class="fl">3</span><span class="op">:</span><span class="fl">7</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Extract the corresponding subset of the self-spectra matrix</span></span></span>
-<span class="r-in"><span>  <span class="va">sliced_matrix</span> <span class="op">&lt;-</span> <span class="fu">seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata</span><span class="op">(</span><span class="va">sample_matrix</span>,</span></span>
-<span class="r-in"><span> <span class="va">selected_bins</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sliced_matrix</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sample_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span>, nrow <span class="op">=</span> <span class="fl">5</span>, ncol <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">selected_bins</span> <span class="op">&lt;-</span> <span class="fl">3</span><span class="op">:</span><span class="fl">7</span></span></span>
+<span class="r-in"><span><span class="va">sliced_matrix</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">sample_matrix</span>,</span></span>
+<span class="r-in"><span>  <span class="va">selected_bins</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sliced_matrix</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1] [,2] [,3] [,4] [,5]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]   11   16   21   26   31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]   12   17   22   27   32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]   13   18   23   28   33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]   14   19   24   29   34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]   15   20   25   30   35</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

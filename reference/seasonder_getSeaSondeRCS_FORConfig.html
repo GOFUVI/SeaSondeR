@@ -9,7 +9,7 @@ It returns a list containing the FOR parameters and the noise level assigned to 
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,11 +73,62 @@ FOR processing. This function aggregates these components by calling <code><a hr
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="co"># Assuming cs_obj is a valid SeaSondeRCS object with configured FOR parameters and noise level</span></span></span>
-<span class="r-in"><span>  <span class="va">config</span> <span class="op">&lt;-</span> <span class="fu">seasonder_getSeaSondeRCS_FORConfig</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">config</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a minimal SeaSondeRCS object</span></span></span>
+<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">apm_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/MeasPattern.txt"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">apm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="va">apm_file</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
+<span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu">seasonder_getSeaSondeRCS_FORConfig</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">config</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FOR_parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FOR_parameters$nsm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FOR_parameters$reference_noise_normalized_limits</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.586848 2.874276</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FOR_parameters$fdown</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FOR_parameters$flim</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FOR_parameters$noisefact</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3.981072</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FOR_parameters$currmax</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FOR_parameters$reject_distant_bragg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FOR_parameters$reject_noise_ionospheric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FOR_parameters$reject_noise_ionospheric_threshold</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $NoiseLevel</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_001 range_002 range_003 range_004 range_005 range_006 range_007 range_008 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -135.2474 -134.8318 -135.0454 -135.0340 -134.9676 -134.7360 -134.8228 -134.8941 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_009 range_010 range_011 range_012 range_013 range_014 range_015 range_016 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -134.8782 -135.0698 -135.2970 -135.1301 -134.8897 -134.8974 -134.8161 -134.7336 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_017 range_018 range_019 range_020 range_021 range_022 range_023 range_024 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -134.9820 -134.5720 -134.0027 -134.4659 -134.9164 -135.5818 -135.4132 -135.2606 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_025 range_026 range_027 range_028 range_029 range_030 range_031 range_032 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -135.4979 -135.5128 -135.6235 -135.3909 -135.3739 -135.2351 -135.7927 -135.7334 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_033 range_034 range_035 range_036 range_037 range_038 range_039 range_040 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -135.6103 -135.7485 -136.0722 -136.1765 -135.4616 -135.9233 -136.4067 -136.0290 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_041 range_042 range_043 range_044 range_045 range_046 range_047 range_048 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -135.9551 -136.3613 -136.1284 -136.6700 -136.8593 -136.8549 -136.5435 -136.2426 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_049 range_050 range_051 range_052 range_053 range_054 range_055 range_056 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -136.1255 -136.2856 -136.2771 -136.7757 -136.7783 -136.6267 -136.8762 -136.7339 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> range_057 range_058 range_059 range_060 range_061 range_062 range_063 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -136.5483 -136.7173 -136.6149 -136.7406 -136.8187 -136.9787 -137.3383 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

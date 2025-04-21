@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,12 +71,52 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="co"># Assuming cs_obj is a valid SeaSondeRCS object and new_data is a valid data list</span></span></span>
-<span class="r-in"><span>  <span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">seasonder_setSeaSondeRCS_data</span><span class="op">(</span><span class="va">cs_obj</span>, <span class="va">new_data</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="co"># Check the updated data</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="seasonder_getSeaSondeRCS_data.html">seasonder_getSeaSondeRCS_data</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Minimal example for seasonder_setSeaSondeRCS_data</span></span></span>
+<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">apm_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/MeasPattern.txt"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">apm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="va">apm_file</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
+<span class="r-in"><span><span class="va">new_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_getSeaSondeRCS_data.html">seasonder_getSeaSondeRCS_data</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_setSeaSondeRCS_data</span><span class="op">(</span><span class="va">cs_obj</span>, <span class="va">new_data</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="seasonder_getSeaSondeRCS_data.html">seasonder_getSeaSondeRCS_data</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SSA1: 'SeaSondeRCS_SSMatrix' num [1:63, 1:1024] 4.54e-11 3.38e-11 3.05e-11 3.80e-11 3.00e-11 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "name")= chr "SSA1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SSA2: 'SeaSondeRCS_SSMatrix' num [1:63, 1:1024] 3.47e-11 5.49e-11 8.77e-11 1.05e-10 2.90e-11 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "name")= chr "SSA2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ SSA3: 'SeaSondeRCS_SSMatrix' num [1:63, 1:1024] -1.18e-10 -1.91e-10 -3.21e-10 -3.15e-10 -1.56e-10 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "name")= chr "SSA3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ CS12: 'SeaSondeRCS_CSMatrix' cplx [1:63, 1:1024] -3.08e-11+6.10e-12i -3.11e-11+1.74e-11i -3.10e-11+6.70e-12i ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "name")= chr "CS12"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ CS13: 'SeaSondeRCS_CSMatrix' cplx [1:63, 1:1024] 5.08e-11+3.34e-11i 5.99e-11+2.59e-11i 5.34e-11+4.68e-11i ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "name")= chr "CS13"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ CS23: 'SeaSondeRCS_CSMatrix' cplx [1:63, 1:1024] -3.79e-11-4.55e-11i -5.50e-11-8.05e-11i -9.27e-11-1.31e-10i ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "name")= chr "CS23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ QC  : 'SeaSondeRCS_QCMatrix' num [1:63, 1:1024] 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "name")= chr "QC"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

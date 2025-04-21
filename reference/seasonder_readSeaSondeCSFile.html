@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -114,10 +114,123 @@ This function provides a structured mechanism to recover from errors during its 
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="va">cs</span> <span class="op">&lt;-</span> <span class="fu">seasonder_readSeaSondeCSFile</span><span class="op">(</span><span class="st">"path/to/csfile"</span>, <span class="st">"path/to/specs.yml"</span>, endian <span class="op">=</span> <span class="st">"big"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cs</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">spec_file</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_defaultSpecsFilePath.html">seasonder_defaultSpecsFilePath</a></span><span class="op">(</span><span class="st">"CS"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cs</span> <span class="op">&lt;-</span> <span class="fu">seasonder_readSeaSondeCSFile</span><span class="op">(</span><span class="va">cs_file</span>, <span class="va">spec_file</span>, endian <span class="op">=</span> <span class="st">"big"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">cs</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ header:List of 36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nCsFileVersion  : int 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nDateTime       : POSIXct[1:1], format: "2024-04-04 07:00:00"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nV1Extent       : int 1319</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nCsKind         : int 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nV2Extent       : int 1313</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nSiteCodeName   : chr "TORA"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nV3Extent       : int 1305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nRangeCells     : int 63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nDopplerCells   : int 1024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nFirstRangeCell : int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nCoverMinutes   : int 15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ bDeletedSource  : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ bOverrideSrcInfo: int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fStartFreqMHz   : num 46.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fRepFreqHz      : num 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fBandwidthKHz   : num 801</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ bSweepUp        : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ fRangeCellDistKm: num 0.187</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nV4Extent       : int 1257</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ CenterFreq      : num 46.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ CellsDistKm     : num [1:63] 0.187 0.374 0.561 0.748 0.935 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nOutputInterval : int 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nCreateTypeCode : chr "SSAQ"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nCreatorVersion : chr "11.9"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nActiveChannels : int 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nSpectraChannels: int 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nActiveChanBits : num 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nV5Extent       : int 1229</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ActiveChannels  : int [1:3] 1 2 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nCS6ByteSize    : num 1225</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ TIME            :List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nTimeMark       : Factor w/ 3 levels "start","center time",..: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nYear           : int 2024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nMonth          : int 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nDay            : int 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nHour           : int 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nMinute         : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fSeconds        : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fCoverageSeconds: num 3.51e-310</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fHoursFromUTC   : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ZONE            :List of 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ szTimeZone: chr "Atlantic/Reykjavik"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ LOCA            :List of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fLatitude      : num 42.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fLongitude     : num -8.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fAltitudeMeters: num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ RCVI            :List of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nReceiverModel  : Factor w/ 6 levels "Unknown","Awg3/Rcvr2 Chassis AC",..: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nRxAntennaModel : Factor w/ 6 levels "Unknown","Box Loops",..: 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fReferenceGainDB: num 34.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ szFirmware      : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ GLRM            :List of 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nMethod             : int 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nVersion            : int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nPointsRemoved      : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nTimesRemoved       : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nSegmentsRemoved    : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fPointPowerThreshold: num 15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fRangePowerThreshold: num 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ fRangeBinThreshold  : num 0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ bRemoveDC           : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nReceiverModel      : Factor w/ 5 levels "Off","Point",..: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ FOLS            :List of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nNegBraggLeftIndex :List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ loop: chr "nRangeCells"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ data: int [1:63] 0 334 335 321 317 324 323 323 316 313 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nNegBraggRightIndex:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ loop: chr "nRangeCells"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ data: int [1:63] 0 333 340 344 349 351 349 349 352 353 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nPosBraggLeftIndex :List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ loop: chr "nRangeCells"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ data: int [1:63] 0 689 689 673 668 669 664 664 666 666 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nPosBraggRightIndex:List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ loop: chr "nRangeCells"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ data: int [1:63] 0 688 688 684 698 706 704 707 684 681 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ data  :List of 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ SSA1: 'SeaSondeRCS_SSMatrix' num [1:63, 1:1024] 4.54e-11 3.38e-11 3.05e-11 3.80e-11 3.00e-11 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "name")= chr "SSA1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ SSA2: 'SeaSondeRCS_SSMatrix' num [1:63, 1:1024] 3.47e-11 5.49e-11 8.77e-11 1.05e-10 2.90e-11 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "name")= chr "SSA2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ SSA3: 'SeaSondeRCS_SSMatrix' num [1:63, 1:1024] -1.18e-10 -1.91e-10 -3.21e-10 -3.15e-10 -1.56e-10 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "name")= chr "SSA3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ CS12: 'SeaSondeRCS_CSMatrix' cplx [1:63, 1:1024] -3.08e-11+6.10e-12i -3.11e-11+1.74e-11i -3.10e-11+6.70e-12i ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "name")= chr "CS12"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ CS13: 'SeaSondeRCS_CSMatrix' cplx [1:63, 1:1024] 5.08e-11+3.34e-11i 5.99e-11+2.59e-11i 5.34e-11+4.68e-11i ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "name")= chr "CS13"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ CS23: 'SeaSondeRCS_CSMatrix' cplx [1:63, 1:1024] -3.79e-11-4.55e-11i -5.50e-11-8.05e-11i -9.27e-11-1.31e-10i ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "name")= chr "CS23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ QC  : 'SeaSondeRCS_QCMatrix' num [1:63, 1:1024] 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:63] "range_001" "range_002" "range_003" "range_004" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:1024] "doppler_000" "doppler_001" "doppler_002" "doppler_003" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "name")= chr "QC"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
