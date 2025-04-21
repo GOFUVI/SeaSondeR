@@ -1263,7 +1263,7 @@ seasonder_estimateReferenceNoiseNormalizedLimits <- function(seasonder_cs_object
 #' cs_obj <- SeaSondeR:::seasonder_computeNoiseLevel(cs_obj)
 #' cs_obj <- SeaSondeR:::seasonder_computeNoiseLevel(cs_obj, antenna = 3, smoothed = TRUE)
 #'
-seasonder_computeNoiseLevel <- function(seasonder_cs_object, antenna = 3, smoothed = F) {
+seasonder_computeNoiseLevel <- function(seasonder_cs_object, antenna = 3, smoothed =FALSE) {
 
   # Retrieve the normalized Doppler frequency limits for noise reference
   normalized_doppler_range <- seasonder_getFOR_parameters(seasonder_cs_object)$reference_noise_normalized_limits
@@ -1306,7 +1306,7 @@ seasonder_computeNoiseLevel <- function(seasonder_cs_object, antenna = 3, smooth
 }
 
 
-seasonder_computeSeaSondeRCSAntennaNoise <- function(seasonder_cs_object, antenna,negative_doppler_range, positive_doppler_range, smoothed = F){
+seasonder_computeSeaSondeRCSAntennaNoise <- function(seasonder_cs_object, antenna,negative_doppler_range, positive_doppler_range, smoothed =FALSE){
   # Extract self-spectra (SS) for the defined Doppler ranges
   SS <- seasonder_getSeaSondeRCS_SelfSpectra(
     seasonder_cs_object,

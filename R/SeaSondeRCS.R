@@ -1235,7 +1235,7 @@ seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, dop
 #' spectra_list <- SeaSondeR:::seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae = 1)
 #' print(names(spectra_list))
 #'
-seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_object, antennae, dist_ranges = NULL, doppler_ranges = NULL, dist_in_km = FALSE, collapse = FALSE, smoothed = F) {
+seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_object, antennae, dist_ranges = NULL, doppler_ranges = NULL, dist_in_km = FALSE, collapse = FALSE, smoothed =FALSE) {
 
 
   out <- list()
@@ -1602,7 +1602,7 @@ seasonder_getReceiverGain_dB <- function(seasonder_cs_object) {
 
   # Retrieve the receiver gain from the SeaSondeRCS object's header field "fReferenceGainDB".
   # If the field is missing or NULL, a default value of -34.2 dB is used.
-  receiver_gain <- seasonder_getCSHeaderByPath(seasonder_cs_object, c("RCVI","fReferenceGainDB"),warn_missing = F) %||% 34.2
+  receiver_gain <- seasonder_getCSHeaderByPath(seasonder_cs_object, c("RCVI","fReferenceGainDB"),warn_missing =FALSE) %||% 34.2
 
   # Return the receiver gain in decibels.
   return(receiver_gain)
@@ -3366,7 +3366,7 @@ seasonder_int_to_raw <- function(x) {
 #' @examples
 #' r <- as.raw(c(0x12,0x34,0x56,0x78,0x90,0xAB,0xCD,0xEF))
 #' SeaSondeR:::seasonder_raw_to_int(r, signed = TRUE)
-seasonder_raw_to_int <- function(r,signed = F) {
+seasonder_raw_to_int <- function(r,signed =FALSE) {
   # Convert raw values to bits and collapse into a single bit string.
   bit_str <- sapply(r,FUN = function(x) rev(rawToBits(x))) %>% as.integer() %>% paste0(collapse = "")
   class(bit_str) <- "bitstring"
@@ -3532,16 +3532,16 @@ seasonder_readCSField <- function(con, type, endian = "big") {
 
     # Determine and read the specific data type from the connection.
     switch(type,
-           "UInt8" = as.integer(read_values(1, "raw", signed = F)),
+           "UInt8" = as.integer(read_values(1, "raw", signed =FALSE)),
            "SInt8" = as.integer(read_values(1, "integer")),
-           "UInt16" = as.integer(read_values(2, "int", signed = F)),
+           "UInt16" = as.integer(read_values(2, "int", signed =FALSE)),
            "SInt16" = as.integer(read_values(2, "int")),
            "UInt32" = bitops::bitAnd(read_values(4, "integer"),0xFFFFFFFF),
            "SInt32" = as.integer(read_values(4, "int")),
            "Float" = as.numeric(read_values(4, "numeric")),
            "Double" = as.numeric(read_values(8, "double")),
            "UInt64" = {
-             v <- read_values(1, "raw", n = 8, signed = F)
+             v <- read_values(1, "raw", n = 8, signed =FALSE)
              seasonder_raw_to_int(v, signed = FALSE)
            },
            "SInt64" = {

@@ -55,7 +55,7 @@ seasonder_defaultMUSICOptions <- seasonder_defaultMUSIC_options <- function(){
   
   list(PPMIN = NULL,
        PWMAX = NULL,
-       smoothNoiseLevel = F,
+       smoothNoiseLevel =FALSE,
        doppler_interpolation = 2,
        MUSIC_parameters = seasonder_defaultMUSIC_parameters(),
        discard_low_SNR = TRUE,
@@ -2814,7 +2814,7 @@ seasonder_MUSICComputeDOAProjections <- function(seasonder_cs_object){
 
   a_list <- purrr::map(seq_along(bearings), \(i){
     # Extracts the antenna pattern response for the current bearing.
-    a <- seasonder_apm_obj[,i, drop = F]
+    a <- seasonder_apm_obj[,i, drop =FALSE]
     names(a) <- NULL
     return(a)
   })
@@ -2832,7 +2832,7 @@ seasonder_MUSICComputeDOAProjections <- function(seasonder_cs_object){
     # Iterates over the two possible signal solutions (single and dual).
     for(i in 1:2){
       # Extracts the noise subspace eigenvectors corresponding to the current solution.
-      En <- eigen_analysis$vectors[,(i+1):3, drop = F]
+      En <- eigen_analysis$vectors[,(i+1):3, drop =FALSE]
 
       # Iterates over all bearings to calculate the projection.
       for(j in seq_along(bearings)){

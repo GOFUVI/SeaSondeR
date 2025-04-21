@@ -40,7 +40,7 @@ seasonder_ProcessCSRuntime <- function( file_to_read, APMs_root_folder) {
     cs_date_time <- header$nDateTime
 
     APM_files <- list.files(APM_folder,full.names = TRUE)
-    APM_files <- sort(APM_files, decreasing = F)
+    APM_files <- sort(APM_files, decreasing =FALSE)
 
     APM_dates <- lubridate::parse_date_time(APM_files,orders = "Y-m-d HMS")
 

@@ -35,7 +35,7 @@ seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
                 noisefact = 10^(6/10),
                 currmax = 1,
                 reject_distant_bragg = TRUE, #  Default is to apply this test
-                reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+                reject_noise_ionospheric =FALSE, #  Default is to apply this test (except for 42 MHz)
 
                 reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
   )
@@ -79,9 +79,9 @@ seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
 
 
 
-  # ruv <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 52, header = F)
+  # ruv <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 52, header =FALSE)
   #
-  # header <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 50, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+  # header <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 50, header =FALSE,nrows = 1) %>% dplyr::select(-1) %>% unlist
   #
   # header[14] <- paste(header[14],header[15])
   #
@@ -100,7 +100,7 @@ seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
   # header <- header[-5]
   #
   #
-  # header2 <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 51, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+  # header2 <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 51, header =FALSE,nrows = 1) %>% dplyr::select(-1) %>% unlist
   #
   #
   # names(ruv) <- paste(header,header2)
@@ -108,7 +108,7 @@ seasonder_apm_obj %<>% seasonder_applyAPMAmplitudeAndPhaseCorrections()
   # test_vectors <- ruv %>% dplyr::rename(range_cell = `Spectra RngCell`, bearing = `Bearing (True)`,maxv = `Velocity Maximum`, minv = `Velocity Minimum`)
 
 
-  ruv <- data.table::fread("tests/testthat/data/TORA/test1/RdliXXXX_00_00_00_0000sr.rv",skip = 3, header = F)
+  ruv <- data.table::fread("tests/testthat/data/TORA/test1/RdliXXXX_00_00_00_0000sr.rv",skip = 3, header =FALSE)
 
 
 
@@ -312,7 +312,7 @@ ggplot2::ggplot() + ggplot2::coord_polar(theta = "x", start = 0) + ggplot2::xlim
                     noisefact = 10^(6/10),
                     currmax = 1,
                     reject_distant_bragg = TRUE, #  Default is to apply this test
-                    reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+                    reject_noise_ionospheric =FALSE, #  Default is to apply this test (except for 42 MHz)
 
                     reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
       )
@@ -356,9 +356,9 @@ ggplot2::ggplot() + ggplot2::coord_polar(theta = "x", start = 0) + ggplot2::xlim
 
 
 
-      # ruv <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 52, header = F)
+      # ruv <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 52, header =FALSE)
       #
-      # header <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 50, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+      # header <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 50, header =FALSE,nrows = 1) %>% dplyr::select(-1) %>% unlist
       #
       # header[14] <- paste(header[14],header[15])
       #
@@ -377,7 +377,7 @@ ggplot2::ggplot() + ggplot2::coord_polar(theta = "x", start = 0) + ggplot2::xlim
       # header <- header[-5]
       #
       #
-      # header2 <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 51, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+      # header2 <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 51, header =FALSE,nrows = 1) %>% dplyr::select(-1) %>% unlist
       #
       #
       # names(ruv) <- paste(header,header2)
@@ -385,9 +385,9 @@ ggplot2::ggplot() + ggplot2::coord_polar(theta = "x", start = 0) + ggplot2::xlim
       # test_vectors <- ruv %>% dplyr::rename(range_cell = `Spectra RngCell`, bearing = `Bearing (True)`,maxv = `Velocity Maximum`, minv = `Velocity Minimum`)
 
 
-      ruv <- data.table::fread("tests/testthat/data/TORA/test1/RdlmXXXX_00_00_00_0000sr.rv",skip = 3, header = F)
+      ruv <- data.table::fread("tests/testthat/data/TORA/test1/RdlmXXXX_00_00_00_0000sr.rv",skip = 3, header =FALSE)
 
-      iruv <- data.table::fread("tests/testthat/data/TORA/test1/RdliXXXX_00_00_00_0000sr.rv",skip = 3, header = F)
+      iruv <- data.table::fread("tests/testthat/data/TORA/test1/RdliXXXX_00_00_00_0000sr.rv",skip = 3, header =FALSE)
 
 
 
@@ -538,7 +538,7 @@ to.plot %>% dplyr::group_by(range) %>% dplyr::summarise(P = mean(P)) %>% ggplot2
                     noisefact = 10^(6/10),
                     currmax = 1,
                     reject_distant_bragg = TRUE, #  Default is to apply this test
-                    reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+                    reject_noise_ionospheric =FALSE, #  Default is to apply this test (except for 42 MHz)
 
                     reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
       )
@@ -582,9 +582,9 @@ to.plot %>% dplyr::group_by(range) %>% dplyr::summarise(P = mean(P)) %>% ggplot2
 
 
 
-      # ruv <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 52, header = F)
+      # ruv <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 52, header =FALSE)
       #
-      # header <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 50, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+      # header <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 50, header =FALSE,nrows = 1) %>% dplyr::select(-1) %>% unlist
       #
       # header[14] <- paste(header[14],header[15])
       #
@@ -603,7 +603,7 @@ to.plot %>% dplyr::group_by(range) %>% dplyr::summarise(P = mean(P)) %>% ggplot2
       # header <- header[-5]
       #
       #
-      # header2 <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 51, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+      # header2 <- data.table::fread("tests/testthat/data/TORA/test1/RDLx_TORA_2024_04_05_0730.ruv",skip = 51, header =FALSE,nrows = 1) %>% dplyr::select(-1) %>% unlist
       #
       #
       # names(ruv) <- paste(header,header2)
@@ -611,7 +611,7 @@ to.plot %>% dplyr::group_by(range) %>% dplyr::summarise(P = mean(P)) %>% ggplot2
       # test_vectors <- ruv %>% dplyr::rename(range_cell = `Spectra RngCell`, bearing = `Bearing (True)`,maxv = `Velocity Maximum`, minv = `Velocity Minimum`)
 
 
-      ruv <- data.table::fread("tests/testthat/data/CIES/test1/RdliXXXX_00_00_00_0000sr.rv",skip = 3, header = F)
+      ruv <- data.table::fread("tests/testthat/data/CIES/test1/RdliXXXX_00_00_00_0000sr.rv",skip = 3, header =FALSE)
 
 
 
@@ -743,7 +743,7 @@ describe("radials computation",{
                   noisefact = 10^(6/10),
                   currmax = 1,
                   reject_distant_bragg = TRUE, #  Default is to apply this test
-                  reject_noise_ionospheric = F, #  Default is to apply this test (except for 42 MHz)
+                  reject_noise_ionospheric =FALSE, #  Default is to apply this test (except for 42 MHz)
                   # TODO: implement default reject_noise_ionospheric = FALSE for 42 MHz
                   reject_noise_ionospheric_threshold = 0# Default is 0 dB threshold. Typically 0 dB should be used.
     )
@@ -851,9 +851,9 @@ describe("radials computation",{
     test$distances[sample(1:nrow(to.plot),10)] %>% purrr::compact() %>% purrr::map2(factor(seq_along(.)),\(dist,i) data.frame(i = i, dist = 1/pracma::Real(dist["single",, drop=TRUE]) , bearing = attr(dist,"bearings", exact = TRUE))) %>% dplyr::bind_rows() %>%   ggplot2::ggplot(ggplot2::aes(y=dist, x=bearing, color = i)) + ggplot2::geom_point(alpha = 0.5) + ggplot2::xlim(-180,180)
 
 
-    ruv <- data.table::fread("tests/testthat/data/TORA/RDLi_TORA_2024_03_19_1630.ruv",skip = 56, header = F)
+    ruv <- data.table::fread("tests/testthat/data/TORA/RDLi_TORA_2024_03_19_1630.ruv",skip = 56, header =FALSE)
 
-    header <- data.table::fread("tests/testthat/data/TORA/RDLi_TORA_2024_03_19_1630.ruv",skip = 53, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+    header <- data.table::fread("tests/testthat/data/TORA/RDLi_TORA_2024_03_19_1630.ruv",skip = 53, header =FALSE,nrows = 1) %>% dplyr::select(-1) %>% unlist
 
     header[14] <- paste(header[14],header[15])
 
@@ -872,7 +872,7 @@ describe("radials computation",{
     header <- header[-5]
 
 
-    header2 <- data.table::fread("tests/testthat/data/TORA/RDLi_TORA_2024_03_19_1630.ruv",skip = 54, header = F,nrows = 1) %>% dplyr::select(-1) %>% unlist
+    header2 <- data.table::fread("tests/testthat/data/TORA/RDLi_TORA_2024_03_19_1630.ruv",skip = 54, header =FALSE,nrows = 1) %>% dplyr::select(-1) %>% unlist
 
 
     names(ruv) <- paste(header,header2)
