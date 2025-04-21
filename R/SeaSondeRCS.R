@@ -335,7 +335,8 @@ new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 #' rcs_object <- seasonder_createSeaSondeRCS(cs_list)
 #'
 #' # Creating a SeaSondeRCS object from a file path using default YAML specifications
-#' rcs_object <- seasonder_createSeaSondeRCS(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"))
+#' rcs_object <- seasonder_createSeaSondeRCS(system.file("css_data/CSS_TORA_24_04_04_0700.cs", 
+#' package = "SeaSondeR"))
 #'
 #' # Creating a SeaSondeRCS object from a file path with a specified YAML specifications file
 #' rcs_object <- seasonder_createSeaSondeRCS(
