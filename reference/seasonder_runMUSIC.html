@@ -11,7 +11,7 @@ and other related metrics from the radar cross-spectrum data."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">SeaSondeR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,7 +93,7 @@ and metadata. This object is modified in place to include the results of the MUS
 <code><a href="seasonder_MUSICTestDualSolutions.html">seasonder_MUSICTestDualSolutions</a></code>: Test and analyze dual solutions in the DOA.
 <code><a href="seasonder_MUSICComputePropDualSols.html">seasonder_MUSICComputePropDualSols</a></code>: Compute proportions for dual solutions.
 <code><a href="seasonder_MUSICSelectDOA.html">seasonder_MUSICSelectDOA</a></code>: Select final DOA estimations.
-<code><a href="seasonder_MUSIC_LonLat.html">seasonder_MUSIC_LonLat</a></code>: Convert DOA estimations to geographical coordinates.</p></div>
+<code><a href="seasonder_MUSICLonLat.html">seasonder_MUSIC_LonLat</a></code>: Convert DOA estimations to geographical coordinates.</p></div>
     </div>
 
     <div class="section level2">
@@ -119,28 +119,28 @@ and metadata. This object is modified in place to include the results of the MUS
 <span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_runMUSIC:  MUSIC algorithm finished.</span>
 <span class="r-in"><span><span class="co"># Check the updated processing steps</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="seasonder_getSeaSondeRCS_ProcessingSteps.html">seasonder_getSeaSondeRCS_ProcessingSteps</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "2025-04-21 19:34:08.224676: FOR parameters set."                                                                      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "2025-04-21 19:34:08.237358: NoiseLevel for antenna 1 computed."                                                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "2025-04-21 19:34:08.254836: NoiseLevel for antenna 2 computed."                                                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "2025-04-21 19:34:08.271927: NoiseLevel for antenna 3 computed."                                                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "2025-04-21 19:34:08.28004: Created from /home/runner/work/_temp/Library/SeaSondeR/css_data/CSS_TORA_24_04_04_0700.cs."</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "2025-04-21 19:34:08.34831: MUSIC algorithm started."                                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "2025-04-21 19:34:08.348574: MUSIC covariance matrix computation started"                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "2025-04-21 19:34:08.352028: MUSIC covariance matrix computation ended"                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "2025-04-21 19:34:08.354522: NoiseLevel for antenna 1 computed."                                                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "2025-04-21 19:34:08.356712: NoiseLevel for antenna 2 computed."                                                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "2025-04-21 19:34:08.358866: NoiseLevel for antenna 3 computed."                                                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "2025-04-21 19:34:08.363166: MUSIC covariance matrix decomposition started"                                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "2025-04-21 19:34:08.364875: MUSIC covariance matrix decomposition ended"                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [14] "2025-04-21 19:34:08.365088: MUSIC DOA functions computation started"                                                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "2025-04-21 19:34:08.393459: MUSIC DOA functions computation ended"                                                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "2025-04-21 19:34:08.393765: MUSIC peak extraction started"                                                            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "2025-04-21 19:34:08.409318: MUSIC peak extraction ended"                                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [18] "2025-04-21 19:34:08.412502: MUSIC dual solutions testing started"                                                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "2025-04-21 19:34:08.42895: MUSIC dual solutions testing ended"                                                        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [20] "2025-04-21 19:34:08.429282: MUSIC DOA selection started"                                                              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "2025-04-21 19:34:08.430634: MUSIC DOA selection ended"                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [22] "2025-04-21 19:34:08.435141: MUSIC algorithm ended with 42.9% of dual solutions."                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "2025-04-22 21:17:48.050695: FOR parameters set."                                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "2025-04-22 21:17:48.062275: NoiseLevel for antenna 1 computed."                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "2025-04-22 21:17:48.078404: NoiseLevel for antenna 2 computed."                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "2025-04-22 21:17:48.090381: NoiseLevel for antenna 3 computed."                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "2025-04-22 21:17:48.098592: Created from /home/runner/work/_temp/Library/SeaSondeR/css_data/CSS_TORA_24_04_04_0700.cs."</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "2025-04-22 21:17:48.154321: MUSIC algorithm started."                                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "2025-04-22 21:17:48.15467: MUSIC covariance matrix computation started"                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "2025-04-22 21:17:48.15829: MUSIC covariance matrix computation ended"                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "2025-04-22 21:17:48.160736: NoiseLevel for antenna 1 computed."                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "2025-04-22 21:17:48.162969: NoiseLevel for antenna 2 computed."                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "2025-04-22 21:17:48.165093: NoiseLevel for antenna 3 computed."                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "2025-04-22 21:17:48.168911: MUSIC covariance matrix decomposition started"                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "2025-04-22 21:17:48.17057: MUSIC covariance matrix decomposition ended"                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [14] "2025-04-22 21:17:48.170784: MUSIC DOA functions computation started"                                                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "2025-04-22 21:17:48.198979: MUSIC DOA functions computation ended"                                                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "2025-04-22 21:17:48.199239: MUSIC peak extraction started"                                                             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "2025-04-22 21:17:48.214123: MUSIC peak extraction ended"                                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [18] "2025-04-22 21:17:48.217068: MUSIC dual solutions testing started"                                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "2025-04-22 21:17:48.231941: MUSIC dual solutions testing ended"                                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20] "2025-04-22 21:17:48.23219: MUSIC DOA selection started"                                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "2025-04-22 21:17:48.233374: MUSIC DOA selection ended"                                                                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [22] "2025-04-22 21:17:48.237852: MUSIC algorithm ended with 42.9% of dual solutions."                                       </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
