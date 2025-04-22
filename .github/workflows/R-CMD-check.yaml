@@ -49,8 +49,18 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
-      - name: Run additional tests
-        shell: bash -l {0}
+      # On Windows use PowerShell to find R.exe; on macOS/Linux use the default shell
+      - name: Run additional tests (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # Install the built package so library(SeaSondeR) works in the tests
+          R.exe CMD INSTALL --no-multiarch --with-keep.source .
+          # Run extra tests located in tools/tests/testthat
+          Rscript.exe -e 'testthat::test_dir("tools/tests/testthat")'
+
+      - name: Run additional tests (macOS/Linux)
+        if: runner.os != 'Windows'
         run: |
           # Install the built package so library(SeaSondeR) works in the tests
           R CMD INSTALL --no-multiarch --with-keep.source .
