@@ -3514,6 +3514,7 @@ if(discard_no_solution){
 #' # View processing steps
 #' print(seasonder_getSeaSondeRCS_ProcessingSteps(result))
 #' @export
+#' @aliases seasonder_runMUSIC_in_FOR
 seasonder_runMUSICInFOR <- seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object){
 
   # Initialize the output as a copy of the input SeaSondeRCS object
@@ -3526,7 +3527,7 @@ doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_options(out)$doppler_int
   FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_object)
 
   # Iterate over each range cell in the FOR data
-  FOR <- 1:length(FOR) %>% purrr::map(\(range_cell) {
+  FOR <- seq_len(length(FOR)) %>% purrr::map(\(range_cell) {
     o <- NULL
     doppler_bins <- integer(0)
     # Process negative FOR bins
@@ -3564,7 +3565,9 @@ doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_options(out)$doppler_int
 
     return(o)
   }) %>% purrr::compact() %>% dplyr::bind_rows()
-
+if(nrow(FOR) == 0){
+  seasonder_logAndAbort("No valid FOR data found. Please run seasonder_computeFORs first.", calling_function = "seasonder_runMUSICInFOR")
+  }
   # Initialize MUSIC data for the specified range cells and Doppler bins
   out %<>% seasonder_initMUSICData(range_cells = FOR$range_cell, doppler_bins = FOR$doppler_bin, NULL_MUSIC = nrow(FOR) == 0)
 
@@ -3668,9 +3671,16 @@ seasonder_computeLonLatFromOriginDistBearing <- function(origin_lon, origin_lat,
   # Calculate the geographic destination point
   # - Converts distance from kilometers to meters
   # - Uses geosphere::destPoint for spherical geometry calculations
-  geosphere::destPoint(c(origin_lon, origin_lat), bearing, dist * 1000) %>%
+  out <- geosphere::destPoint(c(origin_lon, origin_lat), bearing, dist * 1000) %>%
     # Convert the result to a data frame for easier handling
     as.data.frame()
+out$lon[is.nan(out$lon)] <- NA_real_
+out$lat[is.nan(out$lat)] <- NA_real_
+
+  
+
+  # Return the computed geographic coordinates
+  return(out)
 
 }
 
@@ -3715,9 +3725,10 @@ seasonder_computeLonLatFromOriginDistBearing <- function(origin_lon, origin_lat,
 #'  doppler_bins = c(c(669:679),c(674:684))
 #' )
 #' cs_obj <- seasonder_runMUSIC(cs_obj)
- #' updated_obj <- seasonder_MUSIC_LonLat(cs_obj)
+ #' updated_obj <- seasonder_MUSICLonLat(cs_obj)
  #' print(updated_obj)
-seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
+ #' @aliases seasonder_MUSIC_LonLat
+seasonder_MUSICLonLat <- seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
 
   # Retrieve MUSIC data from the SeaSondeRCS object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
@@ -3762,7 +3773,7 @@ seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
   # Return the updated SeaSondeRCS object
   return(seasonder_cs_object)
 }
-seasonder_MUSICLonLat <- seasonder_MUSIC_LonLat
+
 
 
 #' Export MUSIC Table from SeaSondeRCS Object
@@ -4138,7 +4149,7 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
   MPKR <- MDP1 <- MDP2 <- MDR1 <- MDR2 <- MDW1 <- MDW2 <- cov <- 
   SPRC <- MAXS <- Noise_3 <- Noise_2 <- Noise_1 <- .id <- lonlat <- DOA <- 
   MSA1 <- MDA1 <- MDA2 <- retained_solution <- BEAR <- VFLG <- PPFG <- PWFG <- 
-  VELO <- HEAD <- rlang::zap()
+  VELO <- HEAD <- length_single <- MSP1 <- MSW1 <- MSR1 <- rlang::zap()
   # Obtain the MUSIC table using the function seasonder_getSeaSondeRCS_MUSIC from the global environment. This allows the function to be overridden using local_redefs.
   music <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
@@ -4169,8 +4180,8 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
     ) %>% 
   dplyr::mutate(
     .id = dplyr::row_number(),
-    length_single = purrr::map_int(DOA_solutions, \(x) length(x$single$bearing)),
-    length_dual = purrr::map_int(DOA_solutions, \(x) length(x$dual$bearing)),
+    length_single = purrr::map_int(DOA_solutions, \(x) length(which(!is.na(x$single$bearing)))),
+    length_dual = purrr::map_int(DOA_solutions, \(x) length(which(!is.na(x$dual$bearing)))),
     VELO = radial_v * 100,
     SPDC = doppler_bin -1,
     MOFR = tidyr::replace_na(diag_off_diag_power_ratio, 0),
@@ -4189,14 +4200,17 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
     MSW1 = purrr::map_dbl(DOA_solutions, \(x) x$single$peak_width),
     MDW1 = purrr::map_dbl(DOA_solutions, \(x) x$dual$peak_width[1]),
     MDW2 = purrr::map_dbl(DOA_solutions, \(x) x$dual$peak_width[2]),
-    MSP1 = purrr::map_dbl(DOA_solutions, \(x) 10*log10(abs(x$single$P))),
-    MDP1 = purrr::map_dbl(DOA_solutions, \(x) 10*log10(abs(x$dual$P[1,1]))),
+    MSP1 = purrr::map2_dbl(DOA_solutions,length_single, \(x,y) ifelse(y==1, 10*log10(abs(x$single$P)),NA)),
+    MDP1 = purrr::map2_dbl(DOA_solutions,length_dual, \(x,y) ifelse(y>0,10*log10(abs(x$dual$P[1,1])),NA)),
     MDP2 = purrr::map2_dbl(DOA_solutions,length_dual, \(x,y) ifelse(y>1,10*log10(abs(x$dual$P[2,2])),NA)),
     MPKR = tidyr::replace_na(MPKR, 0),
+    MSP1 = tidyr::replace_na(MSP1, 0),
     MDP1 = tidyr::replace_na(MDP1, 0),
     MDP2 = tidyr::replace_na(MDP2, 0),
+    MSR1 = tidyr::replace_na(MSR1, 0),
     MDR1 = tidyr::replace_na(MDR1, 0),
     MDR2 = tidyr::replace_na(MDR2, 0),
+    MSW1 = tidyr::replace_na(MSW1, 0),
     MDW1 = tidyr::replace_na(MDW1, 0),
     MDW2 = tidyr::replace_na(MDW2, 0),
     MP13 = purrr::map_dbl(cov, \(x) Arg(x[1,3])*180/pi),

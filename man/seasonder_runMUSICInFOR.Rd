@@ -2,6 +2,7 @@
 % Please edit documentation in R/SeaSondeRCS_MUSIC.R
 \name{seasonder_runMUSICInFOR}
 \alias{seasonder_runMUSICInFOR}
+\alias{seasonder_runMUSIC_in_FOR}
 \title{Run MUSIC Algorithm on FOR Data}
 \usage{
 seasonder_runMUSICInFOR(seasonder_cs_object)
