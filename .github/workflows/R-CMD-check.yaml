@@ -51,4 +51,4 @@ jobs:
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
       - name: Run additional tests for tools
         run: |
-          Rscript -e 'testthat::test_dir("tools/tests/testthat", package = "SeaSondeR")'
+          Rscript -e 'testthat::test_dir("tools/tests/testthat")'
