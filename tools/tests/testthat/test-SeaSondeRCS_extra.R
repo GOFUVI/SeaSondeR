@@ -1,5 +1,5 @@
 library(testthat)
-library("SeaSondeR")
+library(SeaSondeR)
 library(magrittr)
 
 test_that("Test spectra file 1", {
@@ -50,7 +50,7 @@ seasonder_disableMessages()
   
   # Función para eliminar las líneas que empiezan por %ProcessedTimeStamp
   filter_text <- function(txt) {
-    txt[!grepl("^%ProcessedTimeStamp", txt)]
+    txt[!(grepl("^%ProcessedTimeStamp", txt)| grepl("%ProcessingTool:", txt) )]
   }
   
   # Aplicar el filtro a ambos textos
@@ -111,7 +111,7 @@ seasonder_disableMessages()
   
   # Función para eliminar las líneas que empiezan por %ProcessedTimeStamp
   filter_text <- function(txt) {
-    txt[!grepl("^%ProcessedTimeStamp", txt)]
+    txt[!(grepl("^%ProcessedTimeStamp", txt)| grepl("%ProcessingTool:", txt) )]
   }
   
   # Aplicar el filtro a ambos textos

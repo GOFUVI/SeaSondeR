@@ -115,10 +115,10 @@ seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_object, FOR) {
 
   nRanges <- seasonder_getnRangeCells(seasonder_cs_object)
 
-  nNegBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nNegBraggLeftIndex")$data %||% seasonder_getCSHeaderByPath(seasonder_cs_object,c("header_csr","alim","lims"))[,"LeftBraggLeftLimit"] %||% rep(0,nRanges)
+  nNegBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "nNegBraggLeftIndex")$data %||% seasonder_getCSHeaderByPath(seasonder_cs_object,c("header_csr","alim","lims"), warn_missing = FALSE)[,"LeftBraggLeftLimit"] %||% rep(0,nRanges)
 
   if (any(nNegBraggLeftIndex > 0)) {
-    nNegBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object,"nNegBraggRightIndex")$data %||% seasonder_getCSHeaderByPath(seasonder_cs_object,c("header_csr","alim","lims"))[,"LeftBraggRightLimit"] %||% rep(0,nRanges)
+    nNegBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object,"nNegBraggRightIndex")$data %||% seasonder_getCSHeaderByPath(seasonder_cs_object,c("header_csr","alim","lims"),warn_missing = FALSE)[,"LeftBraggRightLimit"] %||% rep(0,nRanges)
 
     if (any(nNegBraggRightIndex > 0 & nNegBraggLeftIndex > 0)) {
       out <-  1:nRanges %>% purrr::reduce(\(result,i) {
@@ -138,10 +138,10 @@ seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_object, FOR) {
 
   }
 
-  nPosBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object,"nPosBraggLeftIndex")$data %||% seasonder_getCSHeaderByPath(seasonder_cs_object,c("header_csr","alim","lims"))[,"RightBraggLeftLimit"] %||% rep(0,nRanges)
+  nPosBraggLeftIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object,"nPosBraggLeftIndex")$data %||% seasonder_getCSHeaderByPath(seasonder_cs_object,c("header_csr","alim","lims"), warn_missing = FALSE)[,"RightBraggLeftLimit"] %||% rep(0,nRanges)
 
   if (any(nPosBraggLeftIndex > 0)) {
-    nPosBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object,"nPosBraggRightIndex")$data %||% seasonder_getCSHeaderByPath(seasonder_cs_object,c("header_csr","alim","lims"))[,"RightBraggRightLimit"] %||% rep(0,nRanges)
+    nPosBraggRightIndex <- seasonder_getSeaSondeRCS_headerField(seasonder_cs_object,"nPosBraggRightIndex")$data %||% seasonder_getCSHeaderByPath(seasonder_cs_object,c("header_csr","alim","lims"),warn_missing = FALSE)[,"RightBraggRightLimit"] %||% rep(0,nRanges)
 
     if (any(nPosBraggRightIndex > 0 & nPosBraggLeftIndex > 0)) {
       out <-  1:nRanges %>% purrr::reduce(\(result,i) {
@@ -163,10 +163,9 @@ seasonder_initSeaSondeRCS_FORFromHeader <- function(seasonder_cs_object, FOR) {
 
 }
 
+seasonder_defaultFOR <- function(seasonder_cs_object){
 
-seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_object) {
-
-  nRanges <- seasonder_getnRangeCells(seasonder_cs_object)
+nRanges <- seasonder_getnRangeCells(seasonder_cs_object)
 
   nDoppler <- seasonder_getnDopplerCells(seasonder_cs_object)
 
@@ -175,6 +174,14 @@ seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_object) {
   out <- rep(list(list(negative_FOR = integer(0), positive_FOR = integer(0))),  nRanges)
 
   names(out) <- dim_names[[1]]
+
+  return(out)
+
+}
+
+seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_object) {
+
+  out <- seasonder_defaultFOR(seasonder_cs_object)
 
   out <- seasonder_initSeaSondeRCS_FORFromHeader(seasonder_cs_object, out)
 

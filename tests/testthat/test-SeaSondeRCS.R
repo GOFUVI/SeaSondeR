@@ -52,7 +52,7 @@ seasonder_disableMessages()
   
   # Función para eliminar las líneas que empiezan por %ProcessedTimeStamp
   filter_text <- function(txt) {
-    txt[!grepl("^%ProcessedTimeStamp", txt)]
+    txt[!(grepl("^%ProcessedTimeStamp", txt)| grepl("%ProcessingTool:", txt) )]
   }
   
   # Aplicar el filtro a ambos textos
@@ -63,3 +63,27 @@ seasonder_disableMessages()
   expect_equal(radial_metrics_text, expected_metrics_text)
 })
 
+test_that("If FORS are not configured, runMUSICInFOR should throw an informative error", {
+  # Definir rutas y cargar objetos
+  CS_file_path <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
+  APM_path     <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
+  
+seasonder_disableMessages()
+
+  seasonder_apm_obj <- seasonder_readSeaSondeRAPMFile(APM_path)
+  
+  seasonder_cs_obj <- seasonder_createSeaSondeRCS(CS_file_path, seasonder_apm_object = seasonder_apm_obj)
+  
+seasonder_cs_obj <- seasonder_setSeaSondeRCS_FOR(seasonder_cs_obj,SeaSondeR:::seasonder_defaultFOR(seasonder_cs_obj))
+  # Configuración y ejecución del algoritmo MUSIC
+  MUSIC_options <- list(
+    doppler_interpolation = 2,
+    smoothNoiseLevel = TRUE,
+    PPMIN = 5, 
+    PWMAX = 50
+  )
+  seasonder_cs_obj <- seasonder_setMUSICOptions(seasonder_cs_obj, MUSIC_options)
+  
+  expect_error(seasonder_runMUSICInFOR(seasonder_cs_obj), "No valid FOR data found. Please run seasonder_computeFORs first.")
+  
+})

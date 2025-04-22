@@ -3526,7 +3526,7 @@ doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_options(out)$doppler_int
   FOR <- seasonder_getSeaSondeRCS_FOR(seasonder_cs_object)
 
   # Iterate over each range cell in the FOR data
-  FOR <- 1:length(FOR) %>% purrr::map(\(range_cell) {
+  FOR <- seq_len(length(FOR)) %>% purrr::map(\(range_cell) {
     o <- NULL
     doppler_bins <- integer(0)
     # Process negative FOR bins
@@ -3564,7 +3564,9 @@ doppler_interpolation <- seasonder_getSeaSondeRCS_MUSIC_options(out)$doppler_int
 
     return(o)
   }) %>% purrr::compact() %>% dplyr::bind_rows()
-
+if(nrow(FOR) == 0){
+  seasonder_logAndAbort("No valid FOR data found. Please run seasonder_computeFORs first.", calling_function = "seasonder_runMUSICInFOR")
+  }
   # Initialize MUSIC data for the specified range cells and Doppler bins
   out %<>% seasonder_initMUSICData(range_cells = FOR$range_cell, doppler_bins = FOR$doppler_bin, NULL_MUSIC = nrow(FOR) == 0)
 
