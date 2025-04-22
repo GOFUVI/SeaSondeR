@@ -1,6 +1,3 @@
-library(testthat)
-library(SeaSondeR)
-library(magrittr)
 
 test_that("Test spectra file 1", {
   # Definir rutas y cargar objetos
