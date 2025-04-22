@@ -51,4 +51,7 @@ jobs:
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
       - name: Run additional tests for tools
         run: |
+          # Install the built package so library(SeaSondeR) works in the tests
+          R CMD INSTALL --no-multiarch --with-keep.source .
+          # Run extra tests located in tools/tests/testthat
           Rscript -e 'testthat::test_dir("tools/tests/testthat")'

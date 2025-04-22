@@ -4140,7 +4140,7 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
   MPKR <- MDP1 <- MDP2 <- MDR1 <- MDR2 <- MDW1 <- MDW2 <- cov <- 
   SPRC <- MAXS <- Noise_3 <- Noise_2 <- Noise_1 <- .id <- lonlat <- DOA <- 
   MSA1 <- MDA1 <- MDA2 <- retained_solution <- BEAR <- VFLG <- PPFG <- PWFG <- 
-  VELO <- HEAD <- rlang::zap()
+  VELO <- HEAD <- length_single <- MSP1 <- MSW1 <- MSR1 <- rlang::zap()
   # Obtain the MUSIC table using the function seasonder_getSeaSondeRCS_MUSIC from the global environment. This allows the function to be overridden using local_redefs.
   music <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
 
