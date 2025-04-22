@@ -3514,6 +3514,7 @@ if(discard_no_solution){
 #' # View processing steps
 #' print(seasonder_getSeaSondeRCS_ProcessingSteps(result))
 #' @export
+#' @aliases seasonder_runMUSIC_in_FOR
 seasonder_runMUSICInFOR <- seasonder_runMUSIC_in_FOR <- function(seasonder_cs_object){
 
   # Initialize the output as a copy of the input SeaSondeRCS object
@@ -3670,9 +3671,16 @@ seasonder_computeLonLatFromOriginDistBearing <- function(origin_lon, origin_lat,
   # Calculate the geographic destination point
   # - Converts distance from kilometers to meters
   # - Uses geosphere::destPoint for spherical geometry calculations
-  geosphere::destPoint(c(origin_lon, origin_lat), bearing, dist * 1000) %>%
+  out <- geosphere::destPoint(c(origin_lon, origin_lat), bearing, dist * 1000) %>%
     # Convert the result to a data frame for easier handling
     as.data.frame()
+out$lon[is.nan(out$lon)] <- NA_real_
+out$lat[is.nan(out$lat)] <- NA_real_
+
+  
+
+  # Return the computed geographic coordinates
+  return(out)
 
 }
 
@@ -3717,9 +3725,10 @@ seasonder_computeLonLatFromOriginDistBearing <- function(origin_lon, origin_lat,
 #'  doppler_bins = c(c(669:679),c(674:684))
 #' )
 #' cs_obj <- seasonder_runMUSIC(cs_obj)
- #' updated_obj <- seasonder_MUSIC_LonLat(cs_obj)
+ #' updated_obj <- seasonder_MUSICLonLat(cs_obj)
  #' print(updated_obj)
-seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
+ #' @aliases seasonder_MUSIC_LonLat
+seasonder_MUSICLonLat <- seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
 
   # Retrieve MUSIC data from the SeaSondeRCS object
   MUSIC <- seasonder_getSeaSondeRCS_MUSIC(seasonder_cs_object)
@@ -3764,7 +3773,7 @@ seasonder_MUSIC_LonLat <- function(seasonder_cs_object) {
   # Return the updated SeaSondeRCS object
   return(seasonder_cs_object)
 }
-seasonder_MUSICLonLat <- seasonder_MUSIC_LonLat
+
 
 
 #' Export MUSIC Table from SeaSondeRCS Object
