@@ -1,0 +1,63 @@
+%CTF: 1.00
+%FileType: LLUV rdls "RadialMap"
+%LLUVSpec: 1.25 2016 04 27
+%UUID: 66017F01-03C2-58F2-ADD4-0B8D9CB92946
+%Manufacturer: GOFUVI. SeaSondeR
+%Site: PRIO
+%TimeStamp: 2015 03 09  00 30 00
+%TimeZone: ""  0
+%TimeCoverage: 60.000 Minutes
+%Origin:  43.568 -8.314
+%GreatCircle: "WGS84" 6378137.000  298.257223562997
+%GeodVersion: "CGEO" 1.00  2005 03 23
+%LLUVTrustData: all %% all lluv xyuv rbvd
+%RangeStart: 1
+%RangeEnd: 63
+%RangeResolutionKMeters: 5.100274
+%RangeCells: 63
+%DopplerCells: 2048
+%DopplerInterpolation: 2
+%AntennaBearing: 9.0 True
+%PatternType: 
+%PatternDate: 
+%PatternResolution:  deg
+%PatternSmoothing: 20 deg
+%PatternUUID: 95F4B54E-132E-4028-9BBF-D679638A3E66
+%TransmitCenterFreqMHz: 4.860000
+%TransmitBandwidthKHz: -29.410187
+%TransmitSweepRateHz: 1.000000
+%FirstOrderMethod: 0  1 63
+%BraggSmoothingPoints: 2
+%CurrentVelocityLimit: 2.0
+%BraggHasSecondOrder: 1
+%RadialBraggPeakDropOff: 100.000
+%RadialBraggPeakNull: 10.000
+%RadialBraggNoiseThreshold: 3.981
+%PatternAmplitudeCorrections: 10.8212 4.7998
+%PatternPhaseCorrections: -59.50 -74.10
+%RadialMusicParameters: 40.000 20.000 2.000
+%TableType: LLUV RDM1
+%TableColumns: 38
+%TableColumnTypes: LOND LATD VELU VELV VFLG RNGE BEAR VELO HEAD SPRC SPDC MSEL MSA1 MDA1 MDA2 MEGR MPKR MOFR MP13 MP23 MSP1 MDP1 MDP2 MSW1 MDW1 MDW2 MSR1 MDR1 MDR2 MA1S MA2S MA3S MEI1 MEI2 MEI3 MDRJ PPFG PWFG
+%TableRows: 1
+%TableStart:
+%%   Longitude   Latitude    U comp   V comp  VectorFlag   Range   Bearing   Velocity  Direction   Spectra  Spectra  Ang   MusicSngl MusicDual MusicDual      Music        Music         Music   Spectra  Spectra  MusicSngl MusicDual MusicDual MusicSngl MusicDual MusicDual MusicSngl MusicDual MusicDual SpectraA1 SpectraA2 SpectraA3     Eigen         Eigen         Eigen       Dual   Pk Resp Pk Width
+%%     (deg)       (deg)     (cm/s)   (cm/s)  (GridCode)    (km)    (True)    (cm/s)     (True)    RngCell  DopCell Select   (True)    (True)    (True)    Eigen Ratio  Power Ratio    Off Ratio A13phase A23phase Pwr (dB)  Pwr1 (dB) Pwr2 (dB) Pk Width  Pk1 Width Pk2 Width Peak Resp Peak1Resp Peak2Resp  S/N(dB)   S/N(dB)   S/N(dB)     Value 1       Value 2       Value 3     Reject    Flag    Flag
+          NA          NA       NA       NA         NA        NA      NA         NA        NA        NA       NA    NA         NA        NA        NA             NA           NA           NA      NA       NA         NA        NA        NA       NA        NA        NA         NA        NA        NA      NA        NA        NA              NA            NA            NA    NA      NA      NA  
+%TableEnd:
+%%
+%TableType: RNGI r001
+%TableColumns: 12
+%TableColumnTypes: SPRC RNGC NF01 NF02 NF03 ALM1 ALM2 ALM3 ALM4 NVSC NVDC NVAC 
+%TableRows: 0
+%TableStart: 2
+%% Range  RadDist  NoiseA1 NoiseA2 NoiseA3   FOL N1  FOL N2   FOL P1  FOL P2   Single  Dual    All   
+%%  Cell    (km)    (dBm)   (dBm)   (dBm)    DopIndx DopIndx  DopIndx DopIndx Vectors Vectors Vectors
+%   NA        NA       NA       NA       NA       NA       NA       NA       NA       NA       NA       NA
+
+%TableEnd: 2
+%%
+%%
+%ProcessedTimeStamp: 2025 04 24  22 09 58
+%ProcessingTool: "SeaSondeR" 0.2.8
+%End:

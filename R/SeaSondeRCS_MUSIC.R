@@ -4167,6 +4167,8 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
 
   receiver_gain <- seasonder_getReceiverGain_dB(seasonder_cs_object)
 
+out <- data.frame(matrix(NA, nrow = 1, ncol = length(cols))) %>% magrittr::set_colnames(cols)
+if(nrow(music) > 0){
   out <- music
 
   out <- out %>% 
@@ -4313,7 +4315,7 @@ seasonder_exportRadialMetrics <- function(seasonder_cs_object, AngSeg = list()) 
   }
 
   out <- out %>% dplyr::select(dplyr::all_of(cols))
-
+}
   return(out)
 }
 

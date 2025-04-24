@@ -1574,6 +1574,8 @@ seasonder_findFORNullsInFOR <- function(FOR, start_point_P, doppler_bins, left_r
 #' print(result)
 seasonder_findFORNullsInSpectrum <- function(seasonder_cs_object, spectrum, doppler_bins, negative_Bragg_region = FALSE) {
 
+out <- list(FOR = integer(0), MAXP = numeric(0), MAXP.bin = integer(0))
+
   # Retrieve the 'fdown' parameter, which controls the threshold for null detection
   fdown <- seasonder_getFOR_parameters(seasonder_cs_object)$fdown
 
@@ -1590,7 +1592,7 @@ seasonder_findFORNullsInSpectrum <- function(seasonder_cs_object, spectrum, dopp
   # Identify the main peak in the spectrum to segment it into left and right regions
   center_region_index <- pracma::findpeaks(sp, nups = 2, ndowns = 2, zero = "0",
                                            npeaks = 1, sortstr = FALSE)[, 2, drop = TRUE]
-
+if(!is.null(center_region_index)){
   # Trim the spectrum to exclude regions before the main peak
   dop_b <- dop_b[center_region_index:length(dop_b)]
   sp <- sp[center_region_index:length(sp)]
@@ -1640,7 +1642,7 @@ seasonder_findFORNullsInSpectrum <- function(seasonder_cs_object, spectrum, dopp
   if (has_left_FOL && has_right_FOL) {
     out$FOR <- seq(left_FOL, right_FOL)
   }
-
+}
   return(out)
 }
 
