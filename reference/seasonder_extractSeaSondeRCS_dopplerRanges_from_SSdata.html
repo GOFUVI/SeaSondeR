@@ -70,23 +70,6 @@
 performed to verify that the provided Doppler cell indices fall within the range of the matrix columns.</p>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sample_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span>, nrow <span class="op">=</span> <span class="fl">5</span>, ncol <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">selected_bins</span> <span class="op">&lt;-</span> <span class="fl">3</span><span class="op">:</span><span class="fl">7</span></span></span>
-<span class="r-in"><span><span class="va">sliced_matrix</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">sample_matrix</span>,</span></span>
-<span class="r-in"><span>  <span class="va">selected_bins</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sliced_matrix</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1] [,2] [,3] [,4] [,5]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]   11   16   21   26   31</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]   12   17   22   27   32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]   13   18   23   28   33</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]   14   19   24   29   34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]   15   20   25   30   35</span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

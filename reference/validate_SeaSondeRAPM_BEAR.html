@@ -71,15 +71,6 @@ It also validates that the bearings are between -180 and 180 degrees.</p>
     <p>Returns TRUE if the validation passes.</p>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a default SeaSondeRAPM object and retrieve its BEAR vector</span></span></span>
-<span class="r-in"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRAPM.html">seasonder_createSeaSondeRAPM</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
-<span class="r-in"><span><span class="va">bear</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span><span class="op">$</span><span class="va">BEAR</span></span></span>
-<span class="r-in"><span><span class="va">valid</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">validate_SeaSondeRAPM_BEAR</span><span class="op">(</span><span class="va">bear</span>, <span class="va">obj</span><span class="op">)</span></span></span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
