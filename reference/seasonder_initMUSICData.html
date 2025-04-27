@@ -106,10 +106,10 @@ populated with range cell and Doppler bin combinations.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
 <span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
-<span class="r-in"><span><span class="va">music_obj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_initMUSICData</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">music_obj</span> <span class="op">&lt;-</span> <span class="fu">seasonder_initMUSICData</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Example: specific range cells and Doppler bins</span></span></span>
-<span class="r-in"><span><span class="va">music_obj2</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_initMUSICData</span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">music_obj2</span> <span class="op">&lt;-</span> <span class="fu">seasonder_initMUSICData</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">cs_obj</span>,</span></span>
 <span class="r-in"><span>  range_cells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  doppler_bins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span></span></span>
