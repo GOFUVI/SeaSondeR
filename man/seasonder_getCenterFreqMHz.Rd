@@ -17,12 +17,3 @@ This function extracts the center frequency (in MHz) from the header of a
 SeaSondeRCS object. It accesses the header field named "CenterFreq" using
 \code{seasonder_getSeaSondeRCS_headerField}.
 }
-\examples{
-# Minimal example for seasonder_getCenterFreqMHz
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-center_freq <- SeaSondeR:::seasonder_getCenterFreqMHz(cs_obj)
-print(center_freq)
-}

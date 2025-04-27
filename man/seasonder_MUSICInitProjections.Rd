@@ -27,16 +27,6 @@ The matrix rows are labeled:
 
 An attribute \code{"bearings"} is attached to the matrix, storing the input bearings vector.
 }
-\examples{
-# Initialize projections for default bearings
-projections <- SeaSondeR:::seasonder_MUSICInitProjections()
-print(projections)
-
-# Initialize projections for specific bearings
-bearings <- seq(0, 360, by = 10)
-projections <- SeaSondeR:::seasonder_MUSICInitProjections(bearings)
-print(projections)
-}
 \seealso{
 \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.
 }

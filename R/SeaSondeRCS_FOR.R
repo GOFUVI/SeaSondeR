@@ -22,10 +22,6 @@
 #' - \code{\link{seasonder_validateFOR_parameters}} for FOR parameter validation.
 #' - \code{\link{seasonder_logAndAbort}} for error handling and logging.
 #'
-#' @examples
-#' SeaSondeR:::seasonder_validateFORMethod("SeaSonde")
-#' # Demonstrate error handling for an invalid method
-#' try(SeaSondeR:::seasonder_validateFORMethod("InvalidMethod"), silent = TRUE)
 seasonder_validateFORMethod <- function(method) {
 
   # Check if the provided method is in the list of supported methods
@@ -206,19 +202,6 @@ seasonder_defaultFOR_parameters <- function() {
 #' - \code{\link{seasonder_estimateReferenceNoiseNormalizedLimits}} for computing reference noise limits.
 #' - \code{\link{seasonder_validateFORMethod}} for validating the processing method.
 #'
-#' @examples
-#' # Minimal example for validating FOR parameters
-#' # Prepare a dummy SeaSondeRCS object with default FOR parameters
-#' fo <- SeaSondeR:::seasonder_defaultFOR_parameters()
-#' cs_obj <- list()
-#' attr(cs_obj, "FOR_data") <- list(FOR_parameters = fo)
-#' # Validate parameters with a custom override
-#' # Override fdown and provide reference noise limits to skip estimation
-#' validated_params <- SeaSondeR:::seasonder_validateFOR_parameters(
-#'   cs_obj,
-#'   list(fdown = 12, reference_noise_normalized_limits = c(0, 0))
-#' )
-#' print(validated_params)
 seasonder_validateFOR_parameters <- function(seasonder_cs_object, FOR_parameters, method = "SeaSonde") {
 
   # Validate that the provided method is supported

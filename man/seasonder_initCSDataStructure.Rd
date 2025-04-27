@@ -23,16 +23,10 @@ A list containing matrices for different cross-spectra components:
 \item \code{CS13}: Matrix for CS13 component, complex numbers with \code{NA_real_} real and imaginary parts.
 \item \code{CS23}: Matrix for CS23 component, complex numbers with \code{NA_real_} real and imaginary parts.
 \item \code{QC}: Quality control matrix, filled with \code{NA_real_}.
-}
+}s
 }
 \description{
 This function initializes a data structure for storing cross-spectra data
 related to SeaSonde radar measurements. It creates a list of matrices,
 each corresponding to different components of the SeaSonde data.
-}
-\examples{
-# Initialize the data structure with 100 range cells and 256 Doppler bins
-nRanges <- 100
-nDoppler <- 256
-cs_data_structure <- SeaSondeR:::seasonder_initCSDataStructure(nRanges, nDoppler)
 }

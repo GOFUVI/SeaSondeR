@@ -19,9 +19,3 @@ This function validates if the provided BEAR is a numeric vector and if its leng
 matches the number of columns in the calibration_matrix of the given SeaSondeRAPM object.
 It also validates that the bearings are between -180 and 180 degrees.
 }
-\examples{
-# Create a default SeaSondeRAPM object and retrieve its BEAR vector
-obj <- seasonder_createSeaSondeRAPM()
-bear <- attributes(obj)$BEAR
-valid <- SeaSondeR:::validate_SeaSondeRAPM_BEAR(bear, obj)
-}

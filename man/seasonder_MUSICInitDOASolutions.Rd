@@ -30,11 +30,6 @@ The function returns a list containing two sub-lists, one for \code{"single"} so
 }
 }
 }
-\examples{
-# Initialize DOA solutions
-doa_solutions <- SeaSondeR:::seasonder_MUSICInitDOASolutions()
-print(doa_solutions)
-}
 \seealso{
 \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.
 \code{\link{seasonder_MUSICInitProjections}} for initializing projection matrices.

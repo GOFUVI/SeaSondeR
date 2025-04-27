@@ -15,6 +15,3 @@ Returns TRUE if the validation passes.
 \description{
 This function validates if the provided ProcessingSteps is a character vector.
 }
-\examples{
-valid <- SeaSondeR:::validate_SeaSondeRAPM_ProcessingSteps(c("Step 1", "Step 2"))
-}

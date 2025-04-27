@@ -33,15 +33,15 @@ Finally, it sets the new noise limits in the FOR parameters using \code{seasonde
 new_interval <- list(low_limit = 0.9, high_limit = 1.0)
 # Prepare a SeaSondeRCS object with valid data
 apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- SeaSondeR:::seasonder_readSeaSondeRAPMFile(apm_file)
+apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 cs_obj <- seasonder_createSeaSondeRCS(
   cs_file,
-  specs_path = SeaSondeR:::seasonder_defaultSpecsFilePath("CS"),
+  specs_path = seasonder_defaultSpecsFilePath("CS"),
   seasonder_apm_object = apm_obj
 )
 cs_obj <- seasonder_setNoiseLevelEstimationInterval(cs_obj, new_interval)
 print(attr(cs_obj, "reference_noise_normalized_limits_estimation_interval"))
-noise_limits <- SeaSondeR:::seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
+noise_limits <- seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
 print(noise_limits)
 }

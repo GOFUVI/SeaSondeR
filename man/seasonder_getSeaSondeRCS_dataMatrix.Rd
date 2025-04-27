@@ -33,15 +33,6 @@ in the list of accepted values, it logs an error and aborts execution using \cod
 Once validated, the function extracts the requested matrix from the \code{data} component of the
 SeaSondeRCS object.
 }
-\examples{
-# Minimal example for seasonder_getSeaSondeRCS_dataMatrix
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-ssa1_matrix <- SeaSondeR:::seasonder_getSeaSondeRCS_dataMatrix(cs_obj, "SSA1")
-print(ssa1_matrix[1:10, 1:10])
-}
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_data}} for retrieving the complete data structure.
 \code{\link{seasonder_logAndAbort}} for error handling.

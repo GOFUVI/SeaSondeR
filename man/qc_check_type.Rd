@@ -17,8 +17,3 @@ The original field_value if it matches the expected_type; otherwise, an error is
 \description{
 This function verifies if a given value is of the expected type.
 }
-\examples{
-# Use unexported qc_check_type via triple colon
-result <- SeaSondeR:::qc_check_type(42, "numeric")
-print(result)
-}

@@ -15,6 +15,3 @@ A character string with the trimming details.
 \description{
 This function generates a message indicating that trimming has been applied to the APM.
 }
-\examples{
-msg <- SeaSondeR:::SeaSondeRAPM_trimming_step_text(3)
-}

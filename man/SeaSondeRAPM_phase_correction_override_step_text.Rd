@@ -15,6 +15,3 @@ A character string stating the new phase correction values.
 \description{
 This function generates a message indicating that phase corrections have been overridden.
 }
-\examples{
-msg <- SeaSondeR:::SeaSondeRAPM_phase_correction_override_step_text(c(10, -10))
-}

@@ -33,11 +33,6 @@ The initialized tibble contains the following columns:
 \item \code{lonlat}: A list containing a data frame with longitude (\code{lon}) and latitude (\code{lat}) values.
 }
 }
-\examples{
-# Initialize a NULL structure for MUSIC analysis
-music_results <- SeaSondeR:::seasonder_NULLSeaSondeRCS_MUSIC()
-print(music_results)
-}
 \seealso{
 \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.
 \code{\link{seasonder_MUSICInitEigenDecomp}} for initializing eigenvalue decompositions.

@@ -23,15 +23,6 @@ The function constructs the matrix name dynamically by appending the antenna num
 \code{"SSA"} (e.g., \code{"SSA1"}, \code{"SSA2"}, or \code{"SSA3"}). It then retrieves the corresponding
 matrix from the SeaSondeRCS data using \code{\link{seasonder_getSeaSondeRCS_dataMatrix}}.
 }
-\examples{
-# Minimal example for seasonder_getSeaSondeRCS_antenna_SSdata
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-ssa1_data <- SeaSondeR:::seasonder_getSeaSondeRCS_antenna_SSdata(cs_obj, 1)
-print(ssa1_data[1:10,1:10])
-}
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_dataMatrix}} for extracting specific data matrices.
 \code{\link{seasonder_getSeaSondeRCS_data}} for retrieving the complete data structure.

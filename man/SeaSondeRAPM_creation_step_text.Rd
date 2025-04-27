@@ -15,6 +15,3 @@ A character string with the formatted creation message.
 \description{
 This function generates a text message indicating the time an APM object was created based on the current system time and the provided file path.
 }
-\examples{
-msg <- SeaSondeR:::SeaSondeRAPM_creation_step_text("path/to/file")
-}

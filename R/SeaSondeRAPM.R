@@ -174,8 +174,6 @@ seasonder_initializeAttributesSeaSondeRAPM <- function(calibration_matrix, ...) 
 #'
 #' @return A character string with the formatted creation message.
 #'
-#' @examples
-#' msg <- SeaSondeR:::SeaSondeRAPM_creation_step_text("path/to/file")
 SeaSondeRAPM_creation_step_text <- function(file_path) {
   # Format and return the creation message with the current time and file path using glue
   glue::glue("{Sys.time()}: Created from {file_path}.")
@@ -189,8 +187,6 @@ SeaSondeRAPM_creation_step_text <- function(file_path) {
 #'
 #' @return A character string stating that the antenna bearing has been overridden.
 #'
-#' @examples
-#' msg <- SeaSondeR:::SeaSondeRAPM_antenna_bearing_override_step_text(45)
 SeaSondeRAPM_antenna_bearing_override_step_text <- function(antenna_bearing) {
   # Return a formatted message stating that the antenna bearing has been overridden
   glue::glue("{Sys.time()}: AntennaBearing overriden with value {antenna_bearing}.")
@@ -204,8 +200,6 @@ SeaSondeRAPM_antenna_bearing_override_step_text <- function(antenna_bearing) {
 #'
 #' @return A character string detailing the smoothing operation.
 #'
-#' @examples
-#' msg <- SeaSondeR:::SeaSondeRAPM_smoothing_step_text(5)
 SeaSondeRAPM_smoothing_step_text <- function(smoothing){
   # Return a formatted message stating the smoothing parameter used
   glue::glue("{Sys.time()}: APM smoothed with smoothing {smoothing}.")
@@ -219,8 +213,6 @@ SeaSondeRAPM_smoothing_step_text <- function(smoothing){
 #'
 #' @return A character string with the trimming details.
 #'
-#' @examples
-#' msg <- SeaSondeR:::SeaSondeRAPM_trimming_step_text(3)
 SeaSondeRAPM_trimming_step_text <- function(trimming){
   # Return a formatted message stating how many points were trimmed from the APM ends
   glue::glue("{Sys.time()}: trimmed {trimming} points on APM ends.")
@@ -237,8 +229,6 @@ SeaSondeRAPM_trimming_step_text <- function(trimming){
 #'
 #' @return A character string detailing the applied amplitude and phase corrections.
 #'
-#' @examples
-#' msg <- SeaSondeR:::SeaSondeRAPM_amplitude_and_phase_corrections_step_text(1.1, 0.9, 15, -15)
 SeaSondeRAPM_amplitude_and_phase_corrections_step_text <- function(amplitude1, amplitude2, phase1, phase2){
   # Return a formatted message detailing the amplitude and phase corrections applied
   glue::glue("{Sys.time()}: Phase corrections {phase1}, {phase2}, and amplitude correction {amplitude1}, {amplitude2} applied to APM.")
@@ -252,8 +242,6 @@ SeaSondeRAPM_amplitude_and_phase_corrections_step_text <- function(amplitude1, a
 #'
 #' @return A character string stating the new phase correction values.
 #'
-#' @examples
-#' msg <- SeaSondeR:::SeaSondeRAPM_phase_correction_override_step_text(c(10, -10))
 SeaSondeRAPM_phase_correction_override_step_text <- function(phase_correction) {
   # Return a formatted message stating the new phase correction values
   glue::glue("{Sys.time()}: PhaseCorrection overriden with values {phase_correction[1]} and {phase_correction[2]}.")
@@ -267,8 +255,6 @@ SeaSondeRAPM_phase_correction_override_step_text <- function(phase_correction) {
 #'
 #' @return A character string stating the new amplitude factors.
 #'
-#' @examples
-#' msg <- SeaSondeR:::SeaSondeRAPM_amplitude_factors_override_step_text(c(1.05, 0.95))
 SeaSondeRAPM_amplitude_factors_override_step_text <- function(amplitude_factors) {
   # Return a formatted message stating the new amplitude factors
   glue::glue("{Sys.time()}: AmplitudeFactors overriden with values {amplitude_factors[1]} and {amplitude_factors[2]}.")
@@ -282,8 +268,6 @@ SeaSondeRAPM_amplitude_factors_override_step_text <- function(amplitude_factors)
 #'
 #' @return A character string with the updated SiteOrigin details.
 #'
-#' @examples
-#' msg <- SeaSondeR:::SeaSondeRAPM_SiteOrigin_override_step_text(c(37.7749, -122.4194))
 SeaSondeRAPM_SiteOrigin_override_step_text <- function(SiteOrigin) {
   # Return a formatted message stating the new SiteOrigin (latitude and longitude)
   glue::glue("{Sys.time()}: SiteOrigin overriden with Latitude {SiteOrigin[1]} and Longitude {SiteOrigin[2]}.")
@@ -428,12 +412,6 @@ seasonder_validateAttributesSeaSondeRAPM <- function(seasonde_apm_obj) {
 #' @param seasonde_apm_obj The SeaSondeRAPM object for compatibility check.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' # Create a test SeaSondeRAPM object by reading sample file
-#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-#' obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-#' q_matrix <- attributes(obj)$quality_matrix
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_quality_matrix(q_matrix, obj)
 validate_SeaSondeRAPM_quality_matrix <- function(matrix, seasonde_apm_obj) {
   # Check that the matrix is a valid 3-row complex matrix
   if (!is.matrix(matrix) || nrow(matrix) != 3 || !is.complex(matrix)) {
@@ -463,11 +441,6 @@ validate_SeaSondeRAPM_quality_matrix <- function(matrix, seasonde_apm_obj) {
 #' @param seasonde_apm_obj The SeaSondeRAPM object for compatibility check.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' # Create a default SeaSondeRAPM object and retrieve its BEAR vector
-#' obj <- seasonder_createSeaSondeRAPM()
-#' bear <- attributes(obj)$BEAR
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_BEAR(bear, obj)
 validate_SeaSondeRAPM_BEAR <- function(vector, seasonde_apm_obj) {
   # Ensure BEAR is numeric
   if (!is.numeric(vector)) {
@@ -501,8 +474,6 @@ validate_SeaSondeRAPM_BEAR <- function(vector, seasonde_apm_obj) {
 #' @param type The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_Type("Measured")
 validate_SeaSondeRAPM_Type <- function(type) {
   # Check if type is a character vector
   if (!is.character(type)) {
@@ -522,8 +493,6 @@ validate_SeaSondeRAPM_Type <- function(type) {
 #' @param creator The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_Creator("John Doe")
 validate_SeaSondeRAPM_Creator <- function(creator) {
   # Ensure Creator is a character string
   if (!is.character(creator)) {
@@ -540,8 +509,6 @@ validate_SeaSondeRAPM_Creator <- function(creator) {
 #' @param site_name The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_SiteName("Site A")
 validate_SeaSondeRAPM_SiteName <- function(site_name) {
   # Check if SiteName is a character string
   if (!is.character(site_name)) {
@@ -558,8 +525,6 @@ validate_SeaSondeRAPM_SiteName <- function(site_name) {
 #' @param site_origin The numeric vector to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_SiteOrigin(c(37.7749, -122.4194))
 validate_SeaSondeRAPM_SiteOrigin <- function(site_origin) {
   # Check if SiteOrigin is numeric and has exactly 2 elements
   if (!is.numeric(site_origin) | length(site_origin) != 2) {
@@ -577,8 +542,6 @@ validate_SeaSondeRAPM_SiteOrigin <- function(site_origin) {
 #' @param file_name The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_FileName("file.apm")
 validate_SeaSondeRAPM_FileName <- function(file_name) {
   # Check if FileName is a character string
   if (!is.character(file_name)) {
@@ -595,8 +558,6 @@ validate_SeaSondeRAPM_FileName <- function(file_name) {
 #' @param timestamp The Date object to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_CreateTimeStamp(Sys.time())
 validate_SeaSondeRAPM_CreateTimeStamp <- function(timestamp) {
   # Check if the timestamp inherits from POSIXct (i.e., is a valid date-time object)
   if (!inherits(timestamp, "POSIXct")) {
@@ -613,8 +574,6 @@ validate_SeaSondeRAPM_CreateTimeStamp <- function(timestamp) {
 #' @param steps The character vector to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_ProcessingSteps(c("Step 1", "Step 2"))
 validate_SeaSondeRAPM_ProcessingSteps <- function(steps) {
   # Ensure ProcessingSteps is a character vector
   if (!is.character(steps)) {
@@ -631,8 +590,6 @@ validate_SeaSondeRAPM_ProcessingSteps <- function(steps) {
 #' @param factors The numeric vector to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_AmplitudeFactors(c(1.1, 0.9))
 validate_SeaSondeRAPM_AmplitudeFactors <- function(factors) {
   # Check if AmplitudeFactors is numeric and exactly length 2
   if (!is.numeric(factors) | length(factors) != 2) {
@@ -650,8 +607,6 @@ validate_SeaSondeRAPM_AmplitudeFactors <- function(factors) {
 #' @param bearing The numeric value to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_AntennaBearing(45)
 validate_SeaSondeRAPM_AntennaBearing <- function(bearing) {
   # Ensure that AntennaBearing is numeric
   if (!is.numeric(bearing)) {
@@ -668,8 +623,6 @@ validate_SeaSondeRAPM_AntennaBearing <- function(bearing) {
 #' @param code The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_StationCode("ABCD")
 validate_SeaSondeRAPM_StationCode <- function(code) {
   # Check if StationCode is a character string
   if (!is.character(code)) {
@@ -701,8 +654,6 @@ validate_SeaSondeRAPM_StationCode <- function(code) {
 #' @param resolution The numeric value to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_BearingResolution(10)
 validate_SeaSondeRAPM_BearingResolution <- function(resolution) {
   # Check if BearingResolution is numeric
   if (!is.numeric(resolution)) {
@@ -719,8 +670,6 @@ validate_SeaSondeRAPM_BearingResolution <- function(resolution) {
 #' @param smoothing The numeric value to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_Smoothing(5)
 validate_SeaSondeRAPM_Smoothing <- function(smoothing) {
   # Ensure that Smoothing is numeric
   if (!is.numeric(smoothing)) {
@@ -737,8 +686,6 @@ validate_SeaSondeRAPM_Smoothing <- function(smoothing) {
 #' @param comment The character string to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_CommentLine("This is a comment.")
 validate_SeaSondeRAPM_CommentLine <- function(comment) {
   # Check if CommentLine is a character string
   if (!is.character(comment)) {
@@ -755,8 +702,6 @@ validate_SeaSondeRAPM_CommentLine <- function(comment) {
 #' @param id The unique character string to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_FileID("123e4567-e89b-12d3-a456-426614174000")
 validate_SeaSondeRAPM_FileID <- function(id) {
   # Check if FileID is a character string
   if (!is.character(id)) {
@@ -774,8 +719,6 @@ validate_SeaSondeRAPM_FileID <- function(id) {
 #' @param corrections The numeric vector to be validated.
 #' @return Returns TRUE if the validation passes.
 #'
-#' @examples
-#' valid <- SeaSondeR:::validate_SeaSondeRAPM_PhaseCorrections(c(10, -10))
 validate_SeaSondeRAPM_PhaseCorrections <- function(corrections) {
   # Check if PhaseCorrections is numeric and has exactly 2 elements
   if (!is.numeric(corrections) | length(corrections) != 2) {
@@ -1742,11 +1685,6 @@ seasonder_extrapolateAPM <- function(seasonder_apm_object, n = 1) {
 #' @param number_of_lines_to_read The number of lines to read to form the row.
 #' @return A numeric vector containing the row values.
 #'
-#' @examples
-#' # Example: read a 3-line matrix row from text lines
-#' lines <- c("1 2 3", "4 5 6", "7 8 9")
-#' row <- SeaSondeR:::read_matrix_row(lines, 1, 3)
-#' print(row)
 read_matrix_row <- function(lines, start, number_of_lines_to_read) {
   # Concatenate the specified lines into a single string with spaces between them
   row_str <- paste(lines[start:(start + number_of_lines_to_read - 1)], collapse = " ")
@@ -1762,8 +1700,6 @@ read_matrix_row <- function(lines, start, number_of_lines_to_read) {
 #' @param line The line of text to parse.
 #' @return A list containing the attribute name and its value.
 #'
-#' @examples
-#' metadata <- SeaSondeR:::parse_metadata_line("value ! attribute")
 parse_metadata_line <- function(line) {
   # Split the line into components using "!" as the delimiter
   components <- unlist(strsplit(line, "!"))

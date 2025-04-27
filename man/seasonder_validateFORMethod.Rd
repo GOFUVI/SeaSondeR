@@ -25,11 +25,6 @@ an error is raised using \code{\link{seasonder_logAndAbort}}.
 \item \code{"SeaSonde"}: Implements first-order region detection based on CODAR's SeaSonde methodology.
 }
 }
-\examples{
-SeaSondeR:::seasonder_validateFORMethod("SeaSonde")
-# Demonstrate error handling for an invalid method
-try(SeaSondeR:::seasonder_validateFORMethod("InvalidMethod"), silent = TRUE)
-}
 \seealso{
 \itemize{
 \item \code{\link{seasonder_validateFOR_parameters}} for FOR parameter validation.

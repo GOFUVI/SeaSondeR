@@ -26,6 +26,3 @@ A character string detailing the applied amplitude and phase corrections.
 \description{
 This function generates a message indicating the amplitude and phase corrections applied to the APM.
 }
-\examples{
-msg <- SeaSondeR:::SeaSondeRAPM_amplitude_and_phase_corrections_step_text(1.1, 0.9, 15, -15)
-}

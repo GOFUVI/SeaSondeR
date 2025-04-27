@@ -60,14 +60,3 @@ range cell numbers using \code{seasonder_rangeCellsDists2RangeNumber}.
 \item Finally, if \code{collapse = TRUE}, the nested list is flattened into a single-level list.
 }
 }
-\examples{
-# Retrieve self-spectra for antenna 1 (range and Doppler defaults)
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-# Extract self-spectra for antenna 1
-spectra_list <- SeaSondeR:::seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae = 1)
-print(names(spectra_list))
-
-}

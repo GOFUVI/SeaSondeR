@@ -26,15 +26,6 @@ The data structure is initialized using \code{\link{seasonder_initCSDataStructur
 placeholders for components such as \code{SSA1}, \code{SSA2}, \code{SSA3}, \code{CS12}, \code{CS13},
 \code{CS23}, and \code{QC}.
 }
-\examples{
-# Minimal example for interpolated data initialization
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-interpolated_data <- SeaSondeR:::seasonder_MUSICInitInterpolatedData(cs_obj)
-str(interpolated_data)
-}
 \seealso{
 \code{\link{seasonder_initCSDataStructure}} for details on the cross-spectral data structure.
 }

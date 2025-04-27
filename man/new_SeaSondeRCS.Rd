@@ -41,24 +41,6 @@ After constructing the base object, the function updates the header and data att
 initializes FOR parameters, and sets up the FOR configuration by calling
 \code{seasonder_initSeaSondeRCS_FOR}. A processing step message is logged to indicate successful creation.
 }
-\examples{
-# Example header and data lists (replace with actual header and data content)
-my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0,
-                  nFirstRangeCell = 1)
-my_data <- list(
-  SSA1 = matrix(0, nrow = 100, ncol = 256),
-  SSA2 = matrix(0, nrow = 100, ncol = 256),
-  SSA3 = matrix(0, nrow = 100, ncol = 256),
-  CS12 = matrix(complex(real = 0, imaginary = 0), nrow = 100, ncol = 256),
-  CS13 = matrix(complex(real = 0, imaginary = 0), nrow = 100, ncol = 256),
-  CS23 = matrix(complex(real = 0, imaginary = 0), nrow = 100, ncol = 256),
-  QC  = matrix(0, nrow = 100, ncol = 256)
-)
-rcs_object <- SeaSondeR:::new_SeaSondeRCS(my_header, my_data)
-# Check the header and APM attributes
-print(seasonder_getSeaSondeRCS_header(rcs_object))
-print(attr(rcs_object, "APM"))
-}
 \seealso{
 \code{\link{seasonder_setSeaSondeRCS_header}},
 \code{\link{seasonder_setSeaSondeRCS_data}},

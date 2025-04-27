@@ -17,11 +17,6 @@ The covariance matrix is initialized as a 3 x 3 matrix filled with complex \code
 This structure is specifically designed for three-channel antenna configurations commonly used
 in SeaSondeR applications.
 }
-\examples{
-# Initialize a covariance matrix for MUSIC
-cov_matrix <- SeaSondeR:::seasonder_MUSICInitCov()
-print(cov_matrix)
-}
 \seealso{
 \code{\link{seasonder_defaultMUSIC_parameters}} for default MUSIC parameters.
 }

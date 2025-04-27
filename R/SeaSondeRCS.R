@@ -88,12 +88,7 @@ new_SeaSondeRCS_CSMatrix <- function(nRanges, nDoppler, name = NULL, data = NULL
 #'           \item \code{CS13}: Matrix for CS13 component, complex numbers with \code{NA_real_} real and imaginary parts.
 #'           \item \code{CS23}: Matrix for CS23 component, complex numbers with \code{NA_real_} real and imaginary parts.
 #'           \item \code{QC}: Quality control matrix, filled with \code{NA_real_}.
-#'         }
-#' @examples
-#' # Initialize the data structure with 100 range cells and 256 Doppler bins
-#' nRanges <- 100
-#' nDoppler <- 256
-#' cs_data_structure <- SeaSondeR:::seasonder_initCSDataStructure(nRanges, nDoppler)
+#'         }s
 seasonder_initCSDataStructure <- function(nRanges, nDoppler) {
 
 
@@ -236,23 +231,6 @@ seasonder_initSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 #' initializes FOR parameters, and sets up the FOR configuration by calling
 #' \code{seasonder_initSeaSondeRCS_FOR}. A processing step message is logged to indicate successful creation.
 #'
-#' @examples
-#' # Example header and data lists (replace with actual header and data content)
-#' my_header <- list(nRangeCells = 100, nDopplerCells = 256, fRangeCellDistKm = 1.0,
-#'                   nFirstRangeCell = 1)
-#' my_data <- list(
-#'   SSA1 = matrix(0, nrow = 100, ncol = 256),
-#'   SSA2 = matrix(0, nrow = 100, ncol = 256),
-#'   SSA3 = matrix(0, nrow = 100, ncol = 256),
-#'   CS12 = matrix(complex(real = 0, imaginary = 0), nrow = 100, ncol = 256),
-#'   CS13 = matrix(complex(real = 0, imaginary = 0), nrow = 100, ncol = 256),
-#'   CS23 = matrix(complex(real = 0, imaginary = 0), nrow = 100, ncol = 256),
-#'   QC  = matrix(0, nrow = 100, ncol = 256)
-#' )
-#' rcs_object <- SeaSondeR:::new_SeaSondeRCS(my_header, my_data)
-#' # Check the header and APM attributes
-#' print(seasonder_getSeaSondeRCS_header(rcs_object))
-#' print(attr(rcs_object, "APM"))
 new_SeaSondeRCS <- function(header, data, seasonder_apm_object = NULL) {
 
 
@@ -500,10 +478,6 @@ seasonder_createSeaSondeRCS.character <- function(x, specs_path = rlang::zap(), 
 #'
 #' @param steps The character vector to be validated.
 #' @return Returns TRUE if the validation passes.
-#' @examples
-#' steps <- c("Step 1", "Step 2")
-#' is_valid <- SeaSondeR:::validate_SeaSondeRCS_ProcessingSteps(steps)
-#' print(is_valid)  # Should return TRUE
 validate_SeaSondeRCS_ProcessingSteps <- function(steps) {
   if (!is.character(steps)) {
     seasonder_logAndAbort("ProcessingSteps must be a character vector.", calling_function = "validate_SeaSondeRCS_ProcessingSteps")
@@ -813,16 +787,16 @@ seasonder_setSeaSondeRCS_APM <- function(seasonder_cs_object, seasonder_apm_obje
 #' new_interval <- list(low_limit = 0.9, high_limit = 1.0)
 #' # Prepare a SeaSondeRCS object with valid data
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-#' apm_obj <- SeaSondeR:::seasonder_readSeaSondeRAPMFile(apm_file)
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #' cs_obj <- seasonder_createSeaSondeRCS(
 #'   cs_file,
-#'   specs_path = SeaSondeR:::seasonder_defaultSpecsFilePath("CS"),
+#'   specs_path = seasonder_defaultSpecsFilePath("CS"),
 #'   seasonder_apm_object = apm_obj
 #' )
 #' cs_obj <- seasonder_setNoiseLevelEstimationInterval(cs_obj, new_interval)
 #' print(attr(cs_obj, "reference_noise_normalized_limits_estimation_interval"))
-#' noise_limits <- SeaSondeR:::seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
+#' noise_limits <- seasonder_getFOR_parameters(cs_obj)$reference_noise_normalized_limits
 #' print(noise_limits)
 #' @export
 seasonder_setNoiseLevelEstimationInterval <- seasonder_setSeaSondeRCS_reference_noise_normalized_limits_estimation_interval <- function(seasonder_cs_object, interval_value) {
@@ -1076,14 +1050,6 @@ seasonder_getSeaSondeRCS_data <- function(seasonder_cs_object) {
 #' @importFrom glue glue
 #' @importFrom rlang %||%
 #'
-#' @examples
-#' # Minimal example for seasonder_getSeaSondeRCS_dataMatrix
-#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' ssa1_matrix <- SeaSondeR:::seasonder_getSeaSondeRCS_dataMatrix(cs_obj, "SSA1")
-#' print(ssa1_matrix[1:10, 1:10])
 seasonder_getSeaSondeRCS_dataMatrix <- function(seasonder_cs_object, matrix_name) {
 
   # Validate that the matrix_name is one of the expected values
@@ -1126,14 +1092,6 @@ seasonder_getSeaSondeRCS_dataMatrix <- function(seasonder_cs_object, matrix_name
 #' @importFrom glue glue
 #' @importFrom rlang %||%
 #'
-#' @examples
-#' # Minimal example for seasonder_getSeaSondeRCS_antenna_SSdata
-#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' ssa1_data <- SeaSondeR:::seasonder_getSeaSondeRCS_antenna_SSdata(cs_obj, 1)
-#' print(ssa1_data[1:10,1:10])
 seasonder_getSeaSondeRCS_antenna_SSdata <- function(seasonder_cs_object, antenna) {
 
   # Construct the matrix name dynamically using the antenna number
@@ -1173,14 +1131,6 @@ seasonder_extractSeaSondeRCS_distRanges_from_SSdata <- function(SSmatrix, dist_r
 #' The function extracts a subset of columns from the self-spectra matrix. No explicit validation is currently 
 #' performed to verify that the provided Doppler cell indices fall within the range of the matrix columns.
 #'
-#' @examples
-#' sample_matrix <- matrix(1:50, nrow = 5, ncol = 10)
-#' selected_bins <- 3:7
-#' sliced_matrix <- SeaSondeR:::seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(
-#'   sample_matrix,
-#'   selected_bins
-#' )
-#' print(sliced_matrix)
 seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, doppler_cells) {
 
 
@@ -1231,16 +1181,6 @@ seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata <- function(SSmatrix, dop
 #'   \item For each self-spectra matrix, the function slices the matrix over the specified range and Doppler intervals.
 #'   \item Finally, if \code{collapse = TRUE}, the nested list is flattened into a single-level list.
 #' }
-#'
-#' @examples
-#' # Retrieve self-spectra for antenna 1 (range and Doppler defaults)
-#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' # Extract self-spectra for antenna 1
-#' spectra_list <- SeaSondeR:::seasonder_getSeaSondeRCS_SelfSpectra(cs_obj, antennae = 1)
-#' print(names(spectra_list))
 #'
 seasonder_getSeaSondeRCS_SelfSpectra <- function(seasonder_cs_object, antennae, dist_ranges = NULL, doppler_ranges = NULL, dist_in_km = FALSE, collapse = FALSE, smoothed =FALSE) {
 
@@ -1457,12 +1397,6 @@ seasonder_getCSHeaderByPath <- function(seasonder_obj, path, warn_missing = TRUE
 #'
 #' @importFrom purrr pluck list_flatten
 #'
-#' @examples
-#' # Create a minimal SeaSondeRCS object with a header attribute
-#' cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
-#' attr(cs_obj, "header") <- list(nDopplerCells = 5)
-#' field_value <- SeaSondeR:::seasonder_getSeaSondeRCS_headerField(cs_obj, "nDopplerCells")
-#' print(field_value)
 seasonder_getSeaSondeRCS_headerField <- function(seasonder_cs_object, field) {
 
   # Retrieve the header from the SeaSondeRCS object
@@ -1532,14 +1466,6 @@ seasonder_getCellsDistKm <- function(seasonder_cs_object) {
 #'
 #' @return A numeric value representing the center frequency in MHz.
 #'
-#' @examples
-#' # Minimal example for seasonder_getCenterFreqMHz
-#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' center_freq <- SeaSondeR:::seasonder_getCenterFreqMHz(cs_obj)
-#' print(center_freq)
 seasonder_getCenterFreqMHz <- function(seasonder_cs_object) {
   return(seasonder_getSeaSondeRCS_headerField(seasonder_cs_object, "CenterFreq"))
 }
@@ -1597,14 +1523,6 @@ seasonder_getfLatitude <- function(seasonder_cs_object){
 #' \code{\link{seasonder_getSeaSondeRCS_headerField}} to retrieve specific fields from
 #' the `SeaSondeRCS` header.
 #'
-#' @examples
-#' # Minimal example for seasonder_getReceiverGain_dB
-#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' receiver_gain <- SeaSondeR:::seasonder_getReceiverGain_dB(cs_obj)
-#' print(receiver_gain)
 seasonder_getReceiverGain_dB <- function(seasonder_cs_object) {
 
   # Retrieve the receiver gain from the SeaSondeRCS object's header field "fReferenceGainDB".
@@ -4825,10 +4743,6 @@ seasonder_the$qc_functions <- list()
 #' @param expected_type The expected type of the field_value.
 #'
 #' @return The original field_value if it matches the expected_type; otherwise, an error is raised.
-#' @examples
-#' # Use unexported qc_check_type via triple colon
-#' result <- SeaSondeR:::qc_check_type(42, "numeric")
-#' print(result)
 qc_check_type <- function(field_value, expected_type) {
   if (!inherits(field_value, expected_type)) {
     seasonder_logAndAbort(glue::glue("QC Error: Value does not have the expected type: {expected_type}"))
@@ -4850,10 +4764,6 @@ qc_check_type <- function(field_value, expected_type) {
 #' @param expected_type (optional) The expected type of the field_value. Default is NULL.
 #'
 #' @return The original field_value if it's within range and matches the expected_type; otherwise, an error is raised.
-#' @examples
-#' # Use unexported qc_check_range via triple colon
-#' result <- SeaSondeR:::qc_check_range(5, 0, 10)
-#' print(result)
 qc_check_range <- function(field_value, min, max, expected_type = NULL) {
   # Si se proporciona un tipo esperado, verifica el tipo antes de comprobar el rango
   if (!is.null(expected_type)) {
@@ -4884,9 +4794,6 @@ qc_check_range <- function(field_value, min, max, expected_type = NULL) {
 #' @return Returns the `field_value` if it passes the checks: it is of the expected
 #'         type (if `expected_type` is not NULL) and is non-negative. If any of the
 #'         checks fail, the function logs an error message and aborts execution.
-#' @examples
-#' result <- SeaSondeR:::qc_check_unsigned(10)
-#' print(result)
 qc_check_unsigned <- function(field_value,  expected_type = NULL) {
 
   if (!is.null(expected_type)) {

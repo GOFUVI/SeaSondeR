@@ -22,13 +22,6 @@ This function first retrieves the full header using \code{\link{seasonder_getSea
 and then attempts to extract the requested field using \code{\link[purrr]{pluck}}. The header is
 flattened before extraction to accommodate nested structures.
 }
-\examples{
-# Create a minimal SeaSondeRCS object with a header attribute
-cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
-attr(cs_obj, "header") <- list(nDopplerCells = 5)
-field_value <- SeaSondeR:::seasonder_getSeaSondeRCS_headerField(cs_obj, "nDopplerCells")
-print(field_value)
-}
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_header}} for retrieving the full header.
 \code{\link[purrr]{pluck}} for selective element extraction.

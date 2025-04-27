@@ -15,6 +15,3 @@ Returns TRUE if the validation passes.
 \description{
 This function validates if the provided CreateTimeStamp is a POSIXct Date object.
 }
-\examples{
-valid <- SeaSondeR:::validate_SeaSondeRAPM_CreateTimeStamp(Sys.time())
-}

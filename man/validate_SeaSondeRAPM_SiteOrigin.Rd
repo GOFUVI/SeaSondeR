@@ -15,6 +15,3 @@ Returns TRUE if the validation passes.
 \description{
 This function validates if the provided SiteOrigin is a numeric vector of length 2.
 }
-\examples{
-valid <- SeaSondeR:::validate_SeaSondeRAPM_SiteOrigin(c(37.7749, -122.4194))
-}

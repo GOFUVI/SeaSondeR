@@ -79,10 +79,6 @@ seasonder_defaultMUSICOptions <- seasonder_defaultMUSIC_options <- function(){
 #' @seealso
 #' \code{\link{seasonder_defaultMUSIC_parameters}} for default MUSIC parameters.
 #'
-#' @examples
-#' # Initialize a covariance matrix for MUSIC
-#' cov_matrix <- SeaSondeR:::seasonder_MUSICInitCov()
-#' print(cov_matrix)
 seasonder_MUSICInitCov <- function(){
   out <- matrix(rep(NA_complex_, 9), nrow = 3)
 
@@ -112,15 +108,6 @@ seasonder_MUSICInitCov <- function(){
 #' @seealso
 #' \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.
 #'
-#' @examples
-#' # Initialize projections for default bearings
-#' projections <- SeaSondeR:::seasonder_MUSICInitProjections()
-#' print(projections)
-#'
-#' # Initialize projections for specific bearings
-#' bearings <- seq(0, 360, by = 10)
-#' projections <- SeaSondeR:::seasonder_MUSICInitProjections(bearings)
-#' print(projections)
 seasonder_MUSICInitProjections <- function(bearings = 0) {
 
   # Initialize a 2 x n matrix filled with NA_complex_,
@@ -160,10 +147,6 @@ seasonder_MUSICInitProjections <- function(bearings = 0) {
 #' \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.
 #' \code{\link{seasonder_MUSICInitProjections}} for initializing projection matrices.
 #'
-#' @examples
-#' # Initialize DOA solutions
-#' doa_solutions <- SeaSondeR:::seasonder_MUSICInitDOASolutions()
-#' print(doa_solutions)
 seasonder_MUSICInitDOASolutions <- function() {
 
   # Initialize a list with placeholders for single and dual DOA solutions.
@@ -208,10 +191,6 @@ seasonder_MUSICInitDOASolutions <- function() {
 #' @seealso
 #' \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.
 #'
-#' @examples
-#' # Initialize eigenvalue decomposition structure
-#' eigen_decomp <- SeaSondeR:::seasonder_MUSICInitEigenDecomp()
-#' print(eigen_decomp)
 seasonder_MUSICInitEigenDecomp <- function() {
 
   # Initialize a list with placeholders for eigenvalues and eigenvectors.
@@ -247,14 +226,6 @@ seasonder_MUSICInitEigenDecomp <- function() {
 #' @seealso
 #' \code{\link{seasonder_initCSDataStructure}} for details on the cross-spectral data structure.
 #'
-#' @examples
-#' # Minimal example for interpolated data initialization
-#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' interpolated_data <- SeaSondeR:::seasonder_MUSICInitInterpolatedData(cs_obj)
-#' str(interpolated_data)
 seasonder_MUSICInitInterpolatedData <- function(seasonder_cs_object) {
 
   # Get the number of Doppler cells for MUSIC interpolation
@@ -303,10 +274,6 @@ seasonder_MUSICInitInterpolatedData <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_MUSICInitProjections}} for initializing projection matrices.
 #' \code{\link{seasonder_MUSICInitDOASolutions}} for initializing DOA solutions.
 #'
-#' @examples
-#' # Initialize a NULL structure for MUSIC analysis
-#' music_results <- SeaSondeR:::seasonder_NULLSeaSondeRCS_MUSIC()
-#' print(music_results)
 seasonder_NULLSeaSondeRCS_MUSIC <- function() {
 
   # Initialize an empty data frame with predefined columns for MUSIC analysis results
@@ -375,19 +342,6 @@ seasonder_NULLSeaSondeRCS_MUSIC <- function() {
 #' \code{\link{seasonder_MUSICInitCov}}, \code{\link{seasonder_MUSICInitEigenDecomp}},
 #' \code{\link{seasonder_MUSICInitProjections}}, \code{\link{seasonder_MUSICInitDOASolutions}} for initializing individual components.
 #'
-#' @examples
-#' # Minimal example for initializing MUSIC data structure
-#' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-#' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-#' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' music_data <- SeaSondeR:::seasonder_initSeaSondeRCS_MUSIC(cs_obj)
-#' print(music_data)
-#'
-#' # Initialize for specific range cells and Doppler bins
-#' music_data2 <- SeaSondeR:::seasonder_initSeaSondeRCS_MUSIC(cs_obj,
-#'   range_cells = c(1, 2), doppler_bins = c(5, 10))
-#' print(music_data2)
 seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL) {
 
   # Initialize globals for seasonder_initSeaSondeRCS_MUSIC

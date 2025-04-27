@@ -26,11 +26,6 @@ The function returns a list with the following components:
 
 This structure is designed to support three-channel antenna configurations typical in SeaSondeR applications.
 }
-\examples{
-# Initialize eigenvalue decomposition structure
-eigen_decomp <- SeaSondeR:::seasonder_MUSICInitEigenDecomp()
-print(eigen_decomp)
-}
 \seealso{
 \code{\link{seasonder_MUSICInitCov}} for initializing covariance matrices.
 }

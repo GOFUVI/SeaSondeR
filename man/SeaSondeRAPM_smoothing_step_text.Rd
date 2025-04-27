@@ -15,6 +15,3 @@ A character string detailing the smoothing operation.
 \description{
 This function generates a message indicating that smoothing has been applied to the APM.
 }
-\examples{
-msg <- SeaSondeR:::SeaSondeRAPM_smoothing_step_text(5)
-}

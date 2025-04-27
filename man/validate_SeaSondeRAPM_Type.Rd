@@ -15,6 +15,3 @@ Returns TRUE if the validation passes.
 \description{
 This function validates if the provided Type is a character string.
 }
-\examples{
-valid <- SeaSondeR:::validate_SeaSondeRAPM_Type("Measured")
-}

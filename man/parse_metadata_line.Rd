@@ -16,6 +16,3 @@ A list containing the attribute name and its value.
 This function takes a single line from a SeaSonde APM file and parses it into
 a named attribute and its corresponding value.
 }
-\examples{
-metadata <- SeaSondeR:::parse_metadata_line("value ! attribute")
-}

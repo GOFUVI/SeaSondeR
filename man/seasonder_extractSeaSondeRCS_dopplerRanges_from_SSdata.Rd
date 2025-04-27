@@ -21,12 +21,3 @@ This function slices a self-spectra data matrix by selecting the columns corresp
 The function extracts a subset of columns from the self-spectra matrix. No explicit validation is currently
 performed to verify that the provided Doppler cell indices fall within the range of the matrix columns.
 }
-\examples{
-sample_matrix <- matrix(1:50, nrow = 5, ncol = 10)
-selected_bins <- 3:7
-sliced_matrix <- SeaSondeR:::seasonder_extractSeaSondeRCS_dopplerRanges_from_SSdata(
-  sample_matrix,
-  selected_bins
-)
-print(sliced_matrix)
-}

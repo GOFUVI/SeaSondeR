@@ -15,6 +15,3 @@ Returns TRUE if the validation passes.
 \description{
 This function validates if the provided BearingResolution is a numeric value.
 }
-\examples{
-valid <- SeaSondeR:::validate_SeaSondeRAPM_BearingResolution(10)
-}
