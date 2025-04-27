@@ -95,28 +95,30 @@ Adds nRangeCells, nDopplerCells, and nFirstRangeCell as constant values to the r
 <span class="r-in"><span>  <span class="st">"rb"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readYAMLSpecs.html">seasonder_readYAMLSpecs</a></span><span class="op">(</span><span class="va">specs_path</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"header"</span>,<span class="st">"V1"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">header_v1</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeCSFileHeaderV1.html">seasonder_readSeaSondeCSFileHeaderV1</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">header_v1</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readSeaSondeCSFileHeaderV1.html">seasonder_readSeaSondeCSFileHeaderV1</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">specs</span>,</span></span>
 <span class="r-in"><span>  <span class="va">con</span>,</span></span>
 <span class="r-in"><span>  endian <span class="op">=</span> <span class="st">"big"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in seasonder_readSeaSondeCSFileHeaderV1(specs, con, endian = "big"):</span> could not find function "seasonder_readSeaSondeCSFileHeaderV1"</span>
 <span class="r-in"><span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readYAMLSpecs.html">seasonder_readYAMLSpecs</a></span><span class="op">(</span><span class="va">specs_path</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"header"</span>,<span class="st">"V2"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">header_v2</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeCSFileHeaderV2.html">seasonder_readSeaSondeCSFileHeaderV2</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">header_v2</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_readSeaSondeCSFileHeaderV2.html">seasonder_readSeaSondeCSFileHeaderV2</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">specs</span>,</span></span>
 <span class="r-in"><span>  <span class="va">con</span>,</span></span>
 <span class="r-in"><span>  endian <span class="op">=</span> <span class="st">"big"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in seasonder_readSeaSondeCSFileHeaderV2(specs, con, endian = "big"):</span> could not find function "seasonder_readSeaSondeCSFileHeaderV2"</span>
 <span class="r-in"><span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readYAMLSpecs.html">seasonder_readYAMLSpecs</a></span><span class="op">(</span><span class="va">specs_path</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"header"</span>,<span class="st">"V3"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">header_v3</span> <span class="op">&lt;-</span> <span class="fu">seasonder_readSeaSondeCSFileHeaderV3</span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">header_v3</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_readSeaSondeCSFileHeaderV3</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">specs</span>,</span></span>
 <span class="r-in"><span>  <span class="va">con</span>,</span></span>
 <span class="r-in"><span>  endian <span class="op">=</span> <span class="st">"big"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in seasonder_readSeaSondeCSFileHeaderV3(specs, con, endian = "big"):</span> could not find function "seasonder_readSeaSondeCSFileHeaderV3"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">header_v3</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'header_v3' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nSiteCodeName  : chr "TORA"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nV3Extent      : int 1305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nRangeCells    : int 31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nDopplerCells  : int 512</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nFirstRangeCell: int 1</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">close</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
