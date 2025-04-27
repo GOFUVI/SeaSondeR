@@ -17,11 +17,11 @@ seasonder_the$valid_yaml_seasondecssy_versions <- c("1.0.0")  # Valid version fo
 #' @examples
 #' 
 #'   # Retrieve the default CS specifications file path
-#'   cs_specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#'   cs_specs_path <- seasonder_defaultSpecsFilePath("CS")
 #'
 #'   # Retrieve the default CSSY specifications file path
-#'   cssy_specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSY")
-#' 
+#'   cssy_specs_path <- seasonder_defaultSpecsFilePath("CSSY")
+#' @export
 seasonder_defaultSpecsFilePath <- function(type = "CS") {
   # Retrieve the list of default specifications file paths from the shared environment
   default_paths <- list(
@@ -71,10 +71,10 @@ seasonder_defaultSpecsFilePath <- function(type = "CS") {
 #'
 #' @examples
 #' # Example: Read the CS header specifications (version V1) from the default specs file
-#' specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
-#' result <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header", "V1"))
+#' specs_path <- seasonder_defaultSpecsFilePath("CS")
+#' result <- seasonder_readYAMLSpecs(specs_path, c("header", "V1"))
 #' str(result)
-#'
+#' @export
 seasonder_readYAMLSpecs <- function(file_path, path = rlang::zap()) {
 
   conditions_params <- list(calling_function = "seasonder_readYAMLSpecs",class="seasonder_read_yaml_file_error",seasonder_yaml_file_path=file_path,seasonder_yaml_specs_path=path)

@@ -27,7 +27,7 @@ invisibly, allowing further processing if necessary.
 \examples{
   # Prepare a SeaSondeRCS object with valid data
   apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-  apm_obj <- SeaSondeR:::seasonder_readSeaSondeRAPMFile(apm_file)
+  apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
   cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
   cs_obj <- seasonder_createSeaSondeRCS(
     cs_file,

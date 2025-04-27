@@ -244,8 +244,8 @@ if(computeVoltage){
 #' @examples
 #' # Example: use real specifications with a minimal raw cell
 #' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSW")
-#' specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
-#' body_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSW", "BODY"))
+#' specs_key_size <- seasonder_readYAMLSpecs(spec_file, "key_size_block")
+#' body_specs <- seasonder_readYAMLSpecs(spec_file, c("CSSW", "BODY"))
 #' # Build a minimal raw cell: 'END ' marker and zero payload size
 #' raw_data <- c(charToRaw("END "), as.raw(c(0, 0, 0, 0)))
 #' con <- rawConnection(raw_data)
@@ -325,8 +325,8 @@ seasonder_readCSSWBodyRangeCell <- function(connection, specs, dbRef, endian = "
 #' @examples
 #' # Example: read one minimal cell using real CSSW specifications
 #' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSW")
-#' specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
-#' body_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSW", "BODY"))
+#' specs_key_size <- seasonder_readYAMLSpecs(spec_file, "key_size_block")
+#' body_specs <- seasonder_readYAMLSpecs(spec_file, c("CSSW", "BODY"))
 #' # Build a minimal raw cell: 'END ' marker and zero payload size
 #' raw_data <- c(charToRaw("END "), as.raw(c(0, 0, 0, 0)))
 #' con <- rawConnection(raw_data)
@@ -422,8 +422,8 @@ seasonder_readCSSWLims <- function(connection, n_values, endian = "big") {
 #' @examples
 #' # Example: read the CSSW file header using real specifications
 #' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSW")
-#' specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
-#' header_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSW", "HEAD"))
+#' specs_key_size <- seasonder_readYAMLSpecs(spec_file, "key_size_block")
+#' header_specs <- seasonder_readYAMLSpecs(spec_file, c("CSSW", "HEAD"))
 #' con <- file(
 #'   system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR"),
 #'   "rb",

@@ -24,7 +24,7 @@ apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 new_data <- seasonder_getSeaSondeRCS_data(cs_obj)
-cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_data(cs_obj, new_data)
+cs_obj <- seasonder_setSeaSondeRCS_data(cs_obj, new_data)
 str(seasonder_getSeaSondeRCS_data(cs_obj))
 }
 \seealso{

@@ -475,14 +475,15 @@ seasonder_initSeaSondeRCS_MUSIC <- function(seasonder_cs_object, range_cells = N
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' music_obj <- SeaSondeR:::seasonder_initMUSICData(cs_obj)
+#' music_obj <- seasonder_initMUSICData(cs_obj)
 #'
 #' # Example: specific range cells and Doppler bins
-#' music_obj2 <- SeaSondeR:::seasonder_initMUSICData(
+#' music_obj2 <- seasonder_initMUSICData(
 #'   cs_obj,
 #'   range_cells = c(1, 2),
 #'   doppler_bins = c(1, 2, 5, 10)
 #' )
+#' @export
 seasonder_initMUSICData <- function(seasonder_cs_object, range_cells = NULL, doppler_bins = NULL, NULL_MUSIC = FALSE) {
 
   # Copy the input SeaSondeR object
@@ -2307,7 +2308,8 @@ seasonder_MUSICTestDualSolutions <- function(seasonder_cs_object) {
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' # Perform Doppler interpolation
-#' out <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+#' out <- seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+#' @export
 seasonder_SeaSondeRCSMUSICInterpolateDoppler <- function(seasonder_cs_object){
 
   # Initialize the output object as a copy of the input object
@@ -3358,13 +3360,13 @@ seasonder_checkPWMAX <- function(seasonder_cs_object) {
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' cs_obj <- SeaSondeR:::seasonder_initMUSICData(cs_obj)
-#' cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+#' cs_obj <- seasonder_initMUSICData(cs_obj)
+#' cs_obj <- seasonder_initMUSICData(
 #'  cs_obj,
 #'  range_cells = c(rep(5,11), rep(4,11)),
 #'  doppler_bins = c(c(669:679),c(674:684))
 #' )
-#' cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+#' cs_obj <- seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
 #' # Run the MUSIC algorithm
 #' cs_obj <- seasonder_runMUSIC(cs_obj)
 #' # Check the updated processing steps
@@ -3956,14 +3958,14 @@ seasonder_exportMUSICTable <- function(seasonder_cs_object) {
 #' @examples
 #'   # Prepare a SeaSondeRCS object for examples, including APM
 #'   apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-#'   apm_obj <- SeaSondeR:::seasonder_readSeaSondeRAPMFile(apm_file)
-#'   specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+#'   apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+#'   specs_path <- seasonder_defaultSpecsFilePath("CS")
 #'   cs_obj <- seasonder_createSeaSondeRCS(
 #'     system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
 #'     specs_path = specs_path,
 #'     seasonder_apm_object = apm_obj
 #'   )
-#' cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+#' cs_obj <- seasonder_initMUSICData(
 #'  cs_obj,
 #'  range_cells = c(rep(5,11), rep(4,11)),
 #'  doppler_bins = c(c(669:679),c(674:684))
@@ -4349,7 +4351,7 @@ if(nrow(music) > 0){
 #' @examples
 #' # Prepare a SeaSondeRCS object with MUSIC data
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-#' apm_obj <- SeaSondeR:::seasonder_readSeaSondeRAPMFile(apm_file)
+#' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' FOR <- seasonder_getSeaSondeRCS_FOR(cs_obj)
@@ -4546,7 +4548,7 @@ seasonder_exportCTFRangeInfo_string <- function(seasonder_cs_object, tableStart 
 #' @examples
 #'   # Prepare a SeaSondeRCS object with valid data
 #'   apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-#'   apm_obj <- SeaSondeR:::seasonder_readSeaSondeRAPMFile(apm_file)
+#'   apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #'   cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #'   cs_obj <- seasonder_createSeaSondeRCS(
 #'     cs_file,

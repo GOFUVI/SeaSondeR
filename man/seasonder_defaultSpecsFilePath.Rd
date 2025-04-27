@@ -19,9 +19,8 @@ to the provided type. The type must be one of the names defined in the default p
 \examples{
 
   # Retrieve the default CS specifications file path
-  cs_specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+  cs_specs_path <- seasonder_defaultSpecsFilePath("CS")
 
   # Retrieve the default CSSY specifications file path
-  cssy_specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSY")
-
+  cssy_specs_path <- seasonder_defaultSpecsFilePath("CSSY")
 }

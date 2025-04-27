@@ -46,10 +46,10 @@ cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSonde
 apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-music_obj <- SeaSondeR:::seasonder_initMUSICData(cs_obj)
+music_obj <- seasonder_initMUSICData(cs_obj)
 
 # Example: specific range cells and Doppler bins
-music_obj2 <- SeaSondeR:::seasonder_initMUSICData(
+music_obj2 <- seasonder_initMUSICData(
   cs_obj,
   range_cells = c(1, 2),
   doppler_bins = c(1, 2, 5, 10)

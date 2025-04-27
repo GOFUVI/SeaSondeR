@@ -30,7 +30,7 @@ Transforms the date-time fields and returns the results.
 \examples{
 # Read version 1 header from a CS file
 specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
-specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header", "V1"))
+specs <- seasonder_readYAMLSpecs(specs_path, c("header", "V1"))
 con <- file(
   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
   "rb"

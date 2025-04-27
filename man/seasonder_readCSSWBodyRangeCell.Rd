@@ -49,8 +49,8 @@ the end of the block.
 \examples{
 # Example: use real specifications with a minimal raw cell
 spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSW")
-specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
-body_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSW", "BODY"))
+specs_key_size <- seasonder_readYAMLSpecs(spec_file, "key_size_block")
+body_specs <- seasonder_readYAMLSpecs(spec_file, c("CSSW", "BODY"))
 # Build a minimal raw cell: 'END ' marker and zero payload size
 raw_data <- c(charToRaw("END "), as.raw(c(0, 0, 0, 0)))
 con <- rawConnection(raw_data)

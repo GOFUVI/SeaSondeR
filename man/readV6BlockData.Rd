@@ -52,7 +52,7 @@ specs <- list(
   )
 )
 con <- rawConnection(as.raw(c(10)), "rb")
-result <- SeaSondeR:::readV6BlockData(specs, con, endian = "big")
+result <- readV6BlockData(specs, con, endian = "big")
 print(result)
 close(con)
 }

@@ -41,7 +41,7 @@ with a creation step text that indicates the source.
 \examples{
 # Creating a SeaSondeRCS object from a list
 cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+specs_path <- seasonder_defaultSpecsFilePath("CS")
 temp_obj <- seasonder_readSeaSondeCSFile(cs_file, specs_path)
 cs_list <- list(header = temp_obj$header, data = temp_obj$data)
 rcs_object <- seasonder_createSeaSondeRCS(cs_list)
@@ -53,7 +53,7 @@ package = "SeaSondeR"))
 # Creating a SeaSondeRCS object from a file path with a specified YAML specifications file
 rcs_object <- seasonder_createSeaSondeRCS(
   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
-  specs_path = SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+  specs_path = seasonder_defaultSpecsFilePath("CS")
 )
 }
 \seealso{

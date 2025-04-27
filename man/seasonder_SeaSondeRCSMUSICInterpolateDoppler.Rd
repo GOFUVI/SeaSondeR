@@ -42,7 +42,7 @@ apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 # Perform Doppler interpolation
-out <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
+out <- seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
 }
 \seealso{
 \code{\link{seasonder_setSeaSondeRCS_MUSIC_interpolated_data}} for setting interpolated data,

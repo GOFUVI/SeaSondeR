@@ -53,7 +53,7 @@ rcs_object <- seasonder_createSeaSondeRCS(
 # Create a SeaSondeRCS object from a file with a specified YAML specifications file
 rcs_object <- seasonder_createSeaSondeRCS(
   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
-  specs_path = SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+  specs_path = seasonder_defaultSpecsFilePath("CS")
 )
 }
 \seealso{

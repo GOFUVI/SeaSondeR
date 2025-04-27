@@ -55,7 +55,7 @@ functions are available in the global environment.
 \examples{
 # Example: process version-specific header using real specs and file
 specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
-specs <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, "header")
+specs <- seasonder_readYAMLSpecs(specs_path, "header")
 con <- file(
   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
   "rb"

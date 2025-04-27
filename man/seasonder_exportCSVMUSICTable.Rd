@@ -28,14 +28,14 @@ This function performs the following steps:
 \examples{
   # Prepare a SeaSondeRCS object for examples, including APM
   apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-  apm_obj <- SeaSondeR:::seasonder_readSeaSondeRAPMFile(apm_file)
-  specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
+  apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
+  specs_path <- seasonder_defaultSpecsFilePath("CS")
   cs_obj <- seasonder_createSeaSondeRCS(
     system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
     specs_path = specs_path,
     seasonder_apm_object = apm_obj
   )
-cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+cs_obj <- seasonder_initMUSICData(
  cs_obj,
  range_cells = c(rep(5,11), rep(4,11)),
  doppler_bins = c(c(669:679),c(674:684))

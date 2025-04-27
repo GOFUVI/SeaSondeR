@@ -511,8 +511,8 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 #' @examples
 #' # Example: use real specifications with a minimal raw cell
 #' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSY")
-#' specs_key_size <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, "key_size_block")
-#' body_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSY", "BODY"))
+#' specs_key_size <- seasonder_readYAMLSpecs(spec_file, "key_size_block")
+#' body_specs <- seasonder_readYAMLSpecs(spec_file, c("CSSY", "BODY"))
 #' # Build a minimal raw cell: 'END ' marker and zero payload size
 #' raw_data <- c(charToRaw("END "), as.raw(c(0, 0, 0, 0)))
 #' con <- rawConnection(raw_data)
@@ -649,7 +649,7 @@ seasonder_readCSSYLims <- function(connection, n_values, endian = "big") {
 #' @examples
 #' # Example: load CSSY header specifications
 #' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSY")
-#' header_specs <- SeaSondeR:::seasonder_readYAMLSpecs(spec_file, c("CSSY", "HEAD"))
+#' header_specs <- seasonder_readYAMLSpecs(spec_file, c("CSSY", "HEAD"))
 #' print(names(header_specs))
 seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", parent_key = NULL, keys_so_far = c("CSSY", "HEAD"), specs_key_size = NULL){
   # Initialize an empty output list for accumulating header values

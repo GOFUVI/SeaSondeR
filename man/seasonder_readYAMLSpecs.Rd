@@ -36,10 +36,9 @@ this function uses \code{\link[=seasonder_logAndAbort]{seasonder_logAndAbort}}.
 }
 \examples{
 # Example: Read the CS header specifications (version V1) from the default specs file
-specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
-result <- SeaSondeR:::seasonder_readYAMLSpecs(specs_path, c("header", "V1"))
+specs_path <- seasonder_defaultSpecsFilePath("CS")
+result <- seasonder_readYAMLSpecs(specs_path, c("header", "V1"))
 str(result)
-
 }
 \seealso{
 \code{\link[yaml]{read_yaml}} for the underlying YAML reading.
