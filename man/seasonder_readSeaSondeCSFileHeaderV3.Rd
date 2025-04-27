@@ -35,19 +35,19 @@ con <- file(
   "rb"
 )
 specs <- seasonder_readYAMLSpecs(specs_path, c("header","V1"))
-header_v1 <- seasonder_readSeaSondeCSFileHeaderV1(
+header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
   specs,
   con,
   endian = "big"
 )
 specs <- seasonder_readYAMLSpecs(specs_path, c("header","V2"))
-header_v2 <- seasonder_readSeaSondeCSFileHeaderV2(
+header_v2 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV2(
   specs,
   con,
   endian = "big"
 )
 specs <- seasonder_readYAMLSpecs(specs_path, c("header","V3"))
-header_v3 <- seasonder_readSeaSondeCSFileHeaderV3(
+header_v3 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV3(
   specs,
   con,
   endian = "big"
