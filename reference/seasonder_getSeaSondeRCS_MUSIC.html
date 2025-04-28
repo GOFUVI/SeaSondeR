@@ -74,7 +74,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
 <span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
-<span class="r-in"><span><span class="va">music_data</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_getMUSIC</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">music_data</span> <span class="op">&lt;-</span> <span class="fu">seasonder_getSeaSondeRCS_MUSIC</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">music_data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 64,512 × 18</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    range_cell doppler_bin range  freq radial_v cov            MA1S  MA2S  MA3S</span>

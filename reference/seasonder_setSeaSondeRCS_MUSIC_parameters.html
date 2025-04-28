@@ -81,28 +81,6 @@ in the object's <code>MUSIC_data</code> attribute. These parameters are used in 
 steps of the MUSIC processing workflow.</p>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a valid SeaSondeRCS object for examples</span></span></span>
-<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">apm_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/MeasPattern.txt"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">apm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="va">apm_file</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
-<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Retrieve default MUSIC parameters and modify</span></span></span>
-<span class="r-in"><span><span class="va">default_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_defaultMUSIC_parameters.html">seasonder_defaultMUSIC_parameters</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">new_params</span> <span class="op">&lt;-</span> <span class="va">default_params</span> <span class="op">*</span> <span class="fl">1.5</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Update the SeaSondeRCS object with the new MUSIC parameters (internal function)</span></span></span>
-<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_setSeaSondeRCS_MUSIC_parameters</span><span class="op">(</span><span class="va">cs_obj</span>, <span class="va">new_params</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Verify the update</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">cs_obj</span>, <span class="st">"MUSIC_data"</span><span class="op">)</span><span class="op">$</span><span class="va">MUSIC_options</span><span class="op">$</span><span class="va">MUSIC_parameters</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 60 30  3 30</span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -89,20 +89,6 @@ radial velocities are included in the first-order Bragg region.</p>
 </ul></div>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Set sample file paths</span></span></span>
-<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">apm_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/MeasPattern.txt"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Read the antenna pattern file to create a SeaSondeRAPM object</span></span></span>
-<span class="r-in"><span><span class="va">apm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="va">apm_file</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
-<span class="r-in"><span><span class="co"># Create a SeaSondeRCS object from a spectral file</span></span></span>
-<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
-<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_limitFORCurrentRange</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

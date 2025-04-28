@@ -78,25 +78,6 @@ where:</p><ul><li><p>\( dB \) is the power in decibels,</p></li>
     <div class="dont-index"><p><code><a href="self_spectra_to_dB.html">self_spectra_to_dB</a></code> for a generic power-to-dB transformation.</p></div>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Convert self-spectra power to dB using a SeaSondeR object (toy data)</span></span></span>
-<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="new_SeaSondeRCS.html">new_SeaSondeRCS</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>nRangeCells <span class="op">=</span> <span class="fl">1</span>, nDopplerCells <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    SSA1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, SSA2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, SSA3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    CS12 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fl">1i</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, CS13 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fl">1i</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    CS23 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fl">1i</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, QC <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> :::: new_SeaSondeRCS: SeaSondeRCS object created successfully.</span>
-<span class="r-in"><span><span class="va">spectrum_vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">dB_vals</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_SelfSpectra2dB</span><span class="op">(</span><span class="va">cs_obj</span>, <span class="va">spectrum_vals</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">dB_vals</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -44.2 -34.2 -24.2</span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

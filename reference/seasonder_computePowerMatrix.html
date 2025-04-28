@@ -95,14 +95,6 @@ and \(G_{\text{inv}}\) is the inverse of \(G\).</p>
 <ul><li><p>Paolo, T. de, Cook, T., &amp; Terrill, E. (2007). Properties of HF RADAR Compact Antenna Arrays and Their Effect on the MUSIC Algorithm. <em>OCEANS 2007</em>, 1–10. doi:10.1109/oceans.2007.4449265.</p></li>
 </ul></div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Compute power matrix</span></span></span>
-<span class="r-in"><span><span class="va">eig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">5</span><span class="op">)</span>, vectors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, ncol<span class="op">=</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fl">1i</span>,<span class="fl">2</span><span class="op">+</span><span class="fl">2i</span><span class="op">)</span>, ncol<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">power_matrix</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_computePowerMatrix</span><span class="op">(</span><span class="va">eig</span>, <span class="va">a</span><span class="op">)</span></span></span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

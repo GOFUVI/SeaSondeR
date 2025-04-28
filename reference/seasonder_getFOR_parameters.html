@@ -87,46 +87,6 @@ and assigns default values where necessary.</p>
 <code><a href="seasonder_defaultFOR_parameters.html">seasonder_defaultFOR_parameters</a></code> for retrieving default parameter values.</p></div>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Minimal example for seasonder_getFOR_parameters</span></span></span>
-<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">apm_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/MeasPattern.txt"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">apm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="va">apm_file</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
-<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
-<span class="r-in"><span><span class="va">for_params</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_getFOR_parameters</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">for_params</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $nsm</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $reference_noise_normalized_limits</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.586848 2.874276</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $fdown</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $flim</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 100</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $noisefact</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3.981072</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $currmax</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $reject_distant_bragg</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $reject_noise_ionospheric</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $reject_noise_ionospheric_threshold</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

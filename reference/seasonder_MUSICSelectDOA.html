@@ -88,33 +88,6 @@ DOA and updated processing steps.</p>
 <code><a href="seasonder_setSeaSondeRCS_MUSIC.html">seasonder_setSeaSondeRCS_MUSIC</a></code> to update MUSIC results.</p></div>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Select DOA after MUSIC analysis</span></span></span>
-<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">apm_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/MeasPattern.txt"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">apm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="va">apm_file</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
-<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
-<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_initMUSICData.html">seasonder_initMUSICData</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span> <span class="va">cs_obj</span>,</span></span>
-<span class="r-in"><span> range_cells <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">11</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">11</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span> doppler_bins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">669</span><span class="op">:</span><span class="fl">679</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">674</span><span class="op">:</span><span class="fl">684</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_SeaSondeRCSMUSICInterpolateDoppler.html">seasonder_SeaSondeRCSMUSICInterpolateDoppler</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Assume MUSIC analysis has been run</span></span></span>
-<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_runMUSIC.html">seasonder_runMUSIC</a></span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_runMUSIC:  MUSIC algorithm started.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_runMUSIC:  MUSIC algorithm finished.</span>
-<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_MUSICSelectDOA</span><span class="op">(</span><span class="va">cs_obj</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Station Code: TORA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Time: 2024-04-04 07:00:00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> N Doppler Cells: 1024</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> N Range Cells: 63</span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -96,22 +96,6 @@ where:</p><ul><li><p>\(E_n\) is the eigenvector matrix of the noise subspace.</p
     <div class="dont-index"><p><code><a href="seasonder_compute_antenna_pattern_proyections.html">seasonder_compute_antenna_pattern_proyections</a></code> for computing projections.</p></div>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example: compute a single DOA projection for toy data</span></span></span>
-<span class="r-in"><span><span class="co"># Create a noise subspace eigenvector matrix (3 sensors, noise subspace dimension=2)</span></span></span>
-<span class="r-in"><span><span class="va">En</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fl">1i</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Create an antenna pattern response vector</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fl">0i</span>, <span class="fl">0</span><span class="op">+</span><span class="fl">0i</span>, <span class="fl">0</span><span class="op">+</span><span class="fl">0i</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Compute its conjugate transpose</span></span></span>
-<span class="r-in"><span><span class="va">Conj_t_a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">Conj</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Compute a single projection using the MUSIC formula</span></span></span>
-<span class="r-in"><span><span class="va">proj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu"><a href="seasonder_compute_antenna_pattern_proyections.html">seasonder_compute_antenna_pattern_proyections</a></span><span class="op">(</span><span class="va">En</span>, <span class="va">a</span>, <span class="va">Conj_t_a</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">proj</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 4+0i</span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -95,34 +95,6 @@ across the self-spectra matrix.</p>
 </ul></div>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Create a valid SeaSondeRCS object for examples</span></span></span>
-<span class="r-in"><span><span class="va">cs_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/CSS_TORA_24_04_04_0700.cs"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">apm_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"css_data/MeasPattern.txt"</span>, package <span class="op">=</span> <span class="st">"SeaSondeR"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">apm_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_readSeaSondeRAPMFile.html">seasonder_readSeaSondeRAPMFile</a></span><span class="op">(</span><span class="va">apm_file</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> seasonder_createSeaSondeRAPM:  APM object created successfully.</span>
-<span class="r-in"><span><span class="va">cs_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="seasonder_createSeaSondeRCS.html">seasonder_createSeaSondeRCS</a></span><span class="op">(</span><span class="va">cs_file</span>, seasonder_apm_object <span class="op">=</span> <span class="va">apm_obj</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> new_SeaSondeRCS:  SeaSondeRCS object created successfully.</span>
-<span class="r-in"><span><span class="co"># Smooth self-spectra for antenna 1 (internal function)</span></span></span>
-<span class="r-in"><span><span class="va">smoothed_SS</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_SmoothSS</span><span class="op">(</span><span class="va">cs_obj</span>, antenna <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">smoothed_SS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            doppler_000  doppler_001  doppler_002  doppler_003  doppler_004</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> range_001 2.877848e-11 2.606360e-11 1.815353e-11 2.264140e-11 2.448303e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> range_002 2.739832e-11 3.194929e-11 4.120870e-11 5.058408e-11 5.206900e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> range_003 3.036066e-11 4.256134e-11 5.366957e-11 5.206920e-11 4.413257e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> range_004 3.747393e-11 3.531617e-11 2.876631e-11 2.543074e-11 2.736122e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> range_005 3.416726e-11 2.678868e-11 2.366801e-11 3.103257e-11 3.624500e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> range_006 3.148860e-11 3.041094e-11 3.008027e-11 3.794910e-11 3.838602e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            doppler_005  doppler_006  doppler_007  doppler_008  doppler_009</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> range_001 2.575930e-11 3.992502e-11 4.684262e-11 5.126049e-11 4.247552e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> range_002 3.751368e-11 3.416979e-11 3.343721e-11 4.426933e-11 4.608000e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> range_003 2.988922e-11 3.125795e-11 2.726724e-11 3.242007e-11 2.979494e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> range_004 2.999747e-11 3.296279e-11 3.008841e-11 3.920805e-11 3.237919e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> range_005 3.379503e-11 2.393132e-11 2.321144e-11 2.732173e-11 2.326730e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> range_006 3.767087e-11 3.493705e-11 3.452570e-11 3.330036e-11 2.730492e-11</span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

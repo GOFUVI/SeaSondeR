@@ -78,15 +78,6 @@ If any field is missing, an error is thrown using <code>seasonder_logAndAbort</c
 </ul><p><strong>Condition Cases</strong>:</p><ul><li><p>Required field specification is missing.</p></li>
 </ul></div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example: validate presence of all fields in specs</span></span></span>
-<span class="r-in"><span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>field1 <span class="op">=</span> <span class="st">"spec1"</span>, field2 <span class="op">=</span> <span class="st">"spec2"</span>, field3 <span class="op">=</span> <span class="st">"spec3"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">fields</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"field1"</span>, <span class="st">"field2"</span>, <span class="st">"field3"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_check_specs</span><span class="op">(</span><span class="va">specs</span>, <span class="va">fields</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -98,15 +98,6 @@ as it corresponds to the direction where the signal is strongest relative to the
 <ul><li><p>Paolo, T. de, Cook, T., &amp; Terrill, E. (2007). Properties of HF RADAR Compact Antenna Arrays and Their Effect on the MUSIC Algorithm. <em>OCEANS 2007</em>, 1–10. doi:10.1109/oceans.2007.4449265.</p></li>
 </ul></div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Compute antenna pattern projections</span></span></span>
-<span class="r-in"><span><span class="va">En</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fl">1i</span>, nrow<span class="op">=</span><span class="fl">3</span>, ncol<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="fl">1i</span>,<span class="fl">0</span><span class="op">+</span><span class="fl">0i</span>,<span class="fl">0</span><span class="op">+</span><span class="fl">0i</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">Conj_t_a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">Conj</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">proj</span> <span class="op">&lt;-</span> <span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_compute_antenna_pattern_proyections</span><span class="op">(</span><span class="va">En</span>, <span class="va">a</span>, <span class="va">Conj_t_a</span><span class="op">)</span></span></span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -88,29 +88,6 @@ It checks the file for various conditions to determine if it meets the SeaSondeR
     <p>Cross Spectra File Format Version 6. CODAR. 2016</p>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example: Validate a dummy file and header</span></span></span>
-<span class="r-in"><span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".cs"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Create a dummy file of sufficient size</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/readBin.html" class="external-link">writeBin</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/raw.html" class="external-link">as.raw</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span>, <span class="va">tmp</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">header</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  nCsFileVersion <span class="op">=</span> <span class="fl">6</span>,</span></span>
-<span class="r-in"><span>  nCsKind        <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  nRangeCells    <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  nDopplerCells  <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  nV1Extent      <span class="op">=</span> <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>  nV2Extent      <span class="op">=</span> <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>  nV3Extent      <span class="op">=</span> <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>  nV4Extent      <span class="op">=</span> <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>  nV5Extent      <span class="op">=</span> <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>  nCS6ByteSize   <span class="op">=</span> <span class="fl">50</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Call internal function</span></span></span>
-<span class="r-in"><span><span class="fu">SeaSondeR</span><span class="fu">:::</span><span class="fu">seasonder_validateCSFileData</span><span class="op">(</span><span class="va">tmp</span>, <span class="va">header</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
