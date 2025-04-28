@@ -919,12 +919,6 @@ seasonder_getSeaSondeRCS_FOR <- function(seasonder_cs_object) {
 #' - \code{\link{seasonder_SmoothFORSS}} for applying smoothing and storing the result.
 #' - \code{\link{seasonder_setSeaSondeRCS_FOR_SS_Smoothed}} for setting smoothed self-spectra.
 #'
-    #' @examples
-    #' # Create a minimal SeaSondeRCS object with smoothed self-spectra in FOR_data
-    #' cs_obj <- structure(list(data = list(a = 1, b = 2)), class = "SeaSondeRCS")
-    #' attr(cs_obj, "FOR_data") <- list(FOR_SS_Smoothed = matrix(1:4, nrow = 2, ncol = 2))
-    #' smoothed_SS <- SeaSondeR:::seasonder_getSeaSondeRCS_FOR_SS_Smoothed(cs_obj)
-    #' head(smoothed_SS)
 seasonder_getSeaSondeRCS_FOR_SS_Smoothed  <- function(seasonder_cs_object) {
 
   # Extract the smoothed self-spectra matrix from the FOR_data attribute

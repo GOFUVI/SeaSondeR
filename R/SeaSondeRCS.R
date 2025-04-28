@@ -1561,17 +1561,6 @@ seasonder_getReceiverGain_dB <- function(seasonder_cs_object) {
 #' \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}} to retrieve the number
 #' of Doppler cells from a SeaSondeRCS object.
 #'
- #' @examples
-#' # Read a SeaSonde CS file
-#' cs_obj <- seasonder_readSeaSondeCSFile(
-#'   system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
-#'   SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
-#' )
-#' # Get number of Doppler cells
-#' nDoppler <- seasonder_getnDopplerCells(cs_obj)
-#' # Compute center Doppler bin
-#' center_bin <- SeaSondeR:::seasonder_computeCenterDopplerBin(cs_obj, nDoppler)
-#' print(center_bin)
 seasonder_computeCenterDopplerBin <- function(seasonder_cs_object, nDoppler) {
 
   # Calculate the center Doppler bin. This assumes that the Doppler cells are zero-indexed

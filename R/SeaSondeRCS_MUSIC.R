@@ -925,7 +925,7 @@ seasonder_getSeaSondeRCS_MUSIC_parameters <- seasonder_getMUSICParameters <- fun
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' opts <- SeaSondeR:::seasonder_getMUSICOptions(cs_obj)
+#' opts <- seasonder_getMUSICOptions(cs_obj)
 #' print(opts)
 #' @export
 seasonder_getMUSICOptions <- seasonder_getSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object) {
@@ -989,7 +989,7 @@ seasonder_getSeaSondeRCS_MUSIC <- seasonder_getMUSIC <-  function(seasonder_cs_o
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' dual_prop <- SeaSondeR:::seasonder_getMUSICDualSolutionsProportion(cs_obj)
+#' dual_prop <- seasonder_getMUSICDualSolutionsProportion(cs_obj)
 #' print(dual_prop)
 #' @export
 seasonder_getMUSICDualSolutionsProportion <- seasonder_getSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_cs_object) {
@@ -3321,7 +3321,7 @@ out$lat[is.nan(out$lat)] <- NA_real_
  #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
  #' apm_obj  <- seasonder_readSeaSondeRAPMFile(apm_file)
  #' cs_obj   <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
- #' cs_obj <- SeaSondeR:::seasonder_initMUSICData(
+#' cs_obj <- seasonder_initMUSICData(
 #'  cs_obj,
 #'  range_cells = c(rep(5,11), rep(4,11)),
 #'  doppler_bins = c(c(669:679),c(674:684))
