@@ -130,11 +130,6 @@ seasonder_readYAMLSpecs <- function(file_path, path = rlang::zap()) {
 #' @importFrom rlang try_fetch inject inherits_any
 #' @importFrom glue glue
 #'
-#' @examples
-#'   # Determine the spectra file type for a file included in the package
-#'   spec_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-#'   file_type <- SeaSondeR:::seasonder_find_spectra_file_type(spec_file)
-#'   print(file_type)
 seasonder_find_spectra_file_type <- function(filepath, endian = "big") {
   # Set up error handling parameters with function name, error class, and file path
   conditions_params <- list(
@@ -236,14 +231,6 @@ seasonder_find_spectra_file_type <- function(filepath, endian = "big") {
 #'
 #' @seealso \code{\link{seasonder_find_spectra_file_type}}, \code{\link{seasonder_defaultSpecsFilePath}}
 #'
-#' @examples
-#' 
-#'   # Get the default specifications path for a given spectra file
-#'   specs_path <- SeaSondeR:::seasonder_defaultSpecsPathForFile(
-#'     system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-#'   )
-#'   print(specs_path)
-#' 
 seasonder_defaultSpecsPathForFile <- function(filepath, endian = "big") {
   # Determine the file type ("CS" or "CSSY") by analyzing the spectra file
   file_type <- seasonder_find_spectra_file_type(filepath, endian = endian)

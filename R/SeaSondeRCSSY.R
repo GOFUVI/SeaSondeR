@@ -28,15 +28,6 @@
 #' @importFrom purrr accumulate
 #' @importFrom dplyr last
 #'
-#' @examples
-#'   # Example for processing command 0x9C (unsigned 32-bit integer):
-#'   # 0x9C is followed by 4 bytes that represent 1000 (big endian: 0x00, 0x00, 0x03, 0xE8).
-#'   raw_vec <- as.raw(c(0x9C, 0x00, 0x00, 0x03, 0xE8))
-#'   con <- rawConnection(raw_vec, open = "rb")
-#'   key <- list(size = length(raw_vec))
-#'   result <- SeaSondeR:::seasonder_read_reduced_encoded_data(con, key, endian = "big")
-#'   close(con)
-#'   print(result)  # Expected output: 1000
 seasonder_read_reduced_encoded_data <- function(connection, key, endian = "big") {
 
   # Helper function to read a 32-bit unsigned integer from the binary connection.
@@ -245,13 +236,6 @@ seasonder_read_reduced_encoded_data <- function(connection, key, endian = "big")
 #'   }
 #'
 #'
-#' @examples
-#' # Create a raw connection with sample data:
-#' con <- rawConnection(as.raw(c(0x42, 0x29, 0xa3, 0xd7, 0xFF, 0x00)))
-#' key <- list(size = 6, key = "csign")
-#' result <- SeaSondeR:::seasonder_CSSY_read_csign(con, key)
-#' print(result)
-#' close(con)
 seasonder_CSSY_read_csign <- function(connection, key) {
   # Store the number of bytes to read based on the key list.
   total_bytes <- key$size
@@ -320,11 +304,6 @@ seasonder_CSSY_read_csign <- function(connection, key) {
 #' @return A named list of 3 vectors. Each vector represents one group (i.e., \code{cs1a}, \code{cs2a}, \code{cs3a})
 #'   and contains integers (0 or 1) corresponding to the bits (in little-endian order) extracted from the raw data.
 #'
-#' @examples
-#'   con <- rawConnection(as.raw(c(0x01, 0x02, 0x03)))
-#'   key <- list(size = 3, key = "asgn")
-#'   result <- SeaSondeR:::seasonder_CSSY_read_asign(con, key)
-#'   close(con)
 seasonder_CSSY_read_asign <- function(connection, key) {
   # Determine the total number of bytes to read from the connection based on key$size.
   total_bytes <- key$size
@@ -413,13 +392,6 @@ seasonder_readCSSYFields <- function(connection, specs, endian, parent_key= NULL
 #' @return A list with the same structure as `values`, where each numeric vector has been transformed to a vector of floating point
 #' voltage values. Special integer values equal to 0xFFFFFFFF are converted to NaN.
 #'
-#' @examples
-#' # Example usage:
-#' values <- list(c(1000, 0xFFFFFFFF, 2000))
-#' # Use triple colon to call internal function
-#' scaled <- SeaSondeR:::seasonder_SeaSondeRCSSYApplyScaling(values, fmax = 5, fmin = 0, fscale = 1000,
-#' dbRef = -20)
-#' print(scaled)
 #' @details
 #' The scaling process performs the following steps for each input value:
 #'   1. Checks whether the value equals 0xFFFFFFFF. If so, it returns NaN immediately because this value indicates a
@@ -508,23 +480,6 @@ seasonder_SeaSondeRCSSYApplyScaling <- function(values, fmax, fmin, fscale, dbRe
 #'
 #' @return A list representing a cell in the CSSY body.
 #'
-#' @examples
-#' # Example: use real specifications with a minimal raw cell
-#' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSY")
-#' specs_key_size <- seasonder_readYAMLSpecs(spec_file, "key_size_block")
-#' body_specs <- seasonder_readYAMLSpecs(spec_file, c("CSSY", "BODY"))
-#' # Build a minimal raw cell: 'END ' marker and zero payload size
-#' raw_data <- c(charToRaw("END "), as.raw(c(0, 0, 0, 0)))
-#' con <- rawConnection(raw_data)
-#' result <- SeaSondeR:::seasonder_readCSSYBodyRangeCell(
-#'   con,
-#'   body_specs,
-#'   dbRef = 0,
-#'   endian = "big",
-#'   specs_key_size = specs_key_size
-#' )
-#' print(result)
-#' close(con)
 seasonder_readCSSYBodyRangeCell <- function(connection, specs, dbRef, endian = "big", specs_key_size = NULL){
   indx_read <- FALSE       # Flag indicating whether 'indx' has been encountered
   scaling_params <- NULL   # Storage for scaling parameters read from a 'scal' block
@@ -646,11 +601,6 @@ seasonder_readCSSYLims <- function(connection, n_values, endian = "big") {
 #' @importFrom magrittr set_names
 #' @import glue
 #'
-#' @examples
-#' # Example: load CSSY header specifications
-#' spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSY")
-#' header_specs <- seasonder_readYAMLSpecs(spec_file, c("CSSY", "HEAD"))
-#' print(names(header_specs))
 seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", parent_key = NULL, keys_so_far = c("CSSY", "HEAD"), specs_key_size = NULL){
   # Initialize an empty output list for accumulating header values
   out <- list()
@@ -713,9 +663,6 @@ seasonder_readCSSYHeader <- function(connection, current_specs, endian = "big", 
 #' @return A transformed header where the primary CS header is taken from 'cs4h' and the remaining CSSY header fields
 #'         are stored in the 'header_csr' element.
 #'
-#' @examples
-#'   header <- list(cs4h = list(dummy = "data"), other_field = "info")
-#'   result <- SeaSondeR:::seasonder_CSSY2CSHeader(header)
 seasonder_CSSY2CSHeader <- function(header) {
   if (is.null(header$cs4h)) {
     seasonder_logAndAbort("CSSY header does not contain a cs4h component")
@@ -918,13 +865,6 @@ seasonder_applyCSSYSigns <- function(cs_data) {
 #'   \item Combines the header and data into a SeaSondeRCS object.
 #' }
 #'
-#' @examples
-#' \dontrun{
-#' # Example file not included in package to avoid large file size
-#' # Example (expected to error on missing file):
-#' cs_obj <- SeaSondeR:::seasonder_readSeaSondeRCSSYFile("path/to/file.rcssy")
-#' str(cs_obj)
-#' }
 seasonder_readSeaSondeRCSSYFile <- function(filepath, specs_path = seasonder_defaultSpecsFilePath("CSSY"), endian = "big"){
 
   # Set up error handling parameters with function name, error class, and file path
