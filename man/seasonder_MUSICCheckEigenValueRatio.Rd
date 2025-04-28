@@ -30,28 +30,6 @@ Ratio = lambda1 / lambda2
 This ratio is compared to a threshold defined in the MUSIC parameters to determine whether the solution
 is considered valid. Solutions failing this test are marked as "single."
 }
-\examples{
-# Eigenvalue ratio check (toy data)
-header <- list(nRangeCells = 1, nDopplerCells = 1)
-data <- list(
-  SSA1 = matrix(0, 1, 1),
-  SSA2 = matrix(0, 1, 1),
-  SSA3 = matrix(0, 1, 1),
-  CS12 = matrix(complex(real = 0, imaginary = 0), 1, 1),
-  CS13 = matrix(complex(real = 0, imaginary = 0), 1, 1),
-  CS23 = matrix(complex(real = 0, imaginary = 0), 1, 1),
-  QC   = matrix(0, 1, 1)
-)
-cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data)
-MUSIC_df <- data.frame(
-  eigen = I(list(list(values = c(2, 1)))),
-  retained_solution = "dual",
-  stringsAsFactors = FALSE
-)
-cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_MUSIC(cs_obj, MUSIC_df)
-updated_obj <- SeaSondeR:::seasonder_MUSICCheckEigenValueRatio(cs_obj)
-print(attr(updated_obj, "MUSIC_data")$eigen_values_ratio)
-}
 \seealso{
 \code{seasonder_getSeaSondeRCS_MUSIC}, \code{seasonder_setSeaSondeRCS_MUSIC}
 }

@@ -2,6 +2,7 @@
 % Please edit documentation in R/SeaSondeRCS_MUSIC.R
 \name{seasonder_getSeaSondeRCS_MUSIC_parameters}
 \alias{seasonder_getSeaSondeRCS_MUSIC_parameters}
+\alias{seasonder_getMUSICParameters}
 \title{Retrieve MUSIC Parameters from a SeaSondeRCS Object}
 \usage{
 seasonder_getSeaSondeRCS_MUSIC_parameters(seasonder_cs_object)
@@ -20,11 +21,11 @@ The function checks for the presence of MUSIC parameters in the object's MUSIC_d
 If not found, it defaults to the values returned by \code{seasonder_defaultMUSIC_parameters()}.
 }
 \examples{
-# Minimal example for seasonder_getMUSICParameters
+# Minimal example for seasonder_getSeaSondeRCS_MUSIC_parameters
 cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-params <- SeaSondeR:::seasonder_getMUSICParameters(cs_obj)
+params <- seasonder_getSeaSondeRCS_MUSIC_parameters(cs_obj)
 print(params)
 }

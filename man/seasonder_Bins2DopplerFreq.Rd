@@ -21,19 +21,6 @@ This function retrieves the Doppler frequency values corresponding to the specif
 This function retrieves the full set of Doppler bin frequencies using \code{\link{seasonder_getDopplerBinsFrequency}} in non-normalized form.
 It then selects the Doppler frequencies corresponding to the specified bin indices.
 }
-\examples{
-# Read a sample Cross-Spectral (CS) file to create a SeaSondeRCS object
-specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
-cs_obj <- seasonder_readSeaSondeCSFile(
-  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
-  specs_path
-)
-# Define Doppler bin indices (from 1 to number of bins)
-bins <- seq_len(as.integer(seasonder_getnDopplerCells(cs_obj)))
-# Retrieve Doppler frequencies for the specified bins (internal function)
-freqs <- SeaSondeR:::seasonder_Bins2DopplerFreq(cs_obj, bins)
-head(freqs)
-}
 \seealso{
 \code{\link{seasonder_DopplerFreq2Bins}} for the reverse operation.
 \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving the full set of Doppler frequencies.

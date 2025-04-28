@@ -26,28 +26,6 @@ A list with the read results.
 \description{
 Reads the header of a SeaSonde file (Version 2) based on the provided specifications.
 }
-\examples{
-# Read CS file header and extract version 2 fields
-specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
-con <- file(
-  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
-  "rb"
-)
-specs <- seasonder_readYAMLSpecs(specs_path, c("header","V1"))
-header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
-  specs,
-  con,
-  endian = "big"
-)
-specs <- seasonder_readYAMLSpecs(specs_path, c("header","V2"))
-header_v2 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV2(
-  specs,
-  con,
-  endian = "big"
-)
-str(header_v2)
-close(con)
-}
 \seealso{
 \code{\link{seasonder_check_specs}}
 \code{\link{seasonder_readSeaSondeCSFileBlock}}

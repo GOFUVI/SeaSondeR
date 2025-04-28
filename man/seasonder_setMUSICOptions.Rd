@@ -6,13 +6,13 @@
 \usage{
 seasonder_setMUSICOptions(
   seasonder_cs_object,
-  MUSIC_options = seasonder_defaultMUSIC_options()
+  MUSIC_options = seasonder_defaultMUSICOptions()
 )
 }
 \arguments{
 \item{seasonder_cs_object}{A SeaSondeRCS object that contains the MUSIC data as an attribute.}
 
-\item{MUSIC_options}{A named list of MUSIC options. Defaults to the output of \code{seasonder_defaultMUSIC_options()}.}
+\item{MUSIC_options}{A named list of MUSIC options. Defaults to the output of \code{seasonder_defaultMUSICOptions()}.}
 }
 \value{
 The updated SeaSondeRCS object with the MUSIC options stored in its MUSIC data attribute.
@@ -37,7 +37,8 @@ data <- list(
 )
 apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data, apm_obj)
+cs_obj <- seasonder_createSeaSondeRCS(list(header = header, data = data), 
+seasonder_apm_object = apm_obj)
 cs_obj <- seasonder_setMUSICOptions(cs_obj, list(doppler_interpolation = 3))
 opts <- seasonder_getMUSICOptions(cs_obj)
 print(opts)

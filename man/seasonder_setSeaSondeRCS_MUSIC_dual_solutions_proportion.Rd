@@ -26,17 +26,3 @@ processing workflow. Currently, no explicit validation of the provided value is 
 The function updates the \code{dual_solutions_proportion} field within the \code{MUSIC_data} attribute.
 This value is later used to assess the prevalence of dual bearing solutions in the MUSIC results.
 }
-\examples{
-# Create a valid SeaSondeRCS object for examples
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-
-# Set the dual solutions proportion (example value: 0.35) using internal function
-cs_obj <- SeaSondeR:::seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion(cs_obj, 0.35)
-
-# Retrieve and inspect the proportion from the object's MUSIC data attribute
-dual_prop <- attr(cs_obj, "MUSIC_data")$dual_solutions_proportion
-  print(dual_prop)
-}

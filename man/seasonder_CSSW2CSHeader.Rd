@@ -15,9 +15,3 @@ A transformed list representing a valid SeaSonde CS header with embedded CSSW he
 \description{
 Extracts the 'cs4h' component from a CSSW header and reorganizes the remaining header information under 'header_csr'.
 }
-\examples{
-# Example usage:
-header <- list(cs4h = list(field = 1), someField = 42)
-cs_header <- SeaSondeR:::seasonder_CSSW2CSHeader(header)
-print(cs_header)
-}

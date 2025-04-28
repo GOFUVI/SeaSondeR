@@ -33,16 +33,6 @@ The function performs the following checks:
 This validation ensures the output solutions are consistent with the detected peaks, addressing potential discrepancies
 in the initial assumptions about the solution type.
 }
-\examples{
-# Check retained solution
-out <- SeaSondeR:::seasonder_MUSICExtractPeaksCheckRetainedSolution(
-  "dual",
-  list(
-    single = list(bearing = 45),
-    dual = list(bearing = c(30, 60))
-  )
-)
-}
 \seealso{
 \code{\link{seasonder_MUSICExtractPeaks}}, \code{\link{seasonder_MUSICExtractDOASolutions}}
 }

@@ -37,16 +37,6 @@ across the self-spectra matrix.
 
 This smoothing implementation mimics the one performed by the tool AnalyzeSpectra of CODAR's Radial Suite R8.
 }
-\examples{
-# Create a valid SeaSondeRCS object for examples
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-# Smooth self-spectra for antenna 1 (internal function)
-smoothed_SS <- SeaSondeR:::seasonder_SmoothSS(cs_obj, antenna = 1)
-head(smoothed_SS[1:10, 1:10])
-}
 \seealso{
 \itemize{
 \item \code{\link{seasonder_getFOR_parameters}} for retrieving default \code{nsm} values.

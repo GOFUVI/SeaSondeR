@@ -45,15 +45,6 @@ and are rejected. This step is critical for maintaining the accuracy of radar-de
 This function is particularly useful in environments where noise or ionospheric effects are prevalent,
 ensuring that only valid first-order Bragg peaks are retained for further processing.
 }
-\examples{
-# Remove noise/ionospheric contamination from FOR peaks
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-cs_obj2 <- SeaSondeR:::seasonder_rejectNoiseIonospheric(cs_obj)
-head(seasonder_getSeaSondeRCS_FOR(cs_obj2))
-}
 \seealso{
 \itemize{
 \item \code{\link{seasonder_rejectNoiseIonosphericTest}} for the noise/ionospheric rejection logic.

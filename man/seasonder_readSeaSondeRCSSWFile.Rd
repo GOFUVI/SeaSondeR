@@ -40,12 +40,3 @@ The function executes the following steps:
 \item Combines the header and data into a SeaSondeRCS object.
 }
 }
-\examples{
-\donttest{
-  # Example:
-  cs_obj <- SeaSondeR:::seasonder_readSeaSondeRCSSWFile(
-    system.file("css_data/CSS_TORA_2024_04_04_070000.csr", package = "SeaSondeR")
-  )
-  str(cs_obj)
-}
-}

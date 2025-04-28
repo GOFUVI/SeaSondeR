@@ -26,12 +26,3 @@ The function follows these steps:
 \item Convert the reordered bits back to raw bytes.
 }
 }
-\examples{
-# Define an integer value
-int_val <- 12345
-# Convert to raw bytes using unexported function
-raw_val <- SeaSondeR:::seasonder_int_to_raw(int_val)
-# Show raw byte values
-print(raw_val)
-
-}

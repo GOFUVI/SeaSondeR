@@ -51,13 +51,6 @@ The unit conversions follow this logic:
 
 Overall, the functions used for Doppler units conversion mimic the implementation of Doppler units displayed in  SpectraPlotterMap 12 in Radial Suite R8
 }
-\examples{
-# When input and output units are the same, values are returned unchanged
-vals <- c(1, 2, 3)
-result <- SeaSondeR:::seasonder_SwapDopplerUnits(list(), vals,
-  in_units = "bins", out_units = "bins")
-print(result)
-}
 \references{
 COS. SeaSonde Radial Suite Release 8; CODAR Ocean Sensors (COS): Mountain View, CA, USA, 2016.
 }

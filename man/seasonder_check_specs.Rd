@@ -36,10 +36,3 @@ This function utilizes the \code{rlang} package to manage conditions, and provid
 }
 }
 
-\examples{
-# Example: validate presence of all fields in specs
-specs <- list(field1 = "spec1", field2 = "spec2", field3 = "spec3")
-fields <- c("field1", "field2", "field3")
-SeaSondeR:::seasonder_check_specs(specs, fields)
-
-}

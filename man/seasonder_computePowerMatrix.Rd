@@ -56,9 +56,3 @@ and \eqn{G_{\text{inv}}} is the inverse of \eqn{G}.
 }
 }
 
-\examples{
-# Compute power matrix
-eig <- list(values = c(10,5), vectors = matrix(1:4, ncol=2))
-a <- matrix(c(1+1i,2+2i), ncol=1)
-power_matrix <- SeaSondeR:::seasonder_computePowerMatrix(eig, a)
-}

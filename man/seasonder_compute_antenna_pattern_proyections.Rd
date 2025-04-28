@@ -50,10 +50,3 @@ as it corresponds to the direction where the signal is strongest relative to the
 }
 }
 
-\examples{
-# Compute antenna pattern projections
-En <- matrix(1+1i, nrow=3, ncol=2)
-a <- c(1+1i,0+0i,0+0i)
-Conj_t_a <- Conj(t(a))
-proj <- SeaSondeR:::seasonder_compute_antenna_pattern_proyections(En, a, Conj_t_a)
-}

@@ -2,6 +2,7 @@
 % Please edit documentation in R/SeaSondeRCS_MUSIC.R
 \name{seasonder_defaultMUSICOptions}
 \alias{seasonder_defaultMUSICOptions}
+\alias{seasonder_defaultMUSIC_options}
 \title{Default Options for the MUSIC Algorithm}
 \usage{
 seasonder_defaultMUSICOptions()
@@ -26,6 +27,6 @@ The returned list includes:
 }
 \examples{
 # Retrieve the default options for the MUSIC algorithm
-opts <- SeaSondeR:::seasonder_defaultMUSIC_options()
+opts <- seasonder_defaultMUSICOptions()
 print(opts)
 }

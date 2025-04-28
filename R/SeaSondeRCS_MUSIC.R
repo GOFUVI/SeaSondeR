@@ -48,9 +48,10 @@ seasonder_defaultMUSIC_parameters <- seasonder_defaultMUSICParameters <- functio
 #'
 #' @examples
 #' # Retrieve the default options for the MUSIC algorithm
-#' opts <- SeaSondeR:::seasonder_defaultMUSIC_options()
+#' opts <- seasonder_defaultMUSICOptions()
 #' print(opts)
 #' @export
+#' @aliases seasonder_defaultMUSIC_options
 seasonder_defaultMUSICOptions <- seasonder_defaultMUSIC_options <- function(){
   
   list(PPMIN = NULL,
@@ -611,7 +612,7 @@ SeaSondeRCS_doa_selection_end_step_text  <- function() {
 #' are filled with the defaults.
 #'
 #' @param seasonder_cs_object A SeaSondeRCS object that contains the MUSIC data as an attribute.
-#' @param MUSIC_options A named list of MUSIC options. Defaults to the output of \code{seasonder_defaultMUSIC_options()}.
+#' @param MUSIC_options A named list of MUSIC options. Defaults to the output of \code{seasonder_defaultMUSICOptions()}.
 #'
 #' @return The updated SeaSondeRCS object with the MUSIC options stored in its MUSIC data attribute.
 #'
@@ -630,14 +631,15 @@ SeaSondeRCS_doa_selection_end_step_text  <- function() {
 #' )
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-#' cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data, apm_obj)
+#' cs_obj <- seasonder_createSeaSondeRCS(list(header = header, data = data), 
+#' seasonder_apm_object = apm_obj)
 #' cs_obj <- seasonder_setMUSICOptions(cs_obj, list(doppler_interpolation = 3))
 #' opts <- seasonder_getMUSICOptions(cs_obj)
 #' print(opts)
 #' @export
-seasonder_setMUSICOptions <- seasonder_setSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object, MUSIC_options = seasonder_defaultMUSIC_options()) {
+seasonder_setMUSICOptions <- seasonder_setSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object, MUSIC_options = seasonder_defaultMUSICOptions()) {
 
-  MUSIC_options <- utils::modifyList(seasonder_defaultMUSIC_options(), MUSIC_options)
+  MUSIC_options <- utils::modifyList(seasonder_defaultMUSICOptions(), MUSIC_options)
 
   attr(seasonder_cs_object, "MUSIC_data")$MUSIC_options <- MUSIC_options
 
@@ -662,7 +664,7 @@ seasonder_setMUSICOptions <- seasonder_setSeaSondeRCS_MUSIC_options <- function(
 #'
 #' @details
 #' The function first checks if \code{option_name} is one of the valid options as provided by
-#' \code{seasonder_defaultMUSIC_options()}. If not, it calls \code{seasonder_logAndAbort} to log an error.
+#' \code{seasonder_defaultMUSICOptions()}. If not, it calls \code{seasonder_logAndAbort} to log an error.
 #' Then, the current MUSIC options are retrieved, updated with the new value, and stored back into the object.
 #'
 #' @examples
@@ -676,14 +678,15 @@ seasonder_setMUSICOptions <- seasonder_setSeaSondeRCS_MUSIC_options <- function(
 #' )
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-#' cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data, apm_obj)
+#' cs_obj <- seasonder_createSeaSondeRCS(list(header = header, data = data), 
+#' seasonder_apm_object = apm_obj)
 #' cs_obj <- seasonder_setMUSICOption(cs_obj, "smoothNoiseLevel", TRUE)
 #' opts <- seasonder_getMUSICOptions(cs_obj)
 #' print(opts$smoothNoiseLevel)
 #' @export
 seasonder_setMUSICOption <- seasonder_setSeaSondeRCS_MUSIC_option <- function(seasonder_cs_object, option_name, option_value) {
   # Get the valid option names from the default MUSIC options
-  valid_options <- names(seasonder_defaultMUSIC_options())
+  valid_options <- names(seasonder_defaultMUSICOptions())
   
   # Check if the provided option_name is valid
   if (!option_name %in% valid_options) {
@@ -819,8 +822,9 @@ seasonder_setSeaSondeRCS_MUSIC_dual_solutions_proportion <- function(seasonder_c
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_object <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 #' # Set the Doppler interpolation factor to 2 (internal alias)
-#' cs_object <- SeaSondeR:::seasonder_setMUSICDopplerInterpolation(cs_object, 2)
+#' cs_object <- seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation(cs_object, 2)
 #' @export
+#' @aliases seasonder_setMUSICDopplerInterpolation
 seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation <- seasonder_setMUSICDopplerInterpolation <- function(seasonder_cs_object, doppler_interpolation){
   
   doppler_interpolation <- SeaSondeRCS_MUSIC_validate_doppler_interpolation(doppler_interpolation, seasonder_cs_object)
@@ -887,14 +891,15 @@ seasonder_setMUSICInterpolatedDopplerCellsIndex <- seasonder_setSeaSondeRCS_MUSI
 #' If not found, it defaults to the values returned by \code{seasonder_defaultMUSIC_parameters()}.
 #'
 #' @examples
-#' # Minimal example for seasonder_getMUSICParameters
+#' # Minimal example for seasonder_getSeaSondeRCS_MUSIC_parameters
 #' cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' params <- SeaSondeR:::seasonder_getMUSICParameters(cs_obj)
+#' params <- seasonder_getSeaSondeRCS_MUSIC_parameters(cs_obj)
 #' print(params)
 #' @export
+#' @aliases seasonder_getMUSICParameters
 seasonder_getSeaSondeRCS_MUSIC_parameters <- seasonder_getMUSICParameters <- function(seasonder_cs_object) {
 
 
@@ -917,7 +922,7 @@ seasonder_getSeaSondeRCS_MUSIC_parameters <- seasonder_getMUSICParameters <- fun
 #'
 #' @details
 #' The function retrieves the MUSIC options from the object's MUSIC_data attribute.
-#' In the absence of user-defined options, it returns the default options provided by \code{seasonder_defaultMUSIC_options()}.
+#' In the absence of user-defined options, it returns the default options provided by \code{seasonder_defaultMUSICOptions()}.
 #'
 #' @examples
 #' # Minimal example for seasonder_getMUSICOptions
@@ -931,7 +936,7 @@ seasonder_getSeaSondeRCS_MUSIC_parameters <- seasonder_getMUSICParameters <- fun
 seasonder_getMUSICOptions <- seasonder_getSeaSondeRCS_MUSIC_options <- function(seasonder_cs_object) {
 
 
-  out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC_options %||% seasonder_defaultMUSIC_options()
+  out <- attr(seasonder_cs_object, "MUSIC_data", exact = TRUE)$MUSIC_options %||% seasonder_defaultMUSICOptions()
 
 
   return(out)
@@ -956,9 +961,10 @@ seasonder_getMUSICOptions <- seasonder_getSeaSondeRCS_MUSIC_options <- function(
 #' apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 #' apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 #' cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-#' music_data <- SeaSondeR:::seasonder_getMUSIC(cs_obj)
+#' music_data <- seasonder_getSeaSondeRCS_MUSIC(cs_obj)
 #' print(music_data)
 #' @export
+#' @aliases seasonder_getSeaSondeRCS_MUSIC
 seasonder_getSeaSondeRCS_MUSIC <- seasonder_getMUSIC <-  function(seasonder_cs_object) {
 
 

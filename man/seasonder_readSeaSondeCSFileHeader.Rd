@@ -21,15 +21,6 @@ This function reads and processes the header of a SeaSonde CS file. It initially
 the general header (Version 1) to determine the file version. Subsequent headers are processed
 based on the file version.
 }
-\examples{
-# Example: read header from a sample CS file
-specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
-specs <- seasonder_readYAMLSpecs(specs_path, "header")
-con <- file(system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"), "rb")
-header <- SeaSondeR:::seasonder_readSeaSondeCSFileHeader(specs, con, endian = "big")
-print(header)
-close(con)
-}
 \seealso{
 \code{\link{seasonder_readSeaSondeCSFileHeaderV1}}
 \code{\link{process_version_header}}

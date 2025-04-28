@@ -699,6 +699,7 @@ seasonder_setSeaSondeRCS_NoiseLevel <- function(seasonder_cs_object, NoiseLevel,
 #' \code{\link{seasonder_validateFOR_parameters}} for initializing and validating FOR parameters.
 #' \code{\link{seasonder_defaultFOR_parameters}} for retrieving default parameter values.
 #'
+#' @export
 seasonder_getFOR_parameters <- function(seasonder_cs_object) {
 
   # Extract FOR parameters from the object's attributes

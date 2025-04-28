@@ -31,18 +31,6 @@ the bin at zero Doppler frequency in a zero-indexed system. Since R uses
 one-based indexing, users might observe an offset when comparing the output
 of this function to CODAR's Radia Suite programs.
 }
-\examples{
-# Read a SeaSonde CS file
-cs_obj <- seasonder_readSeaSondeCSFile(
-  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
-  SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
-)
-# Get number of Doppler cells
-nDoppler <- seasonder_getnDopplerCells(cs_obj)
-# Compute center Doppler bin
-center_bin <- SeaSondeR:::seasonder_computeCenterDopplerBin(cs_obj, nDoppler)
-print(center_bin)
-}
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}} to retrieve the number
 of Doppler cells from a SeaSondeRCS object.

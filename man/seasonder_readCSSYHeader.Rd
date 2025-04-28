@@ -56,9 +56,3 @@ function rewinds the connection 8 bytes and stops processing further keys.
 calls itself recursively to process nested keys.
 }
 }
-\examples{
-# Example: load CSSY header specifications
-spec_file <- SeaSondeR:::seasonder_defaultSpecsFilePath("CSSY")
-header_specs <- seasonder_readYAMLSpecs(spec_file, c("CSSY", "HEAD"))
-print(names(header_specs))
-}

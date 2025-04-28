@@ -33,15 +33,6 @@ The bins are critical for identifying the Doppler shifts associated with the fir
 Bragg scattering in HF radar systems, which correspond to surface waves with wavelengths
 half that of the transmitted radar signal.
 }
-\examples{
-# Minimal example for seasonder_getBraggLineBins
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-bins <- SeaSondeR:::seasonder_getBraggLineBins(cs_obj)
-print(bins)
-}
 \seealso{
 \code{\link{seasonder_NormalizedDopplerFreq2Bins}} for the frequency-to-bin mapping logic.
 }

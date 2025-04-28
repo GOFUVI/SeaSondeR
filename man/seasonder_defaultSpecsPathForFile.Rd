@@ -23,15 +23,6 @@ specifications path.
 The function leverages \code{seasonder_find_spectra_file_type} to determine whether the file is of type "CS" or "CSSY".
 It then uses \code{seasonder_defaultSpecsFilePath} to obtain the corresponding default specifications path.
 }
-\examples{
-
-  # Get the default specifications path for a given spectra file
-  specs_path <- SeaSondeR:::seasonder_defaultSpecsPathForFile(
-    system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-  )
-  print(specs_path)
-
-}
 \seealso{
 \code{\link{seasonder_find_spectra_file_type}}, \code{\link{seasonder_defaultSpecsFilePath}}
 }

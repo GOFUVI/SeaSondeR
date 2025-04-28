@@ -364,7 +364,7 @@ seasonder_createSeaSondeRCS <- function(x, specs_path = NULL, ...) {
 seasonder_createSeaSondeRCS.list <- function(x, specs_path = NULL, ...) {
 
   # Creating the SeaSondeRCS object
-  out <- new_SeaSondeRCS(x$header, x$data)
+  out <- new_SeaSondeRCS(x$header, x$data, ...)
 
   out %<>% seasonder_setSeaSondeRCS_ProcessingSteps(SeaSondeRCS_creation_step_text("list"))
 

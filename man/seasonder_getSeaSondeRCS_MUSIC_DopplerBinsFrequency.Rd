@@ -42,15 +42,6 @@ using \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}}.
 The resulting Doppler bins frequencies are crucial for analyzing the spectral
 properties of the MUSIC output.
 }
-\examples{
-# Get Doppler bins frequency
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-freqs <- SeaSondeR:::seasonder_getSeaSondeRCS_MUSIC_DopplerBinsFrequency(cs_obj, normalized = TRUE)
-print(head(freqs))
-}
 \seealso{
 \code{\link{seasonder_getSeaSondeRCS_MUSIC_CenterDopplerBin}} to retrieve the central bin.
 \code{\link{seasonder_getSeaSondeRCS_MUSIC_nDopplerCells}} for the number of Doppler cells.

@@ -41,22 +41,6 @@ The function then applies \code{\link{findInterval}} to determine the correspond
 
 After determining the bin indices, values that are out of range (\code{bins < 1} or \code{bins > nDoppler}) are set to \code{NA}.
 }
-\examples{
-# Compute Doppler bin indices from example cross-spectral file
-# (use internal helpers via SeaSondeR:::)
-cs_obj <- seasonder_readSeaSondeCSFile(
-  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
-  SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
-)
-doppler_freqs   <- SeaSondeR:::seasonder_getDopplerBinsFrequency(cs_obj, normalized = FALSE)
-delta_freq      <- SeaSondeR:::seasonder_getDopplerSpectrumResolution(cs_obj)
-nDoppler        <- SeaSondeR:::seasonder_getnDopplerCells(cs_obj)
-doppler_values  <- doppler_freqs[1:3]
-bins <- SeaSondeR:::seasonder_computeDopplerFreq2Bins(
-  cs_obj, doppler_values, doppler_freqs, delta_freq, nDoppler
-)
-print(bins)
-}
 \seealso{
 \code{\link{seasonder_Bins2NormalizedDopplerFreq}} for converting bins back to normalized Doppler frequencies.
 \code{\link{findInterval}} for details on interval-based bin selection.

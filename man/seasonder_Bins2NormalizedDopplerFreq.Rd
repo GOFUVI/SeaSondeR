@@ -30,19 +30,6 @@ where:
 \item \eqn{f_{bragg}} is the Bragg frequency, computed based on radar wavelength.
 }
 }
-\examples{
-# Read a sample Cross-Spectral (CS) file to create a SeaSondeRCS object
-specs_path <- SeaSondeR:::seasonder_defaultSpecsFilePath("CS")
-cs_obj <- seasonder_readSeaSondeCSFile(
-  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
-  specs_path
-)
-# Define Doppler bin indices (from 1 to number of bins)
-bins <- seq_len(as.integer(seasonder_getnDopplerCells(cs_obj)))
-# Retrieve normalized Doppler frequencies for the specified bins (internal function)
-normalized_freqs <- SeaSondeR:::seasonder_Bins2NormalizedDopplerFreq(cs_obj, bins)
-head(normalized_freqs)
-}
 \seealso{
 \code{\link{seasonder_getDopplerBinsFrequency}} for retrieving Doppler bin frequencies.
 }

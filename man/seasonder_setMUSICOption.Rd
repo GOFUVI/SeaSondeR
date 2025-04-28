@@ -23,7 +23,7 @@ then updates that field with the new value.
 }
 \details{
 The function first checks if \code{option_name} is one of the valid options as provided by
-\code{seasonder_defaultMUSIC_options()}. If not, it calls \code{seasonder_logAndAbort} to log an error.
+\code{seasonder_defaultMUSICOptions()}. If not, it calls \code{seasonder_logAndAbort} to log an error.
 Then, the current MUSIC options are retrieved, updated with the new value, and stored back into the object.
 }
 \examples{
@@ -37,7 +37,8 @@ data <- list(
 )
 apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- SeaSondeR:::new_SeaSondeRCS(header, data, apm_obj)
+cs_obj <- seasonder_createSeaSondeRCS(list(header = header, data = data), 
+seasonder_apm_object = apm_obj)
 cs_obj <- seasonder_setMUSICOption(cs_obj, "smoothNoiseLevel", TRUE)
 opts <- seasonder_getMUSICOptions(cs_obj)
 print(opts$smoothNoiseLevel)

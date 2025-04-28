@@ -85,10 +85,6 @@ This function provides a structured mechanism to recover from errors during its 
 }
 }
 
-\examples{
-con <- rawConnection(as.raw(c(0x12)))
-SeaSondeR:::seasonder_readCSField(con, "UInt8")
-}
 \seealso{
 \code{\link{seasonder_skip_cs_field}},
 \code{\link{seasonder_raw_to_int}}

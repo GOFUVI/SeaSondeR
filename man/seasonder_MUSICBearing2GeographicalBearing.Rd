@@ -27,15 +27,6 @@ The geographic bearing is calculated by:
 
 The formula for each bearing is: \eqn{geo_bearing = ((-1 * music_bearing \\\%\\\% 360) + antenna_bearing) \\\%\\\% 360}.
 }
-\examples{
-# Bearing to geographic
-music_bearings <- list(c(45, 90))
-# Read APM object for antenna bearing
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm      <- seasonder_readSeaSondeRAPMFile(apm_file)
-geo <- SeaSondeR:::seasonder_MUSICBearing2GeographicalBearing(music_bearings, apm)
-print(geo)
-}
 \seealso{
 \itemize{
 \item \code{\link{seasonder_getSeaSondeRAPM_AntennaBearing}}

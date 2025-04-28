@@ -15,8 +15,3 @@ A character string with the formatted message indicating the time of creation an
 \description{
 This function generates a text message indicating the time an CS object was created based on the current system time and the provided file path.
 }
-\examples{
-# Generate creation message using internal function
-message <- SeaSondeR:::SeaSondeRCS_creation_step_text("path/to/file.cs")
-print(message)
-}

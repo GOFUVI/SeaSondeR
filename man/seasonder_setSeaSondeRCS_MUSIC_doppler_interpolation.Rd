@@ -2,6 +2,7 @@
 % Please edit documentation in R/SeaSondeRCS_MUSIC.R
 \name{seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation}
 \alias{seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation}
+\alias{seasonder_setMUSICDopplerInterpolation}
 \title{Set the Doppler Interpolation Factor in a SeaSondeRCS Object}
 \usage{
 seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation(
@@ -34,7 +35,7 @@ apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
 apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
 cs_object <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
 # Set the Doppler interpolation factor to 2 (internal alias)
-cs_object <- SeaSondeR:::seasonder_setMUSICDopplerInterpolation(cs_object, 2)
+cs_object <- seasonder_setSeaSondeRCS_MUSIC_doppler_interpolation(cs_object, 2)
 }
 \seealso{
 \code{\link{SeaSondeRCS_MUSIC_validate_doppler_interpolation}} for Doppler interpolation factor validation.

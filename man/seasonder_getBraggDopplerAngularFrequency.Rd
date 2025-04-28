@@ -30,15 +30,6 @@ where:
 
 The returned vector contains the negative (\eqn{-\omega_B}) and positive (\eqn{+\omega_B}) angular frequencies.
 }
-\examples{
-# Minimal example for seasonder_getBraggDopplerAngularFrequency
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-bragg_angular_freq <- SeaSondeR:::seasonder_getBraggDopplerAngularFrequency(cs_obj)
-print(bragg_angular_freq)
-}
 \seealso{
 \code{\link{seasonder_getRadarWaveNumber}} to compute the radar wave number.
 }

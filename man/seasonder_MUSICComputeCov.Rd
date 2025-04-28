@@ -36,21 +36,6 @@ Cross Spectra File Format Version 6 guidelines.
 Off-diagonal elements (\eqn{i \neq j}) are derived from cross-spectra fields, such as \code{CS12} or \code{CS23}.
 If the row index is greater than the column index, the conjugate of the value is used.
 }
-\examples{
-# Compute covariance for a sample SeaSondeRCS object
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-cs_obj <- SeaSondeR:::seasonder_initMUSICData(
- cs_obj,
- range_cells = c(rep(5,11), rep(4,11)),
- doppler_bins = c(c(669:679),c(674:684))
-)
-cs_obj <- SeaSondeR:::seasonder_SeaSondeRCSMUSICInterpolateDoppler(cs_obj)
-out <- SeaSondeR:::seasonder_MUSICComputeCov(cs_obj)
-print(out)
-}
 \references{
 Cross Spectra File Format Version 6, CODAR. (2016).
 Paolo, T. de, Cook, T. & Terrill, E. Properties of HF RADAR Compact Antenna Arrays and Their Effect on the MUSIC Algorithm. OCEANS 2007 1–10 (2007) doi:10.1109/oceans.2007.4449265.

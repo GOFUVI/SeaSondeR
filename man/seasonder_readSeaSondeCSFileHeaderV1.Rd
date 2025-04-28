@@ -27,22 +27,6 @@ A list with the read and transformed results.
 Reads the header of a SeaSonde file (Version 1) based on the provided specifications.
 Transforms the date-time fields and returns the results.
 }
-\examples{
-# Read version 1 header from a CS file
-specs_path <- seasonder_defaultSpecsFilePath("CS")
-specs <- seasonder_readYAMLSpecs(specs_path, c("header", "V1"))
-con <- file(
-  system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR"),
-  "rb"
-)
-header_v1 <- SeaSondeR:::seasonder_readSeaSondeCSFileHeaderV1(
-  specs,
-  con,
-  endian = "big"
-)
-str(header_v1)
-close(con)
-}
 \seealso{
 \code{\link{seasonder_check_specs}}
 \code{\link{seasonder_readSeaSondeCSFileBlock}}

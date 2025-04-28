@@ -31,15 +31,6 @@ from the field \code{fRepFreqHz} in the object's header.
 This calculation is fundamental for understanding the frequency spacing between
 adjacent Doppler bins in the radar spectrum.
 }
-\examples{
-# Minimal example for seasonder_getDopplerSpectrumResolution
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-spectral_res <- SeaSondeR:::seasonder_getDopplerSpectrumResolution(cs_obj)
-print(spectral_res)
-}
 \seealso{
 \code{\link{seasonder_getnDopplerCells}} to retrieve the number of Doppler cells.
 \code{\link{seasonder_getSeaSondeRCS_headerField}} to access specific header fields.

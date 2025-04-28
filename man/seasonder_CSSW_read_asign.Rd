@@ -34,11 +34,3 @@ The function performs the following steps:
 \item Converts each byte into its 8-bit binary representation (using \code{rawToBits}) and flattens the results for each group.
 }
 }
-\examples{
-# Example usage:
-con <- rawConnection(as.raw(c(0xFF, 0x00, 0xAA, 0x55, 0xCC, 0x33, 0x77, 0x88, 0x99)))
-key <- list(size = 9, key = "asign")
-result <- SeaSondeR:::seasonder_CSSW_read_asign(con, key)
-print(result)
-close(con)
-}

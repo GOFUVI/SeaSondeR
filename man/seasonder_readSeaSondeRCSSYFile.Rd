@@ -40,11 +40,3 @@ The function executes the following steps:
 \item Combines the header and data into a SeaSondeRCS object.
 }
 }
-\examples{
-\dontrun{
-# Example file not included in package to avoid large file size
-# Example (expected to error on missing file):
-cs_obj <- SeaSondeR:::seasonder_readSeaSondeRCSSYFile("path/to/file.rcssy")
-str(cs_obj)
-}
-}

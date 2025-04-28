@@ -28,15 +28,6 @@ The function performs the following steps:
 the interpolated number of Doppler cells.
 }
 }
-\examples{
-# Get interpolated Doppler cells count
-cs_file <- system.file("css_data/CSS_TORA_24_04_04_0700.cs", package = "SeaSondeR")
-apm_file <- system.file("css_data/MeasPattern.txt", package = "SeaSondeR")
-apm_obj <- seasonder_readSeaSondeRAPMFile(apm_file)
-cs_obj <- seasonder_createSeaSondeRCS(cs_file, seasonder_apm_object = apm_obj)
-n_doppler <- SeaSondeR:::seasonder_getSeaSondeRCS_MUSIC_nDopplerCells(cs_obj)
-print(n_doppler)
-}
 \seealso{
 \code{\link{seasonder_getnDopplerCells}} to obtain the base number of Doppler cells.
 \code{\link{seasonder_getSeaSondeRCS_MUSIC_doppler_interpolation}} to retrieve the Doppler interpolation factor.

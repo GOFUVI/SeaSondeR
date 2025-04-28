@@ -53,16 +53,6 @@ response and peak width for each.
 \item Finally, the function populates and returns a DOA solutions structure containing both single and dual solution fields.
 }
 }
-\examples{
-# DOA extraction toy example
-projections <- matrix(1, nrow = 2, ncol = 5, dimnames = list(c("single", "dual"), NULL))
-bearings <- seq(0, 360, length.out = ncol(projections))
-attr(projections, "bearings") <- bearings
-valid_bearings <- bearings
-apm <- matrix(1+1i, nrow = 3, ncol = length(bearings))
-sol <- SeaSondeR:::seasonder_MUSICExtractDOASolutions(projections, valid_bearings, apm)
-print(sol)
-}
 \references{
 Paolo, S., & Terril, E. (2007). Detection and characterization of signals in HF radar cross-spectra using the MUSIC algorithm.
 \emph{Journal of Atmospheric and Oceanic Technology}.

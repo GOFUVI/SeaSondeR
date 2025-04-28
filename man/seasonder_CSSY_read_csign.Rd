@@ -35,11 +35,3 @@ The function performs the following steps:
 \item Converts each byte into its 8-bit representation (using \code{rawToBits}) and flattens the result.
 }
 }
-\examples{
-# Create a raw connection with sample data:
-con <- rawConnection(as.raw(c(0x42, 0x29, 0xa3, 0xd7, 0xFF, 0x00)))
-key <- list(size = 6, key = "csign")
-result <- SeaSondeR:::seasonder_CSSY_read_csign(con, key)
-print(result)
-close(con)
-}

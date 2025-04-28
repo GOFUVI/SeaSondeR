@@ -49,18 +49,6 @@ where:
 }
 }
 
-\examples{
-# Example: compute a single DOA projection for toy data
-# Create a noise subspace eigenvector matrix (3 sensors, noise subspace dimension=2)
-En <- matrix(1+1i, nrow = 3, ncol = 2)
-# Create an antenna pattern response vector
-a <- c(1+0i, 0+0i, 0+0i)
-# Compute its conjugate transpose
-Conj_t_a <- Conj(t(a))
-# Compute a single projection using the MUSIC formula
-proj <- SeaSondeR:::seasonder_compute_antenna_pattern_proyections(En, a, Conj_t_a)
-print(proj)
-}
 \seealso{
 \code{\link{seasonder_compute_antenna_pattern_proyections}} for computing projections.
 }
