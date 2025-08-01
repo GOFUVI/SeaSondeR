@@ -22,7 +22,7 @@ https://gofuvi.github.io/SeaSondeR/
 
 ## Acknowledgements
 
-This work has been funded by the HF-EOLUS project (TED2021-129551B-I00), financed by MICIU/AEI /10.13039/501100011033 and by the European Union NextGenerationEU/PRTR - BDNS 598843 - Component 17 - Investment I3.
+This work has been funded by the HF-EOLUS project (TED2021-129551B-I00), financed by MICIU/AEI /10.13039/501100011033 and by the European Union NextGenerationEU/PRTR - BDNS 598843 - Component 17 - Investment I3. Members of the Marine Research Centre (CIM) of the University of Vigo have participated in the development of this repository.
 
 ## Disclaimer
 
@@ -32,3 +32,14 @@ This software is provided "as is", without warranty of any kind, express or impl
 
 SeaSonde(R) is a trademark of CODAR Ocean Sensors Ltd.
 
+---
+<p align="center">
+  <img src="logos/EN_Funded_by_the_European_Union_RGB_POS.png" alt="Funded by the European Union" height="80"/>
+  <img src="logos/LOGO%20COLOR.png" alt="Logo Color" height="80"/>
+  <img src="logos/logo_aei.png" alt="AEI Logo" height="80"/>
+  <img src="logos/MCIU_header.svg" alt="MCIU Header" height="80"/>
+  <img src ="logos/Logotipo_CIM_original.png" alt="CIM logo" height="80"/>
+  
+
+  
+</p>
